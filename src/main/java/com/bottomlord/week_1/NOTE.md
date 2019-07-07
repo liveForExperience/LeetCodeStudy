@@ -44,5 +44,18 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-在解法二
+在国内站看到的解法，不需要利用hash表，直接通过String的replace方法，将宝石数组J中的字符从石头数组S中去除掉，那么S字符串的长度差就是宝石的个数。
 ### 代码
+```java
+class Solution {
+    public int numJewelsInStones(String J, String S) {
+        String[] jss = J.split("");
+        int len = S.length();
+        for (String s: jss) {
+            S = S.replace(s, "");
+        }
+        
+        return len - S.length();
+    }
+}
+```
