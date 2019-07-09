@@ -203,5 +203,107 @@ class Solution {
 2. 把大写改成小写
 ### 代码
 ```java
-
+class Solution {
+    public String toLowerCase(String str) {
+        char[] cs = str.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] >= 65 && cs[i] <= 90) {
+                cs[i] += 32;
+            }
+        }
+        return new String(cs);
+    } 
+}
 ```
+## 解法二
+### 思路
+直接用jdk的现成方法。。。
+### 代码
+```java
+class Solution {
+    public String toLowerCase(String str) {
+        return str.toLowerCase();
+    }
+}
+```
+# LeetCode_1108_IP地址无效化
+## 题目
+给你一个有效的 IPv4 地址 address，返回这个 IP 地址的无效化版本。
+
+所谓无效化 IP 地址，其实就是用 "[.]" 代替了每个 "."。
+ 
+示例 1：
+```
+输入：address = "1.1.1.1"
+输出："1[.]1[.]1[.]1"
+```
+示例 2：
+```
+输入：address = "255.100.50.0"
+输出："255[.]100[.]50[.]0"
+```
+提示：
+```
+给出的 address 是一个有效的 IPv4 地址
+```
+## 解法一
+### 思路
+遍历字符数组，同时使用StringBuilder进行append，如果碰到"."就套上"[]"。
+### 代码
+```java
+class Solution {
+    public String defangIPaddr(String address) {
+        StringBuilder sb = new StringBuilder();
+        for (char c: address.toCharArray()) {
+            if (c == '.') {
+                sb.append('[');
+                sb.append(c);
+                sb.append(']');
+            } else {
+                sb.append(c);
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
+## 解法二
+### 思路
+使用String的replace方法
+### 代码
+```java
+class Solution {
+    public String defangIPaddr(String address) {
+        return address.replace(".", "[.]");
+    }
+}
+```
+### 结果
+相比较解法一，这个解法的耗时更慢，内存消耗也略微更多。
+# LeetCode_804_唯一摩尔斯密码词
+## 题目
+国际摩尔斯密码定义一种标准编码方式，将每个字母对应于一个由一系列点和短线组成的字符串， 比如: "a" 对应 ".-", "b" 对应 "-...", "c" 对应 "-.-.", 等等。
+
+为了方便，所有26个英文字母对应摩尔斯密码表如下：
+
+[".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."]
+给定一个单词列表，每个单词可以写成每个字母对应摩尔斯密码的组合。例如，"cab" 可以写成 "-.-..--..."，(即 "-.-." + "-..." + ".-"字符串的结合)。我们将这样一个连接过程称作单词翻译。
+
+返回我们可以获得所有词不同单词翻译的数量。
+
+例如:
+```
+输入: words = ["gin", "zen", "gig", "msg"]
+输出: 2
+```
+解释: 
+```
+各单词翻译如下:
+"gin" -> "--...-."
+"zen" -> "--...-."
+"gig" -> "--...--."
+"msg" -> "--...--."
+共有 2 种不同翻译, "--...-." 和 "--...--.".
+```
+## 解法一
