@@ -1,4 +1,4 @@
-package com.bottomlord.week_1.quiz_237;
+package com.bottomlord.week_1;
 
 import com.bottomlord.ListNode;
 

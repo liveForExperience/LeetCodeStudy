@@ -1,4 +1,4 @@
-package com.bottomlord.week_1.quiz_804;
+package com.bottomlord.week_1;
 
 import java.util.HashSet;
 import java.util.Set;

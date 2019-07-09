@@ -1,4 +1,4 @@
-package com.bottomlord.week_1.quiz_709;
+package com.bottomlord.week_1;
 
 /**
  * @author LiveForExperience
