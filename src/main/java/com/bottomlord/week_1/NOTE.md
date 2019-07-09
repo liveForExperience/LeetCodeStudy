@@ -434,3 +434,51 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+和解法一一样，使用dfs，但不同点是非递归。而难点也是，如果要同时遍历，那么如何实现。在看了国际站的解法后整理如下：
+- 首先栈所放入的元素不再是普通一棵树的题目那种一个节点，而是需要放入一个节点数组
+- 通过循环弹栈获取数组来带动遍历搜索的过程，同时可以使得两棵树的节点的信息在同一时间同时处理
+- 之后就开始具体的逻辑处理，最终的结果是在t1的基础上返回合并后的树：
+   1. 如果弹出的数组中的元素都非空，将两个节点的值相加，同时将两棵树的两个子树按照左左、右右的关系组成数组放入栈中
+   2. 如果弹出的数组中的代表t1的子节点的元素(第一个元素)是空，那么就应该把t1的子节点的指针指向元素2，**但是这时候没办法操作指针了**
+   3. 所以第1步要修改，指针变化的动作要在第1步做了，判断数组中t1的节点(第一个元素)的左右子树是否是空:
+      - 如果是，就把它指向左右子树的指针指向t2相应的左右子树(t2不用判断空，因为只要t1的节点是空了，t1就替换成t2的节点，无论是否为空)。
+      - 如果不是，就组成数组，放入栈
+   4. 同时加上一步continue的动作，因为t1的节点为空的时候被t2的节点替换了，没有放入栈，所以当第2个元素为空的时候，就代表当前为止只有t1有节点，不用处理了
+- 最终返回t1节点。
+### 代码
+```java
+class Solution {
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
+        if (t1 == null) {
+            return t2;
+        }
+
+        Stack<TreeNode[]> stack = new Stack<>();
+        stack.push(new TreeNode[]{t1, t2});
+        while (!stack.empty()) {
+            TreeNode[] nodes = stack.pop();
+            if (nodes[1] == null) {
+                continue;
+            }
+
+            nodes[0].val += nodes[1].val;
+
+            if (nodes[0].left == null) {
+                nodes[0].left = nodes[1].left;
+            } else {
+                stack.push(new TreeNode[]{nodes[0].left, nodes[1].left});
+            }
+
+            if (nodes[0].right == null) {
+                nodes[0].right = nodes[1].right;
+            } else {
+                stack.push(new TreeNode[]{nodes[0].right, nodes[1].right});
+            }
+        }
+
+        return t1;
+    }
+}
+```
