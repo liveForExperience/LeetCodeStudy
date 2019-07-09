@@ -306,4 +306,26 @@ class Solution {
 "msg" -> "--...--."
 共有 2 种不同翻译, "--...-." 和 "--...--.".
 ```
-## 解法一
+## 解法
+### 思路
+1. 使用数组保存从a到z的摩尔斯密码
+2. 迭代字符串数组，拼接当前字符串所对应的摩尔斯密码串
+3. 放入一个HashSet进行去重
+4. 迭代结束后返回HashSet的长度
+### 代码
+```java
+class Solution {
+    public int uniqueMorseRepresentations(String[] words) {
+        String[] dict = new String[]{".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."};
+        Set<String> set = new HashSet<>();
+        for (String word: words) {
+            StringBuilder sb = new StringBuilder();
+            for (char c: word.toCharArray()) {
+                sb.append(dict[c - 'a']);
+            }
+            set.add(sb.toString());
+        }
+        return set.size();
+    }
+}
+```
