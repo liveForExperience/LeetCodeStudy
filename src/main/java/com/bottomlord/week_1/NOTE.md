@@ -677,3 +677,64 @@ class Solution {
 
 这个问题是受到 Max Howell 的 原问题 启发的 ：
 > 谷歌：我们90％的工程师使用您编写的软件(Homebrew)，但是您却无法在面试时在白板上写出翻转二叉树这道题，这太糟糕了。
+## 解法一
+### 思路
+使用dfs递归方式
+- 如果为空就返回
+- 否则节点指针左右替换一下
+- 左右子树下钻下一层
+### 代码
+```java
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        invert(root);
+        return root;
+    }
+    
+    private void invert(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        
+        TreeNode tmp = node.left;
+        node.left = node.right;
+        node.right = tmp;
+        
+        invert(node.left);
+        invert(node.right);
+    }
+}
+```
+## 解法二
+### 思路
+dfs非递归方式，循环体的逻辑和解法一类似
+### 代码
+```java
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            TreeNode tmp = node.left;
+            node.left = node.right;
+            node.right = tmp;
+            
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+            
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+        }
+        
+        return root;
+    }
+}
+```
