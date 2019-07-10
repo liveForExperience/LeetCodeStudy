@@ -6,7 +6,7 @@ import com.bottomlord.TreeNode;
  * @author LiveForExperience
  * @date 2019/7/8 18:29
  */
-public class LeetCode_938_1 {
+public class LeetCode_938_1_二叉搜索树的范围和 {
     public int rangeSumBST(TreeNode root, int L, int R) {
         return count(root, L, R, 0);
     }

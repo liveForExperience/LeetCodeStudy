@@ -381,7 +381,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_617_1
+# LeetCode_617_合并二叉树
 ## 题目
 给定两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。
 
@@ -475,6 +475,45 @@ class Solution {
                 nodes[0].right = nodes[1].right;
             } else {
                 stack.push(new TreeNode[]{nodes[0].right, nodes[1].right});
+            }
+        }
+
+        return t1;
+    }
+}
+```
+## 解法三
+### 思路
+使用bfs替换解法二的dfs，其他步骤基本不变
+### 代码
+```java
+class Solution {
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
+        if (t1 == null) {
+            return t2;
+        }
+
+        Queue<TreeNode[]> queue = new ArrayDeque<>();
+        TreeNode[] root = new TreeNode[]{t1, t2};
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            TreeNode[] nodes = queue.poll();
+            if (nodes[1] == null) {
+                continue;
+            }
+
+            nodes[0].val += nodes[1].val;
+            if (nodes[0].left == null) {
+                nodes[0].left = nodes[1].left;
+            } else {
+                queue.offer(new TreeNode[]{nodes[0].left, nodes[1].left});
+            }
+
+            if (nodes[0].right == null) {
+                nodes[0].right = nodes[1].right;
+            } else {
+                queue.offer(new TreeNode[]{nodes[0].right, nodes[1].right});
             }
         }
 

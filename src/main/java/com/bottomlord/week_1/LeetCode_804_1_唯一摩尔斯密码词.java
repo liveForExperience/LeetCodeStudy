@@ -7,7 +7,7 @@ import java.util.Set;
  * @author LiveForExperience
  * @date 2019/7/9 12:50
  */
-public class LeetCode_804_1 {
+public class LeetCode_804_1_唯一摩尔斯密码词 {
     public int uniqueMorseRepresentations(String[] words) {
         String[] dict = new String[]{".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."};
         Set<String> set = new HashSet<>();

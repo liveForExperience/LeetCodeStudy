@@ -9,7 +9,7 @@ import java.util.Queue;
  * @author LiveForExperience
  * @date 2019/7/9 17:56
  */
-public class LeetCode_617_1 {
+public class LeetCode_617_1_合并二叉树 {
     public TreeNode mergeTrees(TreeNode t1, TreeNode t2) {
         if (t1 == null) {
             return t2;
