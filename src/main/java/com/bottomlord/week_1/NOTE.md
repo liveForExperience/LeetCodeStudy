@@ -827,3 +827,44 @@ class Solution {
     }
 }
 ```
+# LeetCode_1051_高度检查器
+## 题目
+学校在拍年度纪念照时，一般要求学生按照 非递减 的高度顺序排列。
+
+请你返回至少有多少个学生没有站在正确位置数量。该人数指的是：能让所有学生以 非递减 高度排列的必要移动人数。
+
+示例：
+```
+输入：[1,1,4,2,1,3]
+输出：3
+解释：
+高度为 4、3 和最后一个 1 的学生，没有站在正确的位置。
+```
+提示：
+```
+1 <= heights.length <= 100
+1 <= heights[i] <= 100
+```
+## 解法一
+### 思路
+- 复制一个数组
+- 把一个数组排序
+- 遍历数组，比对是否一致，不一致的计数
+### 代码
+```java
+class Solution {
+    public int heightChecker(int[] heights) {
+        int[] tmp = Arrays.copyOf(heights, heights.length);
+        Arrays.sort(tmp);
+        
+        int count = 0;
+        for (int i = 0; i < heights.length; i++) {
+            if (tmp[i] != heights[i]) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+```
