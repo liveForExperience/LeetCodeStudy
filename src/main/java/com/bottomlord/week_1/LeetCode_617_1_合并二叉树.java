@@ -2,9 +2,6 @@ package com.bottomlord.week_1;
 
 import com.bottomlord.TreeNode;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 /**
  * @author LiveForExperience
  * @date 2019/7/9 17:56
