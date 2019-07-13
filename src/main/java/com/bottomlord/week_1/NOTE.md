@@ -1024,3 +1024,38 @@ class Solution {
 }
 ```
 ## 解法二
+### 思路
+通过int值小数部分会被截取的特点
+- 遍历left到right
+- 不断截断遍历的数，并通过取模来获得10进制当前位的值，并判断两件事
+   - 取模得到的值是否为0
+   - 遍历到的这个数是否能被当前位的值整除
+- 如果截取到值为0的时候，说明已经截完了，如果这时候上述条件都不满足，那就放入ans中
+- 遍历结束后返回ans
+### 代码
+```java
+class Solution {
+    public List<Integer> selfDividingNumbers(int left, int right) {
+        List<Integer> ans = new ArrayList<>();
+        for (int i = left; i <= right; i++) {
+            int t = i;
+            boolean flag = true;
+            while (t != 0) {
+                int s = t % 10;
+                if (s == 0 || i % s != 0) {
+                    flag = false;
+                    break;
+                }
+                
+                t /= 10;
+            }
+            
+            if (flag) {
+                ans.add(i);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
