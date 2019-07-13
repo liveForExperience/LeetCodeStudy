@@ -1059,3 +1059,70 @@ class Solution {
     }
 }
 ```
+# LeetCode_590_N叉树的后序遍历
+## 题目
+
+## 解法一
+### 思路
+dfs递归方式，就是要注意后序遍历，所以需要修改递归和放值的顺序
+### 代码
+```java
+class Solution {
+    public List<Integer> postorder(Node root) {
+        List<Integer> ans = new ArrayList<>();
+        dfs(ans, root);
+        return ans;
+    }
+    
+    private void dfs(List<Integer> ans, Node node) {
+        if (node == null) {
+            return;
+        }
+        
+        for (Node child: node.children) {
+            dfs(ans, child);
+        }
+        
+        ans.add(node.val);
+    }
+}
+```
+## 解法二
+### 思路
+dfs非递归方法，因为是后序遍历，所以：
+- 下钻的时候不是通过pop弹栈的方式，而是通过peek的方式，一层层的将children压入栈中
+- 而放入ans中的时机是在
+   - 要么钻到叶子节点了
+   - 要么是回到上一层的时候
+- 在放入ans中后就把当前节点出栈
+- 同时还要干一件重要的事情，使用一个pre指针指向当前这个出栈的节点。原因是，通过这个pre指针，就能够判断当前遍历到的节点是已经第二次被经过(这次是返回的过程，需要记录节点值了)。具体方法就是当前这个节点是否包含pre指针指向的那个节点，是就代表现在是在返回，需要记录了。
+- 最后while结束，返回ans就可以了
+### 代码
+```java
+class Solution {
+    public List<Integer> postorder(Node root) {
+        List<Integer> ans = new ArrayList<>();
+
+        Node pre = null;
+
+        Stack<Node> stack = new Stack<>();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            Node cur = stack.peek();
+
+            if (cur.children == null || (pre != null && cur.children.contains(pre))) {
+                ans.add(cur.val);
+                stack.pop();
+                pre = cur;
+            } else {
+                for (int i = cur.children.size() - 1; i >= 0; i--) {
+                    stack.push(cur.children.get(i));
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
