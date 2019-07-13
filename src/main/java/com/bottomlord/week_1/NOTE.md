@@ -1209,21 +1209,12 @@ class Solution {
 ```
 ## 解法一
 ### 思路
-dfs递归
+因为是二叉搜索树，利用其左子树比根节点小，右子树比根节点大的特性，使用dfs方式根据val大小选择遍历路径遍历，效率最高。这个解法使用递归地方式：
 - 如果null或者等于val就返回
 - 如果小于val就往右子树下钻
 - 如果大于val就往左子树下钻
 ### 代码
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
 class Solution {
     public TreeNode searchBST(TreeNode root, int val) {
         return dfs(root, val);
@@ -1239,6 +1230,47 @@ class Solution {
         } else {
             return dfs(node.left, val);
         }
+    }
+}
+```
+## 解法二
+### 思路
+dfs非递归，和解法一类似，注意null的情况
+### 代码
+```java
+class Solution {
+    public TreeNode searchBST(TreeNode root, int val) {
+        TreeNode ans = null;
+        
+        if (root == null) {
+            return ans;
+        }
+        
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            
+            if (node.val == val) {
+                ans = node;
+                break;
+            }
+            
+            if (node.val < val) {
+                if (node.right == null) {
+                    break;
+                }
+                stack.push(node.right);
+            } else {
+                if (node.left == null) {
+                    break;
+                }
+                stack.push(node.left);
+            }
+        }
+        
+        return ans;
     }
 }
 ```
