@@ -1061,7 +1061,7 @@ class Solution {
 ```
 # LeetCode_590_N叉树的后序遍历
 ## 题目
-
+给定一个 N 叉树，返回其节点值的后序遍历。
 ## 解法一
 ### 思路
 dfs递归方式，就是要注意后序遍历，所以需要修改递归和放值的顺序
@@ -1118,6 +1118,65 @@ class Solution {
             } else {
                 for (int i = cur.children.size() - 1; i >= 0; i--) {
                     stack.push(cur.children.get(i));
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+# LeetCode_589_N叉树的前序遍历
+## 题目
+给定一个 N 叉树，返回其节点值的前序遍历。
+## 解法一
+### 思路
+dfs递归解法，注意先放入ans再递归就可以
+### 代码
+```java
+class Solution {
+    public List<Integer> preorder(Node root) {
+        List<Integer> ans = new ArrayList<>();
+        dfs(ans, root);
+        return ans;
+    }
+    
+    private void dfs(List<Integer> ans, Node node) {
+        if (node == null) {
+            return;
+        }
+        
+        ans.add(node.val);
+        
+        for (Node child: node.children) {
+            dfs(ans, child);
+        }
+    }
+}
+```
+## 解法二
+### 思路
+dfs非递归方式，很标准
+### 代码
+```java
+class Solution {
+    public List<Integer> preorder(Node root) {
+        List<Integer> ans = new ArrayList<>(); 
+        
+        if (root == null) {
+            return ans;
+        }
+        
+        Stack<Node> stack = new Stack<>();
+        stack.push(root);
+        
+        while (!stack.isEmpty()) {
+            Node node = stack.pop();
+            ans.add(node.val);
+            
+            if (node.children != null) {
+                for (int i = node.children.size() - 1; i >= 0; i--) {
+                    stack.push(node.children.get(i));
                 }
             }
         }
