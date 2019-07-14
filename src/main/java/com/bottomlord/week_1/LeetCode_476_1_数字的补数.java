@@ -14,9 +14,4 @@ public class LeetCode_476_1_数字的补数 {
 
         return tmp ^ num;
     }
-
-    public static void main(String[] args) {
-        LeetCode_476_1_数字的补数 test = new LeetCode_476_1_数字的补数();
-        System.out.println(2147483647);
-    }
 }
