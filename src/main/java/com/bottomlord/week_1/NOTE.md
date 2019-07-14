@@ -1445,5 +1445,21 @@ class Solution {
 解法一的思路中，其实是将整个过程分成了，**判断**和**存放**两个步骤，而这两部可以通过双指针合并成在一起。因为题目没有要求奇偶数排列的顺序。
 ### 代码
 ```java
-
+class Solution {
+    public int[] sortArrayByParity(int[] A) {
+        int[] ans = new int[A.length];
+        
+        int even = 0, odd = A.length - 1;
+        
+        for (int num: A) {
+            if (num % 2 == 0) {
+                ans[even++] = num;
+            } else {
+                ans[odd--] = num;
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
