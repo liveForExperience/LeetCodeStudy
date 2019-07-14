@@ -1353,3 +1353,23 @@ class Solution {
     }
 }
 ```
+# LeetCode_476_数字的补数
+## 题目
+
+## 解法
+### 思路
+当前数和与它位数相同且每一位都为1的数异或，得到的就是它的补数。获取这个数的时候注意int的溢出导致的死循环。
+### 代码
+```java
+class Solution {
+    public int findComplement(int num) {
+        int tmp = 1;
+        while (tmp < num) {
+            tmp <<= 1;
+            tmp += 1;
+        }
+
+        return tmp ^ num;
+    }
+}
+```
