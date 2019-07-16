@@ -241,3 +241,63 @@ class Solution {
     }
 }
 ```
+# LeetCode_500_键盘行
+## 题目
+给定一个单词列表，只返回可以使用在键盘同一行的字母打印出来的单词。键盘如下图所示。
+
+示例：
+```
+输入: ["Hello", "Alaska", "Dad", "Peace"]
+输出: ["Alaska", "Dad"]
+```
+注意：
+```
+你可以重复使用键盘上同一字符。
+你可以假设输入的字符串将只包含字母。
+```
+## 解法
+### 思路
+- 一个长度为26的int数组，每一个下标对应一个字母，下标对应的元素为键盘的行数。
+- 嵌套遍历字符串数组和字符串的字符数组，通过字符值从数组中找到对应的行数
+- 如果有不一致就终止内层循环
+- 否则放入结果中
+### 代码
+```java
+class Solution {
+    public String[] findWords(String[] words) {
+        int[] board = new int[]{2,3,3,2,1,2,2,2,1,2,2,2,3,3,1,1,1,1,2,1,1,3,1,3,1,3};
+        List<String> list = new ArrayList<>();
+        
+        for (String word: words) {
+            char[] cs = word.toCharArray();
+            int line;
+            boolean flag = true;
+            
+            if (cs[0] < 'a') {
+                line = board[cs[0] - 'A'];
+            } else {
+                line = board[cs[0] - 'a'];
+            }
+            for (int i = 1; i < cs.length; i++) {
+                int cur;
+                if (cs[i] < 'a') {
+                    cur = board[cs[i] - 'A'];
+                } else {
+                    cur = board[cs[i] - 'a'];
+                }
+                
+                if (cur != line) {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if (flag) {
+                list.add(word);
+            }
+        }
+
+        return list.toArray(new String[0]);
+    }
+}
+```
