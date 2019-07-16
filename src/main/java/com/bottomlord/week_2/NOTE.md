@@ -301,3 +301,54 @@ class Solution {
     }
 }
 ```
+# LeetCode_559_N叉树的最大深度
+## 题目
+
+## 解法一
+### 思路
+使用dfs递归搜索方式，记录子树的深度，返回时比较大小取最大值。
+
+**注意root为空的情况**。
+### 代码
+```java
+class Solution {
+    public int maxDepth(Node root) {      
+        return root == null ? 0 : dfs(root, 0);
+    }
+
+    private int dfs(Node node, int count) {      
+        if (node.children.size() == 0) {
+            return ++count;
+        }
+
+        int depth = 0;
+        for (Node child: node.children) {
+            int tmp = dfs(child, count + 1);
+            depth = depth >=  tmp ? depth: tmp;
+        }
+
+        return depth;
+    }
+}
+```
+## 优化代码
+如上的dfs函数中，count其实不需要传递。
+- 解法一是在下钻过程中使用count计数
+- 其实可以通过返回时候+1来计数
+```java
+class Solution {
+    public int maxDepth(Node root) {      
+        if (root == null) {
+            return 0;
+        }
+
+        int max = 0;
+        for (Node node: root.children) {
+            int depth = maxDepth(node);
+            max = Math.max(max, depth);
+        }
+        
+        return max + 1;
+    }
+}
+```
