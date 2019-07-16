@@ -457,3 +457,42 @@ class Solution {
     }
 }
 ```
+# LeetCode_557_反转字符串中的单词III
+## 题目
+给定一个字符串，你需要反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。
+
+示例 1:
+```
+输入: "Let's take LeetCode contest"
+输出: "s'teL ekat edoCteeL tsetnoc" 
+注意：在字符串中，每个单词由单个空格分隔，并且字符串中不会有任何额外的空格。
+```
+## 解法一
+### 思路
+- 根据空格拆分成字符串数组
+- 将字符串中的字符镜像反转，用到异或位运算的原地互换技巧
+- 用StringBuilder拼接反转的字符串，外加空格
+- 最后返回trim后的结果
+### 代码
+```java
+class Solution {
+    public String reverseWords(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (String word: s.split(" ")) {
+            sb.append(reverse(word)).append(" ");
+        }
+        return sb.toString().trim();
+    }
+    
+    private String reverse(String word) {
+        char[] cs = word.toCharArray();
+        int left = 0, right = cs.length - 1;
+        while (left < right) {
+            cs[left] ^= cs[right];
+            cs[right] ^= cs[left];
+            cs[left++] ^= cs[right--];
+        }
+        return new String(cs);
+    }
+}
+```
