@@ -422,3 +422,38 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+使用桶排序，然后一个隔一个的累加：
+- 因为数组元素的取值范围时[-10000，10000]，所以数组长度就是20001
+- 然后通过下标表示nums的元素值，桶数组的元素值代表nums中值相同元素的个数
+- 因为是桶排序，所以累加的过程需要通过一个标志来控制一个隔一个元素的从最小值开始累加。
+- 累加时循环的是整个bucket数组，循环体内部再嵌套一个循环，用来处理桶中代表个数的元素
+- 内层循环时切换状态和累加时，注意要对桶元素做--的动作，依次处理掉所有nums的值
+### 代码
+```java
+class Solution {
+    public int arrayPairSum(int[] nums) {
+        int[] bucket = new int[20001];
+        for (int num: nums) {
+            bucket[num + 10000]++;
+        }
+
+        int sum = 0;
+        boolean flag = true;
+
+        for (int i = 0; i < 20001; i++) {
+            while (bucket[i] > 0) {
+                if (flag) {
+                    sum += i - 10000;
+                }
+
+                flag = !flag;
+                bucket[i]--;
+            }
+        }
+
+        return sum;
+    }
+}
+```
