@@ -352,3 +352,39 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+因为要得到深度，所以通过bfs，可以在进入每一层的时候计一次数。
+- 在驱动搜索的循环体中，确保循环一次的逻辑中，将N叉树当前这层所有节点的children都放入队列中，这样在写一个循环时，有且仅有下一层的节点会被处理。
+- 而为了达成这个要求，就需要在循环体一开始得到当前层的节点数count，也就是队列的当前长度。然后通过内层嵌套的循环体循环将这一层的所有children放入队列中，内层循环条件就是count是否>0
+- 同时在驱动搜索的外层循环中对深度depth+1
+- 搜索结束后就返回depth
+### 代码
+```java
+class Solution {
+    public int maxDepth(Node root) {      
+        int depth = 0;
+        
+        if (root == null) {
+            return depth;
+        }
+
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            depth++;
+            while (count > 0) {
+                count--;
+                Node node = queue.poll();
+                for (Node child: node.children) {
+                    queue.offer(child);
+                }
+            }
+        }
+        
+        return depth;
+    }
+}
+```
