@@ -687,16 +687,7 @@ class Solution {
 - 返回set长度
 ### 代码
 ```java
-package com.bottomlord.week_2;
-
-import java.util.HashSet;
-import java.util.Set;
-
-/**
- * @author LiveForExperience
- * @date 2019/7/17 18:28
- */
-public class LeetCode_929_1_独特的电子邮件地址 {
+public class Solution {
     public int numUniqueEmails(String[] emails) {
         Set<String> set = new HashSet<>();
 
@@ -713,5 +704,58 @@ public class LeetCode_929_1_独特的电子邮件地址 {
         return set.size();
     }
 }
+```
+## 解法二
+### 思路
+- 外层循环遍历字符串数组
+- 内层循环遍历字符数组，使用StringBuilder来append字符，整个过程需要关注三种状态
+- 首先最重要的是@符号，这个状态代表无论字符是什么都要append，使用一个标识符append来记录这个状态
+- 否则就要关注另外两种状态：
+   - 如果第一次发现了+号，代表着后面除非发现@符号，否则就跳过
+   - 如果发现.号，就忽略这个字符
+- 内层循环结束，把字符串放入set去重
+- 外层循环结束，返回set的长度
+### 代码
+```java
+class Solution {
+    public int numUniqueEmails(String[] emails) {
+        Set<String> set = new HashSet<>();
 
+        for (String email : emails) {
+            boolean ignore = false;
+            boolean append = false;
+            StringBuilder sb = new StringBuilder();
+            for (char c: email.toCharArray()) {
+                if (append) {
+                    sb.append(c);
+                } else {
+                    if (c == '@') {
+                        sb.append(c);
+                        append = true;
+                        continue;
+                    }
+
+                    if (ignore) {
+                        continue;
+                    }
+
+                    if (c == '.') {
+                        continue;
+                    }
+
+                    if (c == '+') {
+                        ignore = true;
+                        continue;
+                    }
+
+                    sb.append(c);
+                }
+            }
+
+            set.add(sb.toString());
+        }
+
+        return set.size();
+    }
+}
 ```
