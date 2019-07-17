@@ -496,3 +496,39 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 用一个指针去寻找字符串中的空格
+- 字符串最后拼接一个空格，类似遍历的哨兵策略，方便搜索空格的指针定位最后一个字
+- 在找到空格后，通过left和right指针来循环处理当前空格之前的那个字，和解法一类似地进行反转操作
+- 外层循环结束前，也就是找到空格的这个循环，使left指针指向当前空格下标+1的位置
+- 循环结束后返回trim后的字符串，去掉之前尾部增加的空格
+### 代码
+```java
+class Solution {
+    public String reverseWords(String s) {
+        StringBuilder sb = new StringBuilder(s);
+        sb.append(" ");
+        
+        char[] cs = sb.toString().toCharArray();
+        
+        int left = 0;
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] != ' ') {
+                continue;
+            }
+            
+            int right = i - 1;
+            while (left < right) {
+                cs[left] ^= cs[right];
+                cs[right] ^= cs[left];
+                cs[left++] ^= cs[right--];
+            }
+            
+            left = i + 1;
+        }
+        
+        return new String(cs).trim();
+    }
+}
+```
