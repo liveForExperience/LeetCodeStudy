@@ -831,3 +831,88 @@ class Solution {
     }
 }
 ```
+# LeetCode_965_单值二叉树
+## 题目
+如果二叉树每个节点都具有相同的值，那么该二叉树就是单值二叉树。
+
+只有给定的树是单值二叉树时，才返回 true；否则返回 false。
+
+示例 1：
+```
+输入：[1,1,1,1,1,null,1]
+输出：true
+```
+示例 2：
+```
+输入：[2,2,2,5,2]
+输出：false
+```
+提示：
+```
+给定树的节点数范围是 [1, 100]。
+每个节点的值都是整数，范围为 [0, 99] 。
+```
+## 解法一
+### 思路
+dfs递归
+### 代码
+```java
+class Solution {
+    public boolean isUnivalTree(TreeNode root) {
+        return dfs(root, root.val);
+    }
+    
+    private boolean dfs(TreeNode node, int val) {
+        if (node == null) {
+            return true;
+        }
+        
+        if (node.val != val) {
+            return false;
+        }
+        
+        return dfs(node.left, val) && dfs(node.right, val);
+    }
+}
+```
+## 解法二
+### 思路
+dfs非递归
+### 代码
+```java
+class Solution {
+    public boolean isUnivalTree(TreeNode root) {
+        if (root == null) {
+            return false;
+        }
+        
+        Stack<TreeNode> stack = new Stack<>();
+        int val = root.val;
+        stack.push(root);
+        
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            if (node.val != val) {
+                return false;
+            }
+            
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+            
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法三
+### 思路
+bfs
+### 代码
+```java
+
+```
