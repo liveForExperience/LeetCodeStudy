@@ -914,5 +914,114 @@ class Solution {
 bfs
 ### 代码
 ```java
+class Solution {
+    public boolean isUnivalTree(TreeNode root) {
+        if (root == null) {
+            return false;
+        }
 
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        int val = root.val;
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if (node.val != val) {
+                return false;
+            }
+
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+        }
+
+        return true;
+    }
+}
+```
+# LeetCode_108_将有序数组转成二叉搜索树
+## 题目
+将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。
+
+本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+
+示例:
+```
+给定有序数组: [-10,-3,0,5,9],
+
+一个可能的答案是：[0,-3,9,-10,null,5]，它可以表示下面这个高度平衡二叉搜索树：
+
+      0
+     / \
+   -3   9
+   /   /
+ -10  5
+```
+## 解法一
+### 思路
+为了做到高度平衡，根节点应该选择数组长度中点位置的元素。使用dfs递归来构建。
+### 代码
+```java
+class Solution {
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return dfs(nums, 0, nums.length - 1);
+    }
+
+    private TreeNode dfs(int[] nums, int left, int right) {
+        if (left > right) {
+            return null;
+        }
+        int mid = (right - left) / 2 + left;
+        TreeNode node = new TreeNode(nums[mid]);
+        node.left = dfs(nums, left, mid - 1);
+        node.right = dfs(nums, mid + 1, right);
+        return node;
+    }
+}
+```
+## 解法二
+### 思路
+同解法一，使用dfs非递归
+### 代码
+```java
+class Solution {
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return null;
+        }
+
+        Stack<int []> arrStack = new Stack<>();
+        arrStack.push(new int[]{0, nums.length - 1});
+        
+        Stack<TreeNode> nodeStack = new Stack<>();
+        TreeNode root = new TreeNode(nums[(nums.length - 1) / 2]);
+        nodeStack.push(root);
+        
+        while (!arrStack.isEmpty()) {
+            TreeNode node = nodeStack.pop();
+            
+            int[] arr = arrStack.pop();
+            int left = arr[0], right = arr[1];
+            int mid = (right - left) / 2 + left;
+            
+            if (left <= mid - 1) {
+                node.left = new TreeNode(nums[(mid - 1 - left) / 2 + left]);    
+                nodeStack.push(node.left);
+                arrStack.push(new int[]{left, mid - 1});
+            }
+            
+            if (mid + 1 <= right) {
+                node.right = new TreeNode(nums[(right - mid - 1) / 2 + mid + 1]);
+                nodeStack.push(node.right);
+                arrStack.push(new int[]{mid + 1, right});
+            }
+        }
+        
+        return root;
+    }
+}
 ```
