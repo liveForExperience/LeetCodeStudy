@@ -759,3 +759,75 @@ class Solution {
     }
 }
 ```
+# LeetCode_908_最小差值I
+## 思路
+给定一个整数数组 A，对于每个整数 A[i]，我们可以选择任意 x 满足 -K <= x <= K，并将 x 加到 A[i] 中。
+
+在此过程之后，我们得到一些数组 B。
+
+返回 B 的最大值和 B 的最小值之间可能存在的最小差值。
+
+示例 1：
+```
+输入：A = [1], K = 0
+输出：0
+解释：B = [1]
+```
+示例 2：
+```
+输入：A = [0,10], K = 2
+输出：6
+解释：B = [2,8]
+```
+示例 3：
+```
+输入：A = [1,3,6], K = 3
+输出：0
+解释：B = [3,3,3] 或 B = [4,4,4]
+```
+提示：
+```
+1 <= A.length <= 10000
+0 <= A[i] <= 10000
+0 <= K <= 10000
+```
+## 解法一
+### 思路
+A数组最大值和最小值之间的差，判断它是否小于2倍的K的绝对值：
+- 如果是，就返回0，说明整个数组都可以处理成相同的数
+- 如果不是，就返回这两个数之间的差值
+
+时间复杂度是O(NlogN)
+### 代码
+```java
+class Solution {
+    public int smallestRangeI(int[] A, int K) {
+        Arrays.sort(A);
+        int min = A[A.length - 1] - A[0] - 2 * Math.abs(K);
+        return min <= 0 ? 0 : min;
+    }
+}
+```
+## 解法二
+### 思路
+不需要排序，只要拿到最大最小值就可以。剩下的还是按照解法一的思路。这样时间复杂度就是O(N)
+### 代码
+```java
+class Solution {
+    public int smallestRangeI(int[] A, int K) {
+        int min = A[0], max = min;
+        for (int i = 1; i < A.length; i++) {
+            if (A[i] > max) {
+                max = A[i];
+            }
+            
+            if (A[i] < min) {
+                min = A[i];
+            }
+        }
+        
+        int ans = max - min - 2 * Math.abs(K);
+        return ans <= 0 ? 0 : ans;
+    }
+}
+```
