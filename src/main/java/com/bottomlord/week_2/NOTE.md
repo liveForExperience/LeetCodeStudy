@@ -1025,3 +1025,55 @@ class Solution {
     }
 }
 ```
+# LeetCode_171_Excel表列序号
+## 题目
+给定一个Excel表格中的列名称，返回其相应的列序号。
+
+例如，
+```
+    A -> 1
+    B -> 2
+    C -> 3
+    ...
+    Z -> 26
+    AA -> 27
+    AB -> 28 
+    ...
+```
+示例 1:
+```
+输入: "A"
+输出: 1
+```
+示例 2:
+```
+输入: "AB"
+输出: 28
+```
+示例 3:
+```
+输入: "ZY"
+输出: 701
+```
+## 思路
+26进制和10进制的转换
+- 遍历字符数组，定义两个游标
+   - 一个用来确定当前位的值
+   - 一个用来确定是第几位
+- 通过**字符c-'A'**获得10每一位的10进制数，然后通过位数算出是26的几次方
+- 把循环体中算出的当前位代表的10进制值循环累加到变量ans
+## 代码
+```java
+class Solution {
+    public int titleToNumber(String s) {
+       int ans = 0;
+        char[] cs = s.toCharArray();
+        
+        for (int i = 0, bit = cs.length - 1; i < cs.length; i++, bit--) {
+            ans += Math.pow(26, bit) * (cs[i] - 'A' + 1);
+        }
+        
+        return ans; 
+    }
+}
+```
