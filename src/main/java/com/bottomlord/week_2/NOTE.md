@@ -1310,3 +1310,96 @@ class Solution {
     }
 }
 ```
+# LeetCode_349_两数组的交集
+## 题目
+给定两个数组，编写一个函数来计算它们的交集。
+
+示例 1:
+```
+输入: nums1 = [1,2,2,1], nums2 = [2,2]
+输出: [2]
+```
+示例 2:
+```
+输入: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+输出: [9,4]
+```
+说明:
+```
+输出结果中的每个元素一定是唯一的。
+我们可以不考虑输出结果的顺序。
+```
+## 解法一
+### 思路
+1. 使用set去重第一个数组
+2. 遍历第二个数组，有相同的就放入数组，同时把set中对应元素去除
+3. 如果set为空或者结束遍历，就返回数组(要截取下，因为一开始预估了一个尽可能小的长度)
+### 代码
+```java
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        Set<Integer> set = new HashSet<>();
+        for (int i : nums1) {
+            set.add(i);
+        }
+        
+        int len = nums1.length < nums2.length ? nums1.length : nums2.length;
+        int[] arr = new int[len];
+        int count = 0;
+        for (int i : nums2) {
+            if (set.contains(i)) {
+                arr[count++] = i;
+                set.remove(i);
+            }
+            
+            if (set.isEmpty()) {
+                break;
+            }
+        }
+        
+        return Arrays.copyOf(arr, count);
+    }
+}
+```
+## 优化代码
+### 思路
+试着用boolean数组来省去拆装箱的过程
+
+注意需要注意很多的边界条件
+### 代码
+```java
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums1.length == 0 || nums2 == null || nums2.length == 0) {
+            return new int[0];
+        }
+        
+        int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
+        for (int i :nums1) {
+            max = Math.max(i, max);
+            min = Math.min(i, min);
+        }
+
+        boolean[] bArr = new boolean[max - min + 1];
+        for(int value: nums1){
+            bArr[value - min] = true;
+        }
+
+        int[] arr = new int[nums2.length];
+        int count = 0;
+        for (int num : nums2) {
+            if (num >= min && num <= max && bArr[num - min]) {
+                arr[count++] = num;
+                bArr[num - min] = false;
+            }
+        }
+
+        int[] ans = new int[count];
+        for (int i = 0; i < ans.length; i++) {
+            ans[i] = arr[i];
+        }
+        
+        return ans;
+    }
+}
+```
