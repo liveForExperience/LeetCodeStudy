@@ -1214,3 +1214,74 @@ class Solution {
     }
 }
 ```
+# LeetCode_922_按奇偶排序数组II
+## 题目
+给定一个非负整数数组 A， A 中一半整数是奇数，一半整数是偶数。
+
+对数组进行排序，以便当 A[i] 为奇数时，i 也是奇数；当 A[i] 为偶数时， i 也是偶数。
+
+你可以返回任何满足上述条件的数组作为答案。
+
+示例：
+```
+输入：[4,2,5,7]
+输出：[4,5,2,7]
+解释：[4,7,2,5]，[2,5,4,7]，[2,7,4,5] 也会被接受。
+```
+提示：
+```
+2 <= A.length <= 20000
+A.length % 2 == 0
+0 <= A[i] <= 1000
+```
+## 解法一
+### 思路
+- 有两个数据结构用来存放不匹配的奇偶数
+- 有一个数据结构用来放不匹配的下标
+- 遍历数组，判断当前元素与下标是否都是奇数或偶数
+- 如果不是：
+   - 把元素放入对应的数据结构
+   - 找是否有现成的匹配元素，有的话就把元素取出，放入数组中
+   - 如果没有把下标放入存下标的数据结构
+- 遍历结束，检查存下标的数据结构是否为空，不是就按照下标的奇偶性从指定的数据结构中取值赋给制定下标的位置
+### 代码
+```java
+class Solution {
+    public int[] sortArrayByParityII(int[] A) {
+        Stack<Integer> oddStack = new Stack<>();
+        Stack<Integer> evenStack = new Stack<>();
+        Stack<Integer> indexStack = new Stack<>();
+
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] % 2 == 0 && i % 2 == 1) {
+                evenStack.push(A[i]);
+                if (!oddStack.isEmpty()) {
+                    A[i] = oddStack.pop();
+                } else {
+                    indexStack.push(i);
+                }
+            }
+
+            if (A[i] % 2 == 1 && i % 2 == 0) {
+                oddStack.push(A[i]);
+                if (!evenStack.isEmpty()) {
+                    A[i] = evenStack.pop();
+                } else {
+                    indexStack.push(i);
+                }
+            }
+        }
+
+        while (!indexStack.isEmpty()) {
+            int i = indexStack.pop();
+            if (i % 2 == 0) {
+                A[i] = evenStack.pop();
+            } else {
+                A[i] = oddStack.pop();
+            }
+        }
+
+        return A;
+    }
+}
+```
