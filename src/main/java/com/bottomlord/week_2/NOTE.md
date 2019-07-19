@@ -1285,3 +1285,28 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 新建一个新数组
+- 遍历原数组，偶数就放在新数组偶数位，反之则放在奇数位。同时对应指针+2
+- 最终返回新数组
+### 代码
+```
+class Solution {
+    public int[] sortArrayByParityII(int[] A) {
+        int[] arr = new int[A.length];
+        int even = 0, odd = 1;
+        for (int value : A) {
+            if (value % 2 == 0) {
+                arr[even] = value;
+                even += 2;
+            } else {
+                arr[odd] = value;
+                odd += 2;
+            }
+        }
+        
+        return arr;
+    }
+}
+```
