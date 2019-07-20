@@ -1615,3 +1615,75 @@ class Solution {
     }
 }
 ```
+# LeetCode_1002_查找常用字符
+## 题目
+给定仅有小写字母组成的字符串数组 A，返回列表中的每个字符串中都显示的全部字符（包括重复字符）组成的列表。例如，如果一个字符在每个字符串中出现 3 次，但不是 4 次，则需要在最终答案中包含该字符 3 次。
+
+你可以按任意顺序返回答案。
+
+示例 1：
+```
+输入：["bella","label","roller"]
+输出：["e","l","l"]
+```
+示例 2：
+```
+输入：["cool","lock","cook"]
+输出：["c","o"]
+```
+提示：
+```
+1 <= A.length <= 100
+1 <= A[i].length <= 100
+A[i][j] 是小写字母
+```
+## 解法
+### 思路
+- 遍历字符串数组
+- 遍历字符数组，生成一个map
+- 与第一个字符串的map进行比较，如果是第一个字符串就只进行初始化
+- 如果第一个map里有，当前map也有，就取两者的最小值
+- 如果map里有，当前的没有，就把那个字符对应的值变为0
+- 最后遍历map的键值对，生成指定数量的字符串
+### 代码
+```java
+class Solution {
+    public List<String> commonChars(String[] A) {
+        Map<Character, Integer> map = null;
+        
+        for (String str: A) {
+            Map<Character, Integer> tmp = new HashMap<>();
+            for (char c : str.toCharArray()) {
+                if (tmp.containsKey(c)) {
+                    tmp.computeIfPresent(c, (k, v) -> v += 1);
+                } else {
+                    tmp.put(c, 1);
+                }
+            }
+            
+            if (map == null) {
+                map = tmp;
+                continue;
+            }
+            
+            for (Character c: map.keySet()) {
+                if (tmp.containsKey(c)) {
+                    map.computeIfPresent(c, (k, v) -> v = Math.min(v, tmp.get(c)));
+                } else {
+                    map.computeIfPresent(c, (k, v) -> v = 0);
+                }
+            }
+        }
+        
+        List<String> list = new ArrayList<>();
+        for (Map.Entry<Character, Integer> entry: map.entrySet()) {
+            int count = entry.getValue();
+            while (count-- > 0) {
+                list.add(String.valueOf(entry.getKey()));
+            }
+        }
+        
+        return list;
+    }
+}
+```
