@@ -1861,5 +1861,133 @@ class Solution {
 - 不用StringBuilder的append，还是用indexOf
 ### 代码
 ```java
+public class Solution {
+    private static final String DOT = ".";
+    private static final String SPACE = " ";
+    public List<String> subdomainVisits(String[] cpdomains) {
+        Map<String, Integer> map = new HashMap<>();
 
+        for (String str : cpdomains) {
+            if (str.contains(SPACE)) {
+                int count = Integer.parseInt(str.substring(0, str.indexOf(" ")));
+                String domain = str.substring(str.indexOf(SPACE) + 1);
+
+                putMap(map, count, domain);
+                while (domain.contains(DOT)) {
+                    domain = domain.substring(domain.indexOf(DOT) + 1);
+                    putMap(map, count, domain);
+                }
+            }
+        }
+
+        List<String> ans = new ArrayList<>(map.size());
+        for (Map.Entry<String, Integer> entry: map.entrySet()) {
+            ans.add(entry.getValue() + SPACE + entry.getKey());
+        }
+
+        return ans;
+    }
+
+    private void putMap(Map<String, Integer> map, int count, String domain) {
+        if (map.containsKey(domain)) {
+            map.computeIfPresent(domain, (k, v) -> v += count);
+        } else {
+            map.put(domain, count);
+        }
+    }
+}
+```
+# LeetCode_1078_Bigram分词
+## 题目
+给出第一个词 first 和第二个词 second，考虑在某些文本 text 中可能以 "first second third" 形式出现的情况，其中 second 紧随 first 出现，third 紧随 second 出现。
+
+对于每种这样的情况，将第三个词 "third" 添加到答案中，并返回答案。
+
+示例 1：
+```
+输入：text = "alice is a good girl she is a good student", first = "a", second = "good"
+输出：["girl","student"]
+```
+示例 2：
+```
+输入：text = "we will we will rock you", first = "we", second = "will"
+输出：["we","rock"]
+```
+提示：
+```
+1 <= text.length <= 1000
+text 由一些用空格分隔的单词组成，每个单词都由小写英文字母组成
+1 <= first.length, second.length <= 10
+first 和 second 由小写英文字母组成
+```
+## 解法一
+### 思路
+- 把first和second拼接成字符串str
+- 循环在字符串中找str，通过下标截断text：
+   - 如果截断的text包含空格，就根据空格下标找到后一个词
+   - 如果没有空格，也就是最后一个单词的时候，就直接返回text
+- 把得到字放入list中，最后返回list的toArray
+### 代码
+```java
+class Solution {
+    public String[] findOcurrences(String text, String first, String second) {
+        String str = first + " " + second + " ";
+        List<String> ans = new ArrayList<>();
+        while (text.contains(str)) {
+            text = text.substring(text.indexOf(str) + str.length());
+            if (text.contains(" ")) {
+                ans.add(text.substring(0, text.indexOf(" ")));
+            } else {
+                ans.add(text);
+            }
+        }
+        return ans.toArray(new String[0]);
+    }
+}
+```
+## 解法二
+### 思路
+- 拆成字符串数组
+- 用两个变量标记找到first和找到second的状态
+- 同时满足的时候，就把当前字符串放入ans，重置变量
+
+注意：这种方法需要注意的特殊情况很多，提交了很多次，发现很多情况都没有想到。
+### 代码
+```java
+class Solution {
+    public String[] findOcurrences(String text, String first, String second) {
+        String[] strs = text.split(" ");
+        boolean findFirst = false;
+        boolean findSecod = false;
+        List<String> ans = new ArrayList<>();
+
+        for (String str: strs) {
+            if (!findFirst && first.equals(str)) {
+                findFirst = true;
+                continue;
+            }
+
+            if (findFirst) {
+                if (findSecod) {
+                    ans.add(str);
+                    findSecod = false;
+                    if (!first.equals(str)) {
+                        findFirst = false;
+                    }
+                    continue;
+                }
+                if (!second.equals(str)) {
+                    if (first.equals(str)) {
+                        continue;
+                    }
+                    findFirst = false;
+                    continue;
+                }
+                findSecod = true;
+            }
+        }
+
+        return ans.toArray(new String[0]);
+    }
+}
 ```
