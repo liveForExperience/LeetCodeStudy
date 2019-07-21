@@ -1687,3 +1687,44 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+结果依赖的是所有字符串共有的字符，所以只要有任意一个是其他字符串没有的，就不能加到结果list中
+- 可以使用2个长度26的数组记录两两字符串之间共同出现过的字符，然后依次比较26个字符元素出现的个数，取两者中的最小值
+- 2个字符串其中一个记录比较后的最小值，并用来与后一个字符串进行相同逻辑的比较
+- 等所有字符串都遍历完成了，就把这个记录用的数组进行遍历，并按照下标是字符，元素是个数的原则，加到list中
+- 最后返回
+
+速度比解法一提升了非常多，不需要生成hash表。
+### 代码
+```java
+class Solution {
+    public List<String> commonChars(String[] A) {
+        int[] dict = new int[26];
+        for (char c: A[0].toCharArray()) {
+            dict[c - 'a']++;
+        }
+
+        for (String str: A) {
+            int[] tmp = new int[26];
+            for (char c: str.toCharArray()) {
+                tmp[c - 'a']++;    
+            }
+            
+            for (int i = 0; i < dict.length; i++) {
+                if (dict[i] > 0) {
+                    dict[i] = Math.min(dict[i], tmp[i]);
+                }
+            }
+        }
+        
+        List<String> ans = new ArrayList<>();
+        for (int i = 0; i < dict.length; i++) {
+            while (dict[i]-- > 0) {
+                ans.add(String.valueOf((char)(i + 'a')));
+            }
+        }
+        return ans;
+    }
+}
+```
