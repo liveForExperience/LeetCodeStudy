@@ -43,9 +43,4 @@ public class LeetCode_811_2 {
             map.put(domain, count);
         }
     }
-
-    public static void main(String[] args) {
-        LeetCode_811_2 test = new LeetCode_811_2();
-        test.subdomainVisits(new String[]{"900 google.mail.com", "50 yahoo.com", "1 intel.mail.com", "5 wiki.org"});
-    }
 }
