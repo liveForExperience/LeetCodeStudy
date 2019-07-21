@@ -1728,3 +1728,54 @@ class Solution {
     }
 }
 ```
+# LeetCode_118_杨辉三角
+## 题目
+给定一个非负整数 numRows，生成杨辉三角的前 numRows 行。
+
+在杨辉三角中，每个数是它左上方和右上方的数的和。
+
+示例:
+```
+输入: 5
+输出:
+[
+     [1],
+    [1,1],
+   [1,2,1],
+  [1,3,3,1],
+ [1,4,6,4,1]
+]
+```
+## 解法
+### 思路
+- 根据numRows确定三角的层数，初始化一个嵌套的ArrayList(方便根据下标查询元素)集合ans
+- 遍历ans，并根据层数确定当前层的元素个数
+- 同时遍历ans时注意每一层两种特殊情况
+   - 第一个元素为1
+   - 最后一个元素为1
+- 其余情况下，当前需要设置的元素就是上一层当前下标j-1和当前下标j元素的和
+- 内层嵌套循环时记得把生成的这一层的list放到ans里
+- 返回ans
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> generate(int numRows) {
+        List<List<Integer>> ans = new ArrayList<>(numRows);
+        for (int i = 0; i < numRows; i++) {
+            List<Integer> list = new ArrayList<>(i + 1);
+            for (int j = 0; j < i + 1; j++) {
+                if (j == 0 || j == i) {
+                    list.add(1);
+                    continue;
+                }
+
+                List<Integer> preList = ans.get(i - 1);
+                list.add(preList.get(j - 1) + preList.get(j));
+            }
+            ans.add(list);
+        }
+        
+        return ans;
+    }
+}
+```
