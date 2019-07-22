@@ -172,3 +172,104 @@ class Solution {
     }
 }
 ```
+# LeetCode_136_只出现一次的数字
+## 题目
+给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+
+说明：
+
+你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？
+
+示例 1:
+```
+输入: [2,2,1]
+输出: 1
+```
+示例 2:
+```
+输入: [4,1,2,1,2]
+输出: 4
+```
+## 解法
+### 思路
+- 数组排序
+- 从第一个元素开始，步长为2，到倒数第二个元素为止，判断当前元素是否和后一个元素相等。
+
+注意如果单独的那个元素是最大的时候，需要避免数组越界。
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 1; i += 2) {
+            if (nums[i] != nums[i + 1]) {
+                return nums[i];
+            }
+        }
+
+        return nums[nums.length - 1];
+    }
+}
+```
+## 解法二
+### 思路
+- 遍历数组nums，使用map记录每个数字出现的次数
+- 遍历map键值对，找到值为1的数并返回
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>(nums.length / 2 + 1);
+        for (int num: nums) {
+            if (map.containsKey(num)) {
+                map.computeIfPresent(num, (k, v) -> v+=1);
+            } else {
+                map.put(num, 1);
+            }
+        }
+        
+        for (Map.Entry<Integer, Integer> entry: map.entrySet()) {
+            if (entry.getValue() < 2) {
+                return entry.getKey();
+            }
+        }
+        
+        return -1;
+    }
+}
+```
+## 优化代码
+### 思路
+在解法二中记数时候，其实可以通过把出现两次的数字从map中去掉的方法，省去最后遍历的过程，同时可以只是用set。
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        Set<Integer> set = new HashSet<>(nums.length / 2 + 1);
+        for (int num: nums) {
+            if (set.contains(num)) {
+                set.remove(num);
+            } else {
+                set.add(num);
+            }
+        }
+
+        return set.iterator().next();
+    }
+}
+```
+## 解法三
+### 思路
+使用异或的特性
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int ans = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            ans ^= nums[i];
+        }
+        return ans;
+    }
+}
+```
