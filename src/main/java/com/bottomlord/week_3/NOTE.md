@@ -414,3 +414,76 @@ class Solution {
     }
 }
 ```
+# LeetCode_669_修剪二叉搜索树
+## 题目
+给定一个二叉搜索树，同时给定最小边界L 和最大边界 R。通过修剪二叉搜索树，使得所有节点的值在[L, R]中 (R>=L) 。你可能需要改变树的根节点，所以结果应当返回修剪好的二叉搜索树的新的根节点。
+
+示例 1:
+```
+输入: 
+    1
+   / \
+  0   2
+
+  L = 1
+  R = 2
+
+输出: 
+    1
+      \
+       2
+```
+示例 2:
+```
+输入: 
+    3
+   / \
+  0   4
+   \
+    2
+   /
+  1
+
+  L = 1
+  R = 3
+  
+输出: 
+      3
+     / 
+   2   
+  /
+ 1
+```
+## 解法
+### 思路
+dfs递归方式
+- 退出条件：进入当前层的节点为空
+- 处理逻辑：
+   - 如果当前节点的值小于L，说明该节点左边的所有节点也不符合规则，返回下钻右子树后的结果
+   - 如果当前节点的只大于R，说明该节点右边的所有节点也不符合规则，返回下钻左子树后的结果
+   - 如果在L和R的范围内，就新建一个当前节点值得节点，并返回这个节点给上一层，在返回前，同时下钻它的左右子树去构建新树
+- 最后返回根节点
+### 代码
+```java
+class Solution {
+    public TreeNode trimBST(TreeNode root, int L, int R) {
+        if (root == null) {
+            return null;
+        }
+
+        if (root.val < L) {
+            return trimBST(root.right, L, R);
+        }
+        
+        if (root.val > R) {
+            return trimBST(root.left, L, R);
+        }
+
+        TreeNode node = new TreeNode(root.val);
+        node.left = trimBST(root.left, L, R);
+        node.right = trimBST(root.right, L, R);
+        return node;
+    }
+}
+```
+# LeetCode_

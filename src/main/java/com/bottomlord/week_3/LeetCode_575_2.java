@@ -31,9 +31,4 @@ public class LeetCode_575_2 {
 
         return count;
     }
-
-    public static void main(String[] args) {
-        LeetCode_575_2 test = new LeetCode_575_2();
-        test.distributeCandies(new int[]{1,1,2,3});
-    }
 }
