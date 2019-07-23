@@ -624,3 +624,154 @@ class Solution {
     }
 }
 ```
+# LeetCode_107_二叉树的层次遍历II
+## 题目
+给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+
+例如：
+```
+给定二叉树 [3,9,20,null,null,15,7],
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回其自底向上的层次遍历为：
+
+[
+  [15,7],
+  [9,20],
+  [3]
+]
+```
+## 解法一
+### 思路
+bfs，为了满足从底部到根排序方式，用一个栈暂存每一层的结果，然后再循环弹栈放入list中
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+
+        Stack<List<Integer>> stack = new Stack<>();
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+
+            List<Integer> list = new ArrayList<>(count);
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+                list.add(node.val);
+            }
+            
+            stack.push(list);
+        }
+        
+        while (!stack.isEmpty()) {
+            ans.add(stack.pop());    
+        }
+        
+        return ans;
+    }
+}
+```
+## 优化代码
+### 思路
+使用Collections.reserve()方法来实现stack做的事情，提升了1秒
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+
+            List<Integer> list = new ArrayList<>(count);
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+                list.add(node.val);
+            }
+
+            ans.add(list);
+        }
+
+        Collections.reverse(ans);
+        return ans; 
+    }
+}
+```
+## 解法二
+### 思路
+dfs递归
+- 递归参数：
+    - 结果ans
+    - 代表树层数的level
+    - 当前节点node
+- 退出条件是节点为null
+- 每一层的处理逻辑：
+    - 如果level大于list的size，说明来到新的一层，需要新声明一个list，加入ans
+    - 把当前节点的val加入到level所对应的list中
+    - 往左右节点下钻
+- 返回最终结果ans
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        recurse(ans, 0, root);
+        Collections.reverse(ans);
+        return ans;
+    }
+
+    private void recurse(List<List<Integer>> ans, int level, TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        if (level >= ans.size()) {
+            List<Integer> list = new ArrayList<>();
+            ans.add(list);
+        }
+
+        ans.get(level).add(node.val);
+
+        recurse(ans, level + 1, node.left);
+        recurse(ans, level + 1, node.right);
+    }
+}
+```
