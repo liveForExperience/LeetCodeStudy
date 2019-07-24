@@ -1165,3 +1165,93 @@ class Solution {
     }
 }
 ```
+# LeetCode_412_Fizz Buzz
+## 题目
+写一个程序，输出从 1 到 n 数字的字符串表示。
+
+1. 如果 n 是3的倍数，输出“Fizz”；
+
+2. 如果 n 是5的倍数，输出“Buzz”；
+
+3.如果 n 同时是3和5的倍数，输出 “FizzBuzz”。
+
+示例：
+```
+n = 15,
+
+返回:
+[
+    "1",
+    "2",
+    "Fizz",
+    "4",
+    "Buzz",
+    "Fizz",
+    "7",
+    "8",
+    "Fizz",
+    "Buzz",
+    "11",
+    "Fizz",
+    "13",
+    "14",
+    "FizzBuzz"
+]
+```
+## 解法
+### 思路
+通过条件分支来决定放入list的是什么字符串：
+1. i % 5 == 0 && i % 3 == 0
+2. i % 5 == 0
+3. i % 3 == 0
+4. 其他
+### 代码
+```java
+class Solution {
+    public List<String> fizzBuzz(int n) {
+        List<String> ans = new ArrayList<>(n);
+        for (int i = 1; i <= n; i++) {
+            if (i % 3 == 0 && i % 5 == 0) {
+                ans.add("FizzBuzz");
+            } else if (i % 3 == 0) {
+                ans.add("Fizz");
+            }else if (i % 5 == 0) {
+                ans.add("Buzz");
+            } else {
+                ans.add(Integer.toString(i));
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 优化代码
+### 思路
+简化条件分支，使如果题目增加状态时，代码更易于阅读
+### 代码
+```java
+class Solution {
+    public List<String> fizzBuzz(int n) {
+        List<String> ans = new ArrayList<>(n);
+        for (int i = 1; i <= n; i++) {
+            String str = "";
+            if (i % 3 == 0) {
+                str += "Fizz";
+            }
+
+            if (i % 5 == 0) {
+                str += "Buzz";
+            }
+
+            if ("".equals(str)) {
+                str += Integer.toString(i);
+            }
+
+            ans.add(str);
+        }
+
+        return ans;
+    }
+}
+```
