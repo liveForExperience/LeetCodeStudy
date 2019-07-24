@@ -1004,3 +1004,63 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+使用取模来解决进位的问题，只需要一次嵌套循环
+### 代码
+```java
+class Solution {
+    public int[][] matrixReshape(int[][] nums, int r, int c) {
+        int oldRow = nums.length;
+        int oldCol = nums[0].length;
+        if (oldRow * oldCol < r * c) {
+            return nums;
+        }
+        
+        int row = 0;
+        int col = 0;
+        
+        int[][] ans = new int[r][c];
+        for (int i = 0; i < oldRow; i++) {
+            for (int j = 0; j < oldCol; j++) {
+                ans[row][col] = nums[i][j];
+                
+                row += ++col / c;
+                col %= c;
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+把原数组转成一维数组，然后遍历放置到新数组中
+### 代码
+```java
+class Solution {
+    public int[][] matrixReshape(int[][] nums, int r, int c) {
+        int row = nums.length;
+        int col = nums[0].length;
+        if (row * col < r * c) {
+            return nums;
+        }
+
+        int[] arr = new int[row * col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                arr[i * col + j] = nums[i][j];
+            }
+        }
+
+        int[][] ans = new int[r][c];
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                ans[i][j] = arr[i * c + j];
+            }
+        }
+
+        return ans;
+    }
+}
+```
