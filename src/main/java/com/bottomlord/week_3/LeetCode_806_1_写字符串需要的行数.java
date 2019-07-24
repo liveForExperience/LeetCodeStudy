@@ -32,10 +32,4 @@ public class LeetCode_806_1_写字符串需要的行数 {
         ans[1] = word;
         return ans;
     }
-
-    public static void main(String[] args) {
-        LeetCode_806_1_写字符串需要的行数 test = new LeetCode_806_1_写字符串需要的行数();
-        test.numberOfLines(new int[]{4, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
-                "bbbcccdddaaa");
-    }
 }
