@@ -775,3 +775,66 @@ class Solution {
     }
 }
 ```
+# LeetCode_876_链表的中间节点
+## 题目
+给定一个带有头结点 head 的非空单链表，返回链表的中间结点。
+
+如果有两个中间结点，则返回第二个中间结点。
+
+示例 1：
+```
+输入：[1,2,3,4,5]
+输出：此列表中的结点 3 (序列化形式：[3,4,5])
+返回的结点值为 3 。 (测评系统对该结点序列化表述是 [3,4,5])。
+注意，我们返回了一个 ListNode 类型的对象 ans，这样：
+ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, 以及 ans.next.next.next = NULL.
+```
+示例 2：
+```
+输入：[1,2,3,4,5,6]
+输出：此列表中的结点 4 (序列化形式：[4,5,6])
+由于该列表有两个中间结点，值分别为 3 和 4，我们返回第二个结点。
+```
+提示：
+```
+给定链表的结点数介于 1 和 100 之间。
+```
+## 解法一
+### 思路
+- 遍历链表
+- 将当前的链表节点放入一个有序的、随机查询时间复杂度为O(1)的数据结构
+- 返回数据结构中其长度一半位置存放的链表节点
+### 代码
+```java
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        List<ListNode> list = new ArrayList<>();
+        ListNode node = head;
+        while (node != null) {
+            list.add(node);
+            node = node.next;
+        }
+        
+        return list.get(list.size() / 2);
+    }
+}
+```
+## 解法二
+### 思路
+使用快慢游标，快游标步长为2，慢游标步长为1，当快游标遍历到最后一个或倒数第二个节点时，返回慢游标
+### 代码
+```java
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
+        
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        
+        return slow;
+    }
+}
+```
