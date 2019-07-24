@@ -1064,3 +1064,104 @@ class Solution {
     }
 }
 ```
+# LeetCode_893_特殊等价字符串组
+## 题目
+你将得到一个字符串数组 A。
+
+如果经过任意次数的移动，S == T，那么两个字符串 S 和 T 是特殊等价的。
+
+一次移动包括选择两个索引 i 和 j，且 i ％ 2 == j ％ 2，交换 S[j] 和 S [i]。
+
+现在规定，A 中的特殊等价字符串组是 A 的非空子集 S，这样不在 S 中的任何字符串与 S 中的任何字符串都不是特殊等价的。
+
+返回 A 中特殊等价字符串组的数量。
+
+示例 1：
+```
+输入：["a","b","c","a","c","c"]
+输出：3
+解释：3 组 ["a","a"]，["b"]，["c","c","c"]
+```
+示例 2：
+```
+输入：["aa","bb","ab","ba"]
+输出：4
+解释：4 组 ["aa"]，["bb"]，["ab"]，["ba"]
+```
+示例 3：
+```
+输入：["abc","acb","bac","bca","cab","cba"]
+输出：3
+解释：3 组 ["abc","cba"]，["acb","bca"]，["bac","cab"]
+```
+示例 4：
+```
+输入：["abcd","cdab","adcb","cbad"]
+输出：1
+解释：1 组 ["abcd","cdab","adcb","cbad"]
+```
+提示：
+```
+1 <= A.length <= 1000
+1 <= A[i].length <= 20
+所有 A[i] 都具有相同的长度。
+所有 A[i] 都只由小写字母组成。
+```
+## 解法一
+### 思路
+字符串奇数位的字符和偶数位的字符，种类和数量都相等，属于一种。
+- 算出偶数和奇数的字符及个数
+- 放入set去重
+- 返回set的长度
+### 代码
+```java
+public class Solution {
+    public int numSpecialEquivGroups(String[] A) {
+        Set<String> set = new HashSet<>();
+        for (String str : A) {
+            int[] arr = new int[52];
+            for (int i = 0; i < str.length(); i++) {
+                arr[str.charAt(i) - 'a' + 26 * (i % 2)]++;
+            }
+            set.add(Arrays.toString(arr));
+        }
+        return set.size();
+    }
+}
+```
+## 解法二
+### 思路
+- 使用质数来代表每一个字母
+- 通过相乘的方式来代表奇偶位上字符的个数和种类
+- 通过+5000的特殊处理来将奇偶连在一起，确保奇偶相同，乘数不会相同
+### 代码
+```java
+class Solution {
+    private final static int[] RECORD = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101};
+
+    public int numSpecialEquivGroups(String[] A) {
+        Set<Integer> ans = new HashSet<>();
+        for (String str : A) {
+            ans.add(hash(str));
+        }
+        return ans.size();
+    }
+
+    private int hash(String str) {
+        int res = 1;
+        for (int i = 0; i < str.length(); i += 2) {
+            int idx = str.charAt(i) - 'a';
+            res *= RECORD[idx];
+        }
+
+        res += 5000;
+
+        for (int i = 1; i < str.length(); i += 2) {
+            int idx = str.charAt(i) - 'a';
+            res *= RECORD[idx];
+        }
+        
+        return res;
+    }
+}
+```
