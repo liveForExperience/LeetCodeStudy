@@ -1475,3 +1475,74 @@ class MyQueue {
     }
 }
 ```
+# LeetCode_637_二叉树的层平均值
+## 题目
+给定一个非空二叉树, 返回一个由每层节点平均值组成的数组.
+
+示例 1:
+```
+输入:
+    3
+   / \
+  9  20
+    /  \
+   15   7
+输出: [3, 14.5, 11]
+解释:
+第0层的平均值是 3,  第1层是 14.5, 第2层是 11. 因此返回 [3, 14.5, 11].
+```
+注意：
+```
+节点值的范围在32位有符号整数范围内。
+```
+## 解法
+### 思路
+bfs，注意计算层总和时要用double基本类型，否则会出现溢出
+### 代码
+```java
+class Solution {
+    public List<Double> averageOfLevels(TreeNode root) {
+        List<Double> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+        
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+        
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            int num = count;
+            double total = 0;
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                
+                if (node == null) {
+                    continue;
+                }
+                
+                total += node.val;
+                
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+            
+            ans.add(total / num);
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+dfs递归
+### 代码
+```java
+
+```
