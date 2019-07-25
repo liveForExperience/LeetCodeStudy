@@ -1339,7 +1339,7 @@ queue.empty(); // 返回 false
 你所使用的语言也许不支持栈。你可以使用 list 或者 deque（双端队列）来模拟一个栈，只要是标准的栈操作即可。
 假设所有操作都是有效的 （例如，一个空的队列不会调用 pop 或者 peek 操作）。
 ```
-## 解法
+## 解法一
 ### 思路
 使用两个栈：
 - 一个栈inStack用来平时保存push的值，
@@ -1388,4 +1388,90 @@ class MyQueue {
             return inStack.isEmpty();
         }
     }
+```
+## 解法二
+### 思路
+解法一中pop和peek都需要进行一次搬运的动作，可以把这个搬运动作放到push中，但其实这样反而慢，因为push的动作更多，反而把O(1)的push变成了O(N)
+### 代码
+```java
+class MyQueue {
+    private Stack<Integer> stack;
+    private Stack<Integer> tmpStack;
+    public MyQueue() {
+        this.stack = new Stack<>();
+        this.tmpStack = new Stack<>();
+    }
+
+    public void push(int x) {
+        while (!stack.isEmpty()) {
+            tmpStack.push(stack.pop());
+        }
+        tmpStack.push(x);
+        while (!tmpStack.isEmpty()) {
+            stack.push(tmpStack.pop());
+        }
+    }
+
+    public int pop() {
+        return stack.pop();
+    }
+
+    public int peek() {
+        return stack.peek();
+    }
+
+    public boolean empty() {
+        return stack.isEmpty();
+    }
+}
+```
+## 解法三
+### 思路
+经过两种解法的过程，发现如果要提升效率，应该尽可能保持三种操作的O(1)的概率，或者说尽量减少O(N)搬运的次数。
+
+需要的还是两个stack：
+- pushStack：负责存放push的元素
+- popStack: 负责调整元素顺序，满足队列的先入先出规则
+
+需要搬运的场景：
+- pop()的时候，popStack为空，从pushStack搬运
+- peek()的时候，popStack为空，从pushStack搬运
+### 代码
+```java
+class MyQueue {
+    private Stack<Integer> pushStack;
+    private Stack<Integer> popStack;
+    public MyQueue() {
+        this.pushStack = new Stack<>();
+        this.popStack = new Stack<>();
+    }
+
+    public void push(int x) {
+        pushStack.push(x);
+    }
+
+    public int pop() {
+        if (popStack.isEmpty()) {
+            while (!pushStack.isEmpty()) {
+                popStack.push(pushStack.pop());
+            }
+        }
+
+        return popStack.pop();
+    }
+
+    public int peek() {
+        if (popStack.isEmpty()) {
+            while (!pushStack.isEmpty()) {
+                popStack.push(pushStack.pop());
+            }
+        }
+
+        return popStack.peek();
+    }
+
+    public boolean empty() {
+        return pushStack.isEmpty() && popStack.isEmpty();
+    }
+}
 ```
