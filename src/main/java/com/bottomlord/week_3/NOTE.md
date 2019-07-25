@@ -1544,5 +1544,101 @@ class Solution {
 dfs递归
 ### 代码
 ```java
+public class Solution {
+    public List<Double> averageOfLevels(TreeNode root) {
+        List<Double> ans = new ArrayList<>();
+        List<Integer> levelNum = new ArrayList<>();
+        List<Double> levelSum = new ArrayList<>();
+    
+        rescurse(root, 0, levelNum, levelSum);
+    
+        for (int i = 0; i < levelNum.size(); i++) {
+            ans.add(levelSum.get(i) / levelNum.get(i));
+        }
+    
+        return ans;
+    }
+    
+    private void rescurse(TreeNode node, int level, List<Integer> levelNum, List<Double> levelSum) {
+        if (node == null) {
+            return;
+        }
+    
+        if (levelNum.size() <= level) {
+            levelNum.add(1);
+            levelSum.add((double) node.val);
+        } else {
+            levelNum.set(level, levelNum.get(level) + 1);
+            levelSum.set(level, levelSum.get(level) + node.val);
+        }
+    
+        rescurse(node.left, level + 1, levelNum, levelSum);
+        rescurse(node.right, level + 1, levelNum, levelSum);
+    }
+}
+```
+# LeetCode_496_下一个更大元素I
+## 题目
+给定两个没有重复元素的数组 nums1 和 nums2 ，其中nums1 是 nums2 的子集。找到 nums1 中每个元素在 nums2 中的下一个比其大的值。
 
+nums1 中数字 x 的下一个更大元素是指 x 在 nums2 中对应位置的右边的第一个比 x 大的元素。如果不存在，对应位置输出-1。
+
+示例 1:
+```
+输入: nums1 = [4,1,2], nums2 = [1,3,4,2].
+输出: [-1,3,-1]
+解释:
+对于num1中的数字4，你无法在第二个数组中找到下一个更大的数字，因此输出 -1。
+对于num1中的数字1，第二个数组中数字1右边的下一个较大数字是 3。
+对于num1中的数字2，第二个数组中没有下一个更大的数字，因此输出 -1。
+```
+示例 2:
+```
+输入: nums1 = [2,4], nums2 = [1,2,3,4].
+输出: [3,-1]
+```
+解释:
+```
+对于num1中的数字2，第二个数组中的下一个较大数字是3。
+对于num1中的数字4，第二个数组中没有下一个更大的数字，因此输出 -1。
+```
+注意:
+```
+nums1和nums2中所有元素是唯一的。
+nums1和nums2 的数组大小都不超过1000。
+```
+## 解法一
+### 思路
+嵌套循环找
+### 代码
+```java
+class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        int[] ans = new int[nums1.length];
+        int index = 0;
+
+        for (int x : nums1) {
+            boolean equal = false;
+            boolean find = false;
+            for (int y : nums2) {
+                if (x == y) {
+                    equal = true;
+                    continue;
+                }
+
+                if (equal && y > x) {
+                    find = true;
+                    ans[index++] = y;
+                    break;
+                }
+            }
+
+            if (!find) {
+                ans[index++] = -1;
+            }
+        }
+
+        return ans;
+    }
+}
 ```
