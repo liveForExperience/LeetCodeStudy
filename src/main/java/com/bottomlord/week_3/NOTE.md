@@ -1904,3 +1904,66 @@ class Solution {
     }
 }
 ```
+# LeetCode_225_用队列实现栈
+## 题目
+使用队列实现栈的下列操作：
+```
+push(x) -- 元素 x 入栈
+pop() -- 移除栈顶元素
+top() -- 获取栈顶元素
+empty() -- 返回栈是否为空
+```
+注意:
+```
+你只能使用队列的基本操作-- 也就是 push to back, peek/pop from front, size, 和 is empty 这些操作是合法的。
+你所使用的语言也许不支持队列。 你可以使用 list 或者 deque（双端队列）来模拟一个队列 , 只要是标准的队列操作即可。
+你可以假设所有操作都是有效的（例如, 对一个空的栈不会调用 pop 或者 top 操作）。
+```
+## 解法
+### 思路
+使用两个队列和一个top指针来解决三个函数的功能实现。
+- push时放入一个队列，并把top指向输入参数
+- pop时
+    - 将queue除最后一个元素外的所有元素放入tmpQueue，同时top指向放入的元素
+    - 将最后一个元素返回，并在之前将queue和tmpQueue的指针互换
+- top时返回top
+- empty时返回两个队列的isEmpty方法的与结果
+### 代码
+```java
+class MyStack {
+    private Queue<Integer> queue;
+    private Queue<Integer> tmpQueue;
+    private int top;
+
+    public MyStack() {
+        this.queue = new ArrayDeque<>();
+        this.tmpQueue = new ArrayDeque<>();
+    }
+
+    public void push(int x) {
+        this.queue.offer(x);
+        this.top = x;
+    }
+
+    public int pop() {
+        while (this.queue.size() > 1) {
+            this.top = queue.poll();
+            this.tmpQueue.offer(this.top);
+        }
+
+        int num = this.queue.poll();
+        Queue<Integer> q = this.queue;
+        this.queue = this.tmpQueue;
+        this.tmpQueue = q;
+        return num;
+    }
+
+    public int top() {
+        return this.top;
+    }
+
+    public boolean empty() {
+        return this.queue.isEmpty() && this.tmpQueue.isEmpty();
+    }
+}
+```
