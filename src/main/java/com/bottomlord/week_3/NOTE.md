@@ -1859,15 +1859,6 @@ class Solution {
 - 比较list的内容，返回结果
 ### 代码
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
 class Solution {
     public boolean leafSimilar(TreeNode root1, TreeNode root2) {
         List<Integer> list1 = new ArrayList<>();
@@ -1964,6 +1955,75 @@ class MyStack {
 
     public boolean empty() {
         return this.queue.isEmpty() && this.tmpQueue.isEmpty();
+    }
+}
+```
+## 代码优化
+### 思路
+解法一中的两个队列，其实可以用一个队列代替。
+- push的时候，将元素放入队列后，将这个元素不断前移到队列尾部的位置
+- pop和peek的时候，因为有push的处理，直接返回队列尾部的元素就可以了
+- empty只要返回queue的isEmpty的结果就可以
+### 代码
+```java
+class MyStack {
+    private Queue<Integer> queue;
+
+    public MyStack() {
+        this.queue = new LinkedList<>();
+    }
+
+    public void push(int x) {
+        this.queue.offer(x);
+        int times = queue.size();
+        while (times > 1) {
+            this.queue.offer(this.queue.poll());
+            times--;
+        }
+    }
+
+    public int pop() {
+        return this.queue.poll();
+    }
+
+    public int top() {
+        return this.queue.peek();
+    }
+
+    public boolean empty() {
+        return this.queue.isEmpty();
+    }
+}
+```
+## 解法二
+### 思路
+使用现成的LinkedList实现
+### 代码
+```java
+class MyStack {
+    private LinkedList<Integer> queue;
+
+    public MyStack() {
+        this.queue = new LinkedList<>();
+    }
+
+    public void push(int x) {
+        this.queue.offerFirst(x);
+    }
+
+    public int pop() {
+        if (!queue.isEmpty()) {
+            return queue.pollFirst();
+        }
+        return 0;
+    }
+
+    public int top() {
+        return this.queue.peekFirst();
+    }
+
+    public boolean empty() {
+        return this.queue.isEmpty();
     }
 }
 ```
