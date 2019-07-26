@@ -1577,6 +1577,62 @@ public class Solution {
     }
 }
 ```
+## 解法三
+### 思路
+dfs非递归
+### 代码
+```java
+class Solution {
+    public List<Double> averageOfLevels(TreeNode root) {
+        List<Double> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+        
+        List<Integer> levelCount = new ArrayList<>();
+        List<Double> levelSum = new ArrayList<>();
+        Stack<int[]> entryStack = new Stack<>();
+        int[] rootEntry = new int[]{root.val, 0};
+        entryStack.push(rootEntry);
+        
+        Stack<TreeNode> nodeStack = new Stack<>();
+        nodeStack.push(root);
+        
+        while (!entryStack.isEmpty()) {
+            int[] entry = entryStack.pop();
+            int val = entry[0];
+            int level = entry[1];
+            
+            if (level >= levelCount.size()) {
+                levelCount.add(1);
+                levelSum.add((double) val);
+            } else {
+                levelCount.set(level, levelCount.get(level) + 1);
+                levelSum.set(level, levelSum.get(level) + val);
+            }
+            
+            TreeNode node = nodeStack.pop();
+            if (node.left != null) {
+                int[] leftEntry = new int[]{node.left.val, level + 1};
+                entryStack.push(leftEntry);
+                nodeStack.push(node.left);
+            }
+            
+            if (node.right != null) {
+                int[] rightEntry = new int[]{node.right.val, level + 1};
+                entryStack.push(rightEntry);
+                nodeStack.push(node.right);
+            }
+        }
+        
+        for (int i = 0; i < levelCount.size(); i++) {
+            ans.add(levelSum.get(i) / levelCount.get(i));
+        }
+        
+        return ans;
+    }
+}
+```
 # LeetCode_496_下一个更大元素I
 ## 题目
 给定两个没有重复元素的数组 nums1 和 nums2 ，其中nums1 是 nums2 的子集。找到 nums1 中每个元素在 nums2 中的下一个比其大的值。
