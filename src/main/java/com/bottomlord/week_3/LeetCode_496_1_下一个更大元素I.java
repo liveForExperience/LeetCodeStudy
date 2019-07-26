@@ -32,9 +32,4 @@ public class LeetCode_496_1_下一个更大元素I {
 
         return ans;
     }
-
-    public static void main(String[] args) {
-        LeetCode_496_1_下一个更大元素I test = new LeetCode_496_1_下一个更大元素I();
-        test.nextGreaterElement(new int[]{4,1,2}, new int[]{1,3,4,2});
-    }
 }
