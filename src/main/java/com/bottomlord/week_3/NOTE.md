@@ -2094,3 +2094,105 @@ class Solution {
     }
 }
 ```
+# LeetCode_257_二叉树的所有路径
+## 题目
+给定一个二叉树，返回所有从根节点到叶子节点的路径。
+
+说明: 叶子节点是指没有子节点的节点。
+
+示例:
+```
+输入:
+
+   1
+ /   \
+2     3
+ \
+  5
+```
+输出: ["1->2->5", "1->3"]
+```
+解释: 所有根节点到叶子节点的路径为: 1->2->5, 1->3
+```
+## 解法
+### 思路
+dfs递归打印
+### 代码
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> ans = new ArrayList<>();
+        rescurse(root, "", ans);
+        return ans;
+    }
+
+    private void rescurse(TreeNode node, String str, List<String> ans) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.left == null && node.right == null) {
+            str += node.val;
+            ans.add(str);
+        }
+
+        rescurse(node.left, str + node.val + "->", ans);
+        rescurse(node.right, str + node.val + "->", ans);
+    }
+}
+```
+## 解法二
+### 思路
+dfs非递归
+### 代码
+```java
+class Solution {
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+
+        Stack<TreeNode> nodeStack = new Stack<>();
+        nodeStack.push(root);
+
+        Stack<String> strStack = new Stack<>();
+        strStack.push("");
+
+        while (!nodeStack.isEmpty()) {
+            TreeNode node = nodeStack.pop();
+            String str = strStack.pop();
+
+            if (node == null) {
+                continue;
+            }
+
+            if (node.left == null && node.right == null) {
+                str += node.val;
+                ans.add(str);
+            }
+
+            if (node.left != null) {
+                nodeStack.push(node.left);
+                strStack.push(str + node.val + "->");
+            }
+
+            if (node.right != null) {
+                nodeStack.push(node.right);
+                strStack.push(str + node.val + "->");
+            }
+        }
+        
+        return ans;
+    }
+}
+```
