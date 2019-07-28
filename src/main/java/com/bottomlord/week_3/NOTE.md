@@ -2119,15 +2119,6 @@ class Solution {
 dfs递归打印
 ### 代码
 ```java
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
 class Solution {
     public List<String> binaryTreePaths(TreeNode root) {
         List<String> ans = new ArrayList<>();
@@ -2496,6 +2487,93 @@ class Solution {
             }
         }
         return ans;
+    }
+}
+```
+# LeetCode_868_二进制的间距
+## 题目
+给定一个正整数 N，找到并返回 N 的二进制表示中两个连续的 1 之间的最长距离。 
+
+如果没有两个连续的 1，返回 0 。
+
+示例 1：
+```
+输入：22
+输出：2
+解释：
+22 的二进制是 0b10110 。
+在 22 的二进制表示中，有三个 1，组成两对连续的 1 。
+第一对连续的 1 中，两个 1 之间的距离为 2 。
+第二对连续的 1 中，两个 1 之间的距离为 1 。
+答案取两个距离之中最大的，也就是 2 。
+```
+示例 2：
+```
+输入：5
+输出：2
+解释：
+5 的二进制是 0b101 。
+```
+示例 3：
+```
+输入：6
+输出：1
+解释：
+6 的二进制是 0b110 。
+```
+示例 4：
+```
+输入：8
+输出：0
+解释：
+8 的二进制是 0b1000 。
+在 8 的二进制表示中没有连续的 1，所以返回 0 。
+```
+提示：
+```
+1 <= N <= 10^9
+```
+## 解法
+### 思路
+- 判断二进制当前最低位是否是1，可以使用num & 1 == 1来判断
+    - == 1就是1
+    - == 0就是0
+- 通过右移位来截取数字，循环条件也就是是否\>0
+- 使用3个变量来记录循环中的状态
+    - count：区间的距离
+    - find：代表是否已经找到第一个1
+    - max：过程中记录到的最大值
+- 在没有找到第一个1的情况下：
+    - 当前最低位是1就开始计数，并使find=true
+    - 如果不是就直接continue
+- 在find为true的情况下：
+    - 如果最低位是0，就直接count++
+    - 如果最低位是1，就把count和max做比较，记录两者最大值，并初始化count为1
+- 返回max
+### 代码
+```java
+class Solution {
+    public int binaryGap(int N) {
+        int max = 0;
+        int count = 1;
+        boolean find = false;
+        while (N > 0) {
+            if (find) {
+                if ((N & 1) == 0) {
+                    count++;
+                } else {
+                    max = Math.max(max, count);
+                    count = 1;   
+                }                
+            } else {
+                if ((N & 1) == 1) {
+                    find = true;
+                }
+            }
+            
+            N >>= 1;
+        }
+        return max;
     }
 }
 ```
