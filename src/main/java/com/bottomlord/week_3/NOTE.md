@@ -2341,3 +2341,161 @@ class Solution {
     }
 }
 ```
+# LeetCode_13_罗马数字转整数
+## 题目
+罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。
+```
+字符          数值
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
+例如， 罗马数字 2 写做 II ，即为两个并列的 1。12 写做 XII ，即为 X + II 。 27 写做  XXVII, 即为 XX + V + II 。
+```
+通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 IIII，而是 IV。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 IX。这个特殊的规则只适用于以下六种情况：
+```
+I 可以放在 V (5) 和 X (10) 的左边，来表示 4 和 9。
+X 可以放在 L (50) 和 C (100) 的左边，来表示 40 和 90。 
+C 可以放在 D (500) 和 M (1000) 的左边，来表示 400 和 900。
+给定一个罗马数字，将其转换成整数。输入确保在 1 到 3999 的范围内。
+```
+示例 1:
+```
+输入: "III"
+输出: 3
+```
+示例 2:
+```
+输入: "IV"
+输出: 4
+```
+示例 3:
+```
+输入: "IX"
+输出: 9
+```
+示例 4:
+```
+输入: "LVIII"
+输出: 58
+解释: L = 50, V= 5, III = 3.
+```
+示例 5:
+```
+输入: "MCMXCIV"
+输出: 1994
+解释: M = 1000, CM = 900, XC = 90, IV = 4.
+```
+## 解法一
+### 思路
+- 构建两个映射关系：
+    - 罗马数字与整数的映射关系romanNumMap
+    - 罗马数字与在其左边需要相减的罗马数字的关系map
+
+过程：
+1. 遍历罗马数字字符串，放入栈中
+2. 根据栈先进后出的特性，从罗马数字的右边开始进行转换
+3. 循环弹栈：
+    - 判断当前罗马数字的整数值，并累加到总数中
+    - 查看栈是否为空，空了就终止循环，返回结果
+    - 如果不为空，查看当前栈顶的罗马数字是否符合特殊情况，如果是就弹栈，并从总数中减去该值
+4. 循环结束，返回结果。
+### 代码
+```java
+class Solution {
+    public int romanToInt(String s) {
+        Map<Character, Character> map = new HashMap<>();
+        map.put('I', ' ');
+        map.put('V', 'I');
+        map.put('X', 'I');
+        map.put('L', 'X');
+        map.put('C', 'X');
+        map.put('D', 'C');
+        map.put('M', 'C');
+
+        Map<Character, Integer> romanNumMap = new HashMap<>();
+        romanNumMap.put('I', 1);
+        romanNumMap.put('V', 5);
+        romanNumMap.put('X', 10);
+        romanNumMap.put('L', 50);
+        romanNumMap.put('C', 100);
+        romanNumMap.put('D', 500);
+        romanNumMap.put('M', 1000);
+
+        Stack<Character> stack = new Stack<>();
+        for (char c: s.toCharArray()) {
+            stack.push(c);
+        }
+
+        int total = 0;
+        while (!stack.isEmpty()) {
+            char romanNum = stack.pop();
+
+            total += romanNumMap.get(romanNum);
+            if (stack.isEmpty()) {
+                break;
+            }
+            
+            char nextRomanNum = stack.peek();
+            if (map.get(romanNum).equals(nextRomanNum)) {
+                stack.pop();
+                total -= romanNumMap.get(nextRomanNum);
+            }
+        }
+        return total;
+    }
+}
+```
+## 优化代码
+### 思路
+省去入栈的动作，通过一个pre指针，从字符数组的尾部往头部遍历的同时，记录当前元素的前一个遍历的值，如果大于当前值，就进行减的动作，否则进行加的动作，同时更新pre为当前元素。
+### 代码
+```java
+class Solution {
+    public int romanToInt(String s) {
+        int ans = 0;
+        int pre = 0;
+
+        for (int i = s.length() - 1; i >= 0; i--) {
+            if (s.charAt(i) == 'I') {
+                if (pre > 1) {
+                    ans -= 1;
+                } else {
+                    ans += 1;
+                }
+                pre = 1;
+            } else if (s.charAt(i) == 'V') {
+                ans += 5;
+                pre = 5;
+            } else if (s.charAt(i) == 'X') {
+                if (pre > 10) {
+                    ans -= 10;
+                } else {
+                    ans += 10;
+                }
+                pre = 10;
+            } else if (s.charAt(i) == 'L') {
+                ans += 50;
+                pre = 50;
+            } else if (s.charAt(i) == 'C') {
+                if (pre > 100) {
+                    ans -= 100;
+                } else {
+                    ans += 100;
+                }
+                pre = 100;
+            } else if (s.charAt(i) == 'D') {
+                ans += 500;
+                pre = 500;
+            } else if (s.charAt(i) == 'M'){
+                ans += 1000;
+                pre = 1000;
+            }
+        }
+        return ans;
+    }
+}
+```
