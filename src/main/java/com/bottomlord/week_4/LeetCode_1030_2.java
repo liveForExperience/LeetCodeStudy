@@ -40,9 +40,4 @@ public class LeetCode_1030_2 {
 
         return ans.toArray(new int[0][0]);
     }
-
-    public static void main(String[] args) {
-        LeetCode_1030_2 test = new LeetCode_1030_2();
-        test.allCellsDistOrder(2,3,1,2);
-    }
 }

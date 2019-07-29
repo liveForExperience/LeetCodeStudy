@@ -110,3 +110,84 @@ class Solution {
     }
 }
 ```
+# LeetCode_389_找不同
+## 题目
+给定两个字符串 s 和 t，它们只包含小写字母。
+
+字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。
+
+请找出在 t 中被添加的字母。
+
+示例:
+```
+输入：
+s = "abcd"
+t = "abcde"
+
+输出：
+e
+```
+解释：
+```
+'e' 是那个被添加的字母。
+```
+## 解法一
+### 思路
+- 两个字符串排序
+- 遍历字符串，把长的字符串中不同的那个返回
+### 代码
+```java
+class Solution {
+    public char findTheDifference(String s, String t) {
+        char[] ss = s.toCharArray();
+        char[] ts = t.toCharArray();
+
+        Arrays.sort(ss);
+        Arrays.sort(ts);
+        
+        for (int i = 0; i < ss.length; i++) {
+            if (ss[i] != ts[i]) {
+                return ts[i];
+            }
+        }
+        
+        return ts[ts.length - 1];
+    }
+}
+```
+## 解法二
+### 思路
+用桶的思路，空间换时间
+- 新建一个26长度的桶
+- 下标对应字符，元素对应个数
+- 遍历一遍短的字符串，设置好对应字符的个数
+- 遍历长的字符串时，一次对对应的元素做--操作，如果遇到需要相减的元素为0时，返回该下标对应的字符
+### 代码
+```java
+class Solution {
+    public char findTheDifference(String s, String t) {
+        int[] dict = new int[26];
+        
+        for (char c : s.toCharArray()) {
+            dict[c - 'a']++;
+        }
+        
+        for (char c : t.toCharArray()) {
+            if (dict[c - 'a'] == 0) {
+                return c;
+            }
+            
+            dict[c - 'a']--;
+        }
+        
+        return ' ';
+    }
+}
+```
+## 解法三
+### 思路
+使用异或，通过其相同字符异或为零，且异或符合交换律的特性，循环异或另个字符数组，返回最后的结果即可。
+### 代码
+```java
+
+```
