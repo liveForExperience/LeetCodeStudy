@@ -189,5 +189,70 @@ class Solution {
 使用异或，通过其相同字符异或为零，且异或符合交换律的特性，循环异或另个字符数组，返回最后的结果即可。
 ### 代码
 ```java
+public class Solution {
+    public char findTheDifference(String s, String t) {
+        int ans = 0;
+
+        for (char c : s.toCharArray()) {
+            ans ^= c;
+        }
+
+        for (char c : t.toCharArray()) {
+            ans ^= c;
+        }
+
+        return (char) ans;
+    }
+}
+
+```
+# LeetCode_812_最大三角形面积
+## 题目
+
+## 解法
+### 思路一
+三层for循环，获取所有可能的边长，并通过海伦公式计算三角形的面积，最终返回面积最大的结果
+- 需要避免所有边在一条直线上的情况
+- 需要避免虚数的情况
+### 代码
+```java
+class Solution {
+    public double largestTriangleArea(int[][] points) {
+        double max = 0;
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points.length; j++) {
+                for (int k = 0; k < points.length; k++) {
+                    double a = Math.sqrt(Math.pow(points[i][0] - points[j][0], 2) + Math.pow(points[i][1] - points[j][1], 2));
+                    double b = Math.sqrt(Math.pow(points[j][0] - points[k][0], 2) + Math.pow(points[j][1] - points[k][1], 2));
+                    double c = Math.sqrt(Math.pow(points[k][0] - points[i][0], 2) + Math.pow(points[k][1] - points[i][1], 2));
+
+                    if (a + b == c || b + c == a || a + c == b) {
+                        continue;
+                    }
+
+                    double p = (a + b + c) /2;
+                    double area = Math.sqrt(p * (p - a) * (p - b) * (p - c));
+                    
+                    if (Double.isNaN(area)) {
+                        continue;
+                    }
+                    
+                    max = Math.max(area, max);
+                }
+            }
+        }
+        
+        return max;
+    }
+}
+```
+## 优化代码
+### 思路
+简化循环体中的计算过程，使用公式
+```math
+A = 1/2 * [ x1(y2-y3) + x2(y3-y1) + x3(y1-y2) ] 
+```
+### 代码
+```java
 
 ```
