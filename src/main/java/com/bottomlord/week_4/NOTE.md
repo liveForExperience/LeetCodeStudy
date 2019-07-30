@@ -629,3 +629,102 @@ class Solution {
     }
 }
 ```
+# LeetCode_9_回文数
+## 题目
+判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+
+示例 1:
+```
+输入: 121
+输出: true
+```
+示例 2:
+```
+输入: -121
+输出: false
+解释: 从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
+```
+示例 3:
+```
+输入: 10
+输出: false
+解释: 从右向左读, 为 01 。因此它不是一个回文数。
+```
+## 解法一
+### 思路
+转成字符串，通过头尾指针的移动来判断是否字符相等
+### 代码
+```java
+class Solution {
+    public boolean isPalindrome(int x) {
+        String s = Integer.toString(x);
+        char[] cs = s.toCharArray();
+        int head =0, tail = cs.length - 1;
+        while (head < tail) {
+            if (cs[head++] != cs[tail--]) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+通过截取数字，并生成相反数的方式来判断
+### 代码
+```java
+class Solution {
+    public boolean isPalindrome(int x) {
+        if (x == 0) {
+            return true;
+        }
+        if (x < 0 || x % 10 == 0) {
+            return false;
+        }
+        if (x == x % 10) {
+            return true;
+        }
+
+        int reserve = 0, cur = x;
+        while (cur >= 10) {
+            int digit = cur % 10;
+            reserve = reserve * 10 + digit;
+            cur /= 10;
+            if (reserve == cur || reserve == cur / 10) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+## 优化代码
+### 思路
+当cur截取不再大于reserve的时候，其实就可以判断是否是回文数了，因为如果是的话，两者是相等的，或者如果位数是奇数，那就让reserve除以10后也是相等的
+### 代码
+```java
+class Solution {
+    public boolean isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+
+        if (x == 0) {
+            return true;
+        }
+
+        if (x % 10 == 0) {
+            return false;
+        }
+
+        int reserve = 0, cur = x;
+        while (cur > reserve) {
+            reserve = 10 * reserve + cur % 10;
+            cur = cur / 10;
+        }
+        return (reserve == cur || cur == reserve / 10);
+    }
+}
+```
