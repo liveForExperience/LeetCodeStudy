@@ -483,3 +483,85 @@ class Solution {
     }
 }
 ```
+# LeetCode_1137_第N个泰波那契数
+## 题目
+泰波那契序列 Tn 定义如下： 
+
+T0 = 0, T1 = 1, T2 = 1, 且在 n >= 0 的条件下 Tn+3 = Tn + Tn+1 + Tn+2
+
+给你整数 n，请返回第 n 个泰波那契数 Tn 的值。
+
+示例 1：
+```
+输入：n = 4
+输出：4
+解释：
+T_3 = 0 + 1 + 1 = 2
+T_4 = 1 + 1 + 2 = 4
+```
+示例 2：
+```
+输入：n = 25
+输出：1389537
+```
+提示：
+```
+0 <= n <= 37
+答案保证是一个 32 位整数，即 answer <= 2^31 - 1。
+```
+## 解法一
+### 思路
+- 动态规划 T(N) = T(N - 1) + T(N - 2) + T(N - 3)
+- 记忆化搜索
+### 代码
+```java
+class Solution {
+    public int tribonacci(int n) {
+        int[] memo = new int[n + 1];
+        return rescurse(memo, n);
+    }
+
+    private int rescurse(int[] memo, int n) {
+        if (n == 1 || n == 2) {
+            return 1;
+        }
+
+        if (n == 0) {
+            return 0;
+        }
+
+        if (memo[n] == 0) {
+            memo[n] = rescurse(memo, n - 1) + rescurse(memo, n - 2) + rescurse(memo, n - 3);
+        }
+        
+        return memo[n];
+    }
+}
+```
+## 解法二
+### 思路
+从3开始循环遍历到n，循环过程中更新3个数，结果存在第3个数上，循环结束返回第三个数。
+### 代码
+```java
+class Solution {
+    public int tribonacci(int n) {
+        if (n == 0) {
+            return 0;
+        }
+
+        if (n == 1 || n == 2) {
+            return 1;
+        }
+
+        int n0 = 0, n1 = 1, n2 = 1;
+        for (int i = 3; i <= n; i++) {
+            int tmp0 = n1, tmp1 = n2;
+            n2 = n0 + n1 + n2;
+            n0 = tmp0;
+            n1 = tmp1;
+        }
+        
+        return n2;
+    }
+}
+```
