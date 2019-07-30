@@ -26,9 +26,4 @@ public class LeetCode_119_1_杨辉三角II {
 
         return list.get(rowIndex);
     }
-
-    public static void main(String[] args) {
-        LeetCode_119_1_杨辉三角II test = new LeetCode_119_1_杨辉三角II();
-        test.getRow(3);
-    }
 }

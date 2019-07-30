@@ -456,3 +456,30 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+使用Map的getOrDefault方法来处理累加的动作，效率惊人
+### 代码
+```java
+class Solution {
+    public String[] uncommonFromSentences(String A, String B) {
+        Map<String, Integer> map = new HashMap<>();
+        for (String a : A.split(" ")) {
+            map.put(a, map.getOrDefault(a, 0) + 1);
+        }
+
+        for (String b : B.split(" ")) {
+            map.put(b, map.getOrDefault(b, 0) + 1);
+        }
+
+        List<String> ans = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry: map.entrySet()) {
+            if (entry.getValue() == 1) {
+                ans.add(entry.getKey());
+            }
+        }
+
+        return ans.toArray(new String[0]);
+    }
+}
+```
