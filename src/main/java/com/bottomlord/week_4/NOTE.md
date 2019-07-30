@@ -565,3 +565,67 @@ class Solution {
     }
 }
 ```
+# LeetCode_1046_最后一块石头的重量
+## 题目
+有一堆石头，每块石头的重量都是正整数。
+
+每一回合，从中选出两块最重的石头，然后将它们一起粉碎。假设石头的重量分别为 x 和 y，且 x <= y。那么粉碎的可能结果如下：
+```
+如果 x == y，那么两块石头都会被完全粉碎；
+如果 x != y，那么重量为 x 的石头将会完全粉碎，而重量为 y 的石头新重量为 y-x。
+最后，最多只会剩下一块石头。返回此石头的重量。如果没有石头剩下，就返回 0。
+```
+提示：
+```
+1 <= stones.length <= 30
+1 <= stones[i] <= 1000
+```
+## 解法一
+### 思路
+- 循环数组，将数字放入大顶堆
+- 大顶堆大小如果大于1，就将堆顶的元素相减：
+    - 如果结果为0，不处理
+    - 如果结果不为0，将差放入大顶堆
+- 返回0或者最后的一个元素
+### 代码
+```java
+class Solution {
+    public int lastStoneWeight(int[] stones) {
+        Queue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
+        for (int num : stones) {
+            queue.offer(num);
+        }
+
+        while (queue.size() > 1) {
+            int num = queue.poll() - queue.poll();
+            if (num != 0) {
+                queue.offer(num);
+            }
+        }
+
+        return queue.isEmpty() ? 0 : queue.poll();
+    }
+}
+```
+## 解法二
+### 思路
+遍历数组，每次都至少处理掉一块石头，在处理的过程中：
+1. 对数组进行排序
+2. 将下标最大和第二大的元素相减
+3. 将差放入元素最大的位置，0放在第二大的位置
+### 代码
+```java
+class Solution {
+    public int lastStoneWeight(int[] stones) {
+        int len = stones.length;
+        for (int i = 0; i < len - 1; i++) {
+            Arrays.sort(stones);
+            int num = stones[len - 1] - stones[len - 2];
+            stones[len - 1] = num;
+            stones[len - 2] = 0;
+        }
+        
+        return stones[len - 1];
+    }
+}
+```
