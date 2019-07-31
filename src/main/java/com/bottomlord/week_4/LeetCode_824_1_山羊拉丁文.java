@@ -45,11 +45,4 @@ public class LeetCode_824_1_山羊拉丁文 {
 
         return String.join(" ", ss);
     }
-
-    public static void main(String[] args) {
-        System.out.println('a' + 0);
-        System.out.println('A' + 0);
-        System.out.println('z' + 0);
-        System.out.println('Z' + 0);
-    }
 }
