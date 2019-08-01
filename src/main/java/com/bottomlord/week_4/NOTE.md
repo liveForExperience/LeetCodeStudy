@@ -1260,3 +1260,84 @@ class Solution {
     }
 }
 ```
+# LeetCode_706_设计哈希映射
+## 题目
+不使用任何内建的哈希表库设计一个哈希映射
+
+具体地说，你的设计应该包含以下的功能
+```
+put(key, value)：向哈希映射中插入(键,值)的数值对。如果键对应的值已经存在，更新这个值。
+get(key)：返回给定的键所对应的值，如果映射中不包含这个键，返回-1。
+remove(key)：如果映射中存在这个键，删除这个数值对。
+```
+示例：
+```
+MyHashMap hashMap = new MyHashMap();
+hashMap.put(1, 1);          
+hashMap.put(2, 2);         
+hashMap.get(1);            // 返回 1
+hashMap.get(3);            // 返回 -1 (未找到)
+hashMap.put(2, 1);         // 更新已有的值
+hashMap.get(2);            // 返回 1 
+hashMap.remove(2);         // 删除键为2的数据
+hashMap.get(2);            // 返回 -1 (未找到) 
+```
+注意：
+```
+所有的值都在 [1, 1000000]的范围内。
+操作的总数目在[1, 10000]范围内。
+不要使用内建的哈希库。
+```
+## 解法
+### 思路
+使用空间换时间，用桶数组。
+- 初始化数组所有值为-1
+- key是数组下标
+- value是数组key下标对应的元素
+- remove时将key下标元素置为-1
+### 代码
+```java
+class MyHashMap {
+    int[] bucket;
+    public MyHashMap() {
+        this.bucket = new int[1000001];
+        Arrays.fill(this.bucket, -1);
+    }
+
+    public void put(int key, int value) {
+        this.bucket[key] = value;
+    }
+
+    public int get(int key) {
+        return this.bucket[key];
+    }
+
+    public void remove(int key) {
+        this.bucket[key] = -1;
+    }
+}
+```
+## 优化代码
+### 思路
+省去上一步的fill -1的动作，用包装类代替，然后判断是否为null来返回
+### 代码
+```java
+class MyHashMap {
+    Integer[] bucket;
+    public MyHashMap() {
+        this.bucket = new Integer[1000001];
+    }
+
+    public void put(int key, int value) {
+        this.bucket[key] = value;
+    }
+
+    public int get(int key) {
+        return this.bucket[key] != null ? this.bucket[key] : -1;
+    }
+
+    public void remove(int key) {
+        this.bucket[key] = -1;
+    }
+}
+```
