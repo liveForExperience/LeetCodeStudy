@@ -1470,3 +1470,57 @@ class Solution {
     }
 }
 ```
+# LeetCode_705_设计哈希集合
+## 题目
+不使用任何内建的哈希表库设计一个哈希集合
+
+具体地说，你的设计应该包含以下的功能
+```
+add(value)：向哈希集合中插入一个值。
+contains(value) ：返回哈希集合中是否存在这个值。
+remove(value)：将给定值从哈希集合中删除。如果哈希集合中没有这个值，什么也不做。
+```
+示例:
+```
+MyHashSet hashSet = new MyHashSet();
+hashSet.add(1);         
+hashSet.add(2);         
+hashSet.contains(1);    // 返回 true
+hashSet.contains(3);    // 返回 false (未找到)
+hashSet.add(2);          
+hashSet.contains(2);    // 返回 true
+hashSet.remove(2);          
+hashSet.contains(2);    // 返回  false (已经被删除)
+```
+注意：
+```
+所有的值都在 [1, 1000000]的范围内。
+操作的总数目在[1, 10000]范围内。
+不要使用内建的哈希集合库。
+```
+## 解法
+### 思路
+桶数组，用空间换时间
+- 下标代表key，元素代表value
+- remove的时候将元素置为1
+### 代码
+```java
+class MyHashSet {
+    int[] bucket;
+    public MyHashSet() {
+        bucket = new int[1000001];
+    }
+
+    public void add(int key) {
+        bucket[key] = 1;
+    }
+
+    public void remove(int key) {
+        bucket[key] = 0;
+    }
+
+    public boolean contains(int key) {
+        return bucket[key] == 1;
+    }
+}
+```
