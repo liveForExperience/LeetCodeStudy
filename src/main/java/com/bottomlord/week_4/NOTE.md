@@ -1341,3 +1341,132 @@ class MyHashMap {
     }
 }
 ```
+# LeetCode_953_验证外星语词典
+## 题目
+某种外星语也使用英文小写字母，但可能顺序 order 不同。字母表的顺序（order）是一些小写字母的排列。
+
+给定一组用外星语书写的单词 words，以及其字母表的顺序 order，只有当给定的单词在这种外星语中按字典序排列时，返回 true；否则，返回 false。
+
+示例 1：
+```
+输入：words = ["hello","leetcode"], order = "hlabcdefgijkmnopqrstuvwxyz"
+输出：true
+解释：在该语言的字母表中，'h' 位于 'l' 之前，所以单词序列是按字典序排列的。
+```
+示例 2：
+```
+输入：words = ["word","world","row"], order = "worldabcefghijkmnpqstuvxyz"
+输出：false
+解释：在该语言的字母表中，'d' 位于 'l' 之后，那么 words[0] > words[1]，因此单词序列不是按字典序排列的。
+```
+示例 3：
+```
+输入：words = ["apple","app"], order = "abcdefghijklmnopqrstuvwxyz"
+输出：false
+解释：当前三个字符 "app" 匹配时，第二个字符串相对短一些，然后根据词典编纂规则 "apple" > "app"，因为 'l' > '∅'，其中 '∅' 是空白字符，定义为比任何其他字符都小（更多信息）。
+```
+提示：
+```
+1 <= words.length <= 100
+1 <= words[i].length <= 20
+order.length == 26
+在 words[i] 和 order 中的所有字符都是英文小写字母。
+```
+## 解法一
+### 思路
+- 根据order字符串生成下标对应字符，元素对应顺序值的字典
+- 循环判断两个字符串的字符顺序
+### 代码
+```java
+class Solution {
+    public boolean isAlienSorted(String[] words, String order) {
+        if (words.length == 0) {
+            return true;
+        }
+        
+        char[] orderC = order.toCharArray();
+        int[] dict = new int[26];
+
+        for (int i = 0; i < orderC.length; i++) {
+            dict[orderC[i] - 'a'] = i;
+        }
+
+        List<List<Integer>> buffer = new ArrayList<>();
+        for (int i = 1; i < words.length; i++) {
+            List<Integer> pre, cur;
+            if (i - 1 < buffer.size()) {
+                pre = buffer.get(i - 1);
+            } else {
+                pre = new ArrayList<>();
+                for (char c : words[i - 1].toCharArray()) {
+                    pre.add(dict[c - 'a']);
+                }
+                buffer.add(pre);
+            }
+            
+            cur = new ArrayList<>();
+            for (char c: words[i].toCharArray()) {
+                cur.add(dict[c - 'a']);
+            }
+            
+            int len = pre.size() <= cur.size() ? pre.size() : cur.size();
+            boolean ok = false;
+            for (int j = 0; j < len; j++) {
+                if (pre.get(j) > cur.get(j)) {
+                    return false;
+                }
+                if (pre.get(j).equals(cur.get(j))) {
+                    continue;
+                }
+                ok = true;
+                break;
+            }
+                        
+            if (!ok && pre.size() > cur.size()) {
+                return false;
+            }
+            
+            buffer.add(cur);
+        }
+        return true;
+    }
+}
+```
+## 代码优化
+### 思路
+把状态区分为三种：
+- 前一个单词的字符小为true
+- 前一个单词的字符大为false
+- 字符比较完相同的情况下：
+    - 前一个字符串相等或更短为true
+    - 前一个字符串长为false
+### 代码
+```java
+class Solution {
+    public boolean isAlienSorted(String[] words, String order) {
+        int[] dic = new int[26];
+        for (int i = 0; i < 26; i++) {
+            dic[order.charAt(i) - 'a'] = i;
+        }
+        for (int i = 0; i < words.length - 1; i++) {
+            if (!judge(words[i], words[i + 1], dic)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean judge(String s1, String s2, int[] dic) {
+        int minLen = s1.length() <= s2.length() ? s1.length() : s2.length();
+        for (int i = 0; i < minLen; i++) {
+            if (dic[s1.charAt(i) - 'a'] < dic[s2.charAt(i) - 'a']) {
+                return true;
+            }
+            if (dic[s1.charAt(i) - 'a'] > dic[s2.charAt(i) - 'a']) {
+                return false;
+            }
+        }
+        return s1.length() <= s2.length();
+    }
+}
+```
