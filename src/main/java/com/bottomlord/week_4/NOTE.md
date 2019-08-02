@@ -1906,3 +1906,78 @@ class Solution {
     }
 }
 ```
+# LeetCode_485_最大连续1的个数
+## 题目
+给定一个二进制数组， 计算其中最大连续1的个数。
+
+示例 1:
+```
+输入: [1,1,0,1,1,1]
+输出: 3
+解释: 开头的两位和最后的三位都是连续1，所以最大连续1的个数是 3.
+```
+注意：
+```
+输入的数组只包含 0 和1。
+输入数组的长度是正整数，且不超过 10,000。
+```
+## 解法一
+### 思路
+- 使用变量count计数
+- 使用大顶堆存储
+- 遍历数组，遇到1就累加，遇到0就将count存入堆中，并将count置为0
+- 遍历结束，返回set的最大值
+### 代码
+```java
+class Solution {
+    public int findMaxConsecutiveOnes(int[] nums) {
+        Queue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
+        int count = 0;
+        for (int num : nums) {
+            if (num == 1) {
+                count++;
+            }
+            
+            if (num == 0) {
+                queue.offer(count);
+                count = 0;
+            }
+        }
+        
+        if (count != 0) {
+            queue.offer(count);
+        }
+        
+        return queue.isEmpty() ? 0 : queue.poll();
+    }
+}
+```
+## 解法二
+### 思路
+不要用数据结构，直接用一个max变量不就好了。。。
+### 代码
+```java
+class Solution {
+    public int findMaxConsecutiveOnes(int[] nums) {
+        int max = 0;
+        int count = 0;
+        
+        for (int num : nums) {
+            if (num == 1) {
+                count++;
+            }
+            
+            if (num == 0) {
+                max = Math.max(max, count);
+                count = 0;
+            }
+        }
+        
+        if (count != 0) {
+            max = Math.max(max, count);
+        }
+        
+        return max;
+    }
+}
+```
