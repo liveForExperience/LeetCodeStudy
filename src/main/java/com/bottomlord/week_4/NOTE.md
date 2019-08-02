@@ -1636,3 +1636,73 @@ class Solution {
     }
 }
 ```
+# LeetCode_202_快乐数
+## 题目
+编写一个算法来判断一个数是不是“快乐数”。
+
+一个“快乐数”定义为：对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和，然后重复这个过程直到这个数变为 1，也可能是无限循环但始终变不到 1。如果可以变为 1，那么这个数就是快乐数。
+
+示例: 
+```
+输入: 19
+输出: true
+解释: 
+12 + 92 = 82
+82 + 22 = 68
+62 + 82 = 100
+12 + 02 + 02 = 1
+```
+## 解法一
+### 思路
+之所以会进入无限循环是因为重复的得到一样的平方和，所以，只要记录平方和是否在以前出现过，就能判断是否会出现死循环。
+- 使用一个set来记录平方和
+- 不断计算平方和，直到如下两种情况退出：
+    - set中已存在这个平方和
+    - 平方和为1
+### 代码
+```java
+class Solution {
+    public boolean isHappy(int n) {
+        Set<Integer> set = new HashSet<>();
+        while (true) {
+            int sum = 0;
+            while (n > 0) {
+                sum += Math.pow(n % 10, 2);
+                n /= 10;
+            }
+            
+            if (sum == 1) {
+                return true;
+            }
+            
+            if (set.contains(sum)) {
+                return false;
+            }
+            set.add(sum);
+            n = sum;
+        }
+    }
+}
+```
+## 解法二
+### 思路
+在本题的题意下，所有数字，都会进入1，4，3的无限循环中，所以只要判断是否是1或4或3就可以了
+### 代码
+```java
+class Solution {
+    public boolean isHappy(int n) {
+        while (n != 1) {
+            int sum = 0;
+            while (n > 0) {
+                sum += Math.pow(n % 10, 2);
+                n /= 10;
+            }
+            if (sum == 3 || sum == 4) {
+                return false;
+            }
+            n = sum;
+        }
+        return true;
+    }
+}
+```
