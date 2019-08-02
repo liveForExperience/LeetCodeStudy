@@ -1798,3 +1798,111 @@ class Solution {
     }
 }
 ```
+# LeetCode_447_回旋镖的数量
+## 题目
+给定平面上 n 对不同的点，“回旋镖” 是由点表示的元组 (i, j, k) ，其中 i 和 j 之间的距离和 i 和 k 之间的距离相等（需要考虑元组的顺序）。
+
+找到所有回旋镖的数量。你可以假设 n 最大为 500，所有点的坐标在闭区间 [-10000, 10000] 中。
+
+示例:
+```
+输入:
+[[0,0],[1,0],[2,0]]
+
+输出:
+2
+```
+解释:
+```
+两个回旋镖为 [[1,0],[0,0],[2,0]] 和 [[1,0],[2,0],[0,0]]
+```
+## 解法
+### 思路
+三层循环，寻找所有的组合，然后判断并计数
+### 失败代码
+```java
+class Solution {
+    public int numberOfBoomerangs(int[][] points) {
+        int count = 0;
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points.length; j++) {
+                if (j == i) {
+                    continue;
+                }
+                for (int k = j + 1; k < points.length; k++) {
+                    if (k == i) {
+                        continue;
+                    }
+                    if (find(points[i], points[j], points[k])) {
+                        count += 2;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    private boolean find(int[] one, int[] two, int[] three) {
+        return Math.pow(one[0] - two[0], 2) + Math.pow(one[1] - two[1], 2) == Math.pow(one[0] - three[0], 2) + Math.pow(one[1] - three[1], 2);
+    }
+}
+```
+超出时间限制
+## 解法
+### 思路
+- 遍历数组，把每个点当作第一个点
+- 嵌套一层循环，算出外层和内层点的距离，
+- 查询map里是否有相同距离的记录，如果有就*2累加到count里(相当于当前找到的点和之前的点的组合以及颠倒后的组合)
+- 放入map,距离为key，value进行累加
+- 把map清空
+- 外层循环结束，返回count
+### 代码
+```java
+class Solution {
+    public int numberOfBoomerangs(int[][] points) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int count = 0;
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j <points.length; j++) {
+                if (i == j) {
+                    continue;
+                }
+
+                int distance = (int)(Math.pow(points[i][0] - points[j][0], 2) + Math.pow(points[i][1] - points[j][1], 2));
+                count += map.getOrDefault(distance, 0) * 2;
+                map.put(distance, map.getOrDefault(distance, 0) + 1);
+            }
+            
+            map.clear();
+        }
+        return count;
+    }
+}
+```
+## 代码优化
+### 思路
+减少map的函数调用，使用临时变量tmp暂存map的value值
+### 代码
+```java
+class Solution {
+    public int numberOfBoomerangs(int[][] points) {
+        Map<Double, Integer> map = new HashMap<>();
+        int count = 0;
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j <points.length; j++) {
+                if (i == j) {
+                    continue;
+                }
+
+                double distance = Math.pow(points[i][0] - points[j][0], 2) + Math.pow(points[i][1] - points[j][1], 2);
+                int tmp = map.getOrDefault(distance, 0);
+                count += tmp * 2;
+                map.put(distance, tmp + 1);
+            }
+
+            map.clear();
+        }
+        return count;
+    }
+}
+```
