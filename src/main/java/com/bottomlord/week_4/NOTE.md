@@ -2145,3 +2145,86 @@ class Solution {
     }
 }
 ```
+# LeetCode_530_二叉搜索树的最小绝对差
+## 题目
+给定一个所有节点为非负值的二叉搜索树，求树中任意两节点的差的绝对值的最小值。
+
+示例 :
+```
+输入:
+
+   1
+    \
+     3
+    /
+   2
+
+输出:
+1
+```
+解释:
+```
+最小绝对差为1，其中 2 和 1 的差的绝对值为 1（或者 2 和 3）。
+注意: 树中至少有2个节点。
+```
+## 解法
+### 思路
+- 通过二叉搜索树的dfs中序遍历得到升序序列的特性，用一个list记录遍历的元素
+- 遍历list获取两元素之间的最小值
+### 代码
+```java
+class Solution {
+    public int getMinimumDifference(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list);
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i < list.size(); i++) {
+            min = Math.min(min, Math.abs(list.get(i) - list.get(i - 1)));
+        }
+        return min;
+    }
+
+    private void dfs(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+
+        dfs(node.left, list);
+        list.add(node.val);
+        dfs(node.right, list);
+    }
+}
+```
+## 解法二
+### 思路
+优化代码，把外层的遍历list的动作放在递归构成中。
+
+需要使用两个对象属性：
+- pre：记录上一个节点的值，初始为null，根节点不需要计算min值
+- min：记录最小值，初始为int最大值
+### 代码
+```java
+class Solution {
+    private Integer pre = Integer.MAX_VALUE;
+    private Integer min = Integer.MAX_VALUE;
+    public int getMinimumDifference(TreeNode root) {
+        dfs(root);
+        return min;
+    }
+
+    private void dfs(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        dfs(node.left);
+
+        if (pre != null) {
+            min = Math.min(min, Math.abs(node.val - pre));
+        }
+
+        pre = node.val;
+        dfs(node.right);
+    }
+}
+```
