@@ -17,8 +17,9 @@ public class LeetCode_1089_2 {
                 fast++;
             }
 
-            if (fast++ >= arr.length) {
+            if (fast >= arr.length) {
                 one = true;
+                slow++;
                 break;
             }
         }
@@ -45,10 +46,5 @@ public class LeetCode_1089_2 {
 
             arr[fast--] = arr[slow];
         }
-    }
-
-    public static void main(String[] args) {
-        LeetCode_1089_2 test = new LeetCode_1089_2();
-        test.duplicateZeros(new int[]{8,4,5,0,0,0,0,7});
     }
 }
