@@ -2040,3 +2040,108 @@ class Solution {
     }
 }
 ```
+# LeetCode_1089_复写零
+## 题目
+给你一个长度固定的整数数组 arr，请你将该数组中出现的每个零都复写一遍，并将其余的元素向右平移。
+
+注意：请不要在超过该数组长度的位置写入元素。
+
+要求：请对输入的数组 就地 进行上述修改，不要从函数返回任何东西。
+
+示例 1：
+```
+输入：[1,0,2,3,0,4,5,0]
+输出：null
+解释：调用函数后，输入的数组将被修改为：[1,0,0,2,3,0,0,4]
+```
+示例 2：
+```
+输入：[1,2,3]
+输出：null
+解释：调用函数后，输入的数组将被修改为：[1,2,3]
+```
+提示：
+```
+1 <= arr.length <= 10000
+0 <= arr[i] <= 9
+```
+## 解法
+### 思路
+- 拷贝原数组
+- 遍历拷贝数组，按题意放置元素到原数组
+- 直到原数组更新完毕
+### 代码
+```java
+class Solution {
+    public void duplicateZeros(int[] arr) {
+        int[] copy = Arrays.copyOf(arr, arr.length);
+        for (int i = 0, j = 0; j < arr.length; i++) {
+            if (copy[i] == 0) {
+                arr[j++] = 0;
+                
+                if (j >= arr.length) {
+                    break;
+                }
+            }
+
+            arr[j++] = copy[i];
+        }
+    }
+}
+```
+## 解法二
+### 思路
+题目希望通过操作指针来原地修改数组，但操作指针的过程中有太多的边界情况需要考虑，不简洁
+- 使用快慢指针来确定新数组的最后元素的下标
+- 需要特别标记如果慢指针指向的是0，那么快指针是在累加的第一次超出边界还是第二次超出边界，因为这关系到原地修改的时候，最后一个元素是0的情况应该怎么处理
+- 如果快漫指针一样就直接返回，说明不需要修改
+- 然后从慢指针-1的位置原地变更这个数组
+
+总之很复杂，错了好多遍，希望能找到更简洁的思路
+### 代码
+```java
+class Solution {
+    public void duplicateZeros(int[] arr) {
+        if (arr == null || arr.length == 0) {
+            return;
+        }
+
+        boolean one = false;
+        int fast = 0, slow = 0;
+        for (; fast < arr.length; slow++, fast++) {
+            if (arr[slow] == 0) {
+                fast++;
+            }
+            
+            if (fast >= arr.length) {
+                one = true;
+                slow++;
+                break;
+            }
+        }
+
+        slow--;
+        fast = arr.length - 1;
+
+        if (fast == slow) {
+            return;
+        }
+
+        for (; slow >= 0; slow--) {
+            if (arr[slow] == 0) {
+                if (one) {
+                    one = false;
+                } else {
+                    arr[fast--] = 0;
+                }
+            }
+
+            if (fast <= 0) {
+                return;
+            }
+
+            arr[fast--] = arr[slow];
+        }
+    }
+}
+```
