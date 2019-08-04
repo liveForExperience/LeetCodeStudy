@@ -2446,3 +2446,59 @@ class Solution {
     }
 }
 ```
+# LeetCode_1029_两地调度
+## 题目
+公司计划面试 2N 人。第 i 人飞往 A 市的费用为 costs[i][0]，飞往 B 市的费用为 costs[i][1]。
+
+返回将每个人都飞到某座城市的最低费用，要求每个城市都有 N 人抵达。
+
+示例：
+```
+输入：[[10,20],[30,200],[400,50],[30,20]]
+输出：110
+解释：
+第一个人去 A 市，费用为 10。
+第二个人去 A 市，费用为 30。
+第三个人去 B 市，费用为 50。
+第四个人去 B 市，费用为 20。
+
+最低总费用为 10 + 30 + 50 + 20 = 110，每个城市都有一半的人在面试。
+```
+提示：
+```
+1 <= costs.length <= 100
+costs.length 为偶数
+1 <= costs[i][0], costs[i][1] <= 1000
+```
+## 解法
+### 思路
+- 让2N个人全去A点
+- 然后再让N个人改成去B点
+- 那么必定会导致费用出现变更，变更可正可负，那么就找到变更最小的的那N个组合去B点就是最优解
+- 遍历数组算出两部分内容
+    - 全去A的总和
+    - AB两地费用的数组
+ - 将AB两地费用数组排序
+ - 遍历排序好的数组并将前N个元素累加到A的总和中
+ - 返回累加值
+### 代码
+```java
+class Solution {
+    public int twoCitySchedCost(int[][] costs) {
+        int ans = 0;
+        int[] arr = new int[costs.length];
+        for (int i = 0; i < costs.length; i++) {
+            int[] cost = costs[i];
+            ans += cost[0];
+            arr[i] = cost[1] - cost[0];
+        }
+
+        Arrays.sort(arr);
+        for (int i = 0; i < arr.length / 2; i++) {
+            ans += arr[i];
+        }
+
+        return ans;
+    }
+}
+```
