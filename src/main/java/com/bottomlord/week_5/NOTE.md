@@ -307,3 +307,114 @@ class Solution {
     }
 }
 ```
+# LeetCode_437_路径总和III
+## 题目
+给定一个二叉树，它的每个结点都存放着一个整数值。
+
+找出路径和等于给定数值的路径总数。
+
+路径不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
+
+二叉树不超过1000个节点，且节点数值范围是 [-1000000,1000000] 的整数。
+
+示例：
+```
+root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
+
+      10
+     /  \
+    5   -3
+   / \    \
+  3   2   11
+ / \   \
+3  -2   1
+
+返回 3。和等于 8 的路径有:
+
+1.  5 -> 3
+2.  5 -> 2 -> 1
+3.  -3 -> 11
+```
+## 解法
+### 思路
+因为路径是向下的，所以使用dfs。
+
+感觉很像653题，从某个节点开始下钻。所以是嵌套的递归。
+- 外层递归每一层的节点，选择从该节点开始内层递归，并判断当前节点是否与sum相等
+- 内层递归从该节点的下钻路径，计算和是否满足要求，满足的话就count++
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int pathSum(TreeNode root, int sum) {
+        if (root == null) {
+            return count;
+        }
+        
+        dfs(root, sum);
+        return count;
+    }
+    
+    private void dfs(TreeNode node, int sum) {
+        if (node == null) {
+            return;
+        }
+        
+        if (node.val == sum) {
+            this.count++;
+        }
+        
+        dfs(node.left, sum);
+        
+        doSearch(node.left, node.val, sum);
+        doSearch(node.right, node.val, sum);
+        
+        dfs(node.right, sum);
+    }
+    
+    private void doSearch(TreeNode node, int sum, int target) {
+        if (node == null) {
+            return;
+        }
+        
+        sum += node.val;
+        
+        if (sum == target) {
+            this.count++;
+        }
+        
+        doSearch(node.left, sum, target);
+        doSearch(node.right, sum, target);
+    }
+}
+```
+## 解法二
+### 思路
+解法一有非常多的重复遍历，效率不高，看到有人分享了dfs+回溯的方法，非常有效。主要思想就是：
+- dfs深度优先的每一次深度搜索过程中，把每一层的累加值记录在一个map中
+- 如果到节点N的累加值为a，那么如果在map中能找到a - sum的key，就说明，从该key所对应的节点开始，到N点的总和就是sum
+- 所以只需要将key对应的value累加，就可以得到结果
+- 但需要注意的是，map里存的必需是一条通路上的节点，所以在return之前需要将节点值key对应的value从map中减去
+### 代码
+```java
+class Solution {
+    public int pathSum(TreeNode root, int sum) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        return dfs(root, sum, 0, map);
+    }
+
+    private int dfs(TreeNode node, int sum, int pathSum, Map<Integer, Integer> map) {
+        if (node == null) {
+            return 0;
+        }
+
+        pathSum += node.val;
+        int count = map.getOrDefault(pathSum - sum, 0);
+        map.put(pathSum, map.getOrDefault(pathSum, 0) + 1);
+        int ans = count + dfs(node.left, sum, pathSum, map) + dfs(node.right, sum, pathSum, map);
+        map.put(pathSum, map.get(pathSum) - 1);
+        return ans;
+    }
+}
+```

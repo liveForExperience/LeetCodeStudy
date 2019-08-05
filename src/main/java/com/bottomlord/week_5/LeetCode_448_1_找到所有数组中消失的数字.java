@@ -31,9 +31,4 @@ public class LeetCode_448_1_找到所有数组中消失的数字 {
 
         return ans;
     }
-
-    public static void main(String[] args) {
-        LeetCode_448_1_找到所有数组中消失的数字 test = new LeetCode_448_1_找到所有数组中消失的数字();
-        test.findDisappearedNumbers(new int[]{10,2,5,10,9,1,1,4,3,7});
-    }
 }
