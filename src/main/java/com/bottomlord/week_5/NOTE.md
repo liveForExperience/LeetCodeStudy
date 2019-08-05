@@ -145,3 +145,116 @@ class Solution {
     }
 }
 ```
+# LeetCode_653_两数之和 IV (输入 BST)
+## 题目
+给定一个二叉搜索树和一个目标结果，如果 BST 中存在两个元素且它们的和等于给定的目标结果，则返回 true。
+
+案例 1:
+```
+输入: 
+    5
+   / \
+  3   6
+ / \   \
+2   4   7
+
+Target = 9
+
+输出: True
+```
+案例 2:
+```
+输入: 
+    5
+   / \
+  3   6
+ / \   \
+2   4   7
+
+Target = 28
+
+输出: False
+```
+## 解法
+### 思路
+- dfs中序递归遍历得到升序序列
+- 迭代寻找是否有满足target的两个值
+### 代码
+```java
+class Solution {
+    public boolean findTarget(TreeNode root, int k) {
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list);
+        
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = i + 1; j < list.size(); j++) {
+                int ans = list.get(i) + list.get(j); 
+                
+                if (ans == k) {
+                    return true;
+                }
+                
+                if (ans > k) {
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private void dfs(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, list);
+        list.add(node.val);
+        dfs(node.right, list);
+    }
+}
+```
+## 解法二
+### 思路
+嵌套递归
+- 第一层递归目的是找到两数相加的第一个数，而是否进入第二层递归的判断依据是，k-当前节点的val是否还等于当前节点的val，如果是说明当前节点不符合要求，因为二叉搜索树的节点不能相等
+- 如果符合要求，就进行第二层递归，目的是从根节点开始找到k与第一层递归的那个节点的val的差，如果有就返回true
+- 如果如果没有找到，就递归取找左右子树，再重复如上的过程
+### 代码
+```java
+class Solution {
+    private TreeNode node;
+    public boolean findTarget(TreeNode root, int k) {
+        if (root == null) {
+            return false;
+        }
+        
+        if (node == null) {
+            node = root;
+        }
+
+        int result = k - root.val;
+        if (root.val == result) {
+            return findTarget(root.left, k) || findTarget(root.right, k);
+        }
+
+        boolean find = dfs(this.node, result);
+        if (find) {
+            return true;
+        }
+
+        return findTarget(root.left, k) || findTarget(root.right, k);
+    }
+
+    private boolean dfs(TreeNode node, int target) {
+        if (node == null) {
+            return false;
+        }
+
+        if (node.val == target) {
+            return true;
+        }
+
+        return node.val > target ? dfs(node.left, target) : dfs(node.right, target);
+    }
+}
+```
