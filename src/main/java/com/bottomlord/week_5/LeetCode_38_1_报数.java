@@ -39,9 +39,4 @@ public class LeetCode_38_1_报数 {
         }
         return pre;
     }
-
-    public static void main(String[] args) {
-        LeetCode_38_1_报数 test = new LeetCode_38_1_报数();
-        test.countAndSay(4);
-    }
 }
