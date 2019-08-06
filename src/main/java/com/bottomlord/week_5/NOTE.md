@@ -455,3 +455,64 @@ class Solution {
     }
 }
 ```
+# LeetCode_286_缺失的数字
+## 题目
+给定一个包含 0, 1, 2, ..., n 中 n 个数的序列，找出 0 .. n 中没有出现在序列中的那个数。
+
+示例 1:
+```
+输入: [3,0,1]
+输出: 2
+示例 2:
+
+输入: [9,6,4,2,3,5,7,0,1]
+输出: 8
+```
+## 解法
+### 思路
+- 遍历数组，求出
+    - 最大值
+    - 累加的和
+    - 最小值
+- 查看最小值
+    - 如果最小值不为0，返回0
+    - 如果最小值为0，计算1到最大值的累加和与sum的差
+        - 如果为0，返回max+1
+        - 如果不为0，返回差
+### 代码
+```java
+class Solution {
+    public int missingNumber(int[] nums) {
+        int max = 0, min = nums.length, sum = 0;
+        for (int num : nums) {
+            min = Math.min(num, min);
+            max = Math.max(num, max);
+            sum += num;
+        }
+
+        if (min != 0) {
+            return 0;
+        }
+        
+        int orign = max * (max + 1) / 2;
+        return orign != sum ? orign - sum : max + 1;
+    }
+}
+```
+## 解法二
+### 思路
+- 使用异或两次一样的值，数不变的特性
+- 将下标和元素异或的值，再异或到初始的数组长度(也就是数组应该是的最大值上)
+- 遍历结束，返回那个变量即可
+### 代码
+```java
+class Solution {
+    public int missingNumber(int[] nums) {
+        int ans = nums.length;
+        for (int i = 0; i < nums.length; i++) {
+            ans ^= i ^ nums[i];
+        }
+        return ans;
+    }
+}
+```
