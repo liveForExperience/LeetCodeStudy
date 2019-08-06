@@ -516,3 +516,74 @@ class Solution {
     }
 }
 ```
+# LeetCode_38_报数
+## 题目
+报数序列是一个整数序列，按照其中的整数的顺序进行报数，得到下一个数。其前五项如下：
+```
+1.     1
+2.     11
+3.     21
+4.     1211
+5.     111221
+1 被读作  "one 1"  ("一个一") , 即 11。
+11 被读作 "two 1s" ("两个一"）, 即 21。
+21 被读作 "one 2",  "one 1" （"一个二" ,  "一个一") , 即 1211。
+
+给定一个正整数 n（1 ≤ n ≤ 30），输出报数序列的第 n 项。
+
+注意：整数顺序将表示为一个字符串。
+```
+示例 1:
+```
+输入: 1
+输出: "1"
+示例 2:
+
+输入: 4
+输出: "1211"
+```
+## 解法一
+### 思路
+用一个变量记录上一个字符串的内容，方便对该字符串做处理，遍历字符数组，对字符进行计数
+- 准备2个变量：
+    - 当前出现的字符
+    - 字符未变化时持续出现的次数
+- 在字符变化的时候，将该字符为变化过程中出现的次数和字符append到StringBuilder中
+- 在字符未变化的时候，将长度累加
+### 代码
+```java
+class Solution {
+    public String countAndSay(int n) {
+        if (n == 1) {
+            return "1";
+        }
+
+        if (n == 2) {
+            return "11";
+        }
+        
+        String pre = "11";
+        while (n-- > 2) {
+            char[] cs = pre.toCharArray();
+
+            StringBuilder sb = new StringBuilder();
+            char preC = cs[0];
+            int len = 1;
+            
+            for (int i = 1; i < cs.length; i++) {
+                if (preC == cs[i]) {
+                    len++;
+                } else {
+                    sb.append(len).append(preC);
+                    preC = cs[i];
+                    len = 1;
+                }
+            }
+
+            sb.append(len).append(preC);
+            pre = sb.toString();
+        }
+        return pre;
+    }
+}
+```
