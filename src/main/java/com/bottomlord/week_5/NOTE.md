@@ -771,3 +771,73 @@ class Solution {
     }
 }
 ```
+# LeetCode_404_左叶子之和
+## 题目
+计算给定二叉树的所有左叶子之和。
+
+示例：
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+
+在这个二叉树中，有两个左叶子，分别是 9 和 15，所以返回 24
+```
+## 解法
+### 思路
+dfs递归
+### 代码
+```java
+class Solution {
+    private int sum = 0;
+    public int sumOfLeftLeaves(TreeNode root) {
+        dfs(root, false);
+        return sum;
+    }
+    
+    private void dfs(TreeNode node, boolean isLeft) {
+        if (node == null) {
+            return;
+        }
+        
+        if (node.left == null && node.right == null) {
+            if (isLeft) {
+                sum += node.val;
+            }
+            return;
+        }
+        
+        dfs(node.left, true);
+        dfs(node.right, false);
+    }
+}
+```
+## 优化代码
+### 思路
+不使用类变量
+### 代码
+```java
+class Solution {
+    public int sumOfLeftLeaves(TreeNode root) {
+        return dfs(root, false);
+    }
+    
+    private int dfs(TreeNode node, boolean isLeft) {
+        if (node == null) {
+            return 0;
+        }
+        
+        if (node.left == null && node.right == null) {
+            if (isLeft) {
+                return node.val;
+            }
+            
+            return 0;
+        }
+        
+        return dfs(node.left, true) + dfs(node.right, false);
+    }
+}
+```
