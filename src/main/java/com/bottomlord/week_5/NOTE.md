@@ -841,3 +841,54 @@ class Solution {
     }
 }
 ```
+# LeetCode_506_相对名词
+## 题目
+给出 N 名运动员的成绩，找出他们的相对名次并授予前三名对应的奖牌。前三名运动员将会被分别授予 “金牌”，“银牌” 和“ 铜牌”（"Gold Medal", "Silver Medal", "Bronze Medal"）。
+
+(注：分数越高的选手，排名越靠前。)
+
+示例 1:
+```
+输入: [5, 4, 3, 2, 1]
+输出: ["Gold Medal", "Silver Medal", "Bronze Medal", "4", "5"]
+解释: 前三名运动员的成绩为前三高的，因此将会分别被授予 “金牌”，“银牌”和“铜牌” ("Gold Medal", "Silver Medal" and "Bronze Medal").
+余下的两名运动员，我们只需要通过他们的成绩计算将其相对名次即可。
+```
+提示:
+```
+N 是一个正整数并且不会超过 10000。
+所有运动员的成绩都不相同。
+```
+## 解法
+### 思路
+空间换时间
+- 遍历数组，找到最大值，创建新的数组用来作为桶
+- 再次遍历数组，把num放在桶中，桶的下标是元素值，桶的值对应它的下标
+- 然后从桶的最大处向前遍历，并计数count作为名次。名次1、2、3做一次转义。
+- 把名次放入ans数组中，ans的下标对应桶的元素，值为count
+### 代码
+```java
+class Solution {
+    public String[] findRelativeRanks(int[] nums) {
+        String[] ans = new String[nums.length];
+        int max = 0;
+        for (int num: nums) {
+            max = Math.max(num, max);
+        }
+
+        Integer[] bucket = new Integer[max + 1];
+        for (int i = 0; i < nums.length; i++) {
+            bucket[nums[i]] = i;
+        }
+
+        int count = 0;
+        for (int i = bucket.length - 1; i >= 0; i--) {
+            if (bucket[i] != null) {
+                count++;
+                ans[bucket[i]] = count > 3 ? "" + count : count == 1 ? "Gold Medal" : count == 2 ? "Silver Medal" : "Bronze Medal";
+            }
+        }
+        return ans;
+    }
+}
+```
