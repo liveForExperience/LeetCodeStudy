@@ -892,3 +892,120 @@ class Solution {
     }
 }
 ```
+# LeetCode_606_根据二叉树创建字符串
+## 题目
+你需要采用前序遍历的方式，将一个二叉树转换成一个由括号和整数组成的字符串。
+
+空节点则用一对空括号 "()" 表示。而且你需要省略所有不影响字符串与原始二叉树之间的一对一映射关系的空括号对。
+
+示例 1:
+```
+输入: 二叉树: [1,2,3,4]
+       1
+     /   \
+    2     3
+   /    
+  4     
+
+输出: "1(2(4))(3)"
+
+解释: 原本将是“1(2(4)())(3())”，
+在你省略所有不必要的空括号对之后，
+它将是“1(2(4))(3)”。
+```
+示例 2:
+```
+输入: 二叉树: [1,2,3,null,4]
+       1
+     /   \
+    2     3
+     \  
+      4 
+
+输出: "1(2()(4))(3)"
+
+解释: 和第一个示例相似，
+除了我们不能省略第一个对括号来中断输入和输出之间的一对一映射关系。
+```
+## 解法
+### 思路
+- dfs前序遍历二叉树，需要注意的是如果左子树如果为空，要加括号。
+- 递归函数中带上一个队列
+    1. 先压入当前节点的val
+    2. 如果是叶子节点就直接返回
+    3. 在递归左子树的时候就先压入一个左括号，返回的时候就压入一个右括号。
+    4. 判断右子树是否为空，如果不为空也和左子树一样，否则就不下钻
+- 递归结束后，就循环队列append到StringBuilder上，之后返回toString
+### 代码
+```java
+class Solution {
+    public String tree2str(TreeNode t) {
+        Queue<String> queue = new ArrayDeque<>();
+        dfs(t, queue);
+
+        StringBuilder sb = new StringBuilder();
+        while (!queue.isEmpty()) {
+            sb.append(queue.poll());
+        }
+
+        return sb.toString();
+    }
+
+    private void dfs(TreeNode node, Queue<String> stack) {
+        if (node == null) {
+            return;
+        }
+
+        stack.offer("" + node.val);
+        
+        if (node.left == null && node.right == null) {
+            return;
+        }
+        
+        stack.offer("(");
+        dfs(node.left, stack);
+        stack.offer(")");
+        
+        if (node.right != null) {
+            stack.offer("(");
+            dfs(node.right, stack);
+            stack.offer(")");    
+        }
+    }
+}
+```
+## 解法二
+### 思路
+直接使用StringBuilder来记录，少一次遍历
+### 代码
+```java
+class Solution {
+    public String tree2str(TreeNode t) {
+        StringBuilder sb = new StringBuilder();
+        dfs(t, sb);
+        return sb.toString();
+    }
+    
+    private void dfs(TreeNode node, StringBuilder sb) {
+        if (node == null) {
+            return;
+        }
+        
+        sb.append(node.val);
+        
+        if (node.left == null && node.right == null) {
+            return;
+        }
+        
+        sb.append("(");
+        dfs(node.left, sb);
+        sb.append(")");
+        
+        if (node.right != null) {
+            sb.append("(");
+            dfs(node.right, sb);
+            sb.append(")");
+        }
+    }
+}
+```
