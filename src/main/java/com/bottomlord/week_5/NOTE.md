@@ -1182,3 +1182,38 @@ class Solution {
     }
 }
 ```
+# LeetCode_704_二分查找
+## 题目
+
+## 解法
+### 思路
+- 设置头尾指针进入循环，推出条件是头指针大于尾指针
+- 通过中位数下标mid对应的中位数num来判断是否与target相等，如果是就返回mid
+- 如果不是，就通过num来判断指针的变化
+    - 如果num小于target，说明找的数在当前中位数的右边，头指针变为mid + 1
+    - 如果num大于target，说明找的数在当前中位数的左边，尾指针变为mid - 1
+- 如果没有找到，就返回-1
+### 代码
+```java
+class Solution {
+    public int search(int[] nums, int target) {
+        int head = 0, tail = nums.length - 1;
+        while (head <= tail) {
+            int mid = (tail - head) / 2 + head;
+
+            int num = nums[mid];
+
+            if (num == target) {
+                return mid;
+            }
+
+            if (num > target) {
+                tail = mid - 1;
+            } else {
+                head = mid + 1;
+            }
+        }
+        return -1;
+    }
+}
+```
