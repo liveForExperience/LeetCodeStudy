@@ -1217,3 +1217,70 @@ class Solution {
     }
 }
 ```
+# LeetCode_937_重新排列日志文件
+## 题目
+你有一个日志数组 logs。每条日志都是以空格分隔的字串。
+
+对于每条日志，其第一个字为字母数字标识符。然后，要么：
+```
+标识符后面的每个字将仅由小写字母组成，或；
+标识符后面的每个字将仅由数字组成。
+我们将这两种日志分别称为字母日志和数字日志。保证每个日志在其标识符后面至少有一个字。
+```
+将日志重新排序，使得所有字母日志都排在数字日志之前。字母日志按内容字母顺序排序，忽略标识符；在内容相同时，按标识符排序。数字日志应该按原来的顺序排列。
+
+返回日志的最终顺序。
+
+示例 ：
+```
+输入：["a1 9 2 3 1","g1 act car","zo4 4 7","ab1 off key dog","a8 act zoo"]
+输出：["g1 act car","a8 act zoo","ab1 off key dog","a1 9 2 3 1","zo4 4 7"]
+```
+提示：
+```
+0 <= logs.length <= 100
+3 <= logs[i].length <= 100
+logs[i] 保证有一个标识符，并且标识符后面有一个字。
+```
+## 解法一
+### 思路
+自定义Arrays.sort方法
+- 把字符通过第一个空格分成两部分
+    - 标识符
+    - 其余
+- 通过取余部分的第一个字符判断是数字的还是字母的
+- 然后按照如下的规则顺序排序
+    - 字母优先于数字
+    - 其余部分相同，根据标识符排序
+    - 数字部分就按原顺序
+### 代码
+```java
+class Solution {
+    public String[] reorderLogFiles(String[] logs) {
+        Arrays.sort(logs, (a, b) -> {
+            String[] splitA = a.split(" ", 2);
+            String[] splitB = b.split(" ", 2);
+
+            boolean isDigitA = Character.isDigit(splitA[1].charAt(0));
+            boolean isDigitB = Character.isDigit(splitB[1].charAt(0));
+
+            if (!isDigitA && !isDigitB) {
+                int diff = splitA[1].compareTo(splitB[1]);
+                return diff != 0 ? diff : splitA[0].compareTo(splitB[0]);
+            }
+
+            return isDigitA ? (isDigitB ? 0 : 1) : -1;
+        });
+        return logs;
+    }
+}
+```
+## 解法二
+### 思路
+- 将字符串按照数字和字母分别放入两个list中
+- 对放字母的list做排序，排序规则和解法一一致，只不过不使用String的方法而是使用字符下标
+- 然后先遍历字母list再遍历数字list，放入logs中，并返回
+### 代码
+```java
+
+```
