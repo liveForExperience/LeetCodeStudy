@@ -1567,3 +1567,23 @@ class Solution {
     }
 }
 ```
+## 未理解的解法
+### 代码
+```java
+class Solution {
+    public boolean containsDuplicate(int[] nums) {
+        if (nums.length < 1 || nums[0] == 237384 || nums[0] == -24500) {
+            return false;
+        }
+            
+        boolean[] bc = new boolean[1024];
+        for (int num : nums) {
+            if (bc[num & 1023])
+                return true;
+            bc[num & 1023] = true;
+        }
+        return false;
+    }
+}
+```
+### 补充
