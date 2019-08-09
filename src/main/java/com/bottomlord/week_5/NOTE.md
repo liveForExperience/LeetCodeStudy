@@ -1460,5 +1460,110 @@ class Solution {
 通过头尾指针来找，时间复杂度上是O(N)，比解法二O(NlogN)更快。
 ### 代码
 ```java
+class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        int head = 0, tail = numbers.length - 1;
+        while (head < tail) {
+            int sum = numbers[head] + numbers[tail];
+            if (sum == target) {
+                return new int[]{head + 1, tail + 1};
+            }
 
+            if (sum < target) {
+                head++;
+            } else {
+                tail--;
+            }
+        }
+        return new int[0];
+    }
+}
+```
+# LeetCode_217_存在重复元素
+## 题目
+如果任何值在数组中出现至少两次，函数返回 true。如果数组中每个元素都不相同，则返回 false。
+
+示例 1:
+```
+输入: [1,2,3,1]
+输出: true
+```
+示例 2:
+```
+输入: [1,2,3,4]
+输出: false
+```
+示例 3:
+```
+输入: [1,1,1,3,3,4,3,2,4,2]
+输出: true
+```
+## 解法一
+### 思路
+遍历数组，使用set来做判断
+### 代码
+```java
+class Solution {
+    public boolean containsDuplicate(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int num: nums) {
+            if (set.contains(num)) {
+                return true;
+            }
+            set.add(num);
+        }
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+不使用hash表，使用桶，两次for循环，时间复杂度是O(N)，和解法一一样，但是少了对hash表的操作，时间会快一些。
+### 代码
+```java
+class Solution {
+    public boolean containsDuplicate(int[] nums) {
+        if (nums.length == 0) {
+            return false;
+        }
+
+        int min = nums[0] , max = min;
+        for (int i = 1; i < nums.length; i++) {
+            int num = nums[i];
+            if (num < min) {
+                min = num;
+            } else if (num > max) {
+                max = num;
+            }
+        }
+
+        boolean[] bucket = new boolean[max - min + 1];
+
+        for (int num: nums) {
+            if (bucket[num - min]) {
+                return true;
+            }
+            bucket[num - min] = true;
+        }
+        
+        return false;
+    }
+}
+```
+## 解法三
+### 思路
+- 排序
+- 遍历数组
+- 检查和后一个元素是否相等
+### 代码
+```java
+class Solution {
+    public boolean containsDuplicate(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 1; ++i) {
+            if (nums[i] == nums[i + 1]) return true;
+        }
+        return false;
+    }
+}
 ```
