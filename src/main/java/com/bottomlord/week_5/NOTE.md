@@ -1282,5 +1282,95 @@ class Solution {
 - 然后先遍历字母list再遍历数字list，放入logs中，并返回
 ### 代码
 ```java
+class Solution {
+    public String[] reorderLogFiles(String[] logs) {
+       List<String> alph = new ArrayList<>();
+        List<String> num = new ArrayList<>();
+        for (String log: logs) {
+            int i = 0;
+            while (log.charAt(i++) != ' ');
+            if (Character.isDigit(log.charAt(i))) {
+                num.add(log);
+            } else {
+                alph.add(log);
+            }
+        }
 
+        alph.sort((a, b) -> {
+            int i = 0, j = 0;
+            while (a.charAt(i++) != ' ') ;
+            while (b.charAt(j++) != ' ') ;
+
+            int diff = a.substring(i).compareTo(b.substring(j));
+            return diff != 0 ? diff : a.substring(0, i - 1).compareTo(b.substring(0, j - 1));
+        });
+        
+        int i = 0;
+        for (String log: alph) {
+            logs[i++] = log;
+        }
+        for (String log: num) {
+            logs[i++] = log;
+        }
+        
+        return logs;
+    }
+}
+```
+# LeetCode_67_二进制的求和
+## 题目
+给定两个二进制字符串，返回他们的和（用二进制表示）。
+
+输入为非空字符串且只包含数字 1 和 0。
+
+示例 1:
+```
+输入: a = "11", b = "1"
+输出: "100"
+```
+示例 2:
+```
+输入: a = "1010", b = "1011"
+输出: "10101"
+```
+## 解法
+### 思路
+模拟二进制的相加过程，需要考虑进位的状况。
+- 遍历两个字符数组，获得相同位上的值，相加
+- 再加上上一位的进位值
+- 获得的值与1做与运算，获得当前位的值，append到sb上
+- 然后右移位后再与1做与运算，作为下一次循环的进位值
+- 当两个字符数组都遍历结束，返回sb的字符串
+### 代码
+```java
+class Solution {
+    public String addBinary(String a, String b) {
+        StringBuilder sb = new StringBuilder();
+
+        int iA = a.length() - 1;
+        int iB = b.length() - 1;
+
+        int carry = 0;
+        
+        while (iA > -1 || iB > -1) {
+            int aBit = iA > -1 ? a.charAt(iA) - '0' : 0;
+            int bBit = iB > -1 ? b.charAt(iB) - '0' : 0;
+
+            int sum = aBit + bBit + carry;
+            
+            sb.insert(0, sum & 1);
+            
+            carry = (sum >>> 1) & 1;
+            
+            iA--;
+            iB--;
+        }
+        
+        if (carry == 1) {
+            sb.insert(0, carry);
+        }
+        
+        return sb.toString();
+    }
+}
 ```
