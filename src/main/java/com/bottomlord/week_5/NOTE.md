@@ -1587,3 +1587,90 @@ class Solution {
 }
 ```
 ### 补充
+# LeetCode_155_最小栈
+## 题目
+设计一个支持 push，pop，top 操作，并能在常数时间内检索到最小元素的栈。
+```
+push(x) -- 将元素 x 推入栈中。
+pop() -- 删除栈顶的元素。
+top() -- 获取栈顶元素。
+getMin() -- 检索栈中的最小元素。
+```
+示例:
+```
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin();   --> 返回 -3.
+minStack.pop();
+minStack.top();      --> 返回 0.
+minStack.getMin();   --> 返回 -2.
+```
+## 失败解法
+### 思路
+- stack实现push、pop、top的功能
+- queue实现getMin的功能
+
+但超出了时间限制
+### 代码
+```java
+class MinStack {
+    private Stack<Integer> stack;
+    private Queue<Integer> queue;
+    public MinStack() {
+        this.stack = new Stack<>();
+        this.queue = new ArrayDeque<>();
+    }
+
+    public void push(int x) {
+        this.queue.offer(x);
+        if (x < this.queue.peek()) {
+            while (this.queue.peek() != x) {
+                this.queue.offer(this.queue.poll());
+            }
+        }
+
+        this.stack.push(x);
+    }
+
+    public void pop() {
+        if (!stack.isEmpty()) {
+            int num = this.stack.pop();
+            int min = queue.peek();
+            while (queue.peek() != num) {
+                this.queue.offer(this.queue.poll());
+            }
+            this.queue.poll();
+
+            if (queue.isEmpty()) {
+                return;
+            }
+
+            while (queue.peek() != min) {
+                this.queue.offer(this.queue.poll());
+            }
+        }
+    }
+
+    public int top() {
+        return this.stack.peek();
+    }
+
+    public int getMin() {
+        return this.queue.peek();
+    }
+}
+```
+## 解法一
+### 思路
+- 一个变量存的是最小值min
+- 一个stack存的是和上一个最小值之间的差值，通过这个差值就能得出
+    - 如果差值是正数，说明min在这个元素push的时候没有变化，在top的时候通过min+diff可以得到这个元素的值
+    - 如果差值是0，说明这个元素和最小值一样大，在pop的时候不需要对min改变
+    - 如果差值是负数，说明当前元素比上一个min要小，pop的时候min是需要变成上一个min的
+- 还要注意int的溢出，所以泛型使用long，返回时还要使用Math.toIntExact方法
+### 代码
+```java
+
+```
