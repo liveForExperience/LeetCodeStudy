@@ -1672,5 +1672,133 @@ class MinStack {
 - 还要注意int的溢出，所以泛型使用long，返回时还要使用Math.toIntExact方法
 ### 代码
 ```java
+class MinStack {
+    private Stack<Long> stack;
+    private Long min;
+    public MinStack() {
+        this.stack = new Stack<>();
+    }
 
+    public void push(int x) {
+        if (this.stack.isEmpty()) {
+            this.stack.push(0L);
+            this.min = (long)x;
+        } else {
+            this.stack.push((long)x - min);
+            if (x < min) {
+                this.min = (long)x;
+            }
+        }
+    }
+
+    public void pop() {
+        if (this.stack.isEmpty()) {
+            return;
+        }
+
+        long diff = this.stack.pop();
+        if (diff < 0) {
+            this.min -= diff;
+        }
+    }
+
+    public int top() {
+        Long diff = this.stack.peek();
+        if (diff < 0) {
+            return Math.toIntExact(min);
+        }
+        return Math.toIntExact(min + diff);
+    }
+
+    public int getMin() {
+        return Math.toIntExact(this.min);
+    }
+}
+```
+# LeetCode_409_最长回文串
+## 题目
+给定一个包含大写字母和小写字母的字符串，找到通过这些字母构造成的最长的回文串。
+
+在构造过程中，请注意区分大小写。比如 "Aa" 不能当做一个回文字符串。
+
+注意:
+```
+假设字符串的长度不会超过 1010。
+```
+示例 1:
+```
+输入:
+"abccccdd"
+
+输出:
+7
+```
+解释:
+```
+我们可以构造的最长的回文串是"dccaccd", 它的长度是 7。
+```
+## 解法
+### 思路
+算字符的个数，然后求它们的偶数对，如果有任意字符是奇数个就再+1
+### 代码
+```java
+class Solution {
+    public int longestPalindrome(String s) {
+        int[] bucket = new int[52];
+        for (char c: s.toCharArray()) {
+            int index;
+            if (c >= 'a') {
+                index = c - 'a';
+            } else {
+                index = c - 'A' + 26;
+            }
+            bucket[index] += 1;
+        }
+        
+        boolean odd = false;
+        int len = 0;
+        for (int num : bucket) {
+            if (num == 0) {
+                continue;
+            }
+            
+            if (num % 2 == 0) {
+                len += num;
+            } else {
+                len += num - 1;
+                
+                if (!odd) {
+                    len++;
+                    odd = true;
+                }
+            }
+        }
+        return len;
+    }
+}
+```
+## 优化代码
+### 思路
+- 不要做那么多判断大小写，就用128长度的数组
+- 也不要用标识来判断是否加过一个奇数，直接判断len是否是偶数，如果是，且有一个字符的个数是奇数，就len++
+### 代码
+```java
+class Solution {
+    public int longestPalindrome(String s) {
+        int[] bucket = new int[128];
+        for (char c : s.toCharArray()) {
+            bucket[c]++;
+        }
+
+        int len = 0;
+        for (int num : bucket) {
+            len += num / 2 * 2;
+            if (num % 2 == 1 && len % 2 == 0) {
+                len++;
+            }
+        }
+
+        return len;
+    }
+}
 ```
