@@ -1859,10 +1859,85 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-不要是类变成有状态的，可以进行两次递归
-- 第一次递归帮节点值变成左右子树节点和的差
-- 第二次遍历，帮这些差合起来，在根节点时，就把所有第一次处理过的节点都累加起来了
+不要将类变成有状态的，可以进行两次递归
+- 第一次递归将节点值变成左右子树节点和的差
+- 第二次遍历，将这些差合起来，在根节点时，就把所有第一次处理过的节点都累加起来了
 ### 代码
 ```java
+class Solution {
+    public int findTilt(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        dfs(root);
+        return dfs(root);
+    }
 
+    private int dfs(TreeNode node) {
+        int leftSum = node.left == null ? 0 : dfs(node.left);
+        int rightSum = node.right == null ? 0 : dfs(node.right);
+        
+        int val = node.val;
+        node.val = Math.abs(leftSum - rightSum);
+        
+        return leftSum + rightSum + val; 
+    }
+}
+```
+# LeetCode_917_仅仅反转字母
+## 题目
+给定一个字符串 S，返回 “反转后的” 字符串，其中不是字母的字符都保留在原地，而所有字母的位置发生反转。
+
+示例 1：
+```
+输入："ab-cd"
+输出："dc-ba"
+```
+示例 2：
+```
+输入："a-bC-dEf-ghIj"
+输出："j-Ih-gfE-dCba"
+```
+示例 3：
+```
+输入："Test1ng-Leet=code-Q!"
+输出："Qedo1ct-eeLg=ntse-T!"
+```
+提示：
+```
+S.length <= 100
+33 <= S[i].ASCIIcode <= 122 
+S 中不包含 \ or "
+```
+## 解法
+### 思路
+- 头尾指针遍历
+- 判断字符是否为字母
+- 异或运算换位置
+### 代码
+```java
+class Solution {
+    public String reverseOnlyLetters(String S) {
+        char[] cs = S.toCharArray();
+        int head = 0, tail = cs.length - 1;
+        while (head < tail) {
+            if (Character.isLetter(cs[head]) && Character.isLetter(cs[tail])) {
+                cs[head] ^= cs[tail];
+                cs[tail] ^= cs[head];
+                cs[head] ^= cs[tail];
+
+                head++;
+                tail--;
+                continue;
+            }
+
+            if (Character.isLetter(cs[head])) {
+                tail--;
+            } else {
+                head++;
+            }
+        }
+        return new String(cs);
+    }
+}
 ```
