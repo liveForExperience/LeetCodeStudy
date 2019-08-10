@@ -1981,7 +1981,7 @@ m 和 n 的范围是 [1,40000]。
 a 的范围是 [1,m]，b 的范围是 [1,n]。
 操作数目不超过 10000。
 ```
-## 解法一
+## 解法
 ### 思路
 - 求ops中长度为2的数组中两个位置的元素，出现过的最小值，将这两个最小值相乘，就得到了累加次数最多的个数。
 - 如果数组长度为0，就直接返回m * n的值
@@ -2001,6 +2001,45 @@ class Solution {
         }
         
         return x * y;
+    }
+}
+```
+# LeetCode_383_赎金信
+## 题目
+给定一个赎金信 (ransom) 字符串和一个杂志(magazine)字符串，判断第一个字符串ransom能不能由第二个字符串magazines里面的字符构成。如果可以构成，返回 true ；否则返回 false。
+
+(题目说明：为了不暴露赎金信字迹，要从杂志上搜索各个需要的字母，组成单词来表达意思。)
+
+注意：
+```
+你可以假设两个字符串均只含有小写字母。
+
+canConstruct("a", "b") -> false
+canConstruct("aa", "ab") -> false
+canConstruct("aa", "aab") -> true
+```
+## 解法
+### 思路
+- 把magazine字符数组遍历生成一个桶来计算字符的数量
+- 遍历ransomNote字符串来递减桶中指定字符的数量，如果字符对应的元素数量小于0，就返回false
+### 代码
+```java
+class Solution {
+    public boolean canConstruct(String ransomNote, String magazine) {
+        int[] bucket = new int[128];
+        for (char c : magazine.toCharArray()) {
+            bucket[c]++;
+        }
+        
+        for (char c : ransomNote.toCharArray()) {
+            if (bucket[c] == 0) {
+                return false;
+            }
+            
+            bucket[c]--;
+        }
+        
+        return true;
     }
 }
 ```
