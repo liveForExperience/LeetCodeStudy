@@ -2043,3 +2043,112 @@ class Solution {
     }
 }
 ```
+# LeetCode_110_平衡二叉树
+## 题目
+给定一个二叉树，判断它是否是高度平衡的二叉树。
+
+本题中，一棵高度平衡二叉树定义为：
+
+一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过1。
+
+示例 1:
+```
+给定二叉树 [3,9,20,null,null,15,7]
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回 true 。
+```
+示例 2:
+```
+给定二叉树 [1,2,2,3,3,null,null,4,4]
+
+       1
+      / \
+     2   2
+    / \
+   3   3
+  / \
+ 4   4
+返回 false 。
+```
+## 解法一
+### 思路
+dfs
+- 函数参数：
+    - 遍历的节点node
+    - 节点所在的层数level
+- 退出：节点为空，返回level - 1
+- 过程：下钻并获得左右子树的level值，比较它们的差是否大于1，与类变量进行与运算
+- 返回：返回当前层的左右子树的最大层数
+- 最后返回类变量result
+### 代码
+```java
+class Solution {
+    private boolean result = true;
+    public boolean isBalanced(TreeNode root) {
+        dfs(root, 0);
+        return result;
+    }
+
+    private int dfs(TreeNode node, int level) {
+        if (node == null) {
+            return level - 1;
+        }
+
+        int left = dfs(node.left, level + 1);
+        int right = dfs(node.right, level + 1);
+
+        this.result = this.result && Math.abs(left - right) <= 1;
+
+        return Math.max(left, right);
+    }
+}
+```
+## 解法二
+### 思路
+不使用类变量，逻辑和解法一近似，只是如果比对left和right的差值时，如果绝对值超过1，就返回-1，这样最后通过辨别是否返回-1，来确定是否平衡
+### 代码
+```java
+class Solution {
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        
+        return dfs(root, 0) != -1;
+    }
+    
+    private int dfs(TreeNode node, int level) {
+        if (node == null) {
+            return level - 1;
+        }
+        
+        int left = dfs(node.left, level + 1);
+        int right = dfs(node.right, level + 1);
+        
+        if (left == -1 || right == -1) {
+            return -1;
+        }
+        
+        if (Math.abs(left - right) > 1) {
+            return -1;
+        }
+        
+        return Math.max(left, right);
+    }
+}
+```
+## 优化代码
+### 思路
+解法二是从顶部开始计算深度，这样多了一个level参数，而且root为null的情况也需要特别处理，如果从底部开始算深度，那么就可以使代码更简单，不需要传递level值，root为null也可以统一处理。
+- 退出条件中，node为null就返回0，代表当前层数无效
+- 处理逻辑和解法二一致
+- 返回中需要累加1，意味着从底部开始计算深度
+### 代码
+```java
+
+```
