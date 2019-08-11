@@ -2563,5 +2563,81 @@ class Solution {
 减少判断的逻辑，根据单调递增和单调递减的条件一次判断数组
 ### 代码
 ```java
+class Solution {
+    public boolean isMonotonic(int[] A) {
+        int len = A.length;
+        int i = 0, j = 0;
+        
+        while (i + 1 < len && A[i] <= A[i + 1]) {
+            i++;
+        }
+        
+        if (i == len - 1) {
+            return true;
+        }
 
+        while (j + 1 < len && A[j] >= A[j + 1]) {
+            j++;
+        }
+        
+        if (j == len - 1) {
+            return true;
+        }
+        
+        return false;
+    }
+}
+```
+# LeetCode_401_二进制手表
+## 题目
+二进制手表顶部有 4 个 LED 代表小时（0-11），底部的 6 个 LED 代表分钟（0-59）。
+
+每个 LED 代表一个 0 或 1，最低位在右侧。
+
+例如，上面的二进制手表读取 “3:25”。
+
+给定一个非负整数 n 代表当前 LED 亮着的数量，返回所有可能的时间。
+
+案例:
+```
+输入: n = 1
+返回: ["1:00", "2:00", "4:00", "8:00", "0:01", "0:02", "0:04", "0:08", "0:16", "0:32"]
+```
+注意事项:
+```
+输出的顺序没有要求。
+小时不会以零开头，比如 “01:00” 是不允许的，应为 “1:00”。
+分钟必须由两位数组成，可能会以零开头，比如 “10:2” 是无效的，应为 “10:02”。
+```
+## 解法
+### 思路
+- 使用位运算中 x = x & (x - 1)可以消去最低位的1的特性，计算0-59的1的个数
+- 嵌套循环计算小时和分钟的1的个数是否与num相等
+### 代码
+```java
+class Solution {
+    public List<String> readBinaryWatch(int num) {
+        List<String> ans = new ArrayList<>();
+        Map<Integer, Integer> map = new HashMap<>(60);
+        map.put(0, 0);
+        for (int i = 1; i < 60; i++) {
+            int count = 1, j = i;
+            while ((j &= (j - 1)) != 0) {
+                count++;
+            }
+            map.put(i, count);
+        }
+
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 60; j++) {
+                if (map.get(i) + map.get(j) == num) {
+                    String min = j < 10 ? "0" + j : "" + j;
+                    ans.add("" + i + ":" + min);
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
