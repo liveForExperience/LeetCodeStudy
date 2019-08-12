@@ -154,3 +154,82 @@ class Solution {
     }
 }
 ```
+# LeetCode_492_构造矩形
+## 题目
+作为一位web开发者， 懂得怎样去规划一个页面的尺寸是很重要的。 现给定一个具体的矩形页面面积，你的任务是设计一个长度为 L 和宽度为 W 且满足以下要求的矩形的页面。要求：
+```
+1. 你设计的矩形页面必须等于给定的目标面积。
+
+2. 宽度 W 不应大于长度 L，换言之，要求 L >= W 。
+
+3. 长度 L 和宽度 W 之间的差距应当尽可能小。
+你需要按顺序输出你设计的页面的长度 L 和宽度 W。
+```
+示例：
+```
+输入: 4
+输出: [2, 2]
+解释: 目标面积是 4， 所有可能的构造方案有 [1,4], [2,2], [4,1]。
+但是根据要求2，[1,4] 不符合要求; 根据要求3，[2,2] 比 [4,1] 更能符合要求. 所以输出长度 L 为 2， 宽度 W 为 2。
+```
+说明:
+```
+给定的面积不大于 10,000,000 且为正整数。
+你设计的页面的长度和宽度必须都是正整数。
+```
+## 失败解法
+### 思路
+- 对area开根号，并对结果向下取整得到num
+- 如果num与开根号的值相等，就返回这个值
+- 否则就嵌套循环遍历
+    - 外层是从1到num
+    - 内层是从area到num
+- 并且优化一下遍历的范围，如果发现成绩小于area了，就终止内层循环，进入下一个外层循环    
+
+但是超出了时间限制
+### 代码
+```java
+class Solution {
+    public int[] constructRectangle(int area) {
+        double squareRoot = Math.sqrt(area);
+        int num = (int)squareRoot;
+        if ((double)num == squareRoot) {
+            return new int[]{num, num};
+        }
+        
+        int min = Integer.MAX_VALUE;
+        int[] ans = new int[2];
+        for (int i = 1; i <= num; i++) {
+            for (int j = area; j > num; j--) {
+                if (i * j < area) {
+                    break;
+                }
+                
+                if (i * j == area && j - i < min) {
+                    min = j - i;
+                    ans[0] = j;
+                    ans[1] = i;
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+失败的解法太蠢，直接求出平方根向下取整以后，如果不满足，那么不需要嵌套循环，只要递减或递增求出其中一个因数就可以了呀，判断的依据就是是否取余等于0，然后再通过area / num获得另一个数，只要位置放对就好了。
+### 代码
+```java
+class Solution {
+    public int[] constructRectangle(int area) {
+        int num = (int) Math.sqrt(area);
+
+        while (area % num != 0) {
+            num--;
+        }
+
+        return new int[]{area / num, num};
+    }
+}
+```
