@@ -414,3 +414,73 @@ class Solution {
     }
 }
 ```
+# LeetCode_796_旋转字符串
+## 题目
+给定两个字符串, A 和 B。
+
+A 的旋转操作就是将 A 最左边的字符移动到最右边。 例如, 若 A = 'abcde'，在移动一次之后结果就是'bcdea' 。如果在若干次旋转操作之后，A 能变成B，那么返回True。
+
+示例 1:
+```
+输入: A = 'abcde', B = 'cdeab'
+输出: true
+```
+示例 2:
+```
+输入: A = 'abcde', B = 'abced'
+输出: false
+```
+注意：
+```
+A 和 B 长度不超过 100。
+```
+## 解法
+### 思路
+- 通过异或运算，原地交换元素位置
+- 外部不断循环
+- 内部：通过将第一个元素不断和后一位元素交换的方式，进行数组长度len - 1次的交换，达到题目旋转的要求
+- 如果内部旋转完后和B相等，返回true
+- 如果内部旋转完后和A相等，说明转了一圈也和B不匹配，返回false
+### 代码
+```java
+class Solution {
+    public boolean rotateString(String A, String B) {
+        if (A.equals(B)) {
+            return true;
+        }
+        
+        String str = A;
+        while (true) {
+            str = rotate(str);
+            if (A.equals(str)) {
+                return false;
+            }
+            
+            if (B.equals(str)) {
+                return true;
+            }
+        }
+    }
+    
+    private String rotate(String str) {
+        char[] cs = str.toCharArray();
+        for (int i = 0; i < str.length() - 1; i++) {
+            cs[i] ^= cs[i + 1];
+            cs[i + 1] ^= cs[i];
+            cs[i] ^= cs[i + 1];
+        }
+        return new String(cs);
+    }   
+}
+```
+## 解法二
+### 思路
+因为是旋转的，所以如果再append一个字符串，那么可以旋转的字符串一定是可以包含在扩展的字符串里的，同时字符串长度要相等。
+### 代码
+```java
+class Solution {
+    public boolean rotateString(String A, String B) {
+        return A.length() == B.length() && (A + A).contains(B);
+    } 
+}
+```
