@@ -484,3 +484,125 @@ class Solution {
     } 
 }
 ```
+# LeetCode_345_反转字符串中的元音字母
+## 题目
+编写一个函数，以字符串作为输入，反转该字符串中的元音字母。
+
+示例 1:
+```
+输入: "hello"
+输出: "holle"
+```
+示例 2:
+```
+输入: "leetcode"
+输出: "leotcede"
+说明:
+元音字母不包含字母"y"。
+```
+## 解法
+### 思路
+- 生成储存元音字母的数据结构
+- 初始化头尾两个指针
+- 头尾双向遍历字符数组，同时找到元音字母，进行换位操作
+### 代码
+```java
+class Solution {
+    public String reverseVowels(String s) {
+        Set<Character> set = new HashSet<>();
+        set.add('a');
+        set.add('e');
+        set.add('i');
+        set.add('o');
+        set.add('u');
+        set.add('A');
+        set.add('E');
+        set.add('I');
+        set.add('O');
+        set.add('U');
+
+        char[] cs = s.toCharArray();
+
+        int head = 0, tail = s.length() - 1;
+        while (head < tail) {
+            while (!set.contains(cs[head])) {
+                head++;
+                
+                if (head >= s.length()) {
+                    break;
+                }
+            }
+            
+            if (head >= s.length()) {
+                break;
+            }
+
+            while (!set.contains(cs[tail])) {
+                tail--;
+                
+                if (tail < 0) {
+                    break;
+                }
+            }
+            
+            if (tail < 0) {
+                break;
+            }
+
+            if (head >= tail) {
+                break;
+            }
+
+            cs[head] ^= cs[tail];
+            cs[tail] ^= cs[head];
+            cs[head] ^= cs[tail];
+
+            head++;
+            tail--;
+        }
+
+        return new String(cs);
+    }
+}
+```
+## 优化代码
+### 思路
+- 不使用存储元音字母的数据结构，而是使用或运算判断
+- 简化逻辑分支，因为如果head < tail不满足，第一次发生的情况就是head == tail的情况，这种情况直接退出
+### 代码
+```java
+class Solution {
+    public String reverseVowels(String s) {
+        char[] cs = s.toCharArray();
+        int head = 0, tail = s.length() - 1;
+
+        while (head < tail) {
+            while (head < tail && !isVowel(cs[head])) {
+                head++;
+            }
+
+            while (head < tail && !isVowel(cs[tail])) {
+                tail--;
+            }
+
+            if (head == tail) {
+                break;
+            }
+
+            cs[head] ^= cs[tail];
+            cs[tail] ^= cs[head];
+            cs[head] ^= cs[tail];
+
+            head++;
+            tail--;
+        }
+
+        return new String(cs);
+    }
+
+    private boolean isVowel(char c) {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O'
+                || c == 'U';
+    }
+}
+```
