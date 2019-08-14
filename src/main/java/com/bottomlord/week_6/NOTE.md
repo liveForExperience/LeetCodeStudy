@@ -912,3 +912,149 @@ class Solution {
     }
 }
 ```
+# LeetCode_1005_k次取反后最大化的数组和
+## 题目
+给定一个整数数组 A，我们只能用以下方法修改该数组：我们选择某个个索引 i 并将 A[i] 替换为 -A[i]，然后总共重复这个过程 K 次。（我们可以多次选择同一个索引 i。）
+
+以这种方式修改数组后，返回数组可能的最大和。
+
+示例 1：
+```
+输入：A = [4,2,3], K = 1
+输出：5
+解释：选择索引 (1,) ，然后 A 变为 [4,-2,3]。
+```
+示例 2：
+```
+输入：A = [3,-1,0,2], K = 3
+输出：6
+解释：选择索引 (1, 2, 2) ，然后 A 变为 [3,1,0,2]。
+```
+示例 3：
+```
+输入：A = [2,-3,-1,5,-4], K = 2
+输出：13
+解释：选择索引 (1, 4) ，然后 A 变为 [2,3,-1,5,4]。
+```
+提示：
+```
+1 <= A.length <= 10000
+1 <= K <= 10000
+-100 <= A[i] <= 100
+```
+## 解法
+### 思路
+- 使用桶记录A数组元素值的个数
+- 然后从最小值开始遍历桶，将K值根据桶中记录的个数进行递减，同时进行取反后的累加，直到负数遍历完或者k的个数用完
+- 如果k的个数还没有用完，且是奇数个的化，就比较遍历到的当前元素和前一个元素之间的绝对值谁小，就取这个数的负绝对值计算到sum中
+- 然后继续遍历，最后返回sum。
+### 代码
+```java
+class Solution {
+    public int largestSumAfterKNegations(int[] A, int K) {
+        int[] bucket = new int[201];
+        for (int num: A) {
+            bucket[num + 100]++;
+        }
+
+        int sum = 0;
+        Integer pre = null;
+        for (int i = 0; i < bucket.length; i++) {
+            if (i < 100 && bucket[i] > 0) {
+                pre = i - 100;
+                if (K >= bucket[i]) {
+                    K -= bucket[i];
+                    sum += -bucket[i] * (i - 100);
+                    continue;
+                }
+
+                if (K > 0) {
+                    sum += (bucket[i] - 2 * K) * (i - 100);
+                    K = 0;
+                    continue;
+                }
+
+                sum += bucket[i] * (i - 100);
+            }
+
+            if (i >= 100 && bucket[i] > 0) {
+                if (K > 0) {
+                    K %= 2;
+                    if (K == 1) {
+                        if (pre == null) {
+                            sum += -(i - 100) + (bucket[i] - 1) * (i - 100);
+                            K = 0;
+                        } else {
+                            if (Math.abs(pre) < i - 100) {
+                                sum += (i - 100) - 2 * Math.abs(pre) + (bucket[i] - 1) * (i - 100);
+                            } else {
+                                sum += (bucket[i] - 2) * (i - 100);
+                            }
+                            K = 0;
+                        }
+                        continue;
+                    }
+                }
+                sum += bucket[i] * (i - 100);
+            }
+        }
+
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+解法一因为要在一次遍历中处理完所有的内容，其中的逻辑分支太多，且复杂。可以多次循环，其中一次根据K的数量处理存在的负数，最后一次负责累加。时间复杂度同样是O(N)
+- 先根据K的个数处理相应的负数，处理时把位于负数位置的元素搬到对应的正数位置
+- 这样做不仅有利于累加计算，而且，当如果K有多且为奇数的时候，只需要从0开始找到第一个正元素，此时这个正元素可能是原数组里正数，也可能时原数组里最大地负数，这样就很巧妙地规避了解法一中复杂地逻辑判断
+### 代码
+```java
+class Solution {
+    public int largestSumAfterKNegations(int[] A, int K) {
+        int[] bucket = new int[201];
+        int sum = 0;
+        for (int num : A) {
+            bucket[num + 100]++;
+        }
+
+        int i = 0;
+        while (K != 0 && i < 100) {
+            while (K != 0 && bucket[i] != 0) {
+                bucket[i]--;
+                bucket[200 - i]++;
+                K--;
+            }
+
+            i++;
+
+            if (K == 0) {
+                break;
+            }
+        }
+
+        if (K != 0 && bucket[100] != 0) {
+            K = 0;
+        }
+
+        if (K % 2 != 0) {
+            while (bucket[i] == 0) {
+                i++;
+            }
+
+            if (i == 201) {
+                return 0;
+            }
+            
+            bucket[i]--;
+            sum += -(i - 100);
+        }
+
+        for (i = 0; i < 201; i++) {
+            sum += bucket[i] * (i - 100);
+        }
+
+        return sum;
+    }
+}
+```
