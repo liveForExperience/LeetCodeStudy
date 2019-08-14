@@ -774,3 +774,92 @@ class Solution {
     }
 }
 ```
+# LeetCode_83_删除排序链表中的重复元素
+## 题目
+给定一个排序链表，删除所有重复的元素，使得每个元素只出现一次。
+
+示例 1:
+```
+输入: 1->1->2
+输出: 1->2
+```
+示例 2:
+```
+输入: 1->1->2->3->3
+输出: 1->2->3
+```
+## 解法
+### 思路
+- 使用set存储遍历链表过程中找到的元素
+- 适用一个指针指向遍历节点的上一个节点，方便做删除操作
+- 当发现set中已有当前元素时，就进行删除操作
+### 代码
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null) {
+            return null;
+        }
+
+        Set<Integer> set = new HashSet<>();
+        set.add(head.val);
+        
+        ListNode node = head.next;
+        ListNode pre = head;
+        while (node != null) {
+            if (set.contains(node.val)) {
+                pre.next = node.next;
+            } else {
+                set.add(node.val);
+                pre = node;
+            }
+            node = node.next;
+        }
+
+        return head;
+    }
+}
+```
+## 解法二
+### 思路
+递归删除。
+- 过程：一直递归搜索到链表倒数第二个节点，从倒数第二个节点开始和后一个节点进行比较，如果相等，就返回后一个节点到上一层
+- 退出：因为要遍历到倒数第二个节点，所以是node == null || node.next == null
+- 返回：如果比较相等就返回后一个节点作为上一层，也就是前两个的那个节点，的next指针指向的节点
+### 代码
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        
+        head.next = deleteDuplicates(head.next);
+        return head.val == head.next.val ? head.next : head;
+    }
+}
+```
+## 解法三
+### 思路
+解法一中，不需要适用set，因为链表是排序的，所以重复只会出现在前后节点之间，可以直接通过遍历节点，比较前后节点值的方式来进行删除操作。
+### 代码
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null) {
+            return null;
+        }
+
+        ListNode node = head;
+        while (node.next != null) {
+            if (node.val == node.next.val) {
+                node.next = node.next.next;
+            } else {
+                node = node.next;
+            }
+        }
+        
+        return head;
+    }
+}
+```
