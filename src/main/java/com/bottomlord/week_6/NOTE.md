@@ -1058,3 +1058,109 @@ class Solution {
     }
 }
 ```
+# LeetCode_415_字符串相加
+## 题目
+给定两个字符串形式的非负整数 num1 和num2 ，计算它们的和。
+
+注意：
+```
+num1 和num2 的长度都小于 5100.
+num1 和num2 都只包含数字 0-9.
+num1 和num2 都不包含任何前导零。
+你不能使用任何內建 BigInteger 库， 也不能直接将输入的字符串转换为整数形式。
+```
+## 解法
+### 思路
+- 反转一下字符数组
+- 从字符串头部开始一个字符一个字符相加，并存储进位值，像拨算盘。
+### 代码
+```java
+class Solution {
+    public String addStrings(String num1, String num2) {
+        StringBuilder ansSb = new StringBuilder();
+        
+        char[] cs1 = reserve(num1.toCharArray());
+        char[] cs2 = reserve(num2.toCharArray());
+        
+        int len = Math.min(cs1.length, cs2.length), carry = 0;
+        
+        for (int i = 0; i < len; i++) {
+            int val = Integer.parseInt(Character.toString(cs1[i])) + Integer.parseInt(Character.toString(cs2[i])) + carry;
+            carry = val / 10;
+            ansSb.insert(0, Integer.toString(val % 10));
+        }
+        
+        if (cs1.length == cs2.length) {
+            return carry == 0 ? ansSb.toString() : ansSb.insert(0, carry).toString();
+        }
+        
+        char[] arr = cs1.length > cs2.length ? cs1 : cs2;
+        for (int i = len; i < arr.length; i++) {
+            int val = Integer.parseInt(Character.toString(arr[i])) + carry;
+            carry = val / 10;
+            ansSb.insert(0, Integer.toString(val % 10));
+        }
+
+        return carry == 0 ? ansSb.toString() : ansSb.insert(0, carry).toString();
+    }
+    
+    private char[] reserve(char [] cs) {
+        int head = 0, tail = cs.length - 1;
+        while (head < tail) {
+            cs[head] ^= cs[tail];
+            cs[tail] ^= cs[head];
+            cs[head] ^= cs[tail];
+            head++;
+            tail--;
+        }
+        return cs;
+    }
+}
+```
+## 优化代码
+### 思路
+- 通过长度减去遍历的次数来获取从后往前的下标，从而省去解法一中的反转字符数组的步骤
+- 进位只存在进1，所以可以直接在字符数组中修改，carry值只判断是否超过了10，省去了解法一中的取余等操作
+### 代码
+```java
+class Solution {
+    public String addStrings(String num1, String num2) {
+        char[] cs1 = null;
+        char[] cs2 = null;
+        if (num1.length() > num2.length()) {
+            cs1 = num1.toCharArray();
+            cs2 = num2.toCharArray();
+        } else {
+            cs1 = num2.toCharArray();
+            cs2 = num1.toCharArray();
+        }
+
+        int carry = 0;
+        int i = 1;
+        for (; i <= cs2.length; i++) {
+            cs1[cs1.length - i] += cs2[cs2.length - i] - '0' + carry;
+            if (cs1[cs1.length - i] > '9') {
+                cs1[cs1.length - i] -= 10;
+                carry = 1;
+            } else {
+                carry = 0;
+            }
+        }
+
+        if (carry > 0) {
+            for (; i <= cs1.length; i++) {
+                cs1[cs1.length - i] += carry;
+                if (cs1[cs1.length - i] > '9') {
+                    cs1[cs1.length - i] -= 10;
+                    carry = 1;
+                } else {
+                    carry = 0;
+                    break;
+                }
+            }
+        }
+
+        return carry > 0 ? "1" + String.valueOf(cs1) : String.valueOf(cs1);
+    }
+}
+```
