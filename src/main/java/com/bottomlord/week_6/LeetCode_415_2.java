@@ -2,8 +2,8 @@ package com.bottomlord.week_6;
 
 public class LeetCode_415_2 {
     public String addStrings(String num1, String num2) {
-        char[] cs1 = null;
-        char[] cs2 = null;
+        char[] cs1;
+        char[] cs2;
         if (num1.length() > num2.length()) {
             cs1 = num1.toCharArray();
             cs2 = num2.toCharArray();
