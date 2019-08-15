@@ -1262,3 +1262,125 @@ class Solution {
     }
 }
 ```
+# LeetCode_599_两个列表的最小索引总和
+## 题目
+假设Andy和Doris想在晚餐时选择一家餐厅，并且他们都有一个表示最喜爱餐厅的列表，每个餐厅的名字用字符串表示。
+
+你需要帮助他们用最少的索引和找出他们共同喜爱的餐厅。 如果答案不止一个，则输出所有答案并且不考虑顺序。 你可以假设总是存在一个答案。
+
+示例 1:
+```
+输入:
+["Shogun", "Tapioca Express", "Burger King", "KFC"]
+["Piatti", "The Grill at Torrey Pines", "Hungry Hunter Steakhouse", "Shogun"]
+输出: ["Shogun"]
+解释: 他们唯一共同喜爱的餐厅是“Shogun”。
+```
+示例 2:
+```
+输入:
+["Shogun", "Tapioca Express", "Burger King", "KFC"]
+["KFC", "Shogun", "Burger King"]
+输出: ["Shogun"]
+解释: 他们共同喜爱且具有最小索引和的餐厅是“Shogun”，它有最小的索引和1(0+1)。
+```
+提示:
+```
+两个列表的长度范围都在 [1, 1000]内。
+两个列表中的字符串的长度将在[1，30]的范围内。
+下标从0开始，到列表的长度减1。
+两个列表都没有重复的元素。
+```
+## 解法
+### 思路
+- 使用一个map存储其中一个的喜好餐厅名字和下标
+- 遍历另一个数组，取最小的下标和的那个或多个餐厅名字
+### 代码
+```java
+class Solution {
+    public String[] findRestaurant(String[] list1, String[] list2) {
+        Map<String, Integer> map = new HashMap<>(list1.length);
+        for (int i = 0; i < list1.length; i++) {
+            map.put(list1[i], i);
+        }
+        
+        Integer min = null;
+        List<String> ansList = new ArrayList<>();
+        for (int i = 0; i < list2.length; i++) {
+            String name = list2[i];
+             Integer index = map.get(name);
+             if (index != null) {
+                 int diff = index + i;
+                 
+                 if (min == null) {
+                     min = diff;
+                     ansList.add(name);
+                     continue;
+                 }
+                 
+                 if (min == diff) {
+                     ansList.add(name);
+                     continue;
+                 }
+                 
+                 if (min > diff) {
+                     min = diff;
+                     ansList.clear();
+                     ansList.add(name);
+                 }
+             }
+        }
+        
+        return ansList.toArray(new String[0]);
+    }
+}
+```
+## 解法二
+### 思路
+找到最小的数组进行hash
+### 代码
+```java
+class Solution {
+    public String[] findRestaurant(String[] list1, String[] list2) {
+        int list1Len = list1.length;
+        int list2Len = list2.length;
+
+        if (list1Len > list2Len) {
+            return findRestaurant(list2, list1);
+        }
+        Map<String, Integer> map = new HashMap<>(list1Len);
+        for (int i = 0; i < list1Len; i++) {
+            map.put(list1[i], i);
+        }
+
+        Integer min = null;
+        List<String> ansList = new ArrayList<>();
+        for (int i = 0; i < list2Len; i++) {
+            String name = list2[i];
+            Integer index = map.get(name);
+            if (index != null) {
+                int sum = index + i;
+
+                if (min == null) {
+                    min = sum;
+                    ansList.add(name);
+                    continue;
+                }
+
+                if (min == sum) {
+                    ansList.add(name);
+                    continue;
+                }
+
+                if (min > sum) {
+                    min = sum;
+                    ansList.clear();
+                    ansList.add(name);
+                }
+            }
+        }
+
+        return ansList.toArray(new String[0]);
+    }
+}
+```
