@@ -1560,3 +1560,50 @@ class Solution {
     }
 }
 ```
+# LeetCode_231_2的幂
+## 题目
+给定一个整数，编写一个函数来判断它是否是 2 的幂次方。
+
+示例 1:
+```
+输入: 1
+输出: true
+解释: 20 = 1
+```
+示例 2:
+```
+输入: 16
+输出: true
+解释: 24 = 16
+```
+示例 3:
+```
+输入: 218
+输出: false
+```
+## 解法
+### 思路
+循环：
+- 推出条件：n == 1
+- 过程：n分别和2.0以及2相除，通过比较double和int两种基本类型的商，来看int型的是否有截取的动作，从而判断是否是2的幂
+- 如果循环到最后是1，返回true
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        if (n < 1) {
+            return false;
+        }
+        
+        while (n != 1) {
+            double num = n / 2.0;
+            n /= 2;
+            if (n != num) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
