@@ -1607,3 +1607,15 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 通过2进制的特性，使用位运算n & n-1来判断是否是2的幂，如果是2的幂乘积就一定是0，因为它们之间没有相同的位存在。
+- 还要排除<=0的情况
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        return n > 0 && (n & (n - 1)) == 0;
+    }
+}
+```
