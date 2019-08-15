@@ -1464,3 +1464,99 @@ public class Solution {
     }
 }
 ```
+# LeetCode_696_计算二进制子串
+## 题目
+给定一个字符串 s，计算具有相同数量0和1的非空(连续)子字符串的数量，并且这些子字符串中的所有0和所有1都是组合在一起的。
+
+重复出现的子串要计算它们出现的次数。
+
+示例 1 :
+```
+输入: "00110011"
+输出: 6
+解释: 有6个子串具有相同数量的连续1和0：“0011”，“01”，“1100”，“10”，“0011” 和 “01”。
+
+请注意，一些重复出现的子串要计算它们出现的次数。
+
+另外，“00110011”不是有效的子串，因为所有的0（和1）没有组合在一起。
+```
+示例 2 :
+```
+输入: "10101"
+输出: 4
+解释: 有4个子串：“10”，“01”，“10”，“01”，它们具有相同数量的连续1和0。
+```
+注意：
+```
+s.length 在1到50,000之间。
+s 只包含“0”或“1”字符。
+```
+## 解法
+### 思路
+- 当字符出现第一次从0到1的变化，记录变化后的字符出现了几次，次数代表需要记录的值
+- 如果字符出现第二次变化，就清空该字符的记录，重新开始记录，并等待第三次变化，重复第一次变化时的过程
+- 基于如上的过程，循环遍历整个字符串
+### 代码
+```java
+class Solution {
+    public int countBinarySubstrings(String s) {
+        int count0 = 0, count1 = 0, sum = 0;
+        boolean flag = true;
+        for (char c : s.toCharArray()) {
+            if (c == '0') {
+                if (flag) {
+                    count0 = 0;
+                    flag = false;
+                }
+                count0++;
+                if (count0 <= count1) {
+                    sum++;
+                }
+                continue;
+            }
+
+            if (c == '1') {
+                if (!flag) {
+                    count1 = 0;
+                    flag = true;
+                }
+                count1++;
+                if (count1 <= count0) {
+                    sum++;
+                }
+            }
+        }
+        
+        return sum;
+    }
+}
+```
+## 优化代码
+### 思路
+- 整个过程是计算出现变化前后的字符的数，计算这两个数之间的最小值
+- 且在每次变化的时候都重新开始上一步的过程
+- 所以可以直接通过使用变量切换着记录变化前的值，并计算变化后的值来计算子串的个数
+### 代码
+```java
+class Solution {
+    public int countBinarySubstrings(String s) {
+        char[] cs = s.toCharArray();
+        int cur = 1, last = 0, sum = 0;
+        
+        for (int i = 1; i < cs.length; i++) {
+            if (cs[i] == cs[i - 1]) {
+                cur++;
+            } else {
+                last = cur;
+                cur = 1;
+            }
+            
+            if (last >= cur) {
+                sum++;
+            }
+        }
+        
+        return sum;
+    }
+}
+```
