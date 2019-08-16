@@ -1690,3 +1690,102 @@ class Solution {
     }
 }
 ```
+# LeetCode_628_三个数的最大乘积
+## 题目
+给定一个整型数组，在数组中找出由三个数组成的最大乘积，并输出这个乘积。
+
+示例 1:
+```
+输入: [1,2,3]
+输出: 6
+```
+示例 2:
+```
+输入: [1,2,3,4]
+输出: 24
+```
+注意:
+```
+给定的整型数组长度范围是[3,104]，数组中所有的元素范围是[-1000, 1000]。
+输入的数组中任意三个数的乘积不会超出32位有符号整数的范围。
+```
+## 解法
+### 思路
+- 使用一个大顶堆和一个小顶堆
+- 遍历数组，分别放入大小顶堆
+- 遍历结束，分别从两个堆中拿出3个元素
+- 如果都是负数或都是正数，就取大顶堆的三个元素的成绩
+- 如果正数只有一个，取最小的两个值及正数的成绩
+- 如果正数只有两个，取最大的三个数
+- 如果负数只有一个，取最大的三个数
+- 如果负数只有两个，比较最小的2个数与最大的数与最大的三个数的乘积的大小
+### 代码
+```java
+class Solution {
+    public int maximumProduct(int[] nums) {
+        Queue<Integer> maxQ = new PriorityQueue<>(Comparator.reverseOrder());
+        Queue<Integer> minQ = new PriorityQueue<>();
+
+        for (int num : nums) {
+            maxQ.offer(num);
+            minQ.offer(num);
+        }
+
+        int[] arr = new int[6];
+        int count = 3, index = 0, negative = 0, ans = 0;
+        while (count-- > 0) {
+            int max = maxQ.poll();
+            if (max < 0) {
+                negative++;
+            }
+            arr[index] = max;
+
+            int min = minQ.poll();
+            if (min < 0) {
+                negative++;
+            }
+            arr[index + 3] = min;
+            index++;
+        }
+        
+        if (negative == 5) {
+            return arr[3] * arr[4] * arr[0];
+        }
+        
+        return Math.max(arr[0] * arr[1] * arr[2], arr[0] * arr[3] * arr[4]);
+    }
+}
+```
+## 优化
+### 思路
+- 根据解法一的逻辑，最终需要的是5个变量，最大的三个数和最小的两个数
+- 而且不需要判断是否有负数，返回最大3个数和最大1个数与最小两个数的乘积的最大值
+### 代码
+```java
+class Solution {
+    public int maximumProduct(int[] nums) {
+        int max1 = -1001, max2 = -1001, max3 = -1001, min1 = 1001, min2 = 1001;
+        for (int num : nums) {
+            if (num > max1) {
+                max3 = max2;
+                max2 = max1;
+                max1 = num;
+            } else if (num > max2) {
+                max3 = max2;
+                max2 = num;
+            } else if (num > max3) {
+                max3 = num;
+            }
+
+            if (num < min1) {
+                min2 = min1;
+                min1 = num;
+            } else if (num < min2) {
+                min2 = num;
+            }
+        }
+
+        return Math.max(max1 * max2 * max3, min1 * min2 * max1);
+    }
+}
+```
