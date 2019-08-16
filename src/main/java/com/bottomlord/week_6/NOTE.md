@@ -1619,3 +1619,74 @@ class Solution {
     }
 }
 ```
+# LeetCode_342_4的幂
+## 题目
+给定一个整数 (32 位有符号整数)，请编写一个函数来判断它是否是 4 的幂次方。
+
+示例 1:
+```
+输入: 16
+输出: true
+```
+示例 2:
+```
+输入: 5
+输出: false
+```
+进阶：
+```
+你能不使用循环或者递归来完成本题吗？
+```
+## 解法
+### 思路
+循环，使用int和double的转换，通过判断int是否被截取来断定是否是的幂
+### 解法
+```java
+class Solution {
+    public boolean isPowerOfFour(int num) {
+        if (num < 1) {
+            return false;
+        }
+        
+        while (num != 1 ) {
+            double doubleNum = num / 4.0;
+            num /= 4;
+            if (num != doubleNum) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+4的幂在二进制位上表现就是，奇数位上有且只有一个数为1，可以使用0x55555555与自身进行与运算得到的结果是否为本身来检验
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfFour(int num) {
+        if (num < 1) {
+            return false;
+        }
+
+        return (0x55555555 & num) == num && (num & (num - 1)) == 0;
+    }
+}
+```
+## 解法三
+### 思路
+因为是4的幂，所以被3取余必定为1。先通过判断是否是2的幂，在加上这个条件，也能得知是否是4的幂
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfFour(int num) {
+        if (num < 1) {
+            return false;
+        }
+
+        return (num & (num - 1)) == 0 && num % 3 == 1;
+    }
+}
+```
