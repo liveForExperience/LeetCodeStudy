@@ -1839,3 +1839,23 @@ class Solution {
     }
 }
 ```
+# LeetCode_190_颠倒二进制位
+## 题目
+
+## 解法
+### 思路
+使用1 & n >> i的方式(使用算数右移位)，在遍历的过程中一个个的获得二进制位上的值，然后再<<（31 - i)将该位的值放到对应颠倒的位置上，然后累加到ans上，遍历结束后，返回ans
+### 代码
+```java
+public class Solution {
+    public int reverseBits(int n) {
+        int ans = 0;
+
+        for (int i = 0; i < 32; i++) {
+            ans += ((1 & (n >> i)) << (31 - i));
+        }
+
+        return ans;
+    }
+}
+```
