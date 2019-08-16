@@ -1789,3 +1789,53 @@ class Solution {
     }
 }
 ```
+# LeetCode_543_二叉树的直径
+## 题目
+给定一棵二叉树，你需要计算它的直径长度。一棵二叉树的直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过根结点。
+
+示例 :
+```
+给定二叉树
+
+          1
+         / \
+        2   3
+       / \     
+      4   5    
+返回 3, 它的长度是路径 [4,2,1,3] 或者 [5,2,1,3]。
+```
+注意 :
+```
+两结点之间的路径长度是以它们之间边的数目表示。
+```
+## 解法
+### 思路
+直径：所有节点的左右子树之和中的最大值
+- 类变量max
+- 退出条件：node == null返回0
+- 过程：
+    - 递归到左右子树，获得左右子树的深度
+    - 取左右子树深度之和与max的最大值为max
+- 返回：左右子树的最大值+1
+### 代码
+```java
+class Solution {
+    private int max = 0;
+    public int diameterOfBinaryTree(TreeNode root) {
+        dfs(root);
+        return max;
+    }
+
+    private int dfs(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        
+        int left = dfs(node.left);
+        int right = dfs(node.right);
+        
+        max = Math.max(left + right, max);
+        return Math.max(left, right) + 1;
+    }
+}
+```
