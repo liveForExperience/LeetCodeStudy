@@ -1940,3 +1940,94 @@ class Solution {
     }
 }
 ```
+# LeetCode_205_同构字符串
+## 题目
+给定两个字符串 s 和 t，判断它们是否是同构的。
+
+如果 s 中的字符可以被替换得到 t ，那么这两个字符串是同构的。
+
+所有出现的字符都必须用另一个字符替换，同时保留字符的顺序。两个字符不能映射到同一个字符上，但字符可以映射自己本身。
+
+示例 1:
+```
+输入: s = "egg", t = "add"
+输出: true
+```
+示例 2:
+```
+输入: s = "foo", t = "bar"
+输出: false
+```
+示例 3:
+```
+输入: s = "paper", t = "title"
+输出: true
+说明:
+你可以假设 s 和 t 具有相同的长度。
+```
+## 解法
+### 思路
+两边的字符相对应，如果有一组对应不是1对1，就返回false
+### 代码
+```java
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        Map<Character, Character> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            if (map.containsKey(s.charAt(i))) {
+                if (map.get(s.charAt(i)) != t.charAt(i)) {
+                    return false;
+                }
+            } else {
+                if (map.containsValue(t.charAt(i))) {
+                    return false;
+                }
+                map.put(s.charAt(i), t.charAt(i));
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+- 使用两个数组来代替解法一种的map，因为题目中的测试案例用的都是英文字母，所以数组长度就是128
+- 两个数组分别用下标代替一个的字符，元素代表另一个的字符
+- 循环的时候判断两个字符数组的对应字符是否是一致的
+    - 如果字符下标对应的元素是遍历到的元素，说明之前有设置过，且是正确的，就继续遍历
+    - 如果下标对应的是0，说明还没有设置过，看下另一个字符数组是否也是没有设置过的，是就设置然后继续遍历
+    - 否则说明之前设置过，且不是对应的元素，就返回false
+    - 其他情况也说明是不匹配的，返回false
+- 如果遍历完整个数组没有返回，说明字符串符合要求，返回true    
+### 代码
+```java
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        int[] sMap = new int[128];
+        int[] tMap = new int[128];
+
+        for (int i = 0; i < s.length(); i++) {
+            char sc = s.charAt(i);
+            char tc = t.charAt(i);
+
+            if (sMap[sc] == tc) {
+                continue;
+            }
+            
+            if (sMap[sc] == 0) {
+                if (tMap[tc] != 0) {
+                    return false;
+                }
+                
+                sMap[sc] = tc;
+                tMap[tc] = sc;
+                
+                continue;
+            }
+            return false;
+        }      
+        return true;
+    }
+}
+```
