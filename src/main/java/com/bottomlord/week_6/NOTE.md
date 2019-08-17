@@ -2031,3 +2031,146 @@ class Solution {
     }
 }
 ```
+# LeetCode_994_腐烂的橘子
+## 题目
+在给定的网格中，每个单元格可以有以下三个值之一：
+```
+值 0 代表空单元格；
+值 1 代表新鲜橘子；
+值 2 代表腐烂的橘子。
+每分钟，任何与腐烂的橘子（在 4 个正方向上）相邻的新鲜橘子都会腐烂。
+```
+返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 -1。
+
+示例 1：
+```
+输入：[[2,1,1],[1,1,0],[0,1,1]]
+输出：4
+```
+示例 2：
+```
+输入：[[2,1,1],[0,1,1],[1,0,1]]
+输出：-1
+解释：左下角的橘子（第 2 行， 第 0 列）永远不会腐烂，因为腐烂只会发生在 4 个正向上。
+```
+示例 3：
+```
+输入：[[0,2]]
+输出：0
+解释：因为 0 分钟时已经没有新鲜橘子了，所以答案就是 0 。
+```
+提示：
+```
+1 <= grid.length <= 10
+1 <= grid[0].length <= 10
+grid[i][j] 仅为 0、1 或 2
+```
+## 解法
+### 思路
+bfs遍历
+- 遍历找到烂橘子，使用num = r * x + c的方式将二维坐标放入队列(x是r和c中的最大值)，之后就可以通过取余，和相除的方式获得这个坐标
+- 开始遍历，将坐标取出，然后通过边界和是否是好橘子作为判断，将好橘子变成烂橘子，并再次把变烂的橘子坐标放入队列中，并暂存遍历深度
+- 遍历结束，再遍历二维数组，如果找到1，就返回-1，否则就返回暂存的bfs深度作为次数
+### 代码
+```java
+class Solution {
+    int[] dr = new int[]{-1, 1, 0, 0};
+    int[] dc = new int[]{0, 0, -1, 1};
+    public int orangesRotting(int[][] grid) {
+        int ans = 0, gr = grid.length, gc = grid[0].length, x = Math.max(gr, gc);
+        Queue<Integer> queue = new ArrayDeque<>();
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < gr; i++) {
+            for (int j = 0; j < gc; j++) {
+                if (grid[i][j] == 2) {
+                    int num = x * i + j;
+                    queue.offer(num);
+                    map.put(num, 0);
+                }
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            int num = queue.poll();
+            int r = num / x;
+            int c = num % x;
+
+            for (int i = 0; i < 4; i++) {
+                int tmpR = r + dr[i];
+                int tmpC = c + dc[i];
+                if (tmpR >= 0 && tmpR < gr && tmpC >= 0 && tmpC < gc && grid[tmpR][tmpC] == 1) {
+                    int tmpNum = tmpR * x + tmpC;
+                    grid[tmpR][tmpC] = 2;
+                    queue.offer(tmpR * x + tmpC);
+                    map.put(tmpNum, map.get(num) + 1);
+                    ans = map.get(tmpNum);
+                }
+            }
+        }
+
+        for (int[] arr : grid) {
+            for (int num : arr) {
+                if (num == 1) {
+                    return -1;
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 初始化变量i = 2，因为腐烂的橘子是2，而这里把被腐烂的橘子感染的橘子标记为i + 1,通过这个i来判断被感染了几次，而结果要么是-1，要么是i - 3，-3的原因和for循环的过程有关系，如果出现了一次感染，那么一定是4，所以3的话说明出现感染的过程
+- 遍历数组，找到为2的元素，然后把上下左右的元素变成i + 1，也就是3，然后进入下一次循环，同时i也变成3，这样就去找上次感染的橘子，找它们的上下左右
+- 还需要有一个标识符来判断是否出现了感染，如果出现了感染，那么就继续下一个循环，如果没有就退出，进行二维数组遍历，判断是否有1
+### 代码
+```java
+class Solution {
+    public int orangesRotting(int[][] grid) {
+        boolean flag = true;
+        int bad = 2, gr = grid.length, gc = grid[0].length;
+
+        for (; flag; bad++) {
+            flag = false;
+            for (int i = 0; i < gr; i++) {
+                for (int j = 0; j < gc; j++) {
+                    if (grid[i][j] == bad) {
+                        if (i + 1 < gr && grid[i + 1][j] == 1) {
+                            grid[i + 1][j] = bad + 1;
+                            flag = true;
+                        }
+
+                        if (i - 1 >= 0 && grid[i - 1][j] == 1) {
+                            grid[i - 1][j] = bad + 1;
+                            flag = true;
+                        }
+
+                        if (j + 1 < gc && grid[i][j + 1] == 1) {
+                            grid[i][j + 1] = bad + 1;
+                            flag = true;
+                        }
+
+                        if (j - 1 >= 0 && grid[i][j - 1] == 1) {
+                            grid[i][j - 1] = bad + 1;
+                            flag = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int[] ints : grid) {
+            for (int j = 0; j < gc; j++) {
+                if (ints[j] == 1) {
+                    return -1;
+                }
+            }
+        }
+        
+        return bad - 3;
+    }
+}
+```
