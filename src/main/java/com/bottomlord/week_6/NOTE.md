@@ -2282,3 +2282,65 @@ class Solution {
     }
 }
 ```
+# LeetCode_88_合并两个有序数组
+## 题目
+给定两个有序整数数组 nums1 和 nums2，将 nums2 合并到 nums1 中，使得 num1 成为一个有序数组。
+
+说明:
+```
+初始化 nums1 和 nums2 的元素数量分别为 m 和 n。
+你可以假设 nums1 有足够的空间（空间大小大于或等于 m + n）来保存 nums2 中的元素。
+```
+示例:
+```
+输入:
+nums1 = [1,2,3,0,0,0], m = 3
+nums2 = [2,5,6],       n = 3
+
+输出: [1,2,2,3,5,6]
+```
+## 解法
+### 思路
+使用JDK提供的API
+- 把数组合并起来
+- 排序
+### 代码
+```java
+class Solution {
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        System.arraycopy(nums2, 0, nums1, m, n);
+        Arrays.sort(nums1);
+    }
+}
+```
+## 解法二
+### 思路
+使用双指针，遍历两个数组，选择两个指针中元素最小值放在游标所对应的位置上
+### 代码
+```java
+class Solution {
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int p1 = 0, p2 = 0, index = 0;
+        int[] nums1Copy = Arrays.copyOf(nums1, nums1.length);
+        while (index < n + m) {
+            if (p1 < m && p2 < n) {
+                if (nums1Copy[p1] < nums2[p2]) {
+                    nums1[index++] = nums1Copy[p1++];
+                } else {
+                    nums1[index++] = nums2[p2++];
+                }
+                continue;
+            }
+            
+            if (p1 >= m) {
+                System.arraycopy(nums2, p2, nums1, index, n - p2);
+                index = n + m;
+                continue;
+            }
+            
+            System.arraycopy(nums1Copy, p1, nums1, index, m - p1);
+            index = n + m;
+        }
+    }
+}
+```
