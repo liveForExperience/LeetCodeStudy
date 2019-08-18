@@ -2460,5 +2460,80 @@ class Solution {
 使用数学公式，利用对数来求出3的幂，且注意浮点数的不精确问题
 ### 代码
 ```java
+class Solution {
+    public boolean isPowerOfThree(int n) {
+        return (Math.log10(n) / Math.log10(3)) % 1 == 0;
+    }
+}
+```
+# LeetCode_671_二叉树的第二小节点
+## 题目
+给定一个非空特殊的二叉树，每个节点都是正数，并且每个节点的子节点数量只能为 2 或 0。如果一个节点有两个子节点的话，那么这个节点的值不大于它的子节点的值。 
+
+给出这样的一个二叉树，你需要输出所有节点中的第二小的值。如果第二小的值不存在的话，输出 -1 。
+
+示例 1:
+```
+输入: 
+    2
+   / \
+  2   5
+     / \
+    5   7
+
+输出: 5
+说明: 最小的值是 2 ，第二小的值是 5 。
+```
+示例 2:
+```
+输入: 
+    2
+   / \
+  2   2
+
+输出: -1
+说明: 最小的值是 2, 但是不存在第二小的值。
+```
+## 解法
+### 思路
+dfs遍历
+### 代码
+```java
+class Solution {
+    public int findSecondMinimumValue(TreeNode root) {
+        Integer[] arr = new Integer[]{root.val, null};
+        dfs(root, arr);
+        if (arr[0].equals(arr[1]) || arr[1] == null) {
+            return -1;
+        }
+        return arr[1];
+    }
+
+    private void dfs(TreeNode node, Integer[] arr) {
+        if (node == null) {
+            return;
+        }
+
+        int val = node.val;
+        if (val < arr[0]) {
+            arr[1] = arr[0];
+            arr[0] = val;
+        } else if (val != arr[0] && (arr[1] == null || val < arr[1])) {
+            arr[1] =val;
+        }
+
+        dfs(node.left, arr);
+        dfs(node.right, arr);
+    }
+}
+```
+## 解法二
+### 思路
+- 因为根节点的值不大于子节点的值，所以最简单的情况就是求根节点的左右子树中的最小值
+- 但因为左右子树的可以和根节点一样大，所以当子树节点和根节点一样大的时候就需要向下遍历
+- 然后再求它们的左右子树，如果没有子树了，说明这个方向上没有第二小的子树
+- 如果右子树节点，而且没有和根节点一样的了，就直接返回它们中的最小值
+### 代码
+```java
 
 ```
