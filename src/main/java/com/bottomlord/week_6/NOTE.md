@@ -1619,6 +1619,32 @@ class Solution {
     }
 }
 ```
+## 解法三
+### 思路
+- 小于等于0的数肯定不是
+- 循环判断n，如果取余2为0，就除以2，继续下一个循环
+- 否则就直接返回false
+- 直到n == 1，退出循环，返回true
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        if (n <= 0) {
+            return false;
+        }
+        
+        while (n != 1) {
+            if (n % 2 == 0) {
+                n  /= 2;
+            } else {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
 # LeetCode_342_4的幂
 ## 题目
 给定一个整数 (32 位有符号整数)，请编写一个函数来判断它是否是 4 的幂次方。
@@ -2341,6 +2367,80 @@ class Solution {
             System.arraycopy(nums1Copy, p1, nums1, index, m - p1);
             index = n + m;
         }
+    }
+}
+```
+# LeetCode_326_3的幂
+## 题目
+给定一个整数，写一个函数来判断它是否是 3 的幂次方。
+
+示例 1:
+```
+输入: 27
+输出: true
+```
+示例 2:
+```
+输入: 0
+输出: false
+```
+示例 3:
+```
+输入: 9
+输出: true
+```
+示例 4:
+```
+输入: 45
+输出: false
+```
+进阶：
+```
+你能不使用循环或者递归来完成本题吗？
+```
+## 解法
+### 思路
+使用int的截取特性，循环比较与3相除的double值和int值是否相等来判断是否是3的幂，和231题2的幂，342题4的幂解法类似
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfThree(int n) {
+        if (n <= 0) {
+            return false;
+        }
+        
+        while (n != 1) {
+            double dNum = n / 3.0;
+            n /= 3;
+            if (dNum != n) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+可以直接通过是否取余为0来判断是否是3的幂
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfThree(int n) {
+        if (n <= 0) {
+            return false;
+        }
+
+        while (n != 1) {
+            if (n % 3 == 0) {
+                n /= 3;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 ```
