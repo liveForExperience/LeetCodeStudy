@@ -2174,3 +2174,111 @@ class Solution {
     }
 }
 ```
+# LeetCode_1071_字符串的最大公因子
+## 题目
+对于字符串 S 和 T，只有在 S = T + ... + T（T 与自身连接 1 次或多次）时，我们才认定 “T 能除尽 S”。
+
+返回字符串 X，要求满足 X 能除尽 str1 且 X 能除尽 str2。
+
+示例 1：
+```
+输入：str1 = "ABCABC", str2 = "ABC"
+输出："ABC"
+```
+示例 2：
+```
+输入：str1 = "ABABAB", str2 = "ABAB"
+输出："AB"
+```
+示例 3：
+```
+输入：str1 = "LEET", str2 = "CODE"
+输出：""
+```
+提示：
+```
+1 <= str1.length <= 1000
+1 <= str2.length <= 1000
+str1[i] 和 str2[i] 为大写英文字母
+```
+## 解法
+### 思路
+辗转相除法找到最大公约数
+- 如果长字符串中没有短字符串，说明不符合要求，直接返回“”
+- 让长字符串中的短字符串部分替换成空字符串
+- 然后替换后的作为短字符串，短字符串作为长字符串，反复的执行，直到短字符串是空字符串的时候，说明已经找到了，就是最新的长字符串
+### 代码
+```java
+class Solution {
+    public String gcdOfStrings(String str1, String str2) {
+        boolean longer = str1.length() > str2.length();
+        String longS = longer ? str1 : str2;
+        String shortS = longer ? str2 : str1;
+        
+        while (!shortS.equals("")) {
+            if (!longS.contains(shortS)) {
+                return "";
+            }
+            
+            String tmp = longS.replace(shortS, "");
+            longS = shortS;
+            shortS = tmp;
+        }
+        
+        return longS;
+    }
+}
+```
+## 解法二
+### 思路
+- 如果是字符串中的最大公因数，那么长度也应该是同样的最大公因数
+- 先找到长度的最大公因数
+- 再通过遍历这个长度的字符串是否能完全清除两个字符串来找到最大公因数字符串
+### 代码
+```java
+class Solution {
+    public String gcdOfStrings(String str1, String str2) {
+        int len = gcd(Math.max(str1.length(), str2.length()), Math.min(str1.length(), str2.length()));
+        String ans = str1.substring(0, len);
+        if (!"".equals(str1.replaceAll(ans, "")) || !"".equals(str2.replaceAll(ans, ""))) {
+            return "";
+        }
+        return ans;
+    }
+    
+    private int gcd(int a, int b) {
+        int mod = a % b;
+        return mod == 0 ? b : gcd(b, mod);
+    }
+}
+```
+## 代码优化
+### 思路
+使用字符数组替代String Api的replaceAll
+### 代码
+```java
+class Solution {
+    public String gcdOfStrings(String str1, String str2) {
+        int len = gcd(Math.max(str1.length(), str2.length()), Math.min(str1.length(), str2.length()));
+        String ans = str1.substring(0, len);
+        for (int i = 0; i < str1.length(); i += len) {
+            if (!ans.equals(str1.substring(i, i + len))) {
+                return "";
+            }
+        }
+
+        for (int i = 0; i < str2.length(); i += len) {
+            if (!ans.equals(str2.substring(i, i + len))) {
+                return "";
+            }
+        }
+        
+        return ans;
+    }
+    
+    private int gcd(int a, int b) {
+        int mod = a % b;
+        return mod == 0 ? b : gcd(b, mod);
+    }
+}
+```
