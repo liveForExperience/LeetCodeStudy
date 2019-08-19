@@ -354,3 +354,99 @@ class Solution {
     }
 }
 ```
+# LeetCode_350_两个数组的交集II
+## 题目
+给定两个数组，编写一个函数来计算它们的交集。
+
+示例 1:
+```
+输入: nums1 = [1,2,2,1], nums2 = [2,2]
+输出: [2,2]
+```
+示例 2:
+```
+输入: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+输出: [4,9]
+```
+说明：
+```
+输出结果中每个元素出现的次数，应与元素在两个数组中出现的次数一致。
+我们可以不考虑输出结果的顺序。
+```
+进阶:
+```
+如果给定的数组已经排好序呢？你将如何优化你的算法？
+如果 nums1 的大小比 nums2 小很多，哪种方法更优？
+如果 nums2 的元素存储在磁盘上，磁盘内存是有限的，并且你不能一次加载所有的元素到内存中，你该怎么办？
+```
+## 解法
+### 思路
+- 遍历第一个数组，将元素放入map中并计数
+- 遍历第二个数组，判断map中是否有该元素，且个数大于0，符合就放入list中
+- 最后list转成arr返回
+### 代码
+```java
+class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums1) {
+            map.put(num, map.getOrDefault(num , 0) + 1);
+        }
+
+        List<Integer> list = new ArrayList<>();
+        for (int num : nums2) {
+            if (map.containsKey(num) && map.get(num) != 0) {
+                map.put(num, map.get(num) - 1);
+                list.add(num);
+            }
+        }
+        
+        int[] ans = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            ans[i] = list.get(i);
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 排序两个数组
+- 用2个指针分别对应两个数组，如果某一个数组指针对应的元素小了，那个指针就增加1
+- 否则就说明元素匹配，加到list中
+- 最后当两个数组任意一个遍历结束，就把list中的元素放入arr中返回
+### 代码
+```java
+class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {
+        if (nums1.length == 0 || nums2.length == 0) {
+            return new int[0];
+        }
+        
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        
+        int len1 = nums1.length, len2 = nums2.length;
+        int[] arr = new int[Math.max(len1, len2)];
+        
+        int i1 = 0, i2 = 0, i = 0;
+        while (i1 < len1 && i2 < len2) {
+            if (nums1[i1] < nums2[i2]) {
+                i1++;
+                continue;
+            }
+            
+            if (nums1[i1] > nums2[i2]) {
+                i2++;
+                continue;
+            }
+            
+            arr[i++] = nums1[i1];
+            i1++;
+            i2++;
+        }
+        
+        return Arrays.copyOf(arr, i);
+    }
+}
+```
