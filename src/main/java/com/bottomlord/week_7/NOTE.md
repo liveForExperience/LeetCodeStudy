@@ -450,3 +450,72 @@ class Solution {
     }
 }
 ```
+# LeetCode_830_较大分组的位置
+## 题目
+在一个由小写字母构成的字符串 S 中，包含由一些连续的相同字符所构成的分组。
+
+例如，在字符串 S = "abbxxxxzyy" 中，就含有 "a", "bb", "xxxx", "z" 和 "yy" 这样的一些分组。
+
+我们称所有包含大于或等于三个连续字符的分组为较大分组。找到每一个较大分组的起始和终止位置。
+
+最终结果按照字典顺序输出。
+
+示例 1:
+```
+输入: "abbxxxxzzy"
+输出: [[3,6]]
+解释: "xxxx" 是一个起始于 3 且终止于 6 的较大分组。
+```
+示例 2:
+```
+输入: "abc"
+输出: []
+解释: "a","b" 和 "c" 均不是符合要求的较大分组。
+```
+示例 3:
+```
+输入: "abcdddeeeeaabbbcd"
+输出: [[3,5],[6,9],[12,14]]
+说明:  1 <= S.length <= 1000
+```
+## 解法
+### 思路
+- 初始化一个List<List<Integer>> ans作为结果
+- 使用一个变量start作为开始下标的暂存变量，初始化为0
+- 遍历字符数组，从下标1开始，如果字符与上一个字符不相等，就将start和上一个字符的下标存入list，再存入ans，同时将start变更为当前元素下标
+- 遍历结束，判断最后一段的字符串是否需要放入ans
+- 返回ans
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> largeGroupPositions(String S) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (S.length() <= 1) {
+            return ans;
+        }
+        
+        char[] cs = S.toCharArray();
+        int start = 0;
+        for (int i = 1; i < cs.length; i++) {
+            if (cs[i] != cs[i - 1]) {
+                if (i - 1 - start >= 2) {
+                    List<Integer> list = new ArrayList<>();
+                    list.add(start);
+                    list.add(i - 1);
+                    ans.add(list);    
+                }
+                start = i;
+            }
+        }
+        
+        if (cs.length - start >= 3) {
+            List<Integer> list = new ArrayList<>();
+            list.add(start);
+            list.add(cs.length - 1);
+            ans.add(list);
+        }
+        
+        return ans;
+    }
+}
+```
