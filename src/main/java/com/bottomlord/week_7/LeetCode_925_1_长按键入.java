@@ -26,10 +26,4 @@ public class LeetCode_925_1_长按键入 {
 
         return true;
     }
-
-    public static void main(String[] args) {
-        LeetCode_925_1_长按键入 test = new LeetCode_925_1_长按键入();
-        test.isLongPressedName("kikcxmvzi",
-                "kiikcxxmmvvzz");
-    }
 }
