@@ -602,3 +602,107 @@ class Solution {
     }
 }
 ```
+# LeetCode_459_重复的子字符串
+## 题目
+给定一个非空的字符串，判断它是否可以由它的一个子串重复多次构成。给定的字符串只含有小写英文字母，并且长度不超过10000。
+
+示例 1:
+```
+输入: "abab"
+输出: True
+解释: 可由子字符串 "ab" 重复两次构成。
+```
+示例 2:
+```
+输入: "aba"
+输出: False
+```
+示例 3:
+```
+输入: "abcabcabcabc"
+输出: True
+解释: 可由子字符串 "abc" 重复四次构成。 (或者子字符串 "abcabc" 重复两次构成。)
+```
+## 失败解法
+### 思路
+遍历字符数组，从第一个字符开始不断累加字符，并使用String.replaceAll看是否能将字符串转成空字符串，直到字符长度的一半向上取整为止
+### 失败原因
+超时
+### 代码
+```java
+class Solution {
+    public boolean repeatedSubstringPattern(String s) {
+        if (s.length() <= 1) {
+            return false;
+        }
+        
+        char[] cs = s.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < cs.length / 2 + 1; i++) {
+            if (i != s.length() - 1 && "".equals(s.replaceAll(sb.append(cs[i]).toString(), ""))) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+使用周期串思路，如果存在周期t，那么在[0, 字符串长度len / 2]必定存在元素下标i对应的arr[i] == arr[i % t]，所以就遍历数组，找到这个t
+```math
+f(x+t) = f(x)
+```
+### 代码
+```java
+class Solution {
+    public boolean repeatedSubstringPattern(String s) {
+        for (int i = 1; i <= s.length() / 2; i++) {
+            if (s.length() % i != 0) {
+                continue;
+            }
+            int j = i;
+            for (; j < s.length() && s.charAt(j) == s.charAt(j % i); j++);
+            if (s.length() == j) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+因为可重复，每一个子字符串的最后一个字符和整个字符串的最后一个字符一定是一样的
+- 先找到最后一个字符
+- 从最后开始往前找相同的字符
+- 找到后，先确定从头到该下标的字符串，然后再看该之后是否也有如此长度的字符串，且两者是否相等，如果是，就说明是可重复的
+### 代码
+```java
+class Solution {
+    public boolean repeatedSubstringPattern(String s) {
+        char c = s.charAt(s.length() - 1);
+        int l = s.lastIndexOf(c, s.length() / 2 - 1) + 1;
+        for (; l > 0; l = s.lastIndexOf(c, l - 2) + 1) {
+            if (s.length() % l == 0) {
+                String one = s.substring(0, l);
+                boolean flag = true;
+                for (int i = l; i < s.length(); i += l) {
+                    if (!one.equals(s.substring(i, i + l))) {
+                        flag = false;
+                        break;
+                    }
+                }
+                
+                if (flag) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+```
