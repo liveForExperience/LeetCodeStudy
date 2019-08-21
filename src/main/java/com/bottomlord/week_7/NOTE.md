@@ -826,3 +826,163 @@ class Solution {
     }
 }
 ```
+# LeetCode_594_最长和谐子序列
+## 题目
+和谐数组是指一个数组里元素的最大值和最小值之间的差别正好是1。
+
+现在，给定一个整数数组，你需要在所有可能的子序列中找到最长的和谐子序列的长度。
+
+示例 1:
+```
+输入: [1,3,2,2,5,2,3,7]
+输出: 5
+原因: 最长的和谐数组是：[3,2,2,2,3].
+说明: 输入的数组长度最大不超过20,000.
+```
+## 失败解法
+### 思路
+使用桶记录元素个数，找到相邻元素个数和的最大值，另需要考虑负数
+### 失败原因
+超出内存限制
+### 代码
+```java
+class Solution {
+    public int findLHS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        int len = Integer.MIN_VALUE, min = Integer.MAX_VALUE, max = 0;
+        for (int num : nums) {
+            min = Math.min(min, num);
+            len = Math.max(len, num);
+        }
+        
+        int value = min < 0 ? Math.abs(min) : 0;
+
+        int[] bucket = new int[len + value + 1];
+        for (int num : nums) {
+            bucket[num + value]++;
+        }
+
+        for (int i = 1; i < bucket.length; i++) {
+            if (bucket[i - 1] != 0 && bucket[i] != 0) {
+                max = Math.max(bucket[i - 1] + bucket[i], max);
+            }
+        }
+
+        return max;
+    }
+}
+```
+## 失败解法二
+### 思路
+使用map代替桶
+### 失败原因
+超出时间限制
+### 代码
+```java
+class Solution {
+    public int findLHS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        Map<Integer, Integer> map = new HashMap<>();
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE, ans = 0;
+        for (int num: nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            min = Math.min(num, min);
+            max = Math.max(num, max);
+        }
+        
+        while (++min <= max) {
+            if (map.get(min) != null && map.get(min - 1) != null) {
+                ans = Math.max(map.get(min) + map.get(min - 1), ans);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+基于解法二，使用TreeMap直接排序元素，然后遍历keySet来判断是否有符合要求的相邻元素，并获得和的最大值
+### 代码
+```java
+class Solution {
+    public int findLHS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+
+        Map<Integer, Integer> map = new TreeMap<>(Comparator.naturalOrder());
+        int ans = 0;
+        for (int num: nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        
+        for (Integer num : map.keySet()) {
+            if (map.containsKey(num - 1)) {
+                ans = Math.max(ans, map.get(num) + map.get(num - 1));
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 优化代码
+### 思路
+我排序干嘛?!
+### 代码
+```java
+class Solution {
+    public int findLHS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+
+        Map<Integer, Integer> map = new HashMap<>();
+        int ans = 0;
+        for (int num: nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+
+        for (Integer num : map.keySet()) {
+            if (map.containsKey(num - 1)) {
+                ans = Math.max(ans, map.get(num) + map.get(num - 1));
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 排序数组
+- 用两个指针分别指向：
+    - 第一个指针i移动到当前指向元素+1不再小于第二个指针j指向的元素为止
+    - 指针j指向的元素如果<=指针i指向的元素就移动，且如果==，就更新ans值为j-i+1和ans之间的最大值
+### 代码
+```java
+class Solution {
+    public int findLHS(int[] nums) {
+        Arrays.sort(nums);
+
+        int ans = 0, i = 0;
+        for (int j = 0; j < nums.length; j++) {
+            while (nums[i] + 1 < nums[j]) {
+                i++;
+            }
+            if (nums[i] + 1 == nums[j]) {
+                ans = Math.max(ans, j - i + 1);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
