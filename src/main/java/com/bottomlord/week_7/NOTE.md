@@ -1176,3 +1176,124 @@ class Solution {
     }
 }
 ```
+# LeetCode_744_寻找比目标字母大的最小字母
+## 题目
+给定一个只包含小写字母的有序数组letters 和一个目标字母 target，寻找有序数组里面比目标字母大的最小字母。
+
+数组里字母的顺序是循环的。举个例子，如果目标字母target = 'z' 并且有序数组为 letters = ['a', 'b']，则答案返回 'a'。
+
+示例:
+```
+输入:
+letters = ["c", "f", "j"]
+target = "a"
+输出: "c"
+```
+```
+输入:
+letters = ["c", "f", "j"]
+target = "c"
+输出: "f"
+```
+```
+输入:
+letters = ["c", "f", "j"]
+target = "d"
+输出: "f"
+```
+```
+输入:
+letters = ["c", "f", "j"]
+target = "g"
+输出: "j"
+```
+```
+输入:
+letters = ["c", "f", "j"]
+target = "j"
+输出: "c"
+```
+```
+输入:
+letters = ["c", "f", "j"]
+target = "k"
+输出: "c"
+```
+注:
+```
+letters长度范围在[2, 10000]区间内。
+letters 仅由小写字母组成，最少包含两个不同的字母。
+目标字母target 是一个小写字母。
+```
+## 解法
+### 思路
+使用桶
+- 遍历数组，如果发现比target大1的字符，就直接返回该字符，否则将遍历到的字符放入桶中进行标识
+- 并记录字符的最大值和最小值
+    - 如果target小于最小值，返回最小值
+    - 如果target大于最大值，返回最小值
+    - 从最小值开始遍历，看target小于哪个值
+### 代码
+```java
+class Solution {
+    public char nextGreatestLetter(char[] letters, char target) {
+        boolean[] bucket = new boolean[26];
+        int min = 'z', max = 'a';
+        for (char c : letters) {
+            if (c - target == 1) {
+                return c;
+            }
+            
+            bucket[c - 'a'] = true;
+            min = Math.min(c, min);
+            max = Math.max(c, max);
+        }
+        
+        if (target < min || target >= max) {
+            return (char)min;
+        }
+        
+        for (int i = min - 'a'; i <= max - 'a'; i++) {
+            if (bucket[i] && target - 'a' < i) {
+                return (char)(i + 'a');
+            }
+        }
+        
+        return 'a';
+    }
+}
+```
+## 解法二
+### 思路
+使用双指针来找比target大的最小字母，因为这个数组是排序的
+- 和解法一一样先确定两种情况，比最小字母小，或者大于等于最大字母，则返回最小字母
+- 之后通过mid指针来定位
+    - mid对应元素小于target，l指针指向mid + 1
+    - mid对应元素大于target，r指针指向mid
+- 当l > r之后，返回r指向的元素即可，因为在循环中，当mid找到答案时，r会指向这个mid，同时新的mid将会不断迫使l向r逼近，并在最终通过mid + 1的操作大于r，从而停止循环
+### 代码
+```java
+class Solution {
+    public char nextGreatestLetter(char[] letters, char target) {
+        if (letters == null || letters.length == 0) {
+            return 0;
+        }
+
+        int l = 0, r = letters.length - 1;
+        if (target < letters[l] || target >= letters[r]) {
+            return letters[l];
+        }
+
+        while (l < r) {
+            int mid = l + r >> 1;
+            if (letters[mid] > target) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+
+        return letters[r];
+    }
+}
+```
