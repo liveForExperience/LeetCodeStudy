@@ -1353,3 +1353,47 @@ class Solution {
     }
 }
 ```
+# LeetCode_203_移除链表元素
+## 题目
+删除链表中等于给定值 val 的所有节点。
+
+示例:
+```
+输入: 1->2->6->3->4->5->6, val = 6
+输出: 1->2->3->4->5
+```
+## 解法
+### 思路
+- 使用变量：
+    - pre：暂存上一个节点的指针，初始化为null
+    - node：暂存当前节点的指针
+- 遍历链表
+    - 如果pre==null，也就是head节点的时候，val相等，修改head的指针指向node的next
+    - 如果val相同，修改pre的next指针为next.next
+### 代码
+```java
+class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode node = head;
+        ListNode pre = null;
+        while (node != null) {
+            if (node.val == val) {
+                if (pre == null) {
+                    node = node.next;
+                    head = node;
+                    
+                    continue;
+                }
+                
+                pre.next = node.next;
+            } else {
+                pre = node;
+            }
+            
+            node = node.next;
+        }
+        
+        return head;
+    }
+}
+```
