@@ -1563,3 +1563,44 @@ class Solution {
     }
 }
 ```
+# LeetCode_367_有效的完全平方数
+## 题目
+给定一个正整数 num，编写一个函数，如果 num 是一个完全平方数，则返回 True，否则返回 False。
+
+说明：不要使用任何内置的库函数，如  sqrt。
+
+示例 1：
+```
+输入：16
+输出：True
+```
+示例 2：
+```
+输入：14
+输出：False
+```
+## 解法
+### 思路
+使用双指针来找平方数，谨防溢出
+### 代码
+```java
+class Solution {
+    public boolean isPerfectSquare(int num) {
+        int head = 0, tail = num / 2 + 1;
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+            if ((long) mid * mid == num) {
+                return true;
+            }
+
+            if ((long) mid * mid > num) {
+                tail = mid - 1;
+            } else {
+                head = mid + 1;
+            }
+        }
+
+        return false;
+    }
+}
+```
