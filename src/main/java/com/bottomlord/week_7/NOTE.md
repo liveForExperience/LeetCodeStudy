@@ -1604,3 +1604,107 @@ class Solution {
     }
 }
 ```
+# LeetCode_572_另一个树的子树
+## 题目
+给定两个非空二叉树 s 和 t，检验 s 中是否包含和 t 具有相同结构和节点值的子树。s 的一个子树包括 s 的一个节点和这个节点的所有子孙。s 也可以看做它自身的一棵子树。
+
+示例 1:
+```
+给定的树 s:
+
+     3
+    / \
+   4   5
+  / \
+ 1   2
+给定的树 t：
+
+   4 
+  / \
+ 1   2
+返回 true，因为 t 与 s 的一个子树拥有相同的结构和节点值。
+```
+示例 2:
+```
+给定的树 s：
+
+     3
+    / \
+   4   5
+  / \
+ 1   2
+    /
+   0
+给定的树 t：
+
+   4
+  / \
+ 1   2
+返回 false。
+```
+## 解法
+### 思路
+嵌套dfs
+### 代码
+```java
+class Solution {
+    public boolean isSubtree(TreeNode s, TreeNode t) {
+        if (s == null && t == null) {
+            return true;
+        }
+
+        if (s == null || t == null) {
+            return false;
+        }
+
+        if (s.val == t.val) {
+            return dfs(s, t) || isSubtree(s.left, t) || isSubtree(s.right, t);
+        }
+
+        return isSubtree(s.left, t) || isSubtree(s.right, t);
+    }
+
+    private boolean dfs(TreeNode s, TreeNode t) {
+        if (s == null) {
+            return t == null;
+        }
+
+        if (t == null) {
+            return false;
+        }
+
+        if (s.val != t.val) {
+            return false;
+        }
+
+        return dfs(s.left, t.left) && dfs(s.right, t.right);
+    }
+}
+```
+## 解法二
+### 思路
+使用类变量存储t
+### 代码
+```java
+class Solution {
+    private TreeNode node;
+    public boolean isSubtree(TreeNode s, TreeNode t) {
+        node = t;
+        return dfs(s, t);
+    }
+
+    private boolean dfs(TreeNode s, TreeNode t) {
+        if (s == null && t == null) {
+            return true;
+        }
+
+        if (s == null || t == null) {
+            return false;
+        }
+
+        return s.val == t.val ? dfs(s.left, t.left) && dfs(s.right, t.right) ||
+                                dfs(s.left, t) || dfs(s.right, t) : 
+                                dfs(s.left, node) || dfs(s.right, node);
+    }                               
+}
+```
