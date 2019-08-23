@@ -36,9 +36,4 @@ public class LeetCode_1042_2 {
 
         return ans;
     }
-
-    public static void main(String[] args) {
-        LeetCode_1042_2 test = new LeetCode_1042_2();
-        test.gardenNoAdj(3, new int[][]{{1,2},{2,3},{3,1}});
-    }
 }
