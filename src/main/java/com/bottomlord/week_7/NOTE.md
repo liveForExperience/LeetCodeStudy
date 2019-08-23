@@ -1434,5 +1434,132 @@ class Solution {
     - bottom >= top
 ### 代码
 ```java
+class Solution {
+    public boolean isRectangleOverlap(int[] rec1, int[] rec2) {
+        return !(rec2[0] >= rec1[2] ||
+                rec2[1] >= rec1[3] ||
+                rec2[2] <= rec1[0] ||
+                rec2[3] <= rec1[1]);
+    }
+}
+```
+# LeetCode_1042_不邻接植花
+## 题目
+有 N 个花园，按从 1 到 N 标记。在每个花园中，你打算种下四种花之一。
 
+paths[i] = [x, y] 描述了花园 x 到花园 y 的双向路径。
+
+另外，没有花园有 3 条以上的路径可以进入或者离开。
+
+你需要为每个花园选择一种花，使得通过路径相连的任何两个花园中的花的种类互不相同。
+
+以数组形式返回选择的方案作为答案 answer，其中 answer[i] 为在第 (i+1) 个花园中种植的花的种类。花的种类用  1, 2, 3, 4 表示。保证存在答案。
+
+示例 1：
+```
+输入：N = 3, paths = [[1,2],[2,3],[3,1]]
+输出：[1,2,3]
+```
+示例 2：
+```
+输入：N = 4, paths = [[1,2],[3,4]]
+输出：[1,2,1,2]
+```
+示例 3：
+```
+输入：N = 4, paths = [[1,2],[2,3],[3,4],[4,1],[1,3],[2,4]]
+输出：[1,2,3,4]
+```
+提示：
+```
+1 <= N <= 10000
+0 <= paths.size <= 20000
+不存在花园有 4 条或者更多路径可以进入或离开。
+保证存在答案。
+```
+## 解法
+### 思路
+使用图论涂色，因为每个节点的路径不超过3个，所以可以放心涂色
+- 遍历数组，统计节点的关联节点
+- 循环处理每一个节点：
+    1. 查看关联节点使用了的颜色
+    2. 遍历颜色数组，根据已经使用的颜色，确定用什么颜色为当前节点上色
+    3. 记录在结果数组中
+### 代码
+```java
+class Solution {
+    public int[] gardenNoAdj(int N, int[][] paths) {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int i = 0; i < N; i++) {
+            map.put(i, new HashSet<>());
+        }
+
+        for (int[] graph : paths) {
+            map.get(graph[0] - 1).add(graph[1] - 1);
+            map.get(graph[1] - 1).add(graph[0] - 1);
+        }
+
+        int[] ans = new int[N];
+        for (int i = 0; i < N; i++) {
+            boolean[] used = new boolean[5];
+            for (int j: map.get(i)) {
+                if (ans[j] != 0) {
+                    used[ans[j]] = true;
+                }
+            }
+
+            for (int j = 1; j < 5; j++) {
+                if (!used[j]) {
+                    ans[i] = j;
+                    break;
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用数组代替set
+### 代码
+```java
+class Solution {
+    public int[] gardenNoAdj(int N, int[][] paths) {
+        int[][] topo = new int[N + 1][3];
+        for (int[] path : paths) {
+            int index = 0;
+            while (topo[path[0]][index] != 0) {
+                index++;
+            }
+            topo[path[0]][index] = path[1];
+
+            index = 0;
+            while (topo[path[1]][index] != 0) {
+                index++;
+            }
+            topo[path[1]][index] = path[0];
+        }
+
+        int[] ans = new int[N];
+        for (int i = 1; i < N + 1; i++) {
+             boolean[] used = new boolean[5];
+             for (int j = 0; j < topo[i].length; j++) {
+                 if (topo[i][j] != 0 && ans[topo[i][j] - 1] != 0) {
+                     used[ans[topo[i][j] - 1]] = true;
+                 }
+             }
+
+             for (int j = 1; j < 5; j++) {
+                 if (!used[j]) {
+                     ans[i - 1] = j;
+                     break;
+                 }
+             }
+        }
+
+        return ans;
+    }
+}
 ```
