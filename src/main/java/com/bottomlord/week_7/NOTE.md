@@ -1843,5 +1843,62 @@ f(k) = max(f(k - 2) + Ai, f(k - 1))
 所以，以此类推，整个过程就是在求，当前最大值curMax与上一次最大值和当前元素和preMax + Ak之间的最大值的过程。
 ### 代码
 ```java
+class Solution {
+    public int rob(int[] nums) {
+        int preMax = 0, curMax = 0;
+        for (int num : nums) {
+            int tmp = curMax;
+            curMax = Math.max(preMax + num, curMax);
+            preMax = tmp;
+        }
+        return curMax;
+    }
+}
+```
+# LeetCode_1018_可被5整除的二进制前缀
+## 题目
 
+## 失败解法
+### 思路
+- 遍历数组累加计算获得数组代表的值
+- 然后右移位计算每一位
+### 失败原因
+溢出
+### 代码
+```java
+class Solution {
+    public List<Boolean> prefixesDivBy5(int[] A) {
+        int num = 0;
+        for (int i = A.length - 1; i >= 0; i--) {
+            num += Math.pow(2, A.length - 1 - i) * A[i];
+        }
+
+        List<Boolean> ans = new ArrayList<>(A.length);
+        for (int i = A.length - 1; i >= 0; i--){
+            ans.add(0, num % 5 == 0);
+            num >>= 1;
+        }
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+如果有溢出，就需要简化累加的过程，不要计算所有位
+- 如果n取余5为0，那么右移位1位，取余也是0
+- 所以从最低位开始，记录每一次的余数，然后右移余数1位再加当前位的值来求取余5的值是否为0
+### 代码
+```java
+class Solution {
+    public List<Boolean> prefixesDivBy5(int[] A) {
+        int pre = 0;
+        List<Boolean> ans = new ArrayList<>(A.length);
+        for (int i = 0; i < A.length; i++) {
+            pre = ((pre << 1) + A[i]) % 5;
+            ans.add(pre == 0);
+        }
+        
+        return ans;
+    }
+}
 ```
