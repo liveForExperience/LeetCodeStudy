@@ -18,9 +18,4 @@ public class LeetCode_367_1_有效的完全平方数 {
 
         return false;
     }
-
-    public static void main(String[] args) {
-        LeetCode_367_1_有效的完全平方数 test = new LeetCode_367_1_有效的完全平方数();
-        System.out.println(test.isPerfectSquare(808201));;
-    }
 }
