@@ -2054,3 +2054,76 @@ public class Solution extends GuessGame {
     }
 }
 ```
+# LeetCode_387_字符串中第一个唯一字符
+## 题目
+给定一个字符串，找到它的第一个不重复的字符，并返回它的索引。如果不存在，则返回 -1。
+
+案例:
+```
+s = "leetcode"
+返回 0.
+
+s = "loveleetcode",
+返回 2.
+```
+```
+注意事项：您可以假定该字符串只包含小写字母。
+```
+## 解法
+### 思路
+- 用一个桶来计数字符
+- 另一个桶记录字符的下标
+- 遍历第一个桶，找到计数为1的字符，再从第二个桶中找到对应的下标
+- 遍历过程中，不断更新计数为1的字符的下标，谁小取谁
+- 遍历结束返回下标
+### 代码
+```java
+class Solution {
+    public int firstUniqChar(String s) {
+        int max = 0;
+        char[] cs = s.toCharArray();
+        
+        for (char c: cs) {
+            max = Math.max(c, max);
+        }
+
+        int[] numBucket = new int[max + 1];
+        Integer[] indexBucket = new Integer[max + 1];
+
+        for (int i = 0; i < cs.length; i++) {
+            numBucket[cs[i]]++;
+            if (indexBucket[cs[i]] == null) {
+                indexBucket[cs[i]] = i;
+            }
+        }
+        
+        int index = cs.length;
+        for (int i = 0; i < numBucket.length; i++) {
+            if (numBucket[i] == 1) {
+                index = Math.min(index, indexBucket[i]);
+            }
+        }
+        
+        return index == cs.length ? -1 : index;
+    }
+}
+```
+## 解法二
+### 思路
+直接通过Stirng的lastIndexOf和indexOf是否相等来判断是否是唯一的字符，这样只需要循环一次
+### 代码
+```java
+class Solution {
+    public int firstUniqChar(String s) {
+        int index = -1;
+        for (char i = 'a'; i <= 'z'; i++) {
+            int start = s.indexOf(i);
+            if (start != -1 && s.indexOf(i) == s.lastIndexOf(i)) {
+                index = (index == -1 || index > start) ? start : index;
+            }
+        }
+
+        return index == s.length() ? -1 : index;
+    }
+}
+```
