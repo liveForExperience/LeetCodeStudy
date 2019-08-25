@@ -40,9 +40,4 @@ public class LeetCode_125_1_验证回文串 {
         }
         return true;
     }
-
-    public static void main(String[] args) {
-        LeetCode_125_1_验证回文串 test = new LeetCode_125_1_验证回文串();
-        test.isPalindrome("A man, a plan, a canal: Panama");
-    }
 }

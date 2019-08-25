@@ -2127,3 +2127,21 @@ class Solution {
     }
 }
 ```
+# LeetCode_172_阶乘后的零
+## 题目
+## 解法
+### 思路
+阶乘结果中的零取决于乘数中有多少对2和5，因为5的个数少，所以求出乘数中的为5的因数即可
+### 代码
+```java
+class Solution {
+    public int trailingZeroes(int n) {
+        int ans = 0;
+        while (n > 0) {
+            n /= 5;
+            ans += n;
+        }
+        return ans;
+    }
+}
+```
