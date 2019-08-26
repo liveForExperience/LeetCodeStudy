@@ -306,5 +306,147 @@ class Solution {
 - 比较前后两段链表
 ### 代码
 ```java
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        if (head == null || head.next == null) {
+            return true;
+        }
 
+        ListNode slow = head, fast = head.next;
+        while (fast.next != null && fast.next.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+
+        ListNode node = slow.next, pre = null, next;
+        while (node != null) {
+            next = node.next;
+            node.next = pre;
+            pre = node;
+            node = next;
+        }
+
+        while (pre != null && head != null) {
+            if (pre.val != head.val) {
+                return false;
+            }
+            
+            pre = pre.next;
+            head = head.next;
+        }
+        
+        return true;
+    }
+}
+```
+# LeetCode_438_找到字符串中所有字母异位词
+## 题目
+给定一个字符串 s 和一个非空字符串 p，找到 s 中所有是 p 的字母异位词的子串，返回这些子串的起始索引。
+
+字符串只包含小写英文字母，并且字符串 s 和 p 的长度都不超过 20100。
+
+说明：
+```
+字母异位词指字母相同，但排列不同的字符串。
+不考虑答案输出的顺序。
+```
+示例 1:
+```
+输入:
+s: "cbaebabacd" p: "abc"
+
+输出:
+[0, 6]
+
+解释:
+起始索引等于 0 的子串是 "cba", 它是 "abc" 的字母异位词。
+起始索引等于 6 的子串是 "bac", 它是 "abc" 的字母异位词。
+```
+ 示例 2:
+```
+输入:
+s: "abab" p: "ab"
+
+输出:
+[0, 1, 2]
+```
+```
+解释:
+起始索引等于 0 的子串是 "ab", 它是 "ab" 的字母异位词。
+起始索引等于 1 的子串是 "ba", 它是 "ab" 的字母异位词。
+起始索引等于 2 的子串是 "ab", 它是 "ab" 的字母异位词。
+```
+## 解法
+### 思路
+- 针对字符串p生成一个桶记录字符出现的个数
+- 遍历字符串s，看当前下标及之后p长度的字符串中的字符个数是否和桶中的个数一致，如果是就记录下起始下标
+### 代码
+```java
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        int[] bucket = new int[26];
+        int len = p.length();
+        for (char c : p.toCharArray()) {
+            bucket[c - 'a']++;
+        }
+        
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i + len - 1 < s.length(); i++) {
+            int[] copy = Arrays.copyOf(bucket, bucket.length);
+            for (int j = i; j < i + len; j++) {
+                copy[s.charAt(j) - 'a']--;
+            }
+            
+            boolean flag = true;
+            for (int num : copy) {
+                if (num != 0) {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if (flag) {
+                ans.add(i);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+不需要嵌套循环，只需要在一次遍历中使用两个指针：
+- 一个指针负责找到桶中的字符，然后将桶中的字符递减，直到遍历到并不是桶桶中的字符，停住
+- 这时另一个指针开始追第一个指针，同时将桶中的字符增加回来，直到追到第一个指针所在的位置
+- 然后如果遍历到的都不是p字符，那么两个指针会交替移动，但第二个指针一定不会超过第一个指针
+- 直到再次找到p字符，r开始拉大距离，直到再次停止，如果找到了p的异位词，那么就会拉大到p的长度，所以这个时候可以将l所在的位置放入ans中
+- 直到第一个指针遍历结束
+### 代码
+```java
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        int[] bucket = new int[26];
+        for (char c : p.toCharArray()) {
+            bucket[c - 'a']++;
+        }
+        
+        int one = 0, two = 0, len = p.length();
+        char[] ss = s.toCharArray();
+        List<Integer> ans = new ArrayList<>();
+        
+        while (one < ss.length) {
+            if (bucket[ss[one] - 'a'] > 0) {
+                bucket[ss[one++] - 'a']--;
+                if (one - two == len) {
+                    ans.add(two);
+                }
+            } else {
+                bucket[ss[two++] - 'a']++;
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
