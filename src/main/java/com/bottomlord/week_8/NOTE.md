@@ -579,3 +579,100 @@ class Solution {
     }
 }
 ```
+# LeetCode_482_密钥的格式化
+## 题目
+给定一个密钥字符串S，只包含字母，数字以及 '-'（破折号）。N 个 '-' 将字符串分成了 N+1 组。给定一个数字 K，重新格式化字符串，除了第一个分组以外，每个分组要包含 K 个字符，第一个分组至少要包含 1 个字符。两个分组之间用 '-'（破折号）隔开，并且将所有的小写字母转换为大写字母。
+
+给定非空字符串 S 和数字 K，按照上面描述的规则进行格式化。
+
+示例 1：
+```
+输入：S = "5F3Z-2e-9-w", K = 4
+
+输出："5F3Z-2E9W"
+
+解释：字符串 S 被分成了两个部分，每部分 4 个字符；
+     注意，两个额外的破折号需要删掉。
+```
+示例 2：
+```
+输入：S = "2-5g-3-J", K = 2
+
+输出："2-5G-3J"
+
+解释：字符串 S 被分成了 3 个部分，按照前面的规则描述，第一部分的字符可以少于给定的数量，其余部分皆为 2 个字符。
+```
+提示:
+```
+S 的长度不超过 12,000，K 为正整数
+S 只包含字母数字（a-z，A-Z，0-9）以及破折号'-'
+S 非空
+```
+## 解法
+### 思路
+- 去除-，获得所有有效字符拼接的字符串
+- 根据字符串长度与4取余的余数，确定第一组字符的长度，并把字符转成大写
+- 之后从该长度开始每4个字符一段拼接，且小写字母转成大写
+### 代码
+```java
+class Solution {
+    public String licenseKeyFormatting(String S, int K) {
+        S = S.replaceAll("-" , "");
+        int mod = S.length() % K;
+        if (mod == 0) {
+            mod = K;
+        }
+
+        if (S.length() == 0) {
+            return "";
+        }
+        
+        StringBuilder sb = new StringBuilder(S.substring(0, mod).toUpperCase());
+        while (mod + K <= S.length()) {
+            sb.append("-").append(S.substring(mod, mod + K).toUpperCase());
+            mod += K;
+        }
+
+        return sb.toString();
+    }
+}
+```
+## 优化代码
+### 思路
+- 使用数组代替StringBuilder
+- 从字符串的尾部开始遍历，遍历到的字符转成大写，并使计数器+1
+- 如果计数器==k，增加‘-’,并初始化计数器为0
+- 直到遍历结束
+- 返回字符串
+### 代码
+```java
+class Solution {
+    public String licenseKeyFormatting(String S, int K) {
+        int len = S.length(), count = 0;
+        char[] cs = S.toCharArray();
+        char[] ans = new char[len * 2];
+        int index = ans.length - 1;
+        for (int i = len - 1; i >= 0; i--) {
+            char c = cs[i];
+
+            if (c == '-') {
+                continue;
+            }
+            
+            if (count == K) {
+                ans[index--] = '-';
+                count = 0;
+            }
+
+            if (c >= 'a' && c <= 'z') {
+                c -= ' ';
+            }
+
+            ans[index--] = c;
+            count++;
+        }
+
+        return new String(ans, ++index, ans.length - index);
+    }
+}
+```
