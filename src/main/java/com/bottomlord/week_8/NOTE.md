@@ -1025,5 +1025,103 @@ class Solution {
 - 最后再比较最后一个1到右手边结束的距离
 ### 代码
 ```java
+class Solution {
+    public int maxDistToClosest(int[] seats) {
+        int count = 0, max = 0;
+        for (int i = 0; i < seats.length; i++) {
+            if (seats[i] == 1) {
+                max = i;
+                break;
+            }
+        }
+        
+        for (int i = max + 1; i < seats.length; i++) {
+            if (seats[i] == 1) {
+                max = Math.max(max, count / 2 + count % 2);
+                count = 0;
+                continue;
+            }
+            
+            count++;
+        }
+        
+        return Math.max(count, max);
+    }
+}
+```
+# LeetCode_687_最长同值路径
+## 题目
+给定一个二叉树，找到最长的路径，这个路径中的每个节点具有相同值。 这条路径可以经过也可以不经过根节点。
 
+注意：两个节点之间的路径长度由它们之间的边数表示。
+
+示例 1:
+```
+输入:
+
+              5
+             / \
+            4   5
+           / \   \
+          1   1   5
+输出:
+
+2
+```
+示例 2:
+```
+输入:
+
+              1
+             / \
+            4   5
+           / \   \
+          4   4   5
+输出:
+
+2
+```
+```
+注意: 给定的二叉树不超过10000个结点。 树的高度不超过1000。
+```
+## 解法
+### 思路
+dfs嵌套递归
+- 外层遍历所有节点
+- 内层累加当前节点左右子树val相等的树的深度的和
+- 取最大值返回
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int longestUnivaluePath(TreeNode root) {
+        dfsOut(root);
+        return count;
+    }
+
+    private void dfsOut(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        count = Math.max(count, dfsIn(node.left, node.val, 0) + dfsIn(node.right, node.val, 0));
+
+        dfsOut(node.left);
+        dfsOut(node.right);
+    }
+
+    private int dfsIn(TreeNode node, int pre, int sum) {
+        if (node == null) {
+            return sum;
+        }
+
+        if (node.val == pre) {
+            sum++;
+        } else {
+            return sum;
+        }
+
+        return Math.max(dfsIn(node.left, pre, sum), dfsIn(node.right, pre, sum));
+    }
+}
 ```
