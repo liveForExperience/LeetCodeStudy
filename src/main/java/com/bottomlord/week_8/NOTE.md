@@ -1125,3 +1125,112 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+想通过map来记录路径上的值，减少重复递归，但发掘使用map速度反而因为计算hash等内部逻辑而变得更慢
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int longestUnivaluePath(TreeNode root) {
+        Map<TreeNode, Integer> map = new HashMap<>();
+        dfsOut(root, map);
+        return count;
+    }
+
+    private void dfsOut(TreeNode node, Map<TreeNode, Integer> map) {
+        if (node == null) {
+            return;
+        }
+
+        count = Math.max(count, dfsIn(node.left, node.val, map) + dfsIn(node.right, node.val, map));
+
+        dfsOut(node.left, map);
+        dfsOut(node.right, map);
+    }
+
+    private int dfsIn(TreeNode node, int pre, Map<TreeNode, Integer> map) {
+        if (node == null) {
+            return 0;
+        }
+
+        if (map.containsKey(node)) {
+            return map.get(node);
+        }
+
+        if (node.val != pre) {
+            return 0;
+        }
+
+        int val = Math.max(dfsIn(node.left, pre, map) + 1, dfsIn(node.right, pre, map) + 1);
+        map.put(node, val);
+        return val;
+    }
+}
+```
+## 解法三
+### 思路
+与解法一相反，与解法二类似，不使用sum变量从上往下统计，而是从下往上统计
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int longestUnivaluePath(TreeNode root) {
+        dfsOut(root);
+        return count;
+    }
+
+    private void dfsOut(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        count = Math.max(count, dfsIn(node.left, node.val) + dfsIn(node.right, node.val));
+
+        dfsOut(node.left);
+        dfsOut(node.right);
+    }
+
+    private int dfsIn(TreeNode node, int pre) {
+        if (node == null) {
+            return 0;
+        }
+
+        if (node.val != pre) {
+            return 0;
+        }
+
+        return Math.max(dfsIn(node.left, pre) + 1, dfsIn(node.right, pre) + 1);
+    }
+}
+```
+## 优化代码
+### 思路
+因为是从下往上统计，所以不需要两层嵌套的递归，直接使用同一套逻辑，在下钻的每一个节点，计算节点值和上一个节点值是否相同
+- 如果相同，就返回它的左右子树的深度的最大值+1，1代表当前有效层
+- 如果不相同，就返回0，说明当前层的左右子树的深度和上一层没有关系，不能加在一起统计
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int longestUnivaluePath(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        dfs(root, root.val);
+        return count;
+    }
+    
+    private int dfs(TreeNode node, int preVal) {
+        if (node == null) {
+            return 0;
+        }
+        
+        int left = dfs(node.left, node.val);
+        int right = dfs(node.right, node.val);
+        
+        count = Math.max(count, left + right);
+        return node.val == preVal ? Math.max(left, right) + 1 : 0;
+    }
+}
+```
