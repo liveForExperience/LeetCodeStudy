@@ -1332,3 +1332,68 @@ class Solution {
     }
 }
 ```
+# LeetCode_1037_有效的回旋镖
+## 题目
+回旋镖定义为一组三个点，这些点各不相同且不在一条直线上。
+
+给出平面上三个点组成的列表，判断这些点是否可以构成回旋镖。
+
+示例 1：
+```
+输入：[[1,1],[2,3],[3,2]]
+输出：true
+```
+示例 2：
+```
+输入：[[1,1],[2,2],[3,3]]
+输出：false
+```
+提示：
+```
+points.length == 3
+points[i].length == 2
+0 <= points[i][j] <= 100
+```
+## 解法
+### 思路
+判断二维坐标系中的三个点是否在同一条直线上，因为三个点在同一条直线上，必然有一条边等于另两条边的和，所以只要计算两点之间距离，判断是否有这种可能即可。
+### 代码
+```java
+class Solution {
+    public boolean isBoomerang(int[][] points) {
+        int ax = points[0][0];
+        int ay = points[0][1];
+        int bx = points[1][0];
+        int by = points[1][1];
+        int cx = points[2][0];
+        int cy = points[2][1];
+
+        double lenA = Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2));
+        double lenB = Math.sqrt(Math.pow(ax - cx, 2) + Math.pow(ay - cy, 2));
+        double lenC = Math.sqrt(Math.pow(bx - cx, 2) + Math.pow(by - cy, 2));
+
+        return !(lenA + lenB == lenC || lenA + lenC == lenB || lenB + lenC == lenA);
+    }
+}
+```
+## 解法二
+### 思路
+如果斜率相等，说明在同一条直线上，但为了防止除数为0的情况，斜率方程转换成乘法的方式计算
+### 代码
+```java
+class Solution {
+    public boolean isBoomerang(int[][] points) {
+        int ax = points[0][0];
+        int ay = points[0][1];
+        int bx = points[1][0];
+        int by = points[1][1];
+        int cx = points[2][0];
+        int cy = points[2][1];
+        
+        double s1 = (ax - bx) * (by - cy);
+        double s2 = (bx - cx) * (ay - by);
+        
+        return s1 != s2;
+    }
+}
+```
