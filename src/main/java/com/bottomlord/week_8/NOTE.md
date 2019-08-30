@@ -1741,3 +1741,74 @@ class Solution {
     }
 }
 ```
+# LeetCode_1128_等价多米诺骨牌对的数量
+## 题目
+给你一个由一些多米诺骨牌组成的列表 dominoes。
+
+如果其中某一张多米诺骨牌可以通过旋转 0 度或 180 度得到另一张多米诺骨牌，我们就认为这两张牌是等价的。
+
+形式上，dominoes[i] = [a, b] 和 dominoes[j] = [c, d] 等价的前提是 a==c 且 b==d，或是 a==d 且 b==c。
+
+在 0 <= i < j < dominoes.length 的前提下，找出满足 dominoes[i] 和 dominoes[j] 等价的骨牌对 (i, j) 的数量。
+
+示例：
+```
+输入：dominoes = [[1,2],[2,1],[3,4],[5,6]]
+输出：1
+```
+## 失败解法
+### 失败原因
+超时
+### 思路
+嵌套循环整个二维数组，比较两个数组之间元素是否相等
+### 代码
+```java
+class Solution {
+    public int numEquivDominoPairs(int[][] dominoes) {
+        int sum = 0;
+        for (int i = 0; i < dominoes.length; i++) {
+            for (int j = i + 1; j < dominoes.length; j++) {
+                int[] left = dominoes[i];
+                int[] right = dominoes[j];
+
+                if ((left[0] == right[0]) && (right[1] == left[1]) || (left[0] == right[1] && left[1] == right[0])) {
+                    sum++;
+                }
+            }
+        }
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+- 遍历二维数组，使用嵌套的map来记录每一个多米诺骨牌，为了使反转的骨牌统一，统一小的数为元素1，大的为元素2，这样进行统计
+- 遍历map，将内层map的次数取出，使用组合公式，`n * (n - 1) / 2`来计算每一组相同骨牌能组成的对数，并对结果进行累加
+- 返回累加的值
+### 代码
+```java
+class Solution {
+    public int numEquivDominoPairs(int[][] dominoes) {
+        Map<Integer, Map<Integer, Integer>> map = new HashMap<>();
+        for (int[] arr : dominoes) {
+            int one = arr[0];
+            int two = arr[1];
+
+            int out = Math.min(one, two);
+            int in = Math.max(one, two);
+
+            map.put(out, map.getOrDefault(out, new HashMap<>()));
+            Map<Integer, Integer> innerMap = map.get(out);
+            innerMap.put(in, innerMap.getOrDefault(in, 0) + 1);
+        }
+
+        int sum = 0;
+        for (Map<Integer, Integer> innerMap : map.values()) {
+            for (Integer num : innerMap.values()) {
+                sum += num * (num - 1) / 2;
+            }
+        }
+        return sum;
+    }
+}
+```
