@@ -1840,3 +1840,60 @@ class Solution {
     }
 }
 ```
+# LeetCode_1033_移动石子直到连续
+## 题目
+三枚石子放置在数轴上，位置分别为 a，b，c。
+
+每一回合，我们假设这三枚石子当前分别位于位置 x, y, z 且 x < y < z。从位置 x 或者是位置 z 拿起一枚石子，并将该石子移动到某一整数位置 k 处，其中 x < k < z 且 k != y。
+
+当你无法进行任何移动时，即，这些石子的位置连续时，游戏结束。
+
+要使游戏结束，你可以执行的最小和最大移动次数分别是多少？ 以长度为 2 的数组形式返回答案：answer = [minimum_moves, maximum_moves]
+
+示例 1：
+```
+输入：a = 1, b = 2, c = 5
+输出：[1, 2]
+解释：将石子从 5 移动到 4 再移动到 3，或者我们可以直接将石子移动到 3。
+```
+示例 2：
+```
+输入：a = 4, b = 3, c = 2
+输出：[0, 0]
+解释：我们无法进行任何移动。
+```
+提示：
+```
+1 <= a <= 100
+1 <= b <= 100
+1 <= c <= 100
+a != b, b != c, c != a
+```
+## 解法
+### 思路
+- 最大距离应该是最大值和最小值之间的距离-2
+- 最小值是却决于中间值和左右两个点的距离中的最小值：
+    - 如果为1：那么说明有两个点相邻，结果就是1
+    - 如果为2：那么只要把另一个放到两个间隔为1的点中就可以，结果也是1
+    - 如果大于2：那么就比上面两种情况多出一步，移动一个点到另一个点边上，形成上两种情况的任意只用，然后和上两种情况一下处理就好，所以是2
+- 还有一种特殊情况，就是三个点已经是连续的，这时大小值都是零
+### 代码
+```java
+class Solution {
+    public int[] numMovesStones(int a, int b, int c) {
+        int max = Math.max(a, Math.max(b, c));
+        int min = Math.min(a, Math.min(b, c));
+        int mid = a + b + c - max - min;
+
+        int leftDiff = max - mid;
+        int rightDiff = mid - min;
+        if (leftDiff == 1 && leftDiff == rightDiff) {
+            return new int[2];
+        }
+        
+        int diff = Math.min(leftDiff, rightDiff);
+
+        return new int[]{diff <= 2 ? 1: 2, max - min - 2};
+    }
+}
+```
