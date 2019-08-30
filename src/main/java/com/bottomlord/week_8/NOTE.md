@@ -1780,7 +1780,7 @@ class Solution {
     }
 }
 ```
-## 解法二
+## 解法一
 ### 思路
 - 遍历二维数组，使用嵌套的map来记录每一个多米诺骨牌，为了使反转的骨牌统一，统一小的数为元素1，大的为元素2，这样进行统计
 - 遍历map，将内层map的次数取出，使用组合公式，`n * (n - 1) / 2`来计算每一组相同骨牌能组成的对数，并对结果进行累加
@@ -1808,6 +1808,34 @@ class Solution {
                 sum += num * (num - 1) / 2;
             }
         }
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+- 因为多米诺的每一个元素都是0-9的数字，所以可以用一个二维数组`int[10][10] dict`记录某一种多米诺出现的次数
+- 之后就通过遍历dict，将下标交换后的元素与当前元素相加(元素相同的情况，不能相加)，通过解法一一样的公式累加入结果中
+### 代码
+```java
+class Solution {
+    public int numEquivDominoPairs(int[][] dominoes) {
+        int[][] dict = new int[10][10];
+        for (int[] dominoe : dominoes) {
+            dict[dominoe[0]][dominoe[1]]++;
+        }
+
+        int sum = 0;
+        for (int i = 0; i < dict.length; i++) {
+            for (int j = i; j < dict.length; j++) {
+                int num = dict[i][j];
+                if (i != j) {
+                    num += dict[j][i];
+                }
+                sum += num * (num - 1) / 2;
+            }
+        }
+
         return sum;
     }
 }
