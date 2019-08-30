@@ -1612,3 +1612,49 @@ class Solution {
     }
 }
 ```
+# LeetCode_507_完美数
+## 题目
+对于一个 正整数，如果它和除了它自身以外的所有正因子之和相等，我们称它为“完美数”。
+
+给定一个 整数 n， 如果他是完美数，返回 True，否则返回 False
+
+示例：
+```
+输入: 28
+输出: True
+解释: 28 = 1 + 2 + 4 + 7 + 14
+```
+提示：
+```
+输入的数字 n 不会超过 100,000,000. (1e8)
+```
+## 解法
+### 思路
+- 完美数的因子不包括本身，1去除
+- 因为除了1和整数平方根外，正整数因子都是成对出现，所以只需要遍历到num的平方根处即可
+- 计算因子之和是否等于其本身
+### 代码
+```java
+class Solution {
+    public boolean checkPerfectNumber(int num) {
+        if (num == 1) {
+            return false;
+        }
+
+        int sum = 1, i = 2;
+        double sqrt = Math.sqrt(num);
+        for (; i < sqrt; i++) {
+            if (num % i == 0) {
+                sum += i;
+                sum += num / i;
+            }
+        }
+        
+        if (num % sqrt == 0) {
+            sum += sqrt;
+        }
+        
+        return sum == num;
+    }
+}
+```
