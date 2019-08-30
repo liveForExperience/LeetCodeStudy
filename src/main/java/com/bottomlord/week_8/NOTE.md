@@ -1897,3 +1897,57 @@ class Solution {
     }
 }
 ```
+# LeetCode_168_Excel表列名称
+## 题目
+给定一个正整数，返回它在 Excel 表中相对应的列名称。
+
+例如，
+```
+    1 -> A
+    2 -> B
+    3 -> C
+    ...
+    26 -> Z
+    27 -> AA
+    28 -> AB 
+    ...
+```
+示例 1:
+```
+输入: 1
+输出: "A"
+```
+示例 2:
+```
+输入: 28
+输出: "AB"
+```
+示例 3:
+```
+输入: 701
+输出: "ZY"
+```
+## 解法
+### 思路
+10进制转26进制，通过`StringBuilder.insert(0, char)`来记录:
+- 如果被26整除，说明有进位，需要再`n /= 26`的基础上减去进位的1，这个进位的1由Z在低位代表
+- 如果没有被整除，可以使用`(char)(n % 26 - 1 + 'A')`的方式表示
+### 代码
+```java
+class Solution {
+    public String convertToTitle(int n) {
+        StringBuilder sb = new StringBuilder();
+        while (n > 0) {
+            int mod = n % 26;
+            n /= 26;
+            if (mod == 0) {
+                sb.insert(0, 'Z');
+                n--;
+            } else {
+                sb.insert(0, (char)(mod - 1 + 'A'));
+            }
+        }
+        return sb.toString();
+    }
+}
+```
