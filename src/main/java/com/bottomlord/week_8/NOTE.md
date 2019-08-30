@@ -1452,3 +1452,99 @@ class Solution {
     }
 }
 ```
+# LeetCode_219_存在重复元素II
+## 题目
+给定一个整数数组和一个整数 k，判断数组中是否存在两个不同的索引 i 和 j，使得 nums [i] = nums [j]，并且 i 和 j 的差的绝对值最大为 k。
+
+示例 1:
+```
+输入: nums = [1,2,3,1], k = 3
+输出: true
+```
+示例 2:
+```
+输入: nums = [1,0,1,1], k = 1
+输出: true
+```
+示例 3:
+```
+输入: nums = [1,2,3,1,2,3], k = 2
+输出: false
+```
+## 解法
+### 思路
+- 第一次循环找到所有元素对应的下标
+- 遍历记录元素下标的集合，判断是否有距离绝对值等于k的
+### 代码
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int num = nums[i];
+            List<Integer> list;
+            if (map.containsKey(num)) {
+                list = map.get(num);
+            } else {
+                list = new ArrayList<>();
+                map.put(num, list);
+            }
+            list.add(i);
+        }
+        
+        for (List<Integer> list : map.values()) {
+            for (int i = 0; i < list.size(); i++) {
+                for (int j = i + 1; j < list.size(); j++) {
+                    if (Math.abs(list.get(i) - list.get(j)) <= k) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;     
+    }
+}
+```
+## 优化代码
+### 思路
+使用解法一的思路，其实是审题不清楚，意味距离必需是k，所以需要记录所有的下标，依次比较。如果不需要比较，其实就只要看距离最近的两个元素之间的下标距离是否<=k就可以了。map里只需要存储一个int的包装类
+### 代码
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(nums[i]) && Math.abs(i - map.get(nums[i])) <= k) {
+                return true;
+            }
+            map.put(nums[i], i);
+        }
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+判断数组中所有可能存在的距离为k的元素是否相等，同时不断缩小k，但如果k很大，则需要遍历的次数会很多，尤其是k很大距离很小的情况
+### 代码
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        if (nums.length == 0) {
+            return false;
+        }
+        
+        while (k > 0) {
+            for (int i = 0; i < nums.length - k; i++) {
+                if (nums[i] == nums[i + k]) {
+                    return true;
+                }
+            }
+            
+            k--;
+        }
+        
+        return false;
+    }
+}
+```
