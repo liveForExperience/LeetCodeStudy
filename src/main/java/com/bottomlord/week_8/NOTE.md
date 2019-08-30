@@ -1548,3 +1548,67 @@ class Solution {
     }
 }
 ```
+# LeetCode_643_子数组最大平均值I
+## 题目
+给定 n 个整数，找出平均数最大且长度为 k 的连续子数组，并输出该最大平均数。
+
+示例 1:
+```
+输入: [1,12,-5,-6,50,3], k = 4
+输出: 12.75
+解释: 最大平均数 (12-5-6+50)/4 = 51/4 = 12.75
+```
+注意:
+```
+1 <= k <= n <= 30,000。
+所给数据范围 [-10,000，10,000]。
+```
+## 解法
+### 思路
+遍历数组，计算每k个元素的平均值，找最大值
+### 代码
+```java
+class Solution {
+    public double findMaxAverage(int[] nums, int k) {
+        if (nums.length < k) {
+            return 0;
+        }
+
+        int max = Integer.MIN_VALUE;
+        Integer pre = null;
+        for (int i = 0; i <= nums.length - k; i++) {
+            if (pre == null) {
+                pre = 0;
+                int tmp = k;
+                while (tmp > 0) {
+                    pre += nums[i + tmp-- - 1];
+                }
+            } else {
+                pre = pre - nums[i - 1] + nums[i + k - 1];
+            }
+            max = Math.max(max, pre);
+        }
+        return max * 1D / k;
+    }
+}
+```
+## 优化代码
+### 思路
+不使用null值做初始判断，直接先计算一次第一批k个元素的平均值，然后再继续遍历数组，和解法一的过程类似
+### 代码
+```java
+class Solution {
+    public double findMaxAverage(int[] nums, int k) {
+        int pre = 0;
+        for (int i = 0; i < k; i++) {
+            pre += nums[i];
+        }
+        int max = pre;
+        for (int i = 1; i <= nums.length - k; i++) {
+            pre = pre - nums[i - 1] + nums[i + k - 1];
+            max = Math.max(pre, max);
+        }
+        return max * 1D / k;
+    }
+}
+```
