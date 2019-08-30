@@ -1951,3 +1951,24 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+通过整理解法一，发现无论是否被整除，n总是要-1的，且先-1后，整个过程就整洁多了。
+### 代码
+```java
+class Solution {
+    public String convertToTitle(int n) {
+        if (n <= 0) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (n > 0) {
+            n--;
+            sb.insert(0, (char)(n % 26 + 'A'));
+            n /= 26;
+        }
+        return sb.toString();
+    }
+}
+```
