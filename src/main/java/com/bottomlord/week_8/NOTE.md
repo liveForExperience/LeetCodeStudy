@@ -2129,3 +2129,82 @@ class Solution {
     }
 }
 ```
+# LeetCode_400_第n个数字
+## 题目
+在无限的整数序列 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...中找到第 n 个数字。
+
+注意:
+```
+n 是正数且在32为整形范围内 ( n < 231)。
+```
+示例 1:
+```
+输入:
+3
+
+输出:
+3
+```
+示例 2:
+```
+输入:
+11
+
+输出:
+0
+
+说明:
+第11个数字在序列 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ... 里是0，它是10的一部分。
+```
+## 解法
+### 思路
+- 找到规律
+    - 1-9是1位的，有9个
+    - 10-99是2位的，90个
+    - 100-999是3位的，有900个
+    - k位数有`9 * 10 ^ (k - 1)`个
+- 循环递增k，计算减去k位数后是否<0，如果是就计算是第几个k位数，并算出处在该数的第几位上
+### 代码
+```java
+class Solution {
+    public int findNthDigit(int n) {
+        double dn = n;
+        int k = 0, count = 0;
+        while (dn > 0) {
+            dn = dn - 9 * Math.pow(10, ++k - 1) * k;
+        }
+        dn += 9 * Math.pow(10, k - 1) * k;
+        while (dn > 0) {
+            dn -= k;
+            count++;
+        }
+        double num = Math.pow(10, k - 1) + count - 1;
+        while (dn++ < 0) {
+            num /= 10;
+        }
+        return (int)num % 10;
+    }
+}
+```
+## 优化代码
+### 思路
+- 先计算n处在到第几位数
+- 计算处在当前位中的中第几个数
+- 再算n具体处在这个数的第几位
+### 代码
+```java
+class Solution {
+    public int findNthDigit(int n) {
+        int digit = 1;
+        while (n > digit * Math.pow(10, digit - 1) * 9) {
+            n -= digit * Math.pow(10, digit - 1) * 9;
+            digit++;
+        }
+
+        int num = (n - 1) / digit + (int)Math.pow(10, digit - 1);
+        
+        int index = n % digit == 0 ? digit - 1 : n % digit - 1;
+        return Integer.toString(num).charAt(index) - '0';
+    }
+}
+```
