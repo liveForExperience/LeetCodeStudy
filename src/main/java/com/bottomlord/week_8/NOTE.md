@@ -2067,3 +2067,65 @@ class Solution {
     }
 }
 ```
+# LeetCode_14_最长公共前缀
+## 题目
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。
+
+示例 1:
+```
+输入: ["flower","flow","flight"]
+输出: "fl"
+```
+示例 2:
+```
+输入: ["dog","racecar","car"]
+输出: ""
+解释: 输入不存在公共前缀。
+```
+说明:
+```
+所有输入只包含小写字母 a-z 。
+```
+## 解法
+### 思路
+嵌套循环：
+- 外层用来移动String的charAt对用的指针
+- 内存遍历n个字符串，看他们外层指针对应的字符是否相等
+- 如果都相等继续移动，并计数，否则就停止并返回结果
+- 外层循环的次数取决于字符串中的最小长度
+### 代码
+```java
+class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        if (strs.length == 0) {
+            return "";
+        }
+
+        int len = strs[0].length();
+        for (int i = 1; i < strs.length; i++) {
+            len = Math.min(len, strs[i].length());
+        }
+
+        int count = 0;
+        for (int i = 0; i < len; i++) {
+            char c = strs[0].charAt(i);
+            boolean equal = true;
+            for (int j = 1; j < strs.length; j++) {
+                if (strs[j].charAt(i) != c) {
+                    equal = false;
+                    break;
+                }
+            }
+            if (equal) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        
+        return strs[0].substring(0, count);
+    }
+}
+```
