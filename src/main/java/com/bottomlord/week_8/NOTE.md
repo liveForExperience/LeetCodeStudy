@@ -2300,3 +2300,105 @@ public class Solution extends VersionControl {
     }
 }
 ```
+# LeetCode_7_整数反转
+## 题目
+给出一个 32 位的有符号整数，你需要将这个整数中每位上的数字进行反转。
+
+示例 1:
+```
+输入: 123
+输出: 321
+```
+ 示例 2:
+```
+输入: -123
+输出: -321
+```
+示例 3:
+```
+输入: 120
+输出: 21
+```
+注意:
+```
+假设我们的环境只能存储得下 32 位的有符号整数，则其数值范围为 [−231,  231 − 1]。请根据这个假设，如果反转后整数溢出那么就返回 0。
+```
+## 解法
+### 思路
+- 将数字转成字符数组
+- 处理负号，并通过头尾指针进行换位
+- 过滤掉头部所有连续的0
+- 通过StringBuilder的`append`方法累加字符
+- 根据x是否是负数加上-号
+- 转成long类型的数字，防止int值溢出
+- 判断是否超出int类型的范围，如果超出返回0
+- 否则返回将long类型强转并返回
+### 代码
+```java
+class Solution {
+    public int reverse(int x) {
+        if (x == 0) {
+            return 0;
+        }
+
+        String numStr = Integer.toString(x);
+        if (x < 0) {
+            numStr = numStr.substring(1);
+        }
+
+        char[] nums = numStr.toCharArray();
+        int head = 0, tail = nums.length - 1;
+        while (head < tail) {
+            nums[head] ^= nums[tail];
+            nums[tail] ^= nums[head];
+            nums[head] ^= nums[tail];
+
+            head++;
+            tail--;
+        }
+
+        int index = 0;
+        while (nums[index] == '0') {
+            index++;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (; index < nums.length; index++) {
+            sb.append(nums[index]);
+        }
+
+        if (x < 0) {
+            sb.insert(0, "-");
+        }
+
+        long ansL = Long.parseLong(sb.toString());
+        return ansL > Integer.MAX_VALUE || ansL < Integer.MIN_VALUE ? 0 :(int)ansL;
+    }
+}
+```
+## 解法二
+### 思路
+不使用字符串来转换，直接通过取余和乘10进位的方式
+- 使用long类型变量ans来作为累加过程中的暂存值
+- 创建循环体，退出条件是x == 0
+- 获得`x % 10`的余数并与`ans * 10`相加作为新的ans，取余就是获得x的最低位的值，并通过累加的方式放在了对应的高位
+- 同时判断ans是否超过了int值的范围，如果超过就直接返回0
+- 同时通过`x / 10`截取x
+- 直到循环退出，强转ans并返回
+### 代码
+```java
+class Solution {
+    public int reverse(int x) {
+        long ans = 0;
+        while (x != 0) {
+            ans = ans * 10 + x % 10;
+            if (ans > Integer.MAX_VALUE || ans < Integer.MIN_VALUE) {
+                return 0;
+            }
+            x /= 10;
+        }
+        
+        return (int)ans;
+    }
+}
+```
