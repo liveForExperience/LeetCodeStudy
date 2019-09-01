@@ -2402,3 +2402,37 @@ class Solution {
     }
 }
 ```
+# LeetCode_535_TinyURL的加密与解密
+## 题目
+TinyURL是一种URL简化服务， 比如：当你输入一个URL https://leetcode.com/problems/design-tinyurl 时，它将返回一个简化的URL http://tinyurl.com/4e9iAk.
+
+要求：设计一个 TinyURL 的加密 encode 和解密 decode 的方法。你的加密和解密算法如何设计和运作是没有限制的，你只需要保证一个URL可以被加密成一个TinyURL，并且这个TinyURL可以用解密方法恢复成原本的URL。
+## 解法
+### 思路
+使用map和伪随机函数来记录url，默认生成长度为5的字符串，如果map中已存在，就增加一个长度并再次判断，直到map中不存在
+### 代码
+```java
+public class Codec {
+    private Map<String, String> map = new HashMap<>();
+    private int max = 'z';
+    private Random random = new Random();
+    public String encode(String longUrl) {
+        String key = "";
+        int i = 0;
+        while (i++ < 5) {
+            key += (char) random.nextInt(max);
+        }
+
+        while (map.containsKey(key)) {
+            key += (char) random.nextInt(max);
+        }
+
+        map.put(key, longUrl);
+        return "http://" + key;
+    }
+
+    public String decode(String shortUrl) {
+        return map.get(shortUrl.substring(7));
+    }
+}
+```
