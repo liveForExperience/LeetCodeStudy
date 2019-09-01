@@ -2436,3 +2436,87 @@ public class Codec {
     }
 }
 ```
+# LeetCode_581_最短无序连续子数组
+## 题目
+给定一个整数数组，你需要寻找一个连续的子数组，如果对这个子数组进行升序排序，那么整个数组都会变为升序排序。
+
+你找到的子数组应是最短的，请输出它的长度。
+
+示例 1:
+```
+输入: [2, 6, 4, 8, 10, 9, 15]
+输出: 5
+解释: 你只需要对 [6, 4, 8, 10, 9] 进行升序排序，那么整个表都会变为升序排序。
+```
+说明 :
+```
+输入的数组长度范围在 [1, 10,000]。
+输入的数组可能包含重复元素 ，所以升序的意思是<=。
+```
+## 解法
+### 思路
+- 拷贝原数组、排序原数组
+- 同时遍历两个数组：
+    - 从头开始遍历，直到两个数组的元素不同，获得最短数组的开始下标
+    - 从尾开始遍历，直到两个数组的元素不同，获得最短数组的结束下标
+### 代码
+```java
+class Solution {
+    public int findUnsortedSubarray(int[] nums) {
+        int[] copy = Arrays.copyOf(nums, nums.length);
+        Arrays.sort(nums);
+        int head = 0, tail = nums.length - 1;
+        for (; head < nums.length; head++) {
+            if (copy[head] != nums[head]) {
+                break;
+            }
+        }
+
+        for (; tail >= 0; tail--) {
+            if (copy[tail] != nums[tail]) {
+                break;
+            }
+        }
+
+        if (head > tail) {
+            return 0;
+        }
+
+        return tail - head + 1;
+    }
+}
+```
+## 解法二
+### 思路
+不用先排序，最小的需要排序的连续子数组
+- 它的开始位置是从右向左最后一个大于前前一个最小值的元素的下标
+- 它的结束位置是从左向右最后一个小于前一个最大值的元素的下标
+### 代码
+```java
+class Solution {
+    public int findUnsortedSubarray(int[] nums) {
+        int end = -1, max = nums[0], start = -1, min = nums[nums.length - 1];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] >= max) {
+                max = nums[i];
+            } else {
+                end = i;
+            }
+        }
+
+        if (end == -1) {
+            return 0;
+        }
+
+        for (int i = nums.length - 2; i >= 0; i--) {
+            if (nums[i] <= min) {
+                min = nums[i];
+            } else {
+                start = i;
+            }
+        }
+
+        return end - start + 1;
+    }
+}
+```
