@@ -93,3 +93,96 @@ class Solution {
     }
 }
 ```
+# LeetCode_414_第三大的数
+## 题目
+给定一个非空数组，返回此数组中第三大的数。如果不存在，则返回数组中最大的数。要求算法时间复杂度必须是O(n)。
+
+示例 1:
+```
+输入: [3, 2, 1]
+
+输出: 1
+
+解释: 第三大的数是 1.
+```
+示例 2:
+```
+输入: [1, 2]
+
+输出: 2
+
+解释: 第三大的数不存在, 所以返回最大的数 2 .
+```
+示例 3:
+```
+输入: [2, 2, 3, 1]
+
+输出: 1
+```
+```
+解释: 注意，要求返回第三大的数，是指第三大且唯一出现的数。
+存在两个值为2的数，它们都排第二。
+```
+## 解法
+### 思路
+主要依赖Collections的api
+- 遍历元素放入set
+- 如果set的元素个数小于3个，返回最大值
+- 找两次最大值并把最大值从set中取出
+- 最后一次把set的最大值返回
+### 代码
+```java
+class Solution {
+    public int thirdMax(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            set.add(num);
+        }
+        
+        if (set.size() < 3) {
+            return Collections.max(set);
+        }
+        
+        for (int i = 0; i < 2; i++) {
+            set.remove(Collections.max(set));
+        }
+        
+        return Collections.max(set);
+    }
+}
+```
+## 解法二
+### 思路
+- 定义三个变量：
+    - first：最大值
+    - second：第二大值
+    - third：第三大值
+- 遍历数组并进行判断：
+    - 如果大于first，那么三个变量同时依次变更
+    - 如果大于second，除first的变量依次变更
+    - 如果大于third，third变量变更
+### 代码
+```java
+class Solution {
+    public int thirdMax(int[] nums) {
+        int first =  nums[0];
+        long second = Long.MIN_VALUE;
+        long third = Long.MIN_VALUE;
+        for (int i = 1; i < nums.length; i++) {
+            int num = nums[i];
+            if (num > first) {
+                third = second;
+                second = first;
+                first = num;
+            } else if (num > second && num < first) {
+                third = second;
+                second = num;
+            } else if (num > third && num < second) {
+                third = num;
+            }
+        }
+        
+        return third == Long.MIN_VALUE ? first : (int) third;
+    }
+}
+```
