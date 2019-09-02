@@ -418,3 +418,75 @@ class Solution {
     }
 }
 ```
+# LeetCode_434_字符串中的单词数
+## 题目
+统计字符串中的单词个数，这里的单词指的是连续的不是空格的字符。
+
+请注意，你可以假定字符串里不包括任何不可打印的字符。
+
+示例:
+```
+输入: "Hello, my name is John"
+输出: 5
+在真实的面试中遇到过这道题？
+```
+## 解法
+### 思路
+使用正则表达式`\\s+`，同时注意头尾需要`trim`
+### 代码
+```java
+class Solution {
+    public int countSegments(String s) {
+        s = s.trim();
+        if ("".equals(s)) {
+            return 0;
+        }
+        return s.split("\\s+").length;
+    }
+}
+```
+## 解法二
+### 思路
+定义单词个数可以通过当前字符不是`' '`，前一个字符为`' '`来定义
+### 代码
+```java
+
+```
+## 解法三
+### 思路
+- 遍历字符数组，定义连个函数：
+    - 函数move2End：遍历完一个单词
+    - 函数move2Start：遍历到下一个单词开头
+- 遍历完一个单词，如果下标有增加，计数+1
+### 代码
+```java
+class Solution {
+    public int countSegments(String s) {
+        char[] cs = s.toCharArray();
+        int count = 0;
+        for (int i = 0; i < cs.length;) {
+            int t = move2Start(i, cs);
+            i = move2End(t, cs);
+            if (t != i) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private int move2Start(int i, char[] cs) {
+        while (i < cs.length && cs[i] == ' ') {
+            i++;
+        }
+        return i;
+    }
+
+    private int move2End(int i, char[] cs) {
+        while (i < cs.length && cs[i] != ' ') {
+            i++;
+        }
+        return i;
+    }
+}
+```
