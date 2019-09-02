@@ -186,3 +186,164 @@ class Solution {
     }
 }
 ```
+# LeetCode_532_数组中的K-diff数对
+## 题目
+给定一个整数数组和一个整数 k, 你需要在数组里找到不同的 k-diff 数对。这里将 k-diff 数对定义为一个整数对 (i, j), 其中 i 和 j 都是数组中的数字，且两数之差的绝对值是 k.
+
+示例 1:
+```
+输入: [3, 1, 4, 1, 5], k = 2
+输出: 2
+解释: 数组中有两个 2-diff 数对, (1, 3) 和 (3, 5)。
+尽管数组中有两个1，但我们只应返回不同的数对的数量。
+```
+示例 2:
+```
+输入:[1, 2, 3, 4, 5], k = 1
+输出: 4
+解释: 数组中有四个 1-diff 数对, (1, 2), (2, 3), (3, 4) 和 (4, 5)。
+```
+示例 3:
+```
+输入: [1, 3, 1, 5, 4], k = 0
+输出: 1
+解释: 数组中只有一个 0-diff 数对，(1, 1)。
+```
+注意:
+```
+数对 (i, j) 和数对 (j, i) 被算作同一数对。
+数组的长度不超过10,000。
+所有输入的整数的范围在 [-1e7, 1e7]。
+```
+## 失败解法
+### 思路
+- 嵌套循环数组，使用`Map<Integer,Set> map`记录diff数对，使用`Set<Integer> equal`记录元素相等状况的元素
+- 循环map.values，累加set的长度并除以二，同时加上equal的长度
+### 失败原因
+超时
+### 代码
+```java
+class Solution {
+    public int findPairs(int[] nums, int k) {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int num : nums) {
+            if (!map.containsKey(num)) {
+                map.put(num, new HashSet<>());
+            }
+        }
+
+        Set<Integer> equal = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                if (Math.abs(nums[i] - nums[j]) == k) {
+                    if (nums[i] == nums[j]) {
+                        equal.add(nums[i]);
+                    } else {
+                        map.get(nums[i]).add(nums[j]);
+                        map.get(nums[j]).add(nums[i]);
+                    }
+                }
+            }
+        }
+
+        int ans = 0;
+        for (Set<Integer> set : map.values()) {
+            ans += set.size();
+        }
+
+        return ans / 2 + equal.size();
+    }
+}
+```
+## 优化代码
+### 思路
+- 使用两个set：
+    - 一个set在遍历数组的时候用来保存去重后的元素
+    - 一个set在遍历过程中查询是否在上一个set中存在当前元素+k或-k的元素，如果有就保存
+- 这样一次遍历就可以将所有可能的对保存下来，个数就是第二个set的size
+### 代码
+```java
+class Solution {
+    public int findPairs(int[] nums, int k) {
+        if (k < 0) {
+            return 0;
+        }
+        
+        Set<Integer> save = new HashSet<>();
+        Set<Integer> diff = new HashSet<>();
+        for (int num : nums) {
+            if (save.contains(num + k)) {
+                diff.add(num);
+            } 
+            
+            if (save.contains(num - k)) {
+                diff.add(num - k);
+            }
+            
+            save.add(num);
+        }
+        
+        return diff.size();
+    }
+}
+```
+## 解法二
+### 思路
+- 先将数组排序
+- 处理三种情况：
+    - k < 0，结果就是0
+    - k == 0 ，那么就判断重复的数字有多少，计算重复数字的个数
+    - k > 0，使用两个指针，计算当前两个指针指向的元素的差值：
+        - 如果相等k：计数，同时两个指针同时移动到非重复数字的位置
+        - 如果小于k：说明大的元素不够大，快指针移动到下一个数字
+        - 如果大于k：说明小的元素不够大，慢指针移动到下一个数字
+- 返回计数的值        
+### 代码
+```java
+class Solution {
+    public int findPairs(int[] nums, int k) {
+        if (k < 0) {
+            return 0;
+        }
+
+        Arrays.sort(nums);
+        int count = 0;
+
+        if (k == 0) {
+            int i = 0;
+            while (i < nums.length - 1) {
+                if (nums[i] == nums[i + 1]) {
+                    count++;
+                    i = nextNum(i, nums);
+                } else {
+                    i++;
+                }
+            }
+            return count;
+        }
+
+        int slow = 0, fast = 1;
+        while (fast < nums.length) {
+            if (nums[fast] - nums[slow] == k) {
+                count++;
+                slow = nextNum(slow, nums);
+                fast = nextNum(fast, nums);
+            } else if (nums[fast] - nums[slow] < k) {
+                fast = nextNum(fast, nums);
+            } else {
+                slow = nextNum(slow, nums);
+            }
+        }
+        
+        return count;
+    }
+
+    private int nextNum(int i, int[] nums) {
+        int j = i + 1;
+        while (j < nums.length && nums[i] == nums[j]) {
+            j++;
+        }
+        return j;
+    }
+}
+```
