@@ -578,3 +578,117 @@ class Solution {
     }
 }
 ```
+# LeetCode_686_重复叠加字符串匹配
+## 题目
+给定两个字符串 A 和 B, 寻找重复叠加字符串A的最小次数，使得字符串B成为叠加后的字符串A的子串，如果不存在则返回 -1。
+
+举个例子，A = "abcd"，B = "cdabcdab"。
+
+答案为 3， 因为 A 重复叠加三遍后为 “abcdabcdabcd”，此时 B 是其子串；A 重复叠加两遍后为"abcdabcd"，B 并不是其子串。
+
+注意:
+```
+ A 与 B 字符串的长度在1和10000区间范围内。
+```
+## 解法
+### 思路
+- 如果A包含B，直接返回1
+- 使用两个指针，嵌套循环：
+    - 外层循环A数组，查看从A的哪一个字符开始可以循环的匹配B数组元素
+    - 内层遍历B数组，为了就是查看是否有不匹配的情况，有的话就中断并开始下一个A的字符的遍历
+- 遍历结束后，将A放入StringBuilder并不断`append(A)`，记录append的次数count，并判断是否`contains(B)`
+- 如果contains，则返回count
+### 代码
+```java
+class Solution {
+    public int repeatedStringMatch(String A, String B) {
+        if (A.contains(B)) {
+            return 1;
+        }
+
+        boolean has = false;
+        for (int j = 0; j < A.length(); j++) {
+            int ai = j;
+            boolean find = true;
+            for (int i = 0; i < B.length(); i++) {
+                if (A.charAt(ai) != B.charAt(i)) {
+                    find = false;
+                    break;
+                }
+    
+                if (++ai == A.length()) {
+                    ai = 0;
+                }
+            }
+            
+            if (find) {
+                has = true;
+                break;
+            }
+        }
+        
+        if (!has) {
+            return -1;
+        }
+
+        int count = 1;
+        StringBuilder sb = new StringBuilder(A);
+        while (!sb.toString().contains(B)) {
+            sb.append(A);
+            count++;
+        }
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+- 循环比较数组A和数组B的元素
+- 如果元素不同就移动A数组的下标
+- 如果元素相同，记录当前下标，作为判断叠加的依据
+- 如在叠加过程中发现元素有不同，那么就还原B的元素下标，同时判断A数组在两次叠加之内有不同的元素，那就说明还可能是符合题意得，否则就返回-1
+- 如果A下标回到了0，说明有叠加，ans+1
+- 如果在切换回0后，字符不同了，但A还没有完全走一次从start到start的过程，那么就把之前累加的1减去，并重新冲start+1的位置继续判断
+- 如果在字符相等的情况下，B数组的下标将要越界，那么就返回当前ans + 1作为答案，因为A字符串本身也要计数
+### 代码
+```java
+class Solution {
+    public int repeatedStringMatch(String A, String B) {
+        char[] ca = A.toCharArray(), cb = B.toCharArray();
+        int start = -1, ia = 0, ib = 0, ans = 0;
+        while (true) {
+            if (ca[ia] == cb[ib]) {
+                if (start == -1) {
+                    start = ia;
+                }
+
+                ib++;
+
+                if (ib >= cb.length) {
+                    return ans + 1;
+                }
+            } else {
+                if (ans <= 1) {
+                    ib = 0;
+
+                    if (start != -1) {
+                        if (start > ia) {
+                            ans--;
+                        }
+
+                        ia = start;
+                        start = -1;
+                    }
+                } else {
+                    return -1;
+                }
+            }
+
+            ia = (ia + 1) % ca.length;
+            if (ia == 0) {
+                ans++;
+            }
+        }
+    }
+}
+```
