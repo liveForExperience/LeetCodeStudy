@@ -490,3 +490,91 @@ class Solution {
     }
 }
 ```
+# LeetCode_840_矩阵中的幻方
+## 题目
+3 x 3 的幻方是一个填充有从 1 到 9 的不同数字的 3 x 3 矩阵，其中每行，每列以及两条对角线上的各数之和都相等。
+
+给定一个由整数组成的 grid，其中有多少个 3 × 3 的 “幻方” 子矩阵？（每个子矩阵都是连续的）。
+
+示例：
+```
+输入: [[4,3,8,4],
+      [9,5,1,9],
+      [2,7,6,2]]
+输出: 1
+解释: 
+下面的子矩阵是一个 3 x 3 的幻方：
+438
+951
+276
+
+而这一个不是：
+384
+519
+762
+
+总的来说，在本示例所给定的矩阵中只有一个 3 x 3 的幻方子矩阵。
+```
+提示:
+```
+1 <= grid.length <= 10
+1 <= grid[0].length <= 10
+0 <= grid[i][j] <= 15
+```
+## 解法
+### 思路
+以左上角元素为原点，遍历二维数组
+- 每一条的总和一定是15
+- 所有9个元素均匀分布在[1,9]的区间中
+- 矩阵正中一定是5
+### 代码
+```java
+class Solution {
+    public int numMagicSquaresInside(int[][] grid) {
+        int ans = 0;
+        int[] bucket = new int[9];
+        for (int i = 0; i + 2 < grid.length; i++) {
+            for (int j = 0; j + 2 < grid[i].length; j++) {
+                if (grid[i + 1][j + 1] != 5) {
+                    continue;
+                }
+
+                if (isMagic(grid[i][j], grid[i][j + 1], grid[i][j + 2],
+                        grid[i + 1][j], grid[i + 1][j + 1], grid[i + 1][j + 2],
+                        grid[i + 2][j], grid[i + 2][j + 1], grid[i + 2][j + 2])) {
+                    ans++;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean isMagic(int... nums) {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            max = Math.max(nums[i], max);
+        }
+
+        int[] bucket = new int[max + 1];
+        for (int num : nums) {
+            bucket[num]++;
+        }
+
+        for (int i = 1; i < bucket.length; i++) {
+            if (bucket[i] != 1) {
+                return false;
+            }
+        }
+
+        return nums[0] + nums[1] + nums[2] == 15 &&
+                nums[3] + nums[4] + nums[5] == 15 &&
+                nums[6] + nums[7] + nums[8] == 15 &&
+                nums[0] + nums[3] + nums[6] == 15 &&
+                nums[1] + nums[4] + nums[7] == 15 &&
+                nums[2] + nums[5] + nums[8] == 15 &&
+                nums[0] + nums[4] + nums[8] == 15 &&
+                nums[2] + nums[4] + nums[6] == 15;
+    }
+}
+```
