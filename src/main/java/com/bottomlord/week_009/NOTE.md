@@ -692,3 +692,172 @@ class Solution {
     }
 }
 ```
+# LeetCode_949_给定数字能组成的最大时间
+## 题目
+给定一个由 4 位数字组成的数组，返回可以设置的符合 24 小时制的最大时间。
+
+最小的 24 小时制时间是 00:00，而最大的是 23:59。从 00:00 （午夜）开始算起，过得越久，时间越大。
+
+以长度为 5 的字符串返回答案。如果不能确定有效时间，则返回空字符串。
+
+示例 1：
+```
+输入：[1,2,3,4]
+输出："23:41"
+```
+示例 2：
+```
+输入：[5,5,5,5]
+输出：""
+```
+提示：
+```
+A.length == 4
+0 <= A[i] <= 9
+```
+## 解法
+### 思路
+- 使用通记录0-9的元素的个数
+- 小时和分钟区别处理：
+    1. 小时：
+        - 第一位0，第二位0-9
+        - 第一位1，第二位0-9
+        - 第一位2，第二位0-3
+    2. 分钟：
+        - 第一位0-5
+        - 第二位0-9
+- 必需要有一个数字小于等于2
+- 必须要有两个数字小于等于5
+- 如果有一个数字是2，必须要有2个数字小于等于3，2个数字小于等于5
+### 代码
+```java
+class Solution {
+    public String largestTimeFromDigits(int[] A) {
+        int lte2 = 0, lte3 = 0, lte5 = 0;
+        int[] bucket = new int[10];
+        for (int num : A) {
+            bucket[num]++;
+            if (num <= 2) {
+                lte2++;
+                lte3++;
+                lte5++;
+            } else if (num <= 3) {
+                lte3++;
+                lte5++;
+            } else if (num <= 5) {
+                lte5++;
+            }
+        }
+        
+        if (lte2 < 1 || lte5 < 2) {
+            return "";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        int one = -1;
+        for (int i = 2; i >= 0; i--) {
+            if (bucket[i] > 0) {
+                if (i == 2 && (lte3 < 2 || lte5 < 3)) {
+                    continue;
+                }
+                
+                bucket[i]--;
+                sb.append(i);
+                one = i;
+                break;
+            }
+        }
+
+        if (one == -1) {
+            return "";
+        }
+
+        int two = -1;
+        if (one == 2) {
+            for (int i = 3; i >= 0; i--) {
+                if (bucket[i] > 0) {
+                    bucket[i]--;
+                    sb.append(i);
+                    two = i;
+                    break;
+                }
+            }
+        } else {
+            for (int i = 9; i >= 0; i--) {
+                if (bucket[i] > 0) {
+                    bucket[i]--;
+                    sb.append(i);
+                    two = i;
+                    break;
+                }
+            }
+        }
+
+        if (two == -1) {
+            return "";
+        }
+
+        sb.append(":");
+
+        int three = -1;
+        for (int i = 5; i >= 0; i--) {
+            if (bucket[i] > 0) {
+                bucket[i]--;
+                sb.append(i);
+                three = i;
+                break;
+            }
+        }
+
+        if (three == -1) {
+            return "";
+        }
+
+        int four = -1;
+        for (int i = 9; i >= 0; i--) {
+            if (bucket[i] > 0) {
+                bucket[i]--;
+                sb.append(i);
+                four = i;
+                break;
+            }
+        }
+
+        return four == -1 ? "" : sb.toString();
+    }
+}
+```
+## 解法二
+### 思路
+- 使用暴力方法，枚举所有的可能性，然后分别以小时和分钟判断是否符合规则：
+    - 小时：<24
+    - 分钟：<60
+- 最后比较可能性中的最大值
+### 代码
+```java
+class Solution {
+    public String largestTimeFromDigits(int[] A) {
+        int ans = -1;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (i != j) {
+                    for (int k = 0; k < 4; k++) {
+                        if (i != k && j != k) {
+                            int l = 6 - i - j - k;
+
+                            int hour = A[i] * 10 + A[j];
+                            int minute = A[k] * 10 + A[l];
+
+                            if (hour < 24 && minute < 60) {
+                                ans = Math.max(ans, hour * 60 + minute);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return ans >= 0 ? String.format("%02d:%02d", ans / 60, ans % 60): "";
+    }
+}
+```
