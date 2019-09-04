@@ -1040,3 +1040,59 @@ class Solution {
     }
 }
 ```
+# LeetCode_58_最后一个单词的长度
+## 题目
+给定一个仅包含大小写字母和空格 ' ' 的字符串，返回其最后一个单词的长度。
+
+如果不存在最后一个单词，请返回 0 。
+
+说明：一个单词是指由字母组成，但不包含任何空格的字符串。
+
+示例:
+```
+输入: "Hello World"
+输出: 5
+```
+## 解法
+### 思路
+游标从字符串尾部开始遍历，记录最后一个单词的结尾和起始下标：
+- 当前元素是字母：
+    - 如果下标为`字符串长度-1`或者后一个字符是`' '`：找到了最后一个单词的结尾字符，记录当前下标+1
+    - 如果下标为`0`或者前一个字符是`' '`：找到了最后一个单词的起始字符，记录当前下标
+- 如果起始和结尾都找到了，终止遍历
+- 返回`终止-起始`的长度
+### 代码
+```java
+class Solution {
+    public int lengthOfLastWord(String s) {
+        char[] cs = s.toCharArray();
+        int start = 0, end = 0;
+        boolean findEnd = false, findStart = false;
+        for (int i = cs.length - 1; i >= 0; i--) {
+            if (cs[i] != ' ') {
+                if (i == cs.length - 1) {
+                    end = i + 1;
+                    findEnd = true;
+                } else if (cs[i + 1] == ' ') {
+                    end = i + 1;
+                    findEnd = true;
+                } 
+                
+                if (i == 0) {
+                    start = i;
+                    findStart = true;
+                } else if (cs[i - 1] == ' ') {
+                    start = i;
+                    findStart = true;
+                }
+            }
+
+            if (findStart && findEnd) {
+                break;
+            }
+        }
+
+        return end - start;
+    }
+}
+```
