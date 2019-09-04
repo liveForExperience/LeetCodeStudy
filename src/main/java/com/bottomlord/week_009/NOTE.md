@@ -957,3 +957,86 @@ class Solution {
     }
 }
 ```
+# LeetCode_633_平方数之和
+## 题目
+给定一个非负整数 c ，你要判断是否存在两个整数 a 和 b，使得 a2 + b2 = c。
+
+示例1:
+```
+输入: 5
+输出: True
+解释: 1 * 1 + 2 * 2 = 5
+```
+示例2:
+```
+输入: 3
+输出: False
+```
+## 失败解法
+### 思路
+两层嵌套循环：
+- 外层通过头尾指针确定a和b的值
+- 内层通过二分法确定是否存在平方数
+### 失败原因
+超时
+### 代码
+```java
+class Solution {
+    public boolean judgeSquareSum(int c) {
+        int head = 0, tail = c;
+        while (head <= tail) {
+            if (isQuadraticSum(head) && isQuadraticSum(tail)) {
+                return true;
+            }
+            
+            head++;
+            tail--;
+        }
+        
+        return false;
+    }
+    
+    private boolean isQuadraticSum(int sum) {
+        int head = 0, tail = sum / 2 + 1;
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+            double pow = Math.pow(mid, 2);
+            if (pow == sum) {
+                return true;
+            }
+            
+            if (pow < sum) {
+                head = mid + 1;
+            } else {
+                tail = mid - 1;
+            }
+        }
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+失败解法为什么要嵌套循环，在外层直接通过判断相乘判断就可以了啊
+### 代码
+```java
+class Solution {
+    public boolean judgeSquareSum(int c) {
+        int head = 0, tail = (int) Math.sqrt(c);
+        while (head <= tail) {
+            int sum = head * head + tail * tail;
+            if (sum == c) {
+                return true;
+            }
+
+            if (sum < c) {
+                head++;
+            } else {
+                tail--;
+            }
+        }
+
+        return false;
+    }
+}
+```
