@@ -44,9 +44,4 @@ public class LeetCode_874_1_模拟行走机器人 {
 
         return max;
     }
-
-    public static void main(String[] args) {
-        LeetCode_874_1_模拟行走机器人 t = new LeetCode_874_1_模拟行走机器人();
-        t.robotSim(new int[]{4,-1,4,-2,4,-1,4,-1,7}, new int[][]{{2,4},{1,4}});
-    }
 }
