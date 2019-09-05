@@ -1284,3 +1284,111 @@ class Solution {
     }
 }
 ```
+# LeetCode_475_供暖器
+## 题目
+冬季已经来临。 你的任务是设计一个有固定加热半径的供暖器向所有房屋供暖。
+
+现在，给出位于一条水平线上的房屋和供暖器的位置，找到可以覆盖所有房屋的最小加热半径。
+
+所以，你的输入将会是房屋和供暖器的位置。你将输出供暖器的最小加热半径。
+
+说明:
+```
+给出的房屋和供暖器的数目是非负数且不会超过 25000。
+给出的房屋和供暖器的位置均是非负数且不会超过10^9。
+只要房屋位于供暖器的半径内(包括在边缘上)，它就可以得到供暖。
+所有供暖器都遵循你的半径标准，加热的半径也一样。
+```
+示例 1:
+```
+输入: [1,2,3],[2]
+输出: 1
+解释: 仅在位置2上有一个供暖器。如果我们将加热半径设为1，那么所有房屋就都能得到供暖。
+```
+示例 2:
+```
+输入: [1,2,3,4],[1,4]
+输出: 1
+解释: 在位置1, 4上有两个供暖器。我们需要将加热半径设为1，这样所有房屋就都能得到供暖。
+```
+## 失败解法
+### 思路
+嵌套遍历：
+- 外层遍历houses数组，定义一个min值用来存当前节点能获取到热源的最小距离
+- 内层遍历heaters数组，更新外层的min值
+### 失败原因
+超时
+### 代码
+```java
+class Solution {
+    public int findRadius(int[] houses, int[] heaters) {
+        int max = 0;
+        for (int house : houses) {
+            int min = Integer.MAX_VALUE;
+            for (int heater: heaters) {
+                min = Math.min(Math.abs(heater - house), min);
+            }
+            max = Math.max(min, max);
+        }
+        return max;
+    }
+}
+```
+## 解法
+### 思路
+在失败解法的基础上，缩短内层遍历的时间复杂度，因为内层的加热器只需要计算处于房子前后的两个与房子之间的距离，所以只需要遍历到下标第一次大于房子为止，然后开始计算两个点的最小值.
+- 需要注意heaters的下标处在头尾的情况
+- 需要对两个数组进行排序
+### 代码
+```java
+class Solution {
+    public int findRadius(int[] houses, int[] heaters) {
+        Arrays.sort(houses);
+        Arrays.sort(heaters);
+        int max = 0;
+        for (int house : houses) {
+            int index = 0;
+            while (index < heaters.length && heaters[index] < house) {
+                index++;
+            }
+            if (index == 0) {
+                max = Math.max(Math.abs(house - heaters[0]), max);
+            } else if (index == heaters.length) {
+                max = Math.max(Math.abs(house - heaters[index - 1]), max);
+            } else {
+                max = Math.max(Math.min(Math.abs(heaters[index] - house), house - heaters[index - 1]), max);
+            }
+        }
+
+        return max;
+    }
+}
+```
+## 优化代码
+### 思路
+将循环中的局部变量放在循环体外，从而减少了栈上分配空间回回收的开销
+### 代码
+```java
+class Solution {
+    public int findRadius(int[] houses, int[] heaters) {
+        Arrays.sort(houses);
+        Arrays.sort(heaters);
+        int max = 0;
+        int index = 0;
+        for (int house : houses) {
+            while (index < heaters.length && heaters[index] < house) {
+                index++;
+            }
+            if (index == 0) {
+                max = Math.max(Math.abs(house - heaters[0]), max);
+            } else if (index == heaters.length) {
+                max = Math.max(Math.abs(house - heaters[index - 1]), max);
+            } else {
+                max = Math.max(Math.min(Math.abs(heaters[index] - house), house - heaters[index - 1]), max);
+            }
+        }
+
+        return max;
+    }
+}
+```
