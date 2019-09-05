@@ -1392,3 +1392,91 @@ class Solution {
     }
 }
 ```
+# LeetCode_859_亲密字符串
+## 题目
+给定两个由小写字母构成的字符串 A 和 B ，只要我们可以通过交换 A 中的两个字母得到与 B 相等的结果，就返回 true ；否则返回 false 。
+
+示例 1：
+```
+输入： A = "ab", B = "ba"
+输出： true
+```
+示例 2：
+```
+输入： A = "ab", B = "ab"
+输出： false
+```
+示例 3:
+```
+输入： A = "aa", B = "aa"
+输出： true
+```
+示例 4：
+```
+输入： A = "aaaaaaabc", B = "aaaaaaacb"
+输出： true
+```
+示例 5：
+```
+输入： A = "", B = "aa"
+输出： false
+```
+提示：
+```
+0 <= A.length <= 20000
+0 <= B.length <= 20000
+A 和 B 仅由小写字母构成。
+```
+## 解法
+### 思路
+- 如果两个字符串不相等，直接返回false
+- 同时遍历两个字符串，当字符串不相等，记录下两个字符
+- 继续遍历，直到找到第二个不相等的字符，如果找到的字符与记录的另一个数组的字符不相等，返回false
+- 否则就认为之后字符全都相等，如果出现不相等，返回false
+- 最后如果遍历结束，如果没有记录到不同的字符，查看字符串中是否有相等的字符，有的话返回true，否则返回false
+- 否则查看字符串A的第一个不同是否与字符串B的第二个不同相等，A的第二个不同是否与B的第一个不同相等
+### 代码
+```java
+class Solution {
+    public boolean buddyStrings(String A, String B) {
+        if (A.length() != B.length()) {
+            return false;
+        }
+        
+        int[] bucket = new int[26];
+        Character a1 = null, b1 = null, a2 = null, b2 = null;
+        int count = 0;
+        for (int i = 0; i < A.length(); i++) {
+            if (A.charAt(i) != B.charAt(i)) {
+                if (count == 0) {
+                    count++;
+                    a1 = A.charAt(i);
+                    b1 = B.charAt(i);
+                } else if (count == 1) {
+                    count++;
+                    a2 = A.charAt(i);
+                    b2 = B.charAt(i);
+                } else {
+                    return false;
+                }
+            } else {
+                bucket[A.charAt(i) - 'a']++;
+            }
+        }
+        
+        if (a1 == null || a2 == null) {
+            boolean find = false;
+            for (int value : bucket) {
+                if (value >= 2) {
+                    find = true;
+                    break;
+                }
+            }
+            
+            return find;
+        }
+        
+        return a1 == b2 && a2 == b1;
+    }
+}
+```
