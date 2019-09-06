@@ -1856,3 +1856,56 @@ class MyLinkedList {
     }
 }
 ```
+# LeetCode_665_非递减数列
+## 题目
+给定一个长度为 n 的整数数组，你的任务是判断在最多改变 1 个元素的情况下，该数组能否变成一个非递减数列。
+
+我们是这样定义一个非递减数列的： 对于数组中所有的 i (1 <= i < n)，满足 array[i] <= array[i + 1]。
+
+示例 1:
+```
+输入: [4,2,3]
+输出: True
+解释: 你可以通过把第一个4变成1来使得它成为一个非递减数列。
+```
+示例 2:
+```
+输入: [4,2,1]
+输出: False
+解释: 你不能在只改变一个元素的情况下将其变为非递减数列。
+说明:  n 的范围为 [1, 10,000]。
+```
+## 解法
+### 思路
+- 遍历数组，当出现降序时：
+    - 如果当前元素是第一个元素或者最后第二个元素，没问题
+    - 如果前半部分的第二大值小于等于第二部分的最小值，没问题
+    - 如果后半部分的第二小值大于第一部分的最大值，没问题
+    - 如上任意情况记录出现降序的次数
+    - 否则返回false
+- 出现第二次降序时候，返回false
+### 代码
+```java
+class Solution {
+    public boolean checkPossibility(int[] nums) {
+        int count = 0;
+
+        for (int i = 0; i + 1 < nums.length; i++) {
+            if (nums[i] > nums[i + 1]) {
+                if (count >= 1) {
+                    return false;
+                }
+
+                if (i == 0 || i == nums.length - 2 || nums[i - 1] <= nums[i + 1] || nums[i] <= nums[i + 2]) {
+                    count++;
+                    continue;
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
