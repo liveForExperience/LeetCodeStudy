@@ -8,9 +8,9 @@ import java.util.Map;
 public class LeetCode_1169_1_查询无效交易 {
     public List<String> invalidTransactions(String[] transactions) {
         List<String> ans = new ArrayList<>();
-        Map<String, List<Transaction>> map = new HashMap<>();
+        Map<String, List<Transaction1>> map = new HashMap<>();
         for (String transactionStr : transactions) {
-            Transaction transaction = new Transaction(transactionStr);
+            Transaction1 transaction = new Transaction1(transactionStr);
             if (transaction.amount > 1000) {
                 transaction.valid = false;
             }
@@ -18,13 +18,13 @@ public class LeetCode_1169_1_查询无效交易 {
             if (map.containsKey(transaction.name)) {
                 map.get(transaction.name).add(transaction);
             } else {
-                List<Transaction> list = new ArrayList<>();
+                List<Transaction1> list = new ArrayList<>();
                 list.add(transaction);
                 map.put(transaction.name, list);
             }
         }
 
-        for (List<Transaction> list : map.values()) {
+        for (List<Transaction1> list : map.values()) {
             if (list.size() >= 2) {
                 for (int i = 0; i < list.size(); i++) {
                     for (int j = 0; j < list.size(); j++) {
@@ -32,8 +32,8 @@ public class LeetCode_1169_1_查询无效交易 {
                             continue;
                         }
 
-                        Transaction a = list.get(i);
-                        Transaction b = list.get(j);
+                        Transaction1 a = list.get(i);
+                        Transaction1 b = list.get(j);
 
                         if (Math.abs(a.time - b.time) <= 60 && !a.city.equals(b.city)) {
                             a.valid = false;
@@ -44,8 +44,8 @@ public class LeetCode_1169_1_查询无效交易 {
             }
         }
 
-        for (List<Transaction> list : map.values()) {
-            for (Transaction t : list) {
+        for (List<Transaction1> list : map.values()) {
+            for (Transaction1 t : list) {
                 if (!t.valid) {
                     ans.add(t.toString());
                 }
@@ -55,14 +55,14 @@ public class LeetCode_1169_1_查询无效交易 {
         return ans;
     }
 
-    class Transaction {
+    class Transaction1 {
         private String name;
         private Integer time;
         private Integer amount;
         private String city;
         private boolean valid;
 
-        Transaction(String transcation) {
+        Transaction1(String transcation) {
             String[] factors = transcation.split(",");
             this.name = factors[0];
             this.time = Integer.parseInt(factors[1]);
