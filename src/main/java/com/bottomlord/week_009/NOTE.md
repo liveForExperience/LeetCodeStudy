@@ -2058,3 +2058,59 @@ class Solution {
     }
 }
 ```
+# LeetCode_654_最大二叉树
+## 题目
+给定一个不含重复元素的整数数组。一个以此数组构建的最大二叉树定义如下：
+```
+二叉树的根是数组中的最大元素。
+左子树是通过数组中最大值左边部分构造出的最大二叉树。
+右子树是通过数组中最大值右边部分构造出的最大二叉树。
+通过给定的数组构建最大二叉树，并且输出这个树的根节点。
+```
+示例 ：
+```
+输入：[3,2,1,6,0,5]
+输出：返回下面这棵树的根节点：
+
+      6
+    /   \
+   3     5
+    \    / 
+     2  0   
+       \
+        1
+```
+提示：
+```
+给定的数组的大小在 [1, 1000] 之间。
+```
+## 解法
+### 思路
+dfs递归，每层都输入当前层的起始和结束下标，获取区间内的最大值，并返回，同时继续下钻，直到数组为空
+### 代码
+```java
+class Solution {
+    public TreeNode constructMaximumBinaryTree(int[] nums) {
+        return dfs(nums, 0, nums.length - 1);
+    }
+
+    private TreeNode dfs(int[] nums, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+
+        int max = nums[start], index = start;
+        for (int i = start + 1; i <= end; i++) {
+            if (max < nums[i]) {
+                index = i;
+                max = nums[i];
+            }
+        }
+        
+        TreeNode node = new TreeNode(max);
+        node.left = dfs(nums, start, index - 1);
+        node.right = dfs(nums, index + 1, end);
+        return node;
+    }
+}
+```
