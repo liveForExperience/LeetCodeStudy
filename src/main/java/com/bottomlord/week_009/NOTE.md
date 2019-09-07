@@ -1909,3 +1909,73 @@ class Solution {
     }
 }
 ```
+# LeetCode_807_保持城市天际线
+## 题目
+在二维数组grid中，grid[i][j]代表位于某处的建筑物的高度。 我们被允许增加任何数量（不同建筑物的数量可能不同）的建筑物的高度。 高度 0 也被认为是建筑物。
+
+最后，从新数组的所有四个方向（即顶部，底部，左侧和右侧）观看的“天际线”必须与原始数组的天际线相同。 城市的天际线是从远处观看时，由所有建筑物形成的矩形的外部轮廓。 请看下面的例子。
+
+建筑物高度可以增加的最大总和是多少？
+
+例子：
+```
+输入： grid = [[3,0,8,4],[2,4,5,7],[9,2,6,3],[0,3,1,0]]
+输出： 35
+解释： 
+The grid is:
+[ [3, 0, 8, 4], 
+  [2, 4, 5, 7],
+  [9, 2, 6, 3],
+  [0, 3, 1, 0] ]
+
+从数组竖直方向（即顶部，底部）看“天际线”是：[9, 4, 8, 7]
+从水平水平方向（即左侧，右侧）看“天际线”是：[8, 7, 9, 3]
+
+在不影响天际线的情况下对建筑物进行增高后，新数组如下：
+
+gridNew = [ [8, 4, 8, 7],
+            [7, 4, 7, 7],
+            [9, 4, 8, 7],
+            [3, 3, 3, 3] ]
+```
+说明:
+```
+1 < grid.length = grid[0].length <= 50。
+ grid[i][j] 的高度范围是： [0, 100]。
+一座建筑物占据一个grid[i][j]：换言之，它们是 1 x 1 x grid[i][j] 的长方体。
+```
+## 解法
+### 思路
+- 为了保持天际线，增加高度后的二维数组，横竖上的最高值组成的数组不能变
+- 过程：
+    - 找到每一列的最高值组成横的天际线数组
+    - 找到每一行的最高值组成列的天际线数组
+    - 累加当前建筑下标所在的行和列的最大值之间的最小值与当前建筑的高度的差
+### 代码
+```java
+class Solution {
+    public int maxIncreaseKeepingSkyline(int[][] grid) {
+        int count = 0;
+        int[] rowMaxArr = new int[grid.length];
+        int[] colMaxArr = new int[grid[0].length];
+        for (int i = 0; i < grid.length; i++) {
+            int rowMax = 0;
+            int colMax = 0;
+            for (int j = 0; j < grid[i].length; j++) {
+                rowMax = Math.max(rowMax, grid[i][j]);
+                colMax = Math.max(colMax, grid[j][i]);
+            }
+            rowMaxArr[i] = rowMax;
+            colMaxArr[i] = colMax;
+        }
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                count += Math.min(rowMaxArr[i], colMaxArr[j]) - grid[i][j];
+            }
+        }
+        
+        return count;
+    }
+}
+```
