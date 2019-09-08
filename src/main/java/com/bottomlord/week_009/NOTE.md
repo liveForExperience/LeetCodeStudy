@@ -2217,3 +2217,38 @@ class Solution {
     }
 }
 ```
+# LeetCode_338_比特位计数
+## 题目
+给定一个非负整数 num。对于 0 ≤ i ≤ num 范围中的每个数字 i ，计算其二进制数中的 1 的数目并将它们作为数组返回。
+
+示例 1:
+```
+输入: 2
+输出: [0,1,1]
+```
+示例 2:
+```
+输入: 5
+输出: [0,1,1,2,1,2]
+```
+## 解法
+### 思路
+- 遍历数组
+- 对每个元素使用位运算计算出位数上的1
+- 记录个数并在遍历结束后返回
+### 代码
+```java
+class Solution {
+    public int[] countBits(int num) {
+        int[] ans = new int[num + 1];
+        for (int i = 0; i <= num; i++) {
+            int tmp = i, count = 0;
+            while (tmp > 0) {
+                tmp &= tmp - 1;
+                count++;
+            }
+            ans[i] = count;
+        }
+        return ans;
+    }
+}```
