@@ -2251,4 +2251,20 @@ class Solution {
         }
         return ans;
     }
-}```
+}
+```
+## 优化代码
+### 思路
+不用每次都遍历计算每个数字的1的个数，可以依赖之前数字的结果
+### 代码
+```java
+class Solution {
+    public int[] countBits(int num) {
+        int[] ans = new int[num + 1];
+        for (int i = 1; i <= num; i++) {
+            ans[i] = ans[i & (i - 1)] + 1;
+        }
+        return ans;
+    }
+}
+```
