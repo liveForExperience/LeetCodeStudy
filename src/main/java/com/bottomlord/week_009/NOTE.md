@@ -2167,3 +2167,53 @@ class Solution {
     }
 }
 ```
+# LeetCode_59_螺旋矩阵II
+## 题目
+给定一个正整数 n，生成一个包含 1 到 n2 所有元素，且元素按顺时针顺序螺旋排列的正方形矩阵。
+
+示例:
+```
+输入: 3
+输出:
+[
+ [ 1, 2, 3 ],
+ [ 8, 9, 4 ],
+ [ 7, 6, 5 ]
+]
+```
+## 解法
+### 思路
+嵌套循环，每一次循环都处理`n * n`二维矩阵的最外层：
+- 外层分为4个部分，分别通过头尾指针来确定每一层的边的长度
+- 然后通过记录1到n^2来将这些数字放置到指定的位置
+### 代码
+```java
+class Solution {
+    public int[][] generateMatrix(int n) {
+        int[][] ans = new int[n][n];
+        int index = 1, max = n * n, start = 0, end = n - 1;
+
+        while (start <= end) {
+            if (start == end) {
+                ans[start][end] = n * n;
+                break;
+            }
+
+            int len = end - start;
+            for (int i = 0; i < end - start; i++) {
+                ans[start][start + i] = index;
+                ans[start + i][end] = index + len;
+                ans[end][end - i] = index + len * 2;
+                ans[end - i][start] = index + len * 3;
+                index++;
+            }
+            index = index + 3 * len;
+
+            start++;
+            end--;
+        }
+
+        return ans;
+    }
+}
+```
