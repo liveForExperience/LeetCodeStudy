@@ -2268,3 +2268,57 @@ class Solution {
     }
 }
 ```
+# LeetCode_797_所有可能的路径
+## 题目
+给一个有 n 个结点的有向无环图，找到所有从 0 到 n-1 的路径并输出（不要求按顺序）
+
+二维数组的第 i 个数组中的单元都表示有向图中 i 号结点所能到达的下一些结点（译者注：有向图是有方向的，即规定了a→b你就不能从b→a）空就是没有下一个结点了。
+
+示例:
+```
+输入: [[1,2], [3], [3], []] 
+输出: [[0,1,3],[0,2,3]] 
+解释: 图是这样的:
+0--->1
+|    |
+v    v
+2--->3
+这有两条路: 0 -> 1 -> 3 和 0 -> 2 -> 3.
+```
+提示:
+```
+结点的数量会在范围 [2, 15] 内。
+你可以把路径以任意顺序输出，但在路径内的结点的顺序必须保证。
+```
+## 解法
+### 思路
+dfs深度优先搜索，通过记忆化搜索方式记录途径的节点，并判断是否可以继续下钻，返回上一层的时候需要将已经走过的路径从记录中去除
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
+        List<List<Integer>> ans = new ArrayList<>();
+        boolean[] visit = new boolean[graph.length];
+        dfs(ans, graph, 0, new ArrayList<>(), visit);
+        return ans;
+    }
+
+    private void dfs(List<List<Integer>> ans, int[][] graph, int pos, List<Integer> path, boolean[] visit) {
+        path.add(pos);
+        visit[pos] = true;
+
+        if (pos == graph.length - 1) {
+            ans.add(new ArrayList<>(path));
+        } else {
+            for (int num : graph[pos]) {
+                if (!visit[num]) {
+                    dfs(ans, graph, num, path, visit);
+                }
+            }
+        }
+
+        path.remove(path.size() - 1);
+        visit[pos] = false;
+    }
+}
+```
