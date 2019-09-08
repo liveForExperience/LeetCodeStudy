@@ -2114,3 +2114,56 @@ class Solution {
     }
 }
 ```
+# LeetCode_78_1_子集
+## 题目
+给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+
+说明：解集不能包含重复的子集。
+
+示例:
+```
+输入: nums = [1,2,3]
+输出:
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+```
+## 解法
+### 思路
+- 用一颗树来标识整个可能性的集合
+- 根节点是一个空数组，因为所有数组都一定有一个空集作为子集
+- 然后子树通过数组的下标来确定，每一层的每个子树都只在上一层的基础上增加数组的一个元素，而增加的元素取决于上一层传下来的下标值
+- 将当前层生成的新的list放入总的ans中
+- 如果下标越界就返回
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        List<Integer> list = Collections.emptyList();
+        ans.add(list);
+        rescurse(nums, 0, list, ans);
+        return ans;
+    }
+
+    private void rescurse(int[] nums, int index, List<Integer> preList, List<List<Integer>> ans) {
+        if (index >= nums.length) {
+            return;
+        }
+
+        for (int i = index; i < nums.length; i++) {
+            List<Integer> list = new ArrayList<>(preList);
+            list.add(nums[i]);
+            ans.add(list);
+            rescurse(nums, i + 1, list, ans);
+        }
+    }
+}
+```
