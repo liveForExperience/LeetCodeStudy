@@ -113,3 +113,85 @@ class Solution {
     }
 }
 ```
+# LeetCode_46_全排列
+## 题目
+给定一个没有重复数字的序列，返回其所有可能的全排列。
+
+示例:
+```
+输入: [1,2,3]
+输出:
+[
+  [1,2,3],
+  [1,3,2],
+  [2,1,3],
+  [2,3,1],
+  [3,1,2],
+  [3,2,1]
+]
+```
+## 解法
+### 思路
+回溯算法，循环交换相邻元素，并同时下钻处理以一个元素，返回时回溯到下钻前状态，进入下个循环的下钻。
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (nums.length == 0) {
+            return ans;
+        }
+
+        List<Integer> list = new ArrayList<>();
+        for (int num : nums) {
+            list.add(num);
+        }
+
+        backTrack(nums.length, ans, list, 0);
+        return ans;
+    }
+
+    private void backTrack(int len, List<List<Integer>> ans, List<Integer> list, int index) {
+        if (index == len) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+
+        for (int i = index; i < len; i++) {
+            Collections.swap(list, index, i);
+            backTrack(len, ans, list, index + 1);
+            Collections.swap(list, index, i);
+        }
+    }
+}
+```
+## 解法二
+### 思路
+因为数字是[1,n]排列的有序不重复数组，所以可以通过boolean[]数组来记录记忆化搜索内容的方式来搜索整个数组的可能。递归搜索。
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        boolean[] visit = new boolean[nums.length + 1];
+        recurse(nums, ans, visit, new ArrayList<>(), nums.length);
+        return ans;
+    }
+    
+    private void recurse(int[]nums, List<List<Integer>> ans, boolean[] visit, List<Integer> list, int len) {
+        if (len == list.size()) {
+            ans.add(new ArrayList<>(list));
+        }
+        
+        for (int i = 0; i < len; i++) {
+            if (!visit[i]) {
+                list.add(nums[i]);
+                visit[i] = true;
+                recurse(nums, ans, visit, list, len);
+                list.remove(list.size() - 1);
+                visit[i] = false;
+            }
+        }
+    }
+}
+```
