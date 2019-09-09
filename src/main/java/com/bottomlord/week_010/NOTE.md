@@ -195,3 +195,62 @@ class Solution {
     }
 }
 ```
+# LeetCode_1008_先序遍历构造二叉树
+## 题目
+返回与给定先序遍历 preorder 相匹配的二叉搜索树（binary search tree）的根结点。
+
+(回想一下，二叉搜索树是二叉树的一种，其每个节点都满足以下规则，对于 node.left 的任何后代，值总 < node.val，而 node.right 的任何后代，值总 > node.val。此外，先序遍历首先显示节点的值，然后遍历 node.left，接着遍历 node.right。）
+
+示例：
+```
+输入：[8,5,1,7,10,12]
+输出：[8,5,10,1,7,null,12]
+```
+提示：
+```
+1 <= preorder.length <= 100
+先序 preorder 中的值是不同的。
+```
+## 解法
+### 思路
+- 基于如下两个结论，可以构造这棵树:
+    - 根据二叉树的先序遍历和中序遍历，可以唯一确定这个二叉树
+    - 如果一棵树是二叉树，那么它的中序遍历就是所有树元素的升序排列
+- 过程：
+    1. 排序先序遍历数组，获得中序遍历
+    2. 通过先序数组的第一个元素，获知中序数组中的根节点，并获得这棵树的左右两半部分
+    3. 因为先序遍历数组的左右子树是连续的片段，通过先序确定根节点，通过中序确定左右子树，这样递归构建
+### 代码
+```java
+class Solution {
+    private int predex = 0;
+
+    public TreeNode bstFromPreorder(int[] preorder) {
+        int[] inorder = Arrays.copyOf(preorder, preorder.length);
+        Arrays.sort(inorder);
+
+        Map<Integer, Integer> map = new HashMap<>(inorder.length);
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+
+        return dfs(preorder, 0, preorder.length, map);
+    }
+
+    private TreeNode dfs(int[] preorder, int left, int right, Map<Integer, Integer> map) {
+        if (left == right) {
+            return null;
+        }
+
+        int rootVal = preorder[predex];
+        TreeNode root = new TreeNode(rootVal);
+
+        int rootIndex = map.get(rootVal);
+        predex++;
+        
+        root.left = dfs(preorder, left, rootIndex, map);
+        root.right = dfs(preorder, rootIndex + 1, right, map);
+        return root;
+    }
+}
+```
