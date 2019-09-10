@@ -254,3 +254,38 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+不获得中序遍历，直接通过先序遍历构造二叉树：
+- 通过节点值的上下界来限定当前节点的数值
+- 通过preorder的下标和上下界来节点当前下标对应的值是否在范围内：
+    - 如果是就新建一个node
+    - 否则就回溯
+- 如果index等于preorder的长度，说明构造完成    
+### 代码
+```java
+class Solution {
+    private int predex;
+    public TreeNode bstFromPreorder(int[] preorder) {
+        this.predex = 0;
+        return recurse(preorder.length, preorder, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    private TreeNode recurse(int len, int[] preorder, int low, int high) {
+        if (predex == len) {
+            return null;
+        }
+
+        int val = preorder[predex];
+        if (val < low || val > high) {
+            return null;
+        }
+
+        predex++;
+        TreeNode root = new TreeNode(val);
+        root.left = recurse(len, preorder, low, val);
+        root.right = recurse(len, preorder, val, high);
+        return root;
+    }
+}
+```
