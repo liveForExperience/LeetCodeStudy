@@ -479,3 +479,96 @@ class Solution {
     }
 }
 ```
+# LeetCode_894_所有可能的满二叉树
+## 题目
+满二叉树是一类二叉树，其中每个结点恰好有 0 或 2 个子结点。
+
+返回包含 N 个结点的所有可能满二叉树的列表。 答案的每个元素都是一个可能树的根结点。
+
+答案中每个树的每个结点都必须有 node.val=0。
+
+你可以按任何顺序返回树的最终列表。
+
+示例：
+```
+输入：7
+输出：[[0,0,0,null,null,0,0,null,null,0,0],[0,0,0,null,null,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,null,null,null,null,0,0],[0,0,0,0,0,null,null,0,0]]
+解释：
+```
+提示：
+```
+1 <= N <= 20
+```
+## 解法
+### 思路
+- 满二叉树的所有子树的节点树是奇数
+- 通过嵌套递归来分别确定左子树和右子树
+- 退出条件是`N == 1`的时候，返回`TreeNode node = new TreeNode(0)`
+- 通过`map`来存储已经递归过的N值对应的树
+### 代码
+```java
+class Solution {
+    public List<TreeNode> allPossibleFBT(int N) {
+        Map<Integer, List<TreeNode>> map = new HashMap<>();
+        recurse(map, N);
+        return map.get(N);
+    }
+
+    private List<TreeNode> recurse(Map<Integer, List<TreeNode>> map, int n) {
+        if (!map.containsKey(n)) {
+            List<TreeNode> nodes = new ArrayList<>();
+            if (n == 1) {
+                nodes.add(new TreeNode(0));
+            } else if (n % 2 == 1){
+                for (int left = 1; left < n; left++) {
+                    int right = n - 1 - left;
+                    for (TreeNode leftNode : recurse(map, left)) {
+                        for (TreeNode rightNode : recurse(map, right)) {
+                            TreeNode root = new TreeNode(0);
+                            root.left = leftNode;
+                            root.right = rightNode;
+                            nodes.add(root);
+                        }
+                    }
+                }
+            }
+            map.put(n, nodes);
+        }
+
+        return map.get(n);
+    }
+}
+```
+## 解法二
+### 思路
+使用类变量简化代码
+### 代码
+```java
+class Solution {
+    Map<Integer, List<TreeNode>> map = new HashMap<>();
+    public List<TreeNode> allPossibleFBT(int N) {
+        if (!map.containsKey(N)) {
+            List<TreeNode> nodes = new ArrayList<>();
+            if (N == 1) {
+                nodes.add(new TreeNode(0));
+            } else if (N % 2 == 1) {
+                for (int i = 1; i < N; i++) {
+                    int j = N - 1 - i;
+                    for (TreeNode left : allPossibleFBT(i)) {
+                        for (TreeNode right : allPossibleFBT(j)) {
+                            TreeNode root = new TreeNode(0);
+                            root.left = left;
+                            root.right = right;
+                            nodes.add(root);
+                        }
+                    }
+                }
+            }
+            
+            map.put(N, nodes);
+        }
+
+        return map.get(N);
+    }
+}
+```
