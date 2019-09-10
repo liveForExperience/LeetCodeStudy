@@ -289,3 +289,87 @@ class Solution {
     }
 }
 ```
+# LeetCode_1079_活字印刷
+## 题目
+你有一套活字字模 tiles，其中每个字模上都刻有一个字母 tiles[i]。返回你可以印出的非空字母序列的数目。
+
+示例 1：
+```
+输入："AAB"
+输出：8
+解释：可能的序列为 "A", "B", "AA", "AB", "BA", "AAB", "ABA", "BAA"。
+```
+示例 2：
+```
+输入："AAABBC"
+输出：188
+```
+提示：
+```
+1 <= tiles.length <= 7
+tiles 由大写英文字母组成
+```
+## 解法
+### 思路
+回溯，记忆化的搜索，同时将结果放入set中去重，最终给返回set的长度
+### 代码
+```java
+class Solution {
+    public int numTilePossibilities(String tiles) {
+        Set<String> set = new HashSet<>();
+        backTrack(tiles.toCharArray(), new boolean[tiles.length()], set, new char[tiles.length()], 0);
+        return set.size();
+    }
+
+    private void backTrack(char[] cs, boolean[] visit, Set<String> set, char[] c, int index) {
+        if (index == cs.length) {
+            return;
+        }
+        
+        for (int i = 0; i < cs.length; i++) {
+            if (!visit[i]) {
+                c[index] = cs[i];
+                set.add(new String(c).trim());
+                visit[i] = true;
+                backTrack(cs, visit, set, c, index + 1);
+                c[index] = ' ';
+                visit[i] = false;
+            }
+        }
+    }
+}
+```
+## 优化代码
+### 思路
+不是用set去重，解法一中每次下钻通过visit来规避之前遍历过的字符串的字符，但是会导致有相同字符出现而产生的重复情况。如果使用字典表的思路，字母作为子树来遍历，那同样排列的字符串就只会出现一次，从而省去了构建set的时间复杂度。
+### 代码
+```java
+class Solution {
+    public int numTilePossibilities(String tiles) {
+        if (tiles.length() == 0) {
+            return 0;
+        }
+
+        int[] bucket = new int[26];
+        for (char c : tiles.toCharArray()) {
+            bucket[c - 'A']++;
+        }
+
+        return backTrack(bucket);
+    }
+
+    private int backTrack(int[] bucket) {
+        int result = 0;
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+            result++;
+            bucket[i]--;
+            result += backTrack(bucket);
+            bucket[i]++;
+        }
+        return result;
+    }
+}
+```
