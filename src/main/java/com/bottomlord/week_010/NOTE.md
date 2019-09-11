@@ -572,3 +572,76 @@ class Solution {
     }
 }
 ```
+# LeetCode_77_组合
+## 题目
+给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。
+
+示例:
+```
+输入: n = 4, k = 2
+输出:
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+```
+## 解法
+### 思路
+回溯算法+记忆化搜索
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> ans = new ArrayList<>();
+        recurse(ans, new ArrayList<>(), new boolean[n + 1], n, k, 1, 0);
+        return ans;
+    }
+
+    private void backTrack(List<List<Integer>> ans, List<Integer> list, boolean[] visit, int n, int k, int num, int time) {
+        if (time == k) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+
+        for (int i = num; i <= n; i++) {
+            if (!visit[i]) {
+                list.add(i);
+                visit[i] = true;
+                backTrack(ans, list, visit, n, k, i + 1, time + 1);
+                visit[i] = false;
+                list.remove(list.size() - 1);
+            }
+        }
+    }
+}
+```
+## 优化代码
+### 思路
+开始写解法一的时候，发现起始不需要使用记忆化搜索的数组，通过下标就规避了重复的可能
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> ans = new ArrayList<>();
+        recurse(ans, new ArrayList<>(), n, k, 1, 0);
+        return ans;
+    }
+    
+    private void recurse(List<List<Integer>> ans, List<Integer> list, int n, int k, int num, int time) {
+        if (time == k) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        
+        for (int i = num; i <= n; i++) {
+            list.add(i);
+            recurse(ans, list, n, k, i + 1, time + 1);
+            list.remove(list.size() - 1);
+        }
+    }
+}
+```
