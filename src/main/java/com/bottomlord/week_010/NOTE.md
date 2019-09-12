@@ -1068,3 +1068,104 @@ class Solution {
     }
 }
 ```
+# LeetCode_701_二叉搜索树的插入操作
+## 题目
+给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 保证原始二叉搜索树中不存在新值。
+
+注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回任意有效的结果。
+
+例如, 
+```
+给定二叉搜索树:
+
+        4
+       / \
+      2   7
+     / \
+    1   3
+
+和 插入的值: 5
+你可以返回这个二叉搜索树:
+
+         4
+       /   \
+      2     7
+     / \   /
+    1   3 5
+或者这个树也是有效的:
+
+         5
+       /   \
+      2     7
+     / \   
+    1   3
+         \
+          4
+```
+## 解法
+### 思路
+- 遍历二叉搜索树生成升序序列
+- 将新值放入序列
+- 重新构建新的二叉搜索树
+### 代码
+```java
+class Solution {
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+        if (root == null) {
+            return new TreeNode(val);
+        }
+        
+        List<Integer> list = new ArrayList<>();
+        dfs(list, root);
+        
+        List<Integer> newList = new ArrayList<>();
+        boolean flag = false;
+        for (int i = 0; i < list.size(); i++) {
+            if (i == 0 && val < list.get(i)) {
+                newList.add(val);
+            }
+            
+            newList.add(list.get(i));
+
+            if (i != list.size() - 1 && val > list.get(i) && val < list.get(i + 1)) {
+                newList.add(val);
+            }
+
+            if (i == list.size() - 1 && val > list.get(i)) {
+                newList.add(val);
+            }
+        }
+
+        return dfs2(newList, 0, newList.size());
+    }
+    
+    private void dfs(List<Integer> list, TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(list, node.left);
+        list.add(node.val);
+        dfs(list, node.right);
+    }
+    
+    private TreeNode dfs2(List<Integer> list, int head, int tail) {
+        if (head == tail) {
+            return null;
+        }
+        
+        int mid = head + (tail - head) / 2;
+        TreeNode root = new TreeNode(list.get(mid));
+        root.left = dfs2(list, head, mid);
+        root.right = dfs2(list, mid + 1, tail);
+        return root;
+    }
+}
+```
+## 解法二
+### 思路
+直接想抽自己，脑子里过的时候感觉需要旋转，然后就觉得使用解法一的方法可以避免旋转，但结果旋转个锤子，直接放就好了呀
+### 代码
+```java
+
+```
