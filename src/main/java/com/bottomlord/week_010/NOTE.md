@@ -917,3 +917,56 @@ class Solution {
     }
 }
 ```
+# LeetCode_109_有序列表转换二叉搜索树
+## 题目
+给定一个单链表，其中的元素按升序排序，将其转换为高度平衡的二叉搜索树。
+
+本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+
+示例:
+```
+给定的有序链表： [-10, -3, 0, 5, 9],
+
+一个可能的答案是：[0, -3, 9, -10, null, 5], 它可以表示下面这个高度平衡二叉搜索树：
+
+      0
+     / \
+   -3   9
+   /   /
+ -10  5
+```
+## 解法
+### 思路
+- 遍历链表，构建升序数组
+- 通过二叉搜索树中序遍历是升序序列的特性，中分数组，左边为左子树，右边为右子树，递归构建
+### 代码
+```java
+class Solution {
+    public TreeNode sortedListToBST(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        ListNode node = head;
+        while (node != null) {
+            list.add(node.val);
+            node = node.next;
+        }
+
+        if (list.size() == 0) {
+            return null;
+        }
+
+        return dfs(list, 0, list.size());
+    }
+
+    private TreeNode dfs(List<Integer> list, int left, int right) {
+        if (left == right) {
+            return null;
+        }
+        
+        int index = left + (right - left) / 2;
+        TreeNode root = new TreeNode(list.get(index));
+        root.left = dfs(list, left, index);
+        root.right = dfs(list, index + 1, right);
+        return root;
+    }
+}
+```
