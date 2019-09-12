@@ -999,3 +999,72 @@ class Solution {
     }
 }
 ```
+# LeetCode_94_二叉树的中序遍历
+## 题目
+给定一个二叉树，返回它的中序 遍历。
+
+示例:
+```
+输入: [1,null,2,3]
+   1
+    \
+     2
+    /
+   3
+
+输出: [1,3,2]
+```
+## 解法
+### 思路
+dfs递归遍历
+### 代码
+```java
+class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        dfs(list, root);
+        return list;
+    }
+    
+    private void dfs(List<Integer> list, TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(list, node.left);
+        list.add(node.val);
+        dfs(list, node.right);
+    }
+}
+```
+## 解法二
+### 思路
+使用dfs迭代的方法，通过栈来驱动遍历
+- 初始化Stack
+- 声明一个指针变量node，初始指向root节点
+- 循环判断stack是否为空或者node是否为空
+- 循环内部继续循环判断node是否为空，如果不为空，就push节点node，node指node.left指向left指向的节点 
+- 内层循环结束后，stack的栈顶元素出栈，node指向该元素，并将元素的val放入结果list
+- node指向node.right，继续下一个循环
+- 返回结果list
+### 代码
+```java
+class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+
+        while (node != null || !stack.isEmpty()) {
+            while (node != null) {
+                stack.push(node);
+                node = node.left;
+            }
+            node = stack.pop();
+            ans.add(node.val);
+            node = node.right;
+        }
+        return ans;
+    }
+}
+```
