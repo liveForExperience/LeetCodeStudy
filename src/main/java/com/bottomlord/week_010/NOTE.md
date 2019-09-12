@@ -1167,5 +1167,30 @@ class Solution {
 直接想抽自己，脑子里过的时候感觉需要旋转，然后就觉得使用解法一的方法可以避免旋转，但结果旋转个锤子，直接放就好了呀
 ### 代码
 ```java
-
+class Solution {
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+        TreeNode iNode = new TreeNode(val);
+        if (root == null) {
+            return iNode;
+        }
+        dfs(root, iNode);
+        return root;
+    }
+    
+    private void dfs(TreeNode node, TreeNode iNode) {
+        if (node.val < iNode.val) {
+            if (node.right != null) {
+                dfs(node.right, iNode);
+            } else {
+                node.right = iNode;
+            }
+        } else {
+            if (node.left != null) {
+                dfs(node.left, iNode);
+            } else {
+                node.left = iNode;
+            }
+        }
+    }
+}
 ```
