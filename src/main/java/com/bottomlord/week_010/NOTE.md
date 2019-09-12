@@ -711,3 +711,99 @@ class Solution {
     }
 }
 ```
+# LeetCode_1038_从二叉搜索树到更大和树
+## 题目
+给出二叉搜索树的根节点，该二叉树的节点值各不相同，修改二叉树，使每个节点 node 的新值等于原树中大于或等于 node.val 的值之和。
+
+提醒一下，二叉搜索树满足下列约束条件：
+```
+节点的左子树仅包含键小于节点键的节点。
+节点的右子树仅包含键大于节点键的节点。
+左右子树也必须是二叉搜索树。
+```
+示例：
+```
+输入：[4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
+输出：[30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]
+```
+提示：
+```
+树中的节点数介于 1 和 100 之间。
+每个节点的值介于 0 和 100 之间。
+给定的树为二叉搜索树。
+```
+## 解法
+### 思路
+- 中序遍历获得升序序列数组
+- 根据题意重新计算数组的每个元素值
+- 再次中序遍历并重新赋值val
+### 代码
+```java
+class Solution {
+    public TreeNode bstToGst(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+
+        List<Integer> list = new LinkedList<>();
+        dfs(list, root);
+        int sum = 0;
+        for (int i = 0; i < list.size(); i++) {
+            sum += list.get(i);
+        }
+
+        int pre = 0;
+        for (int i = 0; i < list.size(); i++) {
+            sum -= pre;
+            pre = list.get(i);
+            list.set(i, sum);
+        }
+
+        dfs2(list, root);
+        return root;
+    }
+
+    private void dfs(List<Integer> list, TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        dfs(list, node.left);
+        list.add(node.val);
+        dfs(list, node.right);
+    }
+
+    private void dfs2(List<Integer> list, TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        dfs2(list, node.left);
+        node.val = list.get(0);
+        list.remove(0);
+        dfs2(list, node.right);
+    }
+}
+```
+## 解法二
+### 思路
+使用逆中序遍历，带上一个累加值，每次都都将当前值加上累加值，并作为新的累加值返回
+### 代码
+```java
+class Solution {
+    public TreeNode bstToGst(TreeNode root) {
+        dfs(root, 0);
+        return root;
+    }
+
+    private int dfs(TreeNode node, int add) {
+        if (node == null) {
+            return add;
+        }
+
+        int right = dfs(node.right, add);
+        node.val += right;
+        return dfs(node.left, node.val);
+    }
+}
+```
