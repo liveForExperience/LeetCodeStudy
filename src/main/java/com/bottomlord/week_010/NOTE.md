@@ -970,3 +970,32 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+将解法一中遍历生成数组的动作放在递归过程中，通过快慢指针来找到中点
+### 代码
+```java
+class Solution {
+    public TreeNode sortedListToBST(ListNode head) {
+        return head == null ? null : dfs(head, null);
+    }
+
+    private TreeNode dfs(ListNode head, ListNode tail) {
+        if (head == tail) {
+            return null;
+        }
+
+        ListNode slow = head, fast = head;
+        while (fast != tail && fast.next != tail) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        
+        ListNode mid = slow;
+        TreeNode root = new TreeNode(mid.val);
+        root.left = dfs(head, slow);
+        root.right = dfs(slow.next, tail);
+        return root;
+    }
+}
+```
