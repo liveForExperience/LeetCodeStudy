@@ -1194,3 +1194,91 @@ class Solution {
     }
 }
 ```
+# LeetCode_419_甲板上的战舰
+## 题目
+给定一个二维的甲板， 请计算其中有多少艘战舰。 战舰用 'X'表示，空位用 '.'表示。 你需要遵守以下规则：
+```
+给你一个有效的甲板，仅由战舰或者空位组成。
+战舰只能水平或者垂直放置。换句话说,战舰只能由 1xN (1 行, N 列)组成，或者 Nx1 (N 行, 1 列)组成，其中N可以是任意大小。
+两艘战舰之间至少有一个水平或垂直的空位分隔 - 即没有相邻的战舰。
+```
+示例 :
+```
+X..X
+...X
+...X
+在上面的甲板中有2艘战舰。
+```
+无效样例 :
+```
+...X
+XXXX
+...X
+你不会收到这样的无效甲板 - 因为战舰之间至少会有一个空位将它们分开。
+```
+进阶:
+```
+你可以用一次扫描算法，只使用O(1)额外空间，并且不修改甲板的值来解决这个问题吗？
+```
+## 解法
+### 思路
+- 如果一个元素的纵向和横向都有相连的元素，就说明是无效的。
+- 可以使用sink的方法，外层遍历二维数组，判断当前节点是否为x
+- 如果是x，再判断是否纵向和横向是否都有相连的x，如果是就说明失效
+- 如果不是，就递归朝x的方向递归，当x上下左右都没有x相连时候就返回，在返回的时候将数组转成`.`。
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    private int[][] directions = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+    public int countBattleships(char[][] board) {
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                if (board[row][col] == 'X') {
+                    count++;
+                    for (int[] direction : directions) {
+                        backTrack(board, row, col, direction[0], direction[1]);
+                    }
+                    board[row][col] = '.';
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private void backTrack(char[][] board, int row, int col, int rowPath, int colPath) {
+        int nextRow = row + rowPath, nextCol = col + colPath;
+        if (nextRow < 0 || nextRow >= board.length || nextCol < 0 || nextCol >= board[row].length) {
+            return;
+        }
+        
+        if (board[nextRow][nextCol] == 'X') {
+            backTrack(board, row + rowPath, col + colPath, rowPath, colPath);
+            board[nextRow][nextCol] = '.';
+        }
+    }
+}
+```
+## 解法二
+### 思路
+不使用递归而是直接嵌套循环，判断一架飞机的关键点有如下特征：
+- 当前节点是`X`
+- 当前节点的左边节点是`.`，或者当前节点在第一行
+- 当前节点的上边节点是`.`，或者当前节点在第一列
+### 代码
+```java
+class Solution {
+    public int countBattleships(char[][] board) {
+        int count = 0;
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                if (board[row][col] == 'X' && (row == 0 || board[row - 1][col] == '.') && (col == 0 || board[row][col - 1] == '.')) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+}
+```
