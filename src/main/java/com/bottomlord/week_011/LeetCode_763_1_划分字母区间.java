@@ -1,7 +1,6 @@
 package com.bottomlord.week_011;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class LeetCode_763_1_划分字母区间 {
