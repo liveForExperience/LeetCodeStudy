@@ -1405,3 +1405,37 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+使用数组代替map，因为需要双向映射，所以需要正反判断两次：
+- 基准字符匹配比对字符
+- 每次匹配都在基准字符对应的数组下标处存储比对字符内容
+- 如果下标对应元素不等于0，说明之前已经匹配过，需要比对对应字符，如果一致就继续，否则就说明不符合规则
+### 代码
+```java
+class Solution {
+    public List<String> findAndReplacePattern(String[] words, String pattern) {
+        List<String> ans = new ArrayList<>();
+        for (String word : words) {
+            if (isPattern(word, pattern) && isPattern(pattern, word)) {
+                ans.add(word);
+            }
+        }
+        return ans;
+    }
+
+    private boolean isPattern(String a, String b) {
+        char[] cs = a.toCharArray();
+        char[] bucket = new char[58];
+        for (int i = 0; i < a.length(); i++) {
+            int index = cs[i] - 65;
+            if (bucket[index] == 0) {
+                bucket[index] = b.charAt(i);
+            } else if (bucket[index] != b.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
