@@ -177,3 +177,113 @@ class Solution {
     }
 }
 ```
+# LeetCode_513_找树左下角的值
+## 题目
+给定一个二叉树，在树的最后一行找到最左边的值。
+
+示例 1:
+```
+输入:
+
+    2
+   / \
+  1   3
+
+输出:
+1
+```
+示例 2:
+```
+输入:
+
+        1
+       / \
+      2   3
+     /   / \
+    4   5   6
+       /
+      7
+
+输出:
+7
+```
+```
+注意: 您可以假设树（即给定的根节点）不为 NULL。
+```
+## 解法
+### 思路
+bfs遍历，更新记录每一行的最左边的元素，当队列为空时，返回最后记录的那个元素的值
+### 代码
+```java
+class Solution {
+    public int findBottomLeftValue(TreeNode root) {
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.add(root);
+        int left = root.val;
+
+        while (!queue.isEmpty()) {
+            TreeNode leftNode = queue.poll();
+            left = leftNode.val;
+            int size = queue.size();
+
+            if (leftNode.left != null) {
+                queue.offer(leftNode.left);
+            }
+
+            if (leftNode.right != null) {
+                queue.offer(leftNode.right);
+            }
+            
+            while (size-- > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+        }
+
+        return left;
+    }
+}
+```
+## 解法二
+### 思路
+dfs遍历，因为深度优先优先搜索左下，所以只要第一个下钻到新的一层的节点，一定是最下角的元素
+### 代码
+```java
+class Solution {
+    private int maxLevel = 0;
+    private int result = 0;
+
+    public int findBottomLeftValue(TreeNode root) {
+        dfs(root, 1);
+        return result;
+    }
+
+    private void dfs(TreeNode node, int level) {
+        if (node.left == null && node.right == null) {
+            if (level > maxLevel) {
+                maxLevel = level;
+                result = node.val;
+            }
+            return;
+        }
+        
+        if (node.left != null) {
+            dfs(node.left, level + 1);
+        }
+        
+        if (node.right != null) {
+            dfs(node.right, level + 1);
+        }
+    }
+}
+```
