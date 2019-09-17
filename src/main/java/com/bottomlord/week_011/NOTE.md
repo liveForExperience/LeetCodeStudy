@@ -437,3 +437,30 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+在dfs过程中记录遍历的次数，当次数和k值相同时直接返回
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    private int val = 0;
+    public int kthSmallest(TreeNode root, int k) {
+        dfs(root, k);
+        return val;
+    }
+    
+    private void dfs(TreeNode node, int k) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, k);
+        if (++count == k) {
+            val = node.val;
+            return;
+        }
+        dfs(node.right, k);
+    }
+}
+```
