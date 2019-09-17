@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LeetCode_260_1_只出现一次的数字 {
+public class LeetCode_260_1_只出现一次的数字III {
     public int[] singleNumber(int[] nums) {
         Arrays.sort(nums);
         List<Integer> list = new ArrayList<>();

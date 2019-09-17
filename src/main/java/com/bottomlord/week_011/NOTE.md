@@ -287,7 +287,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_260_只出现一次的数字
+# LeetCode_260_只出现一次的数字III
 ## 题目
 给定一个整数数组 nums，其中恰好有两个元素只出现一次，其余所有元素均出现两次。 找出只出现一次的那两个元素。
 
@@ -325,6 +325,58 @@ class Solution {
             }
         }
         return new int[]{list.get(0), list.get(1)};
+    }
+}
+```
+## 解法二
+### 思路
+使用set来判断是否有重复，如果有就删除，遍历结束，把存在的两个数字返回
+### 代码
+```java
+class Solution {
+    public int[] singleNumber(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            if (set.contains(num)) {
+                set.remove(num);
+            } else {
+                set.add(num);
+            }
+        }
+        
+        Integer[] arr = set.toArray(new Integer[0]);
+        return new int[]{arr[0], arr[1]};
+    }
+}
+```
+## 解法三
+### 思路
+- 位运算，因为有两个不重复的数字，所以通过异或操作最终会得到这两个数的异或值
+- 通过将该异或值与其相反数相与，得到一个标记值，这个值只有一位是1，这个1是两个数异或后最小位上的1，代表这两个值在这一位上不同
+- 然后再遍历数组，用标记值来与数组的值进行异或，这个标记值可以通过与遍历到的数`&=`来将两个不同的数区分，能且只能获得如下值：
+    - 0
+    -标记值
+- 将这两个区分开的值记录下来返回
+### 代码
+```java
+class Solution {
+    public int[] singleNumber(int[] nums) {
+        int xor = 0;
+        for (int num : nums) {
+            xor ^= num;
+        }
+        
+        xor &= -xor;
+        int[] ans = new int[2];
+        for (int num : nums) {
+            if ((xor & num) == 0) {
+                ans[0] ^= num;
+            } else {
+                ans[1] ^= num;
+            }
+        }
+        
+        return ans;
     }
 }
 ```
