@@ -522,3 +522,68 @@ class Solution {
     }
 }
 ```
+# LeetCode_537_复数乘法
+## 题目
+给定两个表示复数的字符串。
+
+返回表示它们乘积的字符串。注意，根据定义 i2 = -1 。
+
+示例 1:
+```
+输入: "1+1i", "1+1i"
+输出: "0+2i"
+解释: (1 + i) * (1 + i) = 1 + i2 + 2 * i = 2i ，你需要将它转换为 0+2i 的形式。
+```
+示例 2:
+```
+输入: "1+-1i", "1+-1i"
+输出: "0+-2i"
+解释: (1 - i) * (1 - i) = 1 + i2 - 2 * i = -2i ，你需要将它转换为 0+-2i 的形式。 
+```
+注意:
+```
+输入字符串不包含额外的空格。
+输入字符串将以 a+bi 的形式给出，其中整数 a 和 b 的范围均在 [-100, 100] 之间。输出也应当符合这种形式。
+```
+## 解法
+### 思路
+复数相乘的关系可以演算为：
+```math
+(a + bi) * (c + di) = ac + i^2bd + i(bc + ad) = ac - bd + i(bc + ad)
+```
+### 代码
+```java
+class Solution {
+    public String complexNumberMultiply(String a, String b) {
+        String regex = "\\+|i";
+        String[] as = a.split(regex);
+        String[] bs = b.split(regex);
+
+        int ax = Integer.parseInt(as[0]);
+        int ay = Integer.parseInt(as[1]);
+        int bx = Integer.parseInt(bs[0]);
+        int by = Integer.parseInt(bs[1]);
+
+        return ax * bx - ay * by + "+" + (ax * by + bx * ay) + "i";
+    }
+}
+```
+## 优化代码
+### 思路
+使用操作字符数组下标，替代正则
+### 代码
+```java
+class Solution {
+    public String complexNumberMultiply(String a, String b) {
+        int ai = a.indexOf("+");
+        int ax = Integer.parseInt(a.substring(0, ai));
+        int ay = Integer.parseInt(a.substring(ai + 1, a.indexOf("i")));
+
+        int bi = b.indexOf("+");
+        int bx = Integer.parseInt(b.substring(0, bi));
+        int by = Integer.parseInt(b.substring(bi + 1, b.indexOf("i")));
+
+        return ax * bx - ay * by + "+" + (ax * by + bx * ay) + "i";
+    }
+}
+```
