@@ -769,3 +769,64 @@ class Solution {
     }
 }
 ```
+# LeetCode_114_二叉树展开为链表
+## 题目
+给定一个二叉树，原地将它展开为链表。
+
+例如，给定二叉树
+```
+    1
+   / \
+  2   5
+ / \   \
+3   4   6
+```
+将其展开为：
+```
+1
+ \
+  2
+   \
+    3
+     \
+      4
+       \
+        5
+         \
+          6
+```
+## 解法
+### 思路
+新的链表的节点顺序等同于二叉树的先序遍历，转换的过程：
+- 将右子树指向左子树
+- 原来的右子树接在左子树的最右叶子节点后
+- 从新的右子树的根节点出发，继续如上的逻辑，直到新的右子树为null
+### 代码
+```java
+class Solution {
+    public void flatten(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        
+        if (root.left != null) {
+            TreeNode tmp = root.right;
+            root.right = root.left;
+            root.left = null;
+
+            TreeNode lowestRight = dfs(root.right);
+            lowestRight.right = tmp;    
+        }
+        
+        flatten(root.right);
+    }
+    
+    private TreeNode dfs(TreeNode node) {
+        if (node.right == null) {
+            return node;
+        }
+        
+        return dfs(node.right);
+    }
+}
+```
