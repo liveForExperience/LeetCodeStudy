@@ -830,3 +830,59 @@ class Solution {
     }
 }
 ```
+# LeetCode_1104_二叉树寻路
+## 题目
+在一棵无限的二叉树上，每个节点都有两个子节点，树中的节点 逐行 依次按 “之” 字形进行标记。
+
+如下图所示，在奇数行（即，第一行、第三行、第五行……）中，按从左到右的顺序进行标记；
+
+而偶数行（即，第二行、第四行、第六行……）中，按从右到左的顺序进行标记。
+
+给你树上某一个节点的标号 label，请你返回从根节点到该标号为 label 节点的路径，该路径是由途经的节点标号所组成的。
+
+示例 1：
+```
+输入：label = 14
+输出：[1,3,4,14]
+```
+示例 2：
+```
+输入：label = 26
+输出：[1,2,6,10,26]
+```
+提示：
+```
+1 <= label <= 10^6
+```
+## 解法
+### 思路
+- label的父节点是值为`label / 2`的节点的镜像节点
+- 每一层的最大值是`Math.pow(2, level) - 1`，通过label第一次小于等于这个值来确定level
+- 镜像通过当前层最大值和最小值的和sum减去label来获得，进而上一层就等于`(sum - label) / 2`来确定
+- 通过递归来确定路径，`level = 1`来决定退出
+### 代码
+```java
+class Solution {
+    public List<Integer> pathInZigZagTree(int label) {
+        int level = 1;
+        while (Math.pow(2, level) - 1 < label) {
+            level+= 1;
+        }
+        List<Integer> ans = new ArrayList<>();
+        ans.add(label);
+        dfs(ans, level, label);
+        return ans;
+    }
+
+    private void dfs(List<Integer> list, int level, int label) {
+        if (level == 1) {
+            return;
+        }
+
+        int sum = (int)Math.pow(2, level - 1) + (int)Math.pow(2, level) - 1;
+        int num = (sum - label) / 2;
+        list.add(0, num);
+        dfs(list, level - 1, num);
+    }
+}
+```
