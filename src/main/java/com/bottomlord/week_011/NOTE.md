@@ -948,3 +948,78 @@ class Solution {
     }
 }
 ```
+# LeetCode_48_旋转图像
+## 题目
+给定一个 n × n 的二维矩阵表示一个图像。
+
+将图像顺时针旋转 90 度。
+
+说明：
+
+你必须在原地旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要使用另一个矩阵来旋转图像。
+
+示例 1:
+```
+给定 matrix = 
+[
+  [1,2,3],
+  [4,5,6],
+  [7,8,9]
+],
+
+原地旋转输入矩阵，使其变为:
+[
+  [7,4,1],
+  [8,5,2],
+  [9,6,3]
+]
+```
+示例 2:
+```
+给定 matrix =
+[
+  [ 5, 1, 9,11],
+  [ 2, 4, 8,10],
+  [13, 3, 6, 7],
+  [15,14,12,16]
+], 
+
+原地旋转输入矩阵，使其变为:
+[
+  [15,13, 2, 5],
+  [14, 3, 4, 1],
+  [12, 6, 8, 9],
+  [16, 7,10,11]
+]
+```
+## 解法
+### 思路
+- 一层层的旋转
+- 使用头尾指针代表每一层的起始和结尾,当头超过尾代表旋转结束
+- 使用level代表第几层
+- 后一个元素的x坐标是前一个元素的y坐标
+- 有一个元素的y坐标是行或列的长度-前一个元素的x坐标
+### 代码
+```java
+class Solution {
+    public void rotate(int[][] matrix) {
+        int head = 0, tail = matrix[0].length - 1, level = 0, len = tail;
+        while (head < tail) {
+            for (int i = head; i < tail; i++) {
+                int x = level, y = i, old = matrix[x][y], now;
+                for (int time = 0; time < 4; time++) {
+                    int newX = y, newY = len - x;
+                    now = matrix[newX][newY];
+                    matrix[newX][newY] = old;
+                    old = now;
+                    x = newX;
+                    y = newY;
+                }
+            }
+            head++;
+            tail--;
+            level++;
+        }
+    }
+}
+```
