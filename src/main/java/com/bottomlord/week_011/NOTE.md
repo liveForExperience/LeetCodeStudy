@@ -1023,3 +1023,71 @@ class Solution {
     }
 }
 ```
+# LeetCode_137_只出现一次的数字II
+## 题目
+给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现了三次。找出那个只出现了一次的元素。
+
+说明：
+
+你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？
+
+示例 1:
+```
+输入: [2,2,3,2]
+输出: 3
+```
+示例 2:
+```
+输入: [0,1,0,1,0,1,99]
+输出: 99
+```
+## 解法
+### 思路
+遍历数组使用map对元素计数，返回为1的key
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == 1) {
+                return entry.getKey();
+            }
+        }
+        
+        return 0;
+    }
+}
+```
+## 解法二
+### 思路
+- 位运算的基本特性：
+    - `x ^ x = 0`
+    - `x ^ 0 = x`
+    - `x & ~x = 0`
+    - `x & ~0 = x`
+- 使用两个变量使元素出现3次值为0
+    - `a = 0, b = 0`
+    - `a = (a ^ n) & ~b`
+    - `b = (b ^ n) & ~a`
+- 运算过程，加入n为1
+    - 如果该位第一次遇到1: a[i]=0, b[i]=1
+    - 如果该位第二次遇到1: a[i]=1, b[i]=0
+    - 如果该位第三次遇到1: a[i]=0, b[i]=0
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int a = 0, b = 0;
+        for (int num : nums) {
+            a = (a ^ num) & ~b;
+            b = (b ^ num) & ~a;
+        }
+        return a;
+    }
+}
+```
