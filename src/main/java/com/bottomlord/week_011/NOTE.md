@@ -1211,3 +1211,112 @@ class Solution {
     }
 }
 ```
+# LeetCode_131_分割回文串
+## 题目
+给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。
+
+返回 s 所有可能的分割方案。
+
+示例:
+```
+输入: "aab"
+输出:
+[
+  ["aa","b"],
+  ["a","a","b"]
+]
+```
+## 解法
+### 思路
+- 将字符串拆分成前后两部分
+    - 前一部分判断是否是回文，如果是就开始第二部分的递归
+    - 后一部分递归之前的步骤，拆分字符串，并判断是否是回文以及继续递归
+    - 如果拆分的两部分都是回文子串，就放入list中返回
+- 在最外层，对所有可能的切分方式进行迭代，同时将递归返回的list增加到最后的结果中
+### 代码
+```java
+class Solution {
+    public List<List<String>> partition(String s) {
+        return recurse(s, 0);
+    }
+
+    private List<List<String>> recurse(String s, int start) {
+        List<List<String>> ans = new ArrayList<>();
+        if (start == s.length()) {
+            List<String> list = new ArrayList<>();
+            ans.add(list);
+            return ans;
+        }
+
+        for (int i = start; i < s.length(); i++) {
+            String left = s.substring(start, i + 1);
+            if (ispalindrome(left)) {
+                for (List<String> list : recurse(s,  i + 1)) {
+                    list.add(0, left);
+                    ans.add(list);
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean ispalindrome(String s) {
+        int head = 0, tail = s.length() - 1;
+        while (head <= tail) {
+            if (s.charAt(head) != s.charAt(tail)) {
+                return false;
+            }
+
+            head++;
+            tail--;
+        }
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+在解法一的基础上增加动态规划来避免重复判断一样的字符串的过程：
+1. 使用dp[i][j]来代表字符数组s[i,j]是否是回文串
+2. dp[i][j]是否是回文字是通过`dp[i][j] = s[i] == s[j] && `来判断
+3. `j = i + len - 1`是i和j坐标的映射关系，len是字符串的长度
+4. 结合2和3的情况，在判断当前字符串是否为回文时，可以优化为`s[i] == s[j] && (len < 3 || dp[i + 1][j - 1])`
+5. 之后的步骤和解法一基本一致
+### 代码
+```java
+class Solution {
+    public List<List<String>> partition(String s) {
+        int length = s.length();
+        boolean[][] dp = new boolean[length][length];
+        for (int len = 1; len <= length; len++) {
+            for (int i = 0; i <= length - len; i++) {
+                int j = i + len - 1;
+                dp[i][j] = s.charAt(i) == s.charAt(j) && (len < 3 || dp[i + 1][j - 1]);
+            }
+        }
+        return recurse(s, 0, dp);
+    }
+
+    private List<List<String>> recurse(String s, int start, boolean[][] dp) {
+        List<List<String>> ans = new ArrayList<>();
+        if (s.length() == start) {
+            List<String> list = new ArrayList<>();
+            ans.add(list);
+            return ans;
+        }
+
+        for (int i = start; i < s.length(); i++) {
+            if (dp[start][i]) {
+                String left = s.substring(start, i + 1);
+                for (List<String> list : recurse(s, i + 1, dp)) {
+                    list.add(0, left);
+                    ans.add(list);
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
