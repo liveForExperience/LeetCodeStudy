@@ -1091,3 +1091,58 @@ class Solution {
     }
 }
 ```
+# LeetCode_106_从中序与后序遍历序列构造二叉树
+## 题目
+根据一棵树的中序遍历与后序遍历构造二叉树。
+
+注意:
+```
+你可以假设树中没有重复的元素。
+```
+例如，给出
+```
+中序遍历 inorder = [9,3,15,20,7]
+后序遍历 postorder = [9,15,7,20,3]
+返回如下的二叉树：
+```
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+## 解法
+### 思路
+- 后序序列从尾部遍历，就是二叉树的镜像的先序遍历
+- 过程和1008的解法一类似，只是过程是逆中序，先right再left
+- 同时postorder的坐标是从尾部开始递减来确定root的val
+### 代码
+```java
+class Solution {
+    private int postIndex;
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        this.postIndex = postorder.length - 1;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+        return dfs(inorder.length - 1, -1, map, postorder);
+    }
+
+    private TreeNode dfs(int head, int tail, Map<Integer, Integer> map, int[] postorder) {
+        if (head == tail) {
+            return null;
+        }
+
+        int rootVal = postorder[postIndex];
+        TreeNode node = new TreeNode(rootVal);
+        int rootIndex = map.get(rootVal);
+
+        postIndex--;
+        node.right = dfs(head, rootIndex, map, postorder);
+        node.left = dfs(rootIndex - 1, tail, map, postorder);
+        return node;
+    }
+}
+```

@@ -18,7 +18,7 @@ public class LeetCode_1008_1_先序遍历构造二叉树 {
             map.put(inorder[i], i);
         }
 
-        return dfs(preorder, 0, preorder.length - 1, map);
+        return dfs(preorder, 0, preorder.length, map);
     }
 
     private TreeNode dfs(int[] preorder, int left, int right, Map<Integer, Integer> map) {
