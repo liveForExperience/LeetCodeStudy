@@ -221,3 +221,88 @@ class Solution {
     }
 }
 ```
+# LeetCode_64_最小路径和
+## 题目
+给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+说明：每次只能向下或者向右移动一步。
+
+示例:
+```
+输入:
+[
+  [1,3,1],
+  [1,5,1],
+  [4,2,1]
+]
+输出: 7
+解释: 因为路径 1→3→1→1→1 的总和最小。
+```
+## 失败解法
+### 思路
+递归搜索所有可能性，在递归过程中超出边界或大于已有最小值则直接返回。递归结束后返回获得最小值
+### 失败原因
+超出时间限制
+### 代码
+```java
+class Solution {
+    private int min = Integer.MAX_VALUE;
+    public int minPathSum(int[][] grid) {
+        recurse(grid, 0, 0, grid.length - 1, grid[0].length - 1, 0);
+        return min;
+    }
+
+    private void recurse(int[][] grid, int row, int col, int finalRow, int finalCol, int sum) {
+        if (sum > min || row > finalRow || col > finalCol) {
+            return;
+        }
+
+        sum += grid[row][col];
+        
+        if (row == finalRow && col == finalCol) {
+            min = Math.min(min, sum);
+            return;
+        }
+
+        recurse(grid, row + 1, col, finalRow, finalCol, sum);
+        recurse(grid, row, col + 1, finalRow, finalCol, sum);
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- 定义状态转移方程
+```math
+dp[i][j] = grid[i][j] + Math.min(dp[i - 1][j], dp[i][j - 1]
+```
+- 遍历二维数组会出现四种情况：
+    - 终点：`dp[i][j] = grid[i][j]`
+    - 最下面一层且不是终点，也就是状态转移的base case，`dp[i][j] = grid[i][j] + dp[i][j + 1]`
+    - 不是最下面一层，但是最后一列，因为没有向右的选项，所以也是特殊情况，`dp[i][j] = grid[i][j] + dp[i + 1][j]`
+    - 普通情况：`dp[i][j] = grid[i][j] + Math.min(dp[i + 1][j], dp[i][j + 1])`
+- 最后返回dp[0][0]即可
+### 代码
+```java
+class Solution {
+    public int minPathSum(int[][] grid) {
+        int rowLen = grid.length, colLen = grid[0].length;
+        int[][] dp = new int[rowLen][colLen];
+        for (int i = rowLen - 1; i >= 0; i--) {
+            for (int j = colLen - 1; j >= 0; j--) {
+                if (i == rowLen - 1 && j == colLen - 1) {
+                    dp[i][j] = grid[i][j];
+                } else if (i == rowLen - 1 && j != colLen - 1) {
+                    dp[i][j] = grid[i][j] + dp[i][j + 1];
+                } else if (i != rowLen - 1 && j == colLen - 1) {
+                    dp[i][j] = grid[i][j] + dp[i + 1][j];
+                } else {
+                    dp[i][j] = grid[i][j] + Math.min(dp[i + 1][j], dp[i][j + 1]);
+                }
+            }
+        }
+        
+        return dp[0][0];
+    }
+}
+```
