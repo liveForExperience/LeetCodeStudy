@@ -306,3 +306,60 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+在解法二的基础上，用一维数组代替二维数组，因为除了最后一行，所有的元素都是依赖上一行的同一列和同一行的右一个，所以数组可以复用。在更新当前元素的dp值时，可以利用到上一行对应的还未更新的dp数组的当前列的值。
+```math
+dp[j] = grid[i][j] + Math.min(dp[j], dp[j + 1])
+```
+### 代码
+```java
+class Solution {
+    public int minPathSum(int[][] grid) {
+        int rowLen = grid.length, colLen = grid[0].length;
+        int[] dp = new int[colLen];
+        for (int i = rowLen - 1; i >= 0; i--) {
+            for (int j = colLen - 1; j >= 0; j--) {
+                if (i == rowLen - 1 && j == colLen - 1) {
+                    dp[j] = grid[i][j];
+                } else if (i == rowLen - 1 && j != colLen - 1) {
+                    dp[j] = grid[i][j] + dp[j + 1];
+                } else if (i != rowLen - 1 && j == colLen - 1) {
+                    dp[j] = grid[i][j] + dp[j];
+                } else {
+                    dp[j] = grid[i][j] + Math.min(dp[j], dp[j + 1]);
+                }
+            }
+        }
+
+        return dp[0];
+    }
+}
+```
+## 解法三
+### 思路
+直接在二维数组上原地修改
+```math
+grid[i][j] = grid[i][j] + Math.min(grid[i + 1][j], grid[i][j + 1]
+```
+### 代码
+```java
+class Solution {
+    public int minPathSum(int[][] grid) {
+        int rowLen = grid.length, colLen = grid[0].length;
+        for (int i = rowLen - 1; i >= 0; i--) {
+            for (int j = colLen - 1; j >= 0; j--) {
+                if (i == rowLen - 1 && j != colLen - 1) {
+                    grid[i][j] += grid[i][j + 1];
+                } else if (i != rowLen - 1 && j == colLen - 1) {
+                    grid[i][j] += grid[i + 1][j];
+                } else if (i != rowLen - 1 && j != colLen - 1){
+                    grid[i][j] += Math.min(grid[i + 1][j], grid[i][j + 1]);
+                }
+            }
+        }
+
+        return grid[0][0];
+    }
+}
+```
