@@ -32,7 +32,7 @@ class Solution {
     - 因为`denominator`初始化是等价于`cont[i]`的，`1`等价于`numerator`的初始值，所以可以推得`denominator / denominator * cont[i - 1] + numerator`
     - 根据公式，`numerator`赋值为`denominator`，`denominator` 赋值为 `denominator * cont[i - 1] + numerator`
     - 然后对`numerator`和`denominator`求最大公约数化简
-- 遍历结束后因为分子分母在循环体中进行了一次颠倒给下一次处理，但最终结果不需要颠倒，所以返回时以倒数的形式返回
+- 遍历结束后因为分子分母在循环体中进行了一次颠倒，用来给下一次循环处理，但最终结果不需要颠倒，所以返回时以倒数的形式返回
 ### 代码
 ```java
 class Solution {
@@ -62,7 +62,7 @@ class Solution {
 
 ## 解法
 ### 思路
-- 对对障碍物的二维数组生成一个`Map<Integer, Set<Integer>>`映射，x坐标为key，y坐标放入set中
+- 对障碍物的二维数组生成一个`Map<Integer, Set<Integer>>`映射，x坐标为key，y坐标放入set中
 - 从原点开始根据字符来判断是x++还是y++
 - 整个过程需要不断循环字符数组来进行，所以是while(true)嵌套for循环
 - 退出循环的三种条件：
