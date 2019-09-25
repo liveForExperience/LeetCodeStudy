@@ -27,25 +27,25 @@
     <tr align="center">
         <td rowspan="5">2019/9/24</td>
         <td rowspan="5">2019 力扣杯全国秋季编程大赛</td>
-        <td>[1](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_1)</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_1">1</a></td>
         <td>:heavy_check_mark:</td>
-        <td rowspan="5">[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190924/NOTE.md)</td>
+        <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190924/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="5">433/1541</td>
     </tr>
     <tr align="center">
-        <td>[2](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_2)</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_2">2</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td>[3](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_3)</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_3">3</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td>[4](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_4)</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_4">4</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td>[5](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5)</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5">5</a></td>
         <td>:x:</td>
     </tr>
 </table>
