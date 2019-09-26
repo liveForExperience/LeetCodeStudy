@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class Contest_3 {
+public class Contest_3_机器人大冒险 {
     public boolean robot(String command, int[][] obstacles, int x, int y) {
         char[] commands = command.toCharArray();
         Map<Integer, Set<Integer>> map = new HashMap<>();

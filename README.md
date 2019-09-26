@@ -13,7 +13,7 @@
 |9|2019/9/2 - 2019/9/8| [26](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_009) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_009/NOTE.md) | - | - |:open_mouth:|1879|
 |10|2019/9/9 - 2019/9/15| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_010) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_010/NOTE.md) | - | - |:blush:|1612|
 |11|2019/9/16 - 2019/9/22| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_011) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_011/NOTE.md) | - | [877_石子游戏_解1](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_011/LeetCode_877_1_石子游戏.java) |:smile:|1404|
-|12|2019/9/23 - 2019/9/29| [6](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_012) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_012/NOTE.md) | - | - |||
+|12|2019/9/23 - 2019/9/29| [7](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_012) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_012/NOTE.md) | - | - |||
 ## 竞赛
 <table>
     <tr align="center">
@@ -27,25 +27,25 @@
     <tr align="center">
         <td rowspan="5">2019/9/24</td>
         <td rowspan="5">2019 力扣杯全国秋季编程大赛</td>
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_1">1</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_1_猜数字">1_猜数字</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190924/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="5">433/1541</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_2">2</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_2_分式化简">2_分式化简</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_3">3</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_3_机器人大冒险">3_机器人大冒险</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_4">4</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_4_覆盖">4_覆盖</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5">5</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5_发LeetCoin">5_发LeetCoin</a></td>
         <td>:x:</td>
     </tr>
 </table>

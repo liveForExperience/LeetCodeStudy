@@ -1,6 +1,6 @@
 package com.bottomlord.contest_20190924;
 
-public class Contest_4 {
+public class Contest_4_覆盖 {
     private int count = 0;
     public int domino(int n, int m, int[][] broken) {
         boolean[][] grid = new boolean[n][m];

@@ -1,6 +1,6 @@
 package com.bottomlord.contest_20190924;
 
-public class Contest_2 {
+public class Contest_2_分式化简 {
     public int[] fraction(int[] cont) {
         int len = cont.length, numerator = 1, denominator = cont[len - 1];
         for (int i = len - 2; i >= 0; i--) {

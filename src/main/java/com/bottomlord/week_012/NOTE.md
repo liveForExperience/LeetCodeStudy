@@ -409,3 +409,67 @@ class Solution {
     }
 }
 ```
+# LeetCode_148_排序链表
+## 题目
+在 O(n log n) 时间复杂度和常数级空间复杂度下，对链表进行排序。
+
+示例 1:
+```
+输入: 4->2->1->3
+输出: 1->2->3->4
+```
+示例 2:
+```
+输入: -1->5->3->4->0
+输出: -1->0->3->4->5
+```
+## 解法
+### 思路
+使用归并排序：
+- 使用快慢指针找到链表中点，递归将其分割
+- 在递归分割后，返回前，对上一层返回的两个排序的子链表，进行合并
+- 最终返回排序好的链表返回到上一层
+### 代码
+```java
+class Solution {
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        
+        ListNode slow = head, fast = head.next;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        ListNode tmp = slow.next;
+        slow.next = null;
+        
+        ListNode left = sortList(head);
+        ListNode right = sortList(tmp);
+        
+        ListNode node = new ListNode(0);
+        ListNode res = node;
+        
+        while (left != null && right != null) {
+            if (left.val < right.val) {
+                node.next = left;
+                left = left.next;
+            } else {
+                node.next = right;
+                right = right.next;
+            }
+            
+            node = node.next;
+        }
+        
+        node.next = left == null ? right : left;
+        
+        return res.next;
+    }
+}
+```
+## 解法二
+### 思路
+非递归，在解法一基础上，不进行cut的动作，而是在通过计算每一次合并的元素

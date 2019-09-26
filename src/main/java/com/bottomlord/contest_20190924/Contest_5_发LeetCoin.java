@@ -2,7 +2,7 @@ package com.bottomlord.contest_20190924;
 
 import java.util.*;
 
-public class Contest_5 {
+public class Contest_5_发LeetCoin {
     public int[] bonus(int n, int[][] leadership, int[][] operations) {
         Map<Integer, Set<Long>> map = new HashMap<>();
         Map<Integer, Long> dict = new HashMap<>();
