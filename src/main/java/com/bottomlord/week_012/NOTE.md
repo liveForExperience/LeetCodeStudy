@@ -472,4 +472,78 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-非递归，在解法一基础上，不进行cut的动作，而是在通过计算每一次合并的元素
+解法一的思路是通过拆分步骤将链表拆分成节点这个最小单元，然后通过合并并排序的方式最终返回排序后的结果。每一轮的排序都是对同样长度的链表进行的合并，所以可以直接通过下标标记来替代cut的步骤。而链表的范围通过下标来确定，下标则通过合并轮次来确定。
+- 计算链表长度，用来确定是否合并过程结束
+- 声明一个res节点，`res.next`指向排序后的链表头节点
+- 声明一个int变量代表每轮合并的链表长度`l`,`l`的大小与合并的轮次有关
+- 一共3层循环：
+    - 最外层：不断增加`l`的大小直到大于等于链表长度`len`，模拟每一轮合并的过程，增大的步长为`l *= 2`
+    - 第二层：对每一轮合并的最小单位，`l`长度的链表进行处理
+    - 最内层：根据`l`长度找到要处理的两个链表的头节点，处理合并动作:
+- 最终返回`res.next`，这样空间复杂度就是O(1)
+### 代码
+```java
+class Solution {
+    public ListNode sortList(ListNode head) {
+        ListNode node = head;
+        int len = 0, l = 1;
+        while (node != null) {
+            node = node.next;
+            len++;
+        }
+
+        ListNode res = new ListNode(0);
+        res.next = head;
+        while (l < len) {
+            ListNode pre = res;
+            node = res.next;
+            while (node != null) {
+                ListNode n1 = node;
+                int tmpL = l;
+                while (node != null && tmpL != 0) {
+                    node = node.next;
+                    tmpL--;
+                }
+
+                if (node == null) {
+                    break;
+                }
+
+                ListNode n2 = node;
+                tmpL = l;
+                while (node != null && tmpL != 0) {
+                    node = node.next;
+                    tmpL--;
+                }
+
+                int c1 = l, c2 = l - tmpL;
+                while (c1 != 0 && c2 != 0) {
+                    if (n1.val < n2.val) {
+                        pre.next = n1;
+                        n1 = n1.next;
+                        c1--;
+                    } else {
+                        pre.next = n2;
+                        n2 = n2.next;
+                        c2--;
+                    }
+                    pre = pre.next;
+                }
+
+                pre.next = c1 == 0 ? n2 : n1;
+                while (c1 > 0 || c2 > 0) {
+                    pre = pre.next;
+                    c1--;
+                    c2--;
+                }
+
+                pre.next = node;
+            }
+
+            l *= 2;
+        }
+
+        return res.next;
+    }
+}
+```

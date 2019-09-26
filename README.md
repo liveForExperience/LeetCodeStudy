@@ -27,25 +27,25 @@
     <tr align="center">
         <td rowspan="5">2019/9/24</td>
         <td rowspan="5">2019 力扣杯全国秋季编程大赛</td>
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_1_猜数字">1_猜数字</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_1_猜数字">猜数字</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190924/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="5">433/1541</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_2_分式化简">2_分式化简</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_2_分式化简">分式化简</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_3_机器人大冒险">3_机器人大冒险</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_3_机器人大冒险">机器人大冒险</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_4_覆盖">4_覆盖</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_4_覆盖">覆盖</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5_发LeetCoin">5_发LeetCoin</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5_发LeetCoin">发LeetCoin</a></td>
         <td>:x:</td>
     </tr>
 </table>
