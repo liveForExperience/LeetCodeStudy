@@ -679,3 +679,76 @@ class Solution {
     }
 }
 ```
+# LeetCode_144_二叉树的前序遍历
+## 题目
+给定一个二叉树，返回它的 前序 遍历。
+
+示例:
+```
+输入: [1,null,2,3]  
+   1
+    \
+     2
+    /
+   3 
+
+输出: [1,2,3]
+```
+```
+进阶: 递归算法很简单，你可以通过迭代算法完成吗？
+```
+## 解法
+### 思路
+dfs前序遍历
+### 代码
+```java
+class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        dfs(ans, root);
+        return ans;
+    }
+    
+    private void dfs(List<Integer> list, TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        
+        list.add(node.val);
+        dfs(list, node.left);
+        dfs(list, node.right);
+    }
+}
+```
+## 解法二
+### 思路
+迭代方式的先序深度优先遍历
+### 代码
+```java
+class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+        
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            ans.add(node.val);
+            
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
