@@ -584,3 +584,98 @@ class Solution {
     }
 }
 ```
+# LeetCode_120_三角形最小路径和
+## 题目
+给定一个三角形，找出自顶向下的最小路径和。每一步只能移动到下一行中相邻的结点上。
+
+例如，给定三角形：
+```
+[
+     [2],
+    [3,4],
+   [6,5,7],
+  [4,1,8,3]
+]
+自顶向下的最小路径和为 11（即，2 + 3 + 5 + 1 = 11）。
+```
+说明：
+```
+如果你可以只使用 O(n) 的额外空间（n 为三角形的总行数）来解决这个问题，那么你的算法会很加分。
+```
+## 失败解法
+### 思路
+递归，自底向上返回左右相邻元素的最小值
+### 失败原因
+超时，重复了多路分支
+### 代码
+```java
+public class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        return recurse(triangle, 0, 0, triangle.size());
+    }
+
+    private int recurse(List<List<Integer>> triangle, int level, int index, int row) {
+        if (level == row - 1) {
+            return triangle.get(level).get(index);
+        }
+
+        int left = recurse(triangle, level + 1, index, row);
+        int right = recurse(triangle, level + 1, index + 1, row);
+
+        return Math.min(left, right) + triangle.get(level).get(index);
+    }
+}
+```
+## 解法
+### 思路
+在失败解法基础上增加记忆化搜索
+### 代码
+```java
+class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int row = triangle.size();
+        return recurse(triangle, new Integer[row][row], 0, 0, row);
+    }
+
+    private int recurse(List<List<Integer>> triangle, Integer[][] memo, int level, int index, int row) {
+        if (memo[level][index] != null) {
+            return memo[level][index];
+        }
+        
+        if (level == row - 1) {
+            return memo[level][index] = triangle.get(level).get(index);
+        }
+        
+        int left = recurse(triangle, memo, level + 1, index, row);
+        int right = recurse(triangle, memo, level + 1, index + 1, row);
+        
+        return memo[level][index] = Math.min(left, right) + triangle.get(level).get(index);
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- base case：最底部一行`dp[level][index] = list.get(level).get(index)`
+- 状态转移方程：`dp[level][index] = Math.min(dp[level + 1][index], dp[level + 1][index + 1]) + list.get(level).get(index)`
+### 代码
+```java
+class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int row = triangle.size();
+        int[][] dp = new int[row][row];
+        
+        for (int level = row - 1; level >= 0; level--) {
+            for (int index = 0; index < triangle.get(level).size(); index++) {
+                if (level == row - 1) {
+                    dp[level][index] = triangle.get(level).get(index);
+                } else {
+                    dp[level][index] = Math.min(dp[level + 1][ index], dp[level + 1][index + 1]) + triangle.get(level).get(index);
+                }
+            }
+        }
+        
+        return dp[0][0];
+    }
+}
+```

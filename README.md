@@ -13,7 +13,7 @@
 |9|2019/9/2 - 2019/9/8| [26](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_009) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_009/NOTE.md) | - | - |:open_mouth:|1879|
 |10|2019/9/9 - 2019/9/15| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_010) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_010/NOTE.md) | - | - |:blush:|1612|
 |11|2019/9/16 - 2019/9/22| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_011) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_011/NOTE.md) | - | [877_石子游戏_解1](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_011/LeetCode_877_1_石子游戏.java) |:smile:|1404|
-|12|2019/9/23 - 2019/9/29| [8](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_012) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_012/NOTE.md) | - | - |||
+|12|2019/9/23 - 2019/9/29| [9](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_012) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_012/NOTE.md) | - | - |||
 ## 竞赛
 <table>
     <tr align="center">
