@@ -877,3 +877,61 @@ class Solution {
     }
 }
 ```
+# LeetCode_105_从前序与中序遍历序列构造二叉树
+## 题目
+根据一棵树的前序遍历与中序遍历构造二叉树。
+
+注意:
+```
+你可以假设树中没有重复的元素。
+```
+例如，给出
+```
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+返回如下的二叉树：
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+## 解法
+### 思路
+- map构成前序元素与中序下标的映射关系
+- 通过前序下标的增加来确定中序遍历的父节点的值
+- 通过map找到父节点，并通过中序序列的特性，确定左右子树在中序序列中的范围
+- 不断递归，直到左右下标相等，说明遍历结束
+### 代码
+```java
+class Solution {
+    private int preIndex = 0;
+    
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+
+        return dfs(0, inorder.length, preorder, map);
+    }
+
+    private TreeNode dfs(int left, int right, int[] preorder, Map<Integer, Integer> map) {
+        if (left == right) {
+            return null;
+        }
+        
+        int rootVal = preorder[preIndex];
+        TreeNode root = new TreeNode(rootVal);
+        
+        preIndex++;
+        
+        int rootIndex = map.get(rootVal);
+        root.left = dfs(left, rootIndex, preorder, map);
+        root.right = dfs(rootIndex + 1, right, preorder, map);
+        
+        return root;
+    }
+}
+```
