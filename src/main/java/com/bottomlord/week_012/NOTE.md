@@ -752,3 +752,128 @@ class Solution {
     }
 }
 ```
+# LeetCode_442_数组中重复的数据
+## 题目
+给定一个整数数组 a，其中1 ≤ a[i] ≤ n （n为数组长度）, 其中有些元素出现两次而其他元素出现一次。
+
+找到所有出现两次的元素。
+
+你可以不用到任何额外空间并在O(n)时间复杂度内解决这个问题吗？
+
+示例：
+```
+输入:
+[4,3,2,7,8,2,3,1]
+
+输出:
+[2,3]
+```
+## 解法
+### 思路
+- 遍历数组，map通过映射计数，如果是计数值是2就放入list
+### 代码
+```java
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        List<Integer> ans = new ArrayList<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            if (map.get(num) == 2) {
+                ans.add(num);
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 遍历数组，map映射计数
+- 遍历数组，将等于2的元素放入list
+### 代码
+```java
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        
+        List<Integer> ans = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == 2) {
+                ans.add(entry.getKey());
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+- 排序数组
+- 指针遍历数组，并记录重复元素的个数
+- 当指针指向的元素变更时，查看个数是否等于2
+- 如果是就加入list
+- 遍历结束后，查看count是否等于2，如果是，将倒数第二个元素加入list
+### 代码
+```java
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        List<Integer> ans = new ArrayList<>();
+        if (nums.length < 2) {
+            return ans;
+        }
+        
+        Arrays.sort(nums);
+        
+        int count = 1;
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] == nums[i + 1]) {
+                count++;
+            } else  {
+                if (count == 2) {
+                    ans.add(nums[i]);
+                }
+                count = 1;
+            }
+        }
+        
+        if (count == 2) {
+            ans.add(nums[nums.length - 2]);
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法四
+### 思路
+- 根据题目，可以通过数组下标来代表元素
+- 为了能原地计数，可以在下标对应的元素基础上，通过增加数组长度来计算
+- 而获得元素原始值可以通过取模的方式获得
+- 最后再遍历一次数组，如果某个下标对应的值大于两倍的数组长度，说明计数过两次，将该下标代表的值放入list
+### 题目
+```java
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        int len = nums.length;
+        List<Integer> ans = new ArrayList<>();
+        
+        for (int num : nums) {
+            int index = (num -  1) % len;
+            nums[index] += len;
+        }
+        
+        for (int i = 0; i < len; i++) {
+            if (nums[i] > 2 * len) {
+                ans.add(i + 1);        
+            }
+        }
+        
+        return ans;
+    }
+}
+```
