@@ -935,3 +935,97 @@ class Solution {
     }
 }
 ```
+# LeetCode_540_有序数组中的单一元素
+## 题目
+给定一个只包含整数的有序数组，每个元素都会出现两次，唯有一个数只会出现一次，找出这个数。
+
+示例 1:
+```
+输入: [1,1,2,3,3,4,4,8,8]
+输出: 2
+```
+示例 2:
+```
+输入: [3,3,7,7,10,11,11]
+输出: 10
+注意: 您的方案应该在 O(log n)时间复杂度和 O(1)空间复杂度中运行。
+```
+## 解法
+### 思路
+位运算异或求解
+### 代码
+```java
+class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        int ans = 0;
+        for (int num : nums) {
+            ans ^= num;
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+为满足O(logn)的时间复杂度，需要使用二分法
+- 如果mid是奇数：
+    - 如果和前一个元素相等，则落单数在前半部分
+    - 如果和后一个元素相等，则落单数在后半部分
+- 如果mid是偶数：
+    - 如果和前一个元素相等，则落单数在后半部分
+    - 如果和后一个元素相等，则落单数在前半部分
+- 但要注意下标因为从0开始，所以奇偶要和正常的相反
+- 不断二分，直到找到前后元素不相等的元素，需要注意边界
+### 代码
+```java
+class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        int head = 0, tail = nums.length - 1;
+        while (head <= tail) {
+            if (head == tail) {
+                return nums[head];
+            }
+            
+            int mid = head + (tail - head) / 2;
+            if (mid == 0) {
+                if (nums[mid] != nums[mid + 1]) {
+                    return nums[mid];
+                }
+            }
+            
+            if (mid == nums.length - 1) {
+                if (nums[mid] != nums[mid - 1]) {
+                    return nums[mid];
+                }
+            }
+            
+            if (mid % 2 == 0) {
+                if (nums[mid] == nums[mid - 1]) {
+                    tail = mid - 1;
+                    continue;
+                } 
+                
+                if (nums[mid] == nums[mid + 1]) {
+                    head = mid + 1;
+                    continue;
+                }
+                
+                return nums[mid];
+            } else {
+                if (nums[mid] == nums[mid + 1]) {
+                    tail = mid - 1;
+                    continue;
+                }
+
+                if (nums[mid] == nums[mid - 1]) {
+                    head = mid + 1;
+                    continue;
+                }
+
+                return nums[mid];
+            }
+        }
+        return 0;
+    }
+}
+```
