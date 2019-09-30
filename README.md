@@ -62,7 +62,7 @@
         </tr>
         <tr align="center">
             <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_3_删除字符串中的虽有响铃重复项II">删除字符串中的虽有响铃重复项II</a></td>
-            <td>:heavy_check_mark:</td>
+            <td>:x:</td>
         </tr>
         <tr align="center">
             <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_4_穿过迷宫的最少移动次数">穿过迷宫的最少移动次数</a></td>
