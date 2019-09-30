@@ -48,4 +48,24 @@
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5_发LeetCoin">发LeetCoin</a></td>
         <td>:x:</td>
     </tr>
+    <tr align="center">
+            <td rowspan="5">2019/9/29</td>
+            <td rowspan="5">156周赛</td>
+            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_1_独一无二的出现次数">独一无二的出现次数</a></td>
+            <td>:heavy_check_mark:</td>
+            <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190929/NOTE.md">:page_with_curl:</a></td>
+            <td rowspan="5">507/1432</td>
+        </tr>
+        <tr align="center">
+            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_2_尽可能使字符串相等">尽可能使字符串相等</a></td>
+            <td>:x:</td>
+        </tr>
+        <tr align="center">
+            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_3_删除字符串中的虽有响铃重复项II">删除字符串中的虽有响铃重复项II</a></td>
+            <td>:heavy_check_mark:</td>
+        </tr>
+        <tr align="center">
+            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_4_穿过迷宫的最少移动次数">穿过迷宫的最少移动次数</a></td>
+            <td>:x:</td>
+        </tr>
 </table>
