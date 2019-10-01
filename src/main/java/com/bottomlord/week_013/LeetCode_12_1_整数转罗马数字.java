@@ -1,6 +1,6 @@
 package com.bottomlord.week_013;
 
-public class LeetCode_12_整数转罗马数字 {
+public class LeetCode_12_1_整数转罗马数字 {
     public String intToRoman(int num) {
         StringBuilder sb = new StringBuilder();
 
