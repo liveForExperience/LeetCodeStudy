@@ -271,5 +271,66 @@ class Solution {
 - 循环结束后返回sb
 ### 代码
 ```java
+class Solution {
+    private int[] nums = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    private String[] roman = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    public String intToRoman(int num) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = 0; j < num / nums[i]; j++) {
+                sb.append(roman[i]);
+            }
+            num %= nums[i];
+        }
+        return sb.toString();
+    }
+}
+```
+# LeetCode_287_寻找重复数
+## 题目
+给定一个包含 n + 1 个整数的数组 nums，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数。
 
+示例 1:
+```
+输入: [1,3,4,2,2]
+输出: 2
+```
+示例 2:
+```
+输入: [3,1,3,4,2]
+输出: 3
+```
+说明：
+```
+不能更改原数组（假设数组是只读的）。
+只能使用额外的 O(1) 的空间。
+时间复杂度小于 O(n2) 。
+数组中只有一个重复的数字，但它可能不止重复出现一次。
+```
+## 解法
+### 思路
+二分查找，因为必然有一个元素是有若干重复的，所以通过判断比mid小的数是否大于mid来判断重复的数比mid大还是小
+### 代码
+```java
+class Solution {
+    public int findDuplicate(int[] nums) {
+        int low = 1, high = nums.length - 1;
+        while (low < high) {
+            int mid = low + (high - low) / 2, count = 0;
+            for (int num : nums) {
+                if (num <= mid) {
+                    count++;
+                }
+            }
+
+            if (count > mid) {
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+        
+        return low;
+    }
+}
 ```
