@@ -448,3 +448,55 @@ class Solution {
     }
 }
 ```
+# LeetCode_341_扁平化嵌套列表迭代器
+## 题目
+给定一个嵌套的整型列表。设计一个迭代器，使其能够遍历这个整型列表中的所有整数。
+
+列表中的项或者为一个整数，或者是另一个列表。
+
+示例 1:
+```
+输入: [[1,1],2,[1,1]]
+输出: [1,1,2,1,1]
+解释: 通过重复调用 next 直到 hasNext 返回false，next 返回的元素的顺序应该是: [1,1,2,1,1]。
+```
+示例 2:
+```
+输入: [1,[4,[6]]]
+输出: [1,4,6]
+解释: 通过重复调用 next 直到 hasNext 返回false，next 返回的元素的顺序应该是: [1,4,6]。
+```
+## 解法
+### 思路
+递归生成list，之后转成迭代器处理这个类的具体逻辑
+### 代码
+```java
+public class NestedIterator implements Iterator<Integer> {
+    private Iterator<Integer> iterator;
+    public NestedIterator(List<NestedInteger> nestedList) {
+        List<Integer> list = new ArrayList<>();
+        recurse(list, nestedList);
+        iterator = list.iterator();
+    }
+
+    private void recurse(List<Integer> list, List<NestedInteger> nestedList) {
+        for (NestedInteger nestedInteger : nestedList) {
+            if (nestedInteger.isInteger()) {
+                list.add(nestedInteger.getInteger());
+            } else {
+                recurse(list, nestedInteger.getList());
+            }
+        }
+    }
+
+    @Override
+    public Integer next() {
+        return iterator.next();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return iterator.hasNext();
+    }
+}
+```
