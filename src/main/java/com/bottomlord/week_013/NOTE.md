@@ -334,3 +334,57 @@ class Solution {
     }
 }
 ```
+# LeetCode_199_二叉树的右视图
+## 题目
+给定一棵二叉树，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+示例:
+```
+输入: [1,2,3,null,5,null,4]
+输出: [1, 3, 4]
+解释:
+
+   1            <---
+ /   \
+2     3         <---
+ \     \
+  5     4       <---
+```
+## 解法
+### 思路
+bfs打印最右节点，每次while循环的时候计算queue的长度，并在长度递减的循环中对长度为1的循环中拉出的节点进行记录
+### 代码
+```java
+class Solution {
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int len = queue.size();
+            while (len > 0) {
+                TreeNode node = queue.poll();
+                if (len == 1) {
+                    ans.add(node.val);
+                }
+                
+                len--;
+
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
