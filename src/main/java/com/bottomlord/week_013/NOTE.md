@@ -500,3 +500,48 @@ public class NestedIterator implements Iterator<Integer> {
     }
 }
 ```
+## 解法二
+### 思路
+将扁平化的过程从解法一的初始化阶段放在了函数调用阶段。使用一个栈来保存list的迭代器，如果迭代器中的是非扁平的元素，就将它取出并放在栈顶，以此类推的获取元素
+### 代码
+```java
+public class NestedIterator implements Iterator<Integer> {
+    private LinkedList<Iterator<NestedInteger>> stack = new LinkedList<>();
+    private boolean flag = false;
+    private Integer num;
+    public NestedIterator(List<NestedInteger> nestedList) {
+        stack.offer(nestedList.iterator());
+    }
+
+    @Override
+    public Integer next() {
+        flag = false;
+        return num;
+    }
+
+    @Override
+    public boolean hasNext() {
+        while (!stack.isEmpty() && !flag) {
+            Iterator<NestedInteger> iterator = stack.peekFirst();
+            if (iterator.hasNext()) {
+                NestedInteger nestedInteger = iterator.next();
+                if (nestedInteger == null) {
+                    continue;
+                }
+
+                if (nestedInteger.isInteger()) {
+                    flag = true;
+                    num = nestedInteger.getInteger();
+                } else {
+                    stack.offerFirst(nestedInteger.getList().iterator());
+                    iterator.remove();
+                }
+            } else {
+                stack.pollFirst();
+            }
+        }
+
+        return flag;
+    }
+}
+```
