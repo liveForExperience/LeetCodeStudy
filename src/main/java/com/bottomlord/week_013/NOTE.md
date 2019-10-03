@@ -388,3 +388,63 @@ class Solution {
     }
 }
 ```
+# LeetCode_147_对链表进行插入排序
+## 题目
+插入排序算法：
+```
+插入排序是迭代的，每次只移动一个元素，直到所有元素可以形成一个有序的输出列表。
+每次迭代中，插入排序只从输入数据中移除一个待排序的元素，找到它在序列中适当的位置，并将其插入。
+重复直到所有输入数据插入完为止。
+```
+示例 1：
+```
+输入: 4->2->1->3
+输出: 1->2->3->4
+```
+示例 2：
+```
+输入: -1->5->3->4->0
+输出: -1->0->3->4->5
+```
+## 解法
+### 思路
+- 初始化三个指针：
+    - 指针的next节点指向链表的头节点：pre
+    - 指针指向遍历排序到的节点位置：head
+    - 指针指向需要被插入的节点位置：index
+- 循环遍历数组，直到head指针指向最后一个元素或指向了空
+- 如果当前元素小于等于head.next指向的元素值，则继续遍历不处理
+- 否则就要从头节点开始，依次判断index.next指针指向的元素是否大于head.next指向的元素，如果是，就说明需要将其插入到该位置
+- 开始进行插入：
+    1. 声明`cur`指针指向需要变更的`head.next`节点
+    2. 将`head.next`指针指向`cur.next`，将下一个需要的遍历位置直到当前需要变更的节点的后一个节点
+    3. 将`cur.next`指针指向需要插入的位置的后一个节点`index.next`
+    4. 将`index.next`指向`cur`节点，从而使需要变更的节点来到应该在的位置
+### 代码
+```java
+class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        ListNode pre = new ListNode(0), index;
+        pre.next = head;
+
+        while (head != null && head.next != null) {
+            if (head.next.val >= head.val) {
+                head = head.next;
+                continue;
+            }
+
+            index = pre;
+            while (index.next.val < head.next.val) {
+                index = index.next;
+            }
+
+            ListNode cur = head.next;
+            head.next = cur.next;
+            cur.next = index.next;
+            index.next = cur;
+        }
+        
+        return pre.next;
+    }
+}
+```
