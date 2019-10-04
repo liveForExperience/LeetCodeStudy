@@ -614,3 +614,54 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+和解法一的思路类似，但是不使用新的数组，而是直接对A数组进行排序，同时判断如果元素不需要移动，就跳过
+- 先找到最大元素
+- 然后记录需要变更的两次动作
+    - 移到数组头需要的元素个数
+    - 移到指定位置需要的元素个数
+- 然后进行对应的元素移动该操作
+- 继续循环，直到最大边界为0为止，也就是只有一个元素需要变更
+- 最终返回结果
+### 代码
+```java
+class Solution {
+    public List<Integer> pancakeSort(int[] A) {
+        int maxIndex = A.length - 1;
+        List<Integer> ans = new ArrayList<>();
+
+        while (maxIndex > 0) {
+            int maxNumIndex = findMaxNumIndex(A, maxIndex);
+
+            if (maxNumIndex == maxIndex) {
+                maxIndex--;
+            } else {
+                ans.add(maxNumIndex + 1);
+                reserve(A, maxNumIndex);
+                ans.add(maxIndex + 1);
+                reserve(A, maxIndex);
+                maxIndex--;
+            }
+        }
+
+        return ans;
+    }
+
+    private int findMaxNumIndex(int[] arr, int maxIndex) {
+        int maxNumIndex = 0;
+        for (int i = 0; i <= maxIndex; i++) {
+            maxNumIndex = arr[maxNumIndex] > arr[i] ? maxNumIndex : i;
+        }
+        return maxNumIndex;
+    }
+
+    private void reserve(int[] arr, int maxIndex) {
+        for (int i = 0; i <= maxIndex / 2; i++) {
+            int tmp = arr[i];
+            arr[i] = arr[maxIndex - i];
+            arr[maxIndex - i] = tmp;
+        }
+    }
+}
+```
