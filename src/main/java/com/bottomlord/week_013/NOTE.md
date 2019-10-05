@@ -758,5 +758,73 @@ class Solution {
 - 遍历存储排序过的下标数组，生成字符串
 ### 代码
 ```java
+class Solution {
+    public String frequencySort(String s) {
+        char[] cs = s.toCharArray();
+        int[] bucket = new int[256];
+        for (char c : cs) {
+            bucket[c]++;
+        }
+        
+        Integer[] indexs = new Integer[256];
+        for (int i = 0; i < indexs.length; i++) {
+            indexs[i] = i;
+        }
 
+        Arrays.sort(indexs, (i, j) -> bucket[j] - bucket[i]);
+        
+        StringBuilder sb = new StringBuilder();
+        for (int index : indexs) {
+            if (bucket[index] == 0) {
+                break;
+            }
+            
+            for (int i = 0; i < bucket[index]; i++) {
+                sb.append((char)index);
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
+## 解法三
+### 思路
+基于解法二，复制bucket数组copy，并对bucket进行降序排列，然后使用嵌套循环来寻找copy中对应的下标并转换成对应的字符
+### 代码
+```java
+class Solution {
+    public String frequencySort(String s) {
+        char[] cs = s.toCharArray();
+        int[] bucket = new int[256];
+
+        for (char c : cs) {
+            bucket[c]++;
+        }
+
+        int[] copy = bucket.clone();
+        Arrays.sort(bucket);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = bucket.length - 1; i >= 0; i--) {
+            if (i != bucket.length - 1 && bucket[i] == bucket[i + 1]) {
+                continue;
+            }
+            
+            if (bucket[i] == 0) {
+                break;
+            }
+
+            for (int j = 0; j < copy.length; j++) {
+                if (bucket[i] == copy[j]) {
+                    while (copy[j]-- > 0) {
+                        sb.append((char)j);
+                    }
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+}
 ```
