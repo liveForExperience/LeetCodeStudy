@@ -1,6 +1,6 @@
 package com.bottomlord.contest_20191005;
 
-public class Contest_4_2 {
+public class Contest_4_验证回文字符串III {
     public boolean isValidPalindrome(String s, int k) {
         StringBuilder sb = new StringBuilder();
         for (int i = s.length() - 1; i >= 0; i--) {

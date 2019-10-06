@@ -5,7 +5,7 @@ import com.bottomlord.TreeNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Contest_2_1_查找两棵二叉搜索树之和 {
+public class Contest_2_查找两棵二叉搜索树之和 {
     public boolean twoSumBSTs(TreeNode root1, TreeNode root2, int target) {
         List<Integer> list1 = new ArrayList<>();
         dfs(root1, list1);

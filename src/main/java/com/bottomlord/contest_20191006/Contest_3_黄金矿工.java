@@ -3,7 +3,7 @@ package com.bottomlord.contest_20191006;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Contest_3_1_黄金矿工 {
+public class Contest_3_黄金矿工 {
     private int max = 0;
     public int getMaximumGold(int[][] grid) {
         for (int i = 0; i < grid.length; i++) {

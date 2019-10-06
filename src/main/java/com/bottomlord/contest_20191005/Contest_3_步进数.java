@@ -2,7 +2,7 @@ package com.bottomlord.contest_20191005;
 
 import java.util.*;
 
-public class Contest_3_2 {
+public class Contest_3_步进数 {
     private Set<Long> set = new HashSet<>();
 
     public List<Integer> countSteppingNumbers(int low, int high) {

@@ -3,7 +3,7 @@ package com.bottomlord.contest_20191006;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Contest_2_2 {
+public class Contest_2_最长定差子序列 {
     public int longestSubsequence(int[] arr, int difference) {
         Map<Integer, Integer> map = new HashMap<>();
         int ans = 0;
