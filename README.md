@@ -14,7 +14,7 @@
 |10|2019/9/9 - 2019/9/15| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_010) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_010/NOTE.md) | - | - |:blush:|1612|
 |11|2019/9/16 - 2019/9/22| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_011) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_011/NOTE.md) | - | [877_石子游戏_解1](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_011/LeetCode_877_1_石子游戏.java) |:smile:|1404|
 |12|2019/9/23 - 2019/9/29| [13](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_012) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_012/NOTE.md) | - | - |:star2:|1205|
-|13|2019/9/30 - 2019/10/6| [10](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_013) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_013/NOTE.md) | - | - |||
+|13|2019/9/30 - 2019/10/6| [11](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_013) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_013/NOTE.md) | - | - |||
 ## 竞赛
 <table>
     <tr align="center">
@@ -50,23 +50,63 @@
         <td>:x:</td>
     </tr>
     <tr align="center">
-            <td rowspan="5">2019/9/29</td>
-            <td rowspan="5">156周赛</td>
-            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_1_独一无二的出现次数">独一无二的出现次数</a></td>
-            <td>:heavy_check_mark:</td>
-            <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190929/NOTE.md">:page_with_curl:</a></td>
-            <td rowspan="5">507/1432</td>
-        </tr>
-        <tr align="center">
-            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_2_尽可能使字符串相等">尽可能使字符串相等</a></td>
-            <td>:x:</td>
-        </tr>
-        <tr align="center">
-            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_3_删除字符串中的虽有响铃重复项II">删除字符串中的虽有响铃重复项II</a></td>
-            <td>:x:</td>
-        </tr>
-        <tr align="center">
-            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_4_穿过迷宫的最少移动次数">穿过迷宫的最少移动次数</a></td>
-            <td>:x:</td>
-        </tr>
+        <td rowspan="5">2019/9/29</td>
+        <td rowspan="5">第156场周赛</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_1_独一无二的出现次数">独一无二的出现次数</a></td>
+        <td>:heavy_check_mark:</td>
+        <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190929/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="5">507/1432</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_2_尽可能使字符串相等">尽可能使字符串相等</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_3_删除字符串中的虽有响铃重复项II">删除字符串中的虽有响铃重复项II</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_4_穿过迷宫的最少移动次数">穿过迷宫的最少移动次数</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td rowspan="5">2019/10/5</td>
+        <td rowspan="5">第10场双周赛</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_1_三个有序数组的交集">三个有序数组的交集</a></td>
+        <td>:heavy_check_mark:</td>
+        <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191005/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="5">217/738</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_2_查找两棵二叉搜索树之和">查找两棵二叉搜索树之和</a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_3_步进数">步进数</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_4_验证回文字符串III">验证回文字符串III</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td rowspan="5">2019/10/06</td>
+        <td rowspan="5">第157场周赛</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_1_玩筹码">玩筹码</a></td>
+        <td>:x:</td>
+        <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191006/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="5">387/1216</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_2_最长定差子序列">最长定差子序列</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_3_黄金矿工">黄金矿工</a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_4_统计元音字母序列的数目">统计元音字母序列的数目</a></td>
+        <td>:x:</td>
+    </tr>
 </table>
