@@ -188,35 +188,49 @@ s 中只含有小写英文字母
 ## 解法
 ### 思路
 使用动态规划：
-- `dp[i][j]`存储i坐标和j坐标对应时已共有多少个成功配对的回文字符对
-- 状态转移方程：
-    - 如果是回文对：`dp[i][j] = dp[i - 1][j - 1] + 1`
-    - 如果不是回文对：`dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1])`
-- base case：`dp[0][0] = 0`，没有记录到回文对
-- 最终返回字符串总长度len减去`dp[len][len]`的长度是否小于k的长度，如果小于，说明需要去除的回文个数小于规定的k的个数
+- `dp[i][j]`存储的是从i到j长度的字符串中的最长回文子序列的长度
+- 状态转移方程有3种情况，当前长度的字符串的长度取得就是三者的最大值：`dp[i][j] = Math.max(res1, res2, res3)`
+    - i和j下标对应的字符不相等：
+        - 可能左边的不对：`res1 = dp[i + 1][j]`
+        - 可能右边的不对：`res2 = dp[i][j - 1]`
+    - i和j下标对应的字符相等：`res3 = dp[i + 1][j - 1] + 2`，加2是因为当前i和j对应的字符也是算在回文序列中的
+- 求dp的过程是一个递归，退出条件是：
+    - i > j，不是字符串了，返回序列长度0
+    - i == j，只有一个字符，返回序列长度1
+    - 如果dp[i][j]已经计算过，就返回这个值
 ### 代码
 ```java
-class Solution {
-    public boolean isValidPalindrome(String s, int k) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = s.length() - 1; i >= 0; i--) {
-            sb.append(s.charAt(i));
-        }
-        String s1 = sb.toString();
-        
-        int len = s.length();
-        int[][] dp = new int[len + 1][len + 1];
-        for (int i = 1; i <= len; i++) {
-            for (int j = 1; j <= len; j++) {
-                if (s.charAt(i - 1) == s1.charAt(j - 1)) {
-                    dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {
-                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
-                }
-            }
-        }
-        
-        return len - dp[len][len] <= k;
-    }
+cclass Solution {
+     public boolean isValidPalindrome(String s, int k) {
+         int len = s.length();
+         int[][] dp = new int[len][len];
+         for (int i = 0; i < len; i++) {
+             Arrays.fill(dp[i], -1);
+         }
+         int max = recurse(s, dp, 0, len - 1);
+         return len - max <= k;
+     }
+ 
+     private int recurse(String s, int[][] dp, int i, int j) {
+         if (i > j) {
+             return 0;
+         }
+ 
+         if (i == j) {
+             return 1;
+         }
+ 
+         if (dp[i][j] != -1) {
+             return dp[i][j];
+         }
+         
+         int max = Math.max(recurse(s, dp, i + 1, j), recurse(s, dp, i, j - 1));
+         if (s.charAt(i) == s.charAt(j)) {
+             max = Math.max(max, recurse(s, dp, i + 1, j - 1) + 2);
+         }
+         
+         return dp[i][j] = max;
+     }
+ }
 }
 ```
