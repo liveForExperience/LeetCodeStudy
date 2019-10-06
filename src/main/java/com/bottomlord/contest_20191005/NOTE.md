@@ -74,7 +74,7 @@ class Solution {
 ## 解法
 ### 思路
 - 遍历两棵树，打印出所有的节点
-- 嵌套循环打印出的两个list，找到相同节点并返回结果集合
+- 嵌套循环打印出的两个list，如果有符合相加等于target的就返回true，否则就在循环结束后返回false
 ### 代码
 ```java
 class Solution {
