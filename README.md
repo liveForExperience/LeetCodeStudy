@@ -50,12 +50,12 @@
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td rowspan="5">2019/9/29</td>
-        <td rowspan="5">第156场周赛</td>
+        <td rowspan="4">2019/9/29</td>
+        <td rowspan="4">第156场周赛</td>
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_1_独一无二的出现次数">独一无二的出现次数</a></td>
         <td>:heavy_check_mark:</td>
-        <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190929/NOTE.md">:page_with_curl:</a></td>
-        <td rowspan="5">507/1432</td>
+        <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190929/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="4">507/1432</td>
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_2_尽可能使字符串相等">尽可能使字符串相等</a></td>
@@ -70,12 +70,12 @@
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td rowspan="5">2019/10/5</td>
-        <td rowspan="5">第10场双周赛</td>
+        <td rowspan="4">2019/10/5</td>
+        <td rowspan="4">第10场双周赛</td>
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_1_三个有序数组的交集">三个有序数组的交集</a></td>
         <td>:heavy_check_mark:</td>
-        <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191005/NOTE.md">:page_with_curl:</a></td>
-        <td rowspan="5">217/738</td>
+        <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191005/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="4">217/738</td>
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_2_查找两棵二叉搜索树之和">查找两棵二叉搜索树之和</a></td>
@@ -90,12 +90,12 @@
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td rowspan="5">2019/10/06</td>
-        <td rowspan="5">第157场周赛</td>
+        <td rowspan="4">2019/10/06</td>
+        <td rowspan="4">第157场周赛</td>
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_1_玩筹码">玩筹码</a></td>
         <td>:x:</td>
-        <td rowspan="5"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191006/NOTE.md">:page_with_curl:</a></td>
-        <td rowspan="5">387/1216</td>
+        <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191006/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="4">387/1216</td>
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_2_最长定差子序列">最长定差子序列</a></td>
