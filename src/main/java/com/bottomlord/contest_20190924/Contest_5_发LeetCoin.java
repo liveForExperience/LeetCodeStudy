@@ -1,52 +1,70 @@
 package com.bottomlord.contest_20190924;
 
+import com.bottomlord.Node;
+
 import java.util.*;
 
 public class Contest_5_发LeetCoin {
     public int[] bonus(int n, int[][] leadership, int[][] operations) {
-        Map<Integer, Set<Long>> map = new HashMap<>();
-        Map<Integer, Long> dict = new HashMap<>();
-
-        for (int i = 1; i <= n; i++) {
-            map.put(i, new HashSet<>());
+        Map<Integer, Node> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            map.put(i + 1, new Node(i + 1));
         }
 
         for (int[] arr : leadership) {
-            long num = arr[1];
-            map.get(arr[0]).add(num);
-        }
+            Node node = map.get(arr[1]);
+            Node parent = map.get(arr[0]);
 
-        for (Map.Entry<Integer, Set<Long>> entry : map.entrySet()) {
-            Set<Long> tmp = new HashSet<>();
-            for (Long key : entry.getValue()) {
-                tmp.addAll(map.get(key.intValue()));
+            node.parent = parent;
+            if (parent.children == null) {
+                parent.children = new ArrayList<>();
             }
-            entry.getValue().addAll(tmp);
+
+            parent.children.add(node);
         }
 
-        List<Long> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
         for (int[] operation : operations) {
+            Node node = map.get(operation[1]);
             if (operation[0] == 1) {
-                dict.put(operation[1], dict.getOrDefault(operation[1], 0L) + operation[2]);
+                node.sum += operation[2];
+                while (node.parent != null) {
+                    node.parent.sum += operation[2];
+                    node = node.parent;
+                }
             } else if (operation[0] == 2) {
-                dict.put(operation[1], dict.getOrDefault(operation[1], 0L) + operation[2]);
-                for (Long key : map.get(operation[1])) {
-                    dict.put(key.intValue(), dict.getOrDefault(key.intValue(), 0L) + operation[2]);
+                int sum = operate(node, operation[2]);
+                while (node.parent != null) {
+                    node.parent.sum += sum;
+                    node = node.parent;
                 }
-            } else if (operation[0] == 3) {
-                long sum = 0;
-                for (Long key : map.get(operation[1])) {
-                    sum += dict.getOrDefault(key.intValue(), 0L);
-                }
-                sum += dict.getOrDefault(operation[1], 0L);
-                list.add(sum % 1000000007);
+            } else {
+                list.add((node.sum % 1000000007));
             }
         }
 
+        int index = 0;
         int[] ans = new int[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            ans[i] = list.get(i).intValue();
+        for (int num : list) {
+            ans[index++] = num;
         }
         return ans;
+    }
+
+    private int operate(Node node, int num) {
+        if (node == null) {
+            return 0;
+        }
+
+        int sum = num;
+
+        if (node.children != null) {
+            for (Node child : node.children) {
+                sum += operate(child, num);
+            }
+        }
+
+        node.sum = sum;
+        return sum;
     }
 }

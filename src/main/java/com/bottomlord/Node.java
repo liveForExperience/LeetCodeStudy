@@ -8,6 +8,8 @@ import java.util.List;
  */
 public class Node {
     public int val;
+    public Node parent;
+    public int sum;
     public List<Node> children;
 
     public Node(){}
