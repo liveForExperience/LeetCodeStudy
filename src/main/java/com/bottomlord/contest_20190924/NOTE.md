@@ -224,10 +224,67 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+回溯算法：
+- 从[0,0]开始进行回溯递归，每一个单元格进行判断时都有三种情况
+    - 可以横着放
+    - 可以竖着放
+    - 横竖都不能放
+- 三种情况递归后返回记录的骨牌数，求三者的最大值并返回
+- 递归时候的退出条件：
+    - 如果行数超出边界，返回计数结果，说明已经遍历结束了
+    - 如果列数超出边界，说明改行遍历结束了，需要换行
+    - 如果当前单元格已被占用或者是坏的，换到下一列
 ### 代码
 ```java
+class Solution {
+    public int domino(int n, int m, int[][] broken) {
+        if (broken.length == 0) {
+            return n * m / 2;
+        }
 
+        int[][] grid = new int[n][m];
+        for (int[] b : broken) {
+            grid[b[0]][b[1]] = 2;
+        }
+
+        return backTrack(grid, 0, 0, 0);
+    }
+
+    private int backTrack(int[][] grid, int r, int c, int count) {
+        if (r >= grid.length) {
+            return count;
+        }
+
+        if (c >= grid[r].length) {
+            return backTrack(grid, r + 1, 0, count);
+        }
+
+        if (grid[r][c] != 0) {
+            return backTrack(grid, r, c + 1, count);
+        }
+
+        int count1 = 0;
+        if (c + 1 < grid[r].length && grid[r][c + 1] == 0) {
+            grid[r][c] = grid[r][c + 1] = 1;
+            count1 = backTrack(grid, r, c + 2, count + 1);
+            grid[r][c] = grid[r][c + 1] = 0;
+        }
+
+        int count2 = 0;
+        if (r + 1 < grid.length && grid[r + 1][c] == 0) {
+            grid[r][c] = grid[r + 1][c] = 1;
+            count2 = backTrack(grid, r, c + 1, count + 1);
+            grid[r][c] = grid[r + 1][c] = 0;
+        }
+
+        int count3 = 0;
+        if (count1 == 0 && count2 == 0) {
+            count3 = backTrack(grid, r, c + 1, count);
+        }
+        
+        return Math.max(count3, Math.max(count1, count2));
+    }
+}
 ```
 # contest_20190924_5_发LeetCoin
 ## 题目
