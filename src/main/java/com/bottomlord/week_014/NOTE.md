@@ -146,3 +146,80 @@ class Solution {
     }
 }
 ```
+# LeetCode_95_不同的二叉搜索树
+## 题目
+给定一个整数 n，生成所有由 1 ... n 为节点所组成的二叉搜索树。
+
+示例:
+```
+输入: 3
+输出:
+[
+  [1,null,3,2],
+  [3,2,null,1],
+  [3,1,null,null,2],
+  [2,1,3],
+  [1,null,2,null,3]
+]
+解释:
+以上的输出对应以下 5 种不同结构的二叉搜索树：
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+```
+## 解法
+### 思路
+递归：
+- 参数：
+    - 起始数字`start`
+    - 结尾数字`end`
+- 退出条件：
+    - `start`大于`end`，说明已经没有能够构建节点的值
+- 处理逻辑：
+    - 循环遍历`start`到`end`
+    - 递归构建`start`到`i - 1`作为左子树集合`lefts`
+    - 递归构建`i + 1`到`end`作为右子树集合`rights`
+    - 嵌套循环两个集合：
+        - 构建i节点
+        - 绑定从两个集合中将左右节点绑定在i节点上
+        - 加入到list中
+    - 循环结束，返回list到上一层
+### 代码
+```java
+class Solution {
+    public List<TreeNode> generateTrees(int n) {
+        if (n == 0) {
+            return new ArrayList<>();
+        }
+        
+        return doGenerate(1, n);
+    }
+
+    private List<TreeNode> doGenerate(int start, int end) {
+        List<TreeNode> list = new ArrayList<>();
+        if (start > end) {
+            list.add(null);
+            return list;
+        }
+
+        for (int i = start; i <= end; i++) {
+            List<TreeNode> lefts = doGenerate(start, i - 1);
+            List<TreeNode> rights = doGenerate(i + 1, end);
+
+            for (TreeNode left : lefts) {
+                for (TreeNode right : rights) {
+                    TreeNode node = new TreeNode(i);
+                    node.left = left;
+                    node.right = right;
+                    list.add(node);
+                }
+            }
+        }
+
+        return list;
+    }
+}
+```
