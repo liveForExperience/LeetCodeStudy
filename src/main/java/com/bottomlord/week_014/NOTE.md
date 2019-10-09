@@ -558,3 +558,87 @@ class Solution {
     }
 }
 ```
+# LeetCode_951_翻转等价二叉树
+## 题目
+我们可以为二叉树 T 定义一个翻转操作，如下所示：选择任意节点，然后交换它的左子树和右子树。
+
+只要经过一定次数的翻转操作后，能使 X 等于 Y，我们就称二叉树 X 翻转等价于二叉树 Y。
+
+编写一个判断两个二叉树是否是翻转等价的函数。这些树由根节点 root1 和 root2 给出。
+
+示例：
+```
+输入：root1 = [1,2,3,4,5,6,null,null,null,7,8], root2 = [1,3,2,null,6,4,5,null,null,null,null,8,7]
+输出：true
+解释：We flipped at nodes with values 1, 3, and 5.
+```
+提示：
+```
+每棵树最多有 100 个节点。
+每棵树中的每个值都是唯一的、在 [0, 99] 范围内的整数。
+```
+## 解法
+### 思路
+递归，判断两棵树是否相等可以分解为判断两部分:
+- 判断根节点:
+    - 如果两个节点都是null，true
+    - 如果任意1个节点是null，false
+    - 如果两个节点的值不相同，false
+- 判断子节点:
+    - 两个节点的左子树和左子树，右子树和右子树比较
+    - 连个节点的左子树和右子树比较
+### 代码
+```java
+class Solution {
+    public boolean flipEquiv(TreeNode root1, TreeNode root2) {
+        if (root1 == root2) {
+            return true;
+        }
+        
+        if (root1 == null || root2 == null || root1.val != root2.val) {
+            return false;
+        }
+        
+        return flipEquiv(root1.left, root2.left) && flipEquiv(root1.right, root2.right) ||
+                flipEquiv(root1.left, root2.right) && flipEquiv(root1.right, root2.left);
+    }
+}
+```
+## 解法二
+### 思路
+将树转成标准态，如果两个是等价树，则深度优先搜索后打印出的节点一定相同。
+- 递归，如果左树的值大于右树，进行翻转
+- 如果子数为null，值为-1
+### 代码
+```java
+class Solution {
+    public boolean flipEquiv(TreeNode root1, TreeNode root2) {
+        List<Integer> list1 = new ArrayList<>();
+        dfs(root1, list1);
+
+        List<Integer> list2 = new ArrayList<>();
+        dfs(root2, list2);
+
+        System.out.println(list1);
+        System.out.println(list2);
+        return list1.equals(list2);
+    }
+
+    private void dfs(TreeNode node, List<Integer> list) {
+        if (node != null) {
+            list.add(node.val);
+
+            int left = node.left != null ? node.left.val : -1;
+            int right = node.right != null ? node.right.val : -1;
+
+            if (left < right) {
+                dfs(node.left, list);
+                dfs(node.right, list);
+            } else {
+                dfs(node.right, list);
+                dfs(node.left, list);
+            }
+        }
+    }
+}
+```
