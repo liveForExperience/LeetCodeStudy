@@ -223,3 +223,161 @@ class Solution {
     }
 }
 ```
+# LeetCode_677_键值映射
+## 题目
+实现一个 MapSum 类里的两个方法，insert 和 sum。
+
+对于方法 insert，你将得到一对（字符串，整数）的键值对。字符串表示键，整数表示值。如果键已经存在，那么原来的键值对将被替代成新的键值对。
+
+对于方法 sum，你将得到一个表示前缀的字符串，你需要返回所有以该前缀开头的键的值的总和。
+
+示例 1:
+```
+输入: insert("apple", 3), 输出: Null
+输入: sum("ap"), 输出: 3
+输入: insert("app", 2), 输出: Null
+输入: sum("ap"), 输出: 5
+```
+## 解法
+### 思路
+- insert：使用map直接存储
+- sum：遍历key，通过startWith来判断并累加
+### 代码
+```java
+class MapSum {
+    Map<String, Integer> map;        
+
+    public MapSum() {
+        map = new HashMap<>();
+    }
+
+    public void insert(String key, int val) {
+        map.put(key, val);
+    }
+
+    public int sum(String prefix) {
+        int sum = 0;
+        for (String key : map.keySet()) {
+            if (key.startsWith(prefix)) {
+                sum += map.get(key);
+            }
+        }
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+- 使用dict存储字符串的前缀和对应的字符串集合
+- 使用map存储字符串对应的值
+### 代码
+```java
+class MapSum {
+    Map<String, Integer> map;
+    Map<String, Set<String>> dict;
+    public MapSum() {
+        map = new HashMap<>();
+        dict = new HashMap<>();
+    }
+
+    public void insert(String key, int val) {
+        StringBuilder sb = new StringBuilder();
+        char[] cs = key.toCharArray();
+        for (char c : cs) {
+            String str = sb.append(c).toString();
+            if (dict.containsKey(str)) {
+                dict.get(str).add(key);
+            } else {
+                Set<String> set = new HashSet<>();
+                set.add(key);
+                dict.put(str, set);
+            }
+        }
+
+        map.put(key, val);
+    }
+
+    public int sum(String prefix) {
+        if (dict.containsKey(prefix)) {
+            int sum = 0;
+            for (String key : dict.get(prefix)) {
+                sum += map.get(key);
+            }
+            return sum;
+        } else {
+            return 0;
+        }
+    }
+}
+```
+## 解法三
+### 思路
+使用字典树
+- insert：
+    - 的时候先从根到底新增或更新`+ val`节点
+    - 返回的时候减去该节点原来的值
+- sum：
+    - 递归搜索字典树并返回该节点值
+### 代码
+```java
+class MapSum {
+        private DictNode root;
+        public MapSum() {
+            this.root = new DictNode(' ');
+        }
+
+        public void insert(String key, int val) {
+            doInsert(key, root, 0, val, sum(key));
+        }
+
+        public int sum(String prefix) {
+            return doSum(prefix, root, 0);
+        }
+
+        private void doInsert(String key, DictNode node, int index, int val, int oldV) {
+            if (index >= key.length()) {
+                return;
+            }
+
+            for (DictNode child : node.children) {
+                if (key.charAt(index) == child.c) {
+                    child.sum += val;
+                    doInsert(key, child, index + 1, val, oldV);
+                    if (index == key.length() - 1 && node.children.isEmpty()) {
+                        DictNode tmp = child;
+                        while (tmp != null) {
+                            tmp.sum -= oldV;
+                            tmp = tmp.parent;
+                        }
+                        return;
+                    }
+                    return;
+                }
+            }
+
+            DictNode cur = new DictNode(key.charAt(index));
+            cur.sum = val;
+            cur.parent = node;
+            node.children.add(cur);
+            doInsert(key, cur, index + 1, val, oldV);
+        }
+
+        private int doSum(String prefix, DictNode node, int index) {
+            if (index >= prefix.length()) {
+                return 0;
+            }
+
+            for (DictNode child : node.children) {
+                if (child.c == prefix.charAt(index)) {
+                    if (index == prefix.length() - 1) {
+                        return child.sum;
+                    }
+
+                    return doSum(prefix, child, index + 1);
+                }
+            }
+
+            return 0;
+        }
+    }
+```
