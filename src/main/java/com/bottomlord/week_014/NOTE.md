@@ -642,3 +642,44 @@ class Solution {
     }
 }
 ```
+# LeetCode_889_根据前序和后续遍历构造二叉树
+## 题目
+返回与给定的前序和后序遍历匹配的任何二叉树。
+
+pre 和 post 遍历中的值是不同的正整数。
+
+示例：
+```
+输入：pre = [1,2,4,5,3,6,7], post = [4,5,2,6,7,3,1]
+输出：[1,2,3,4,5,6,7]
+```
+提示：
+```
+1 <= pre.length == post.length <= 30
+pre[] 和 post[] 都是 1, 2, ..., pre.length 的排列
+每个输入保证至少有一个答案。如果有多个答案，可以返回其中一个。
+```
+## 解法
+### 思路
+- 因为子树根节点在先序序列中时第一个，在后序序列中是最后一个
+    - 使用先序序列构建子树
+    - 使用后序序列验证子树
+### 代码
+```java
+class Solution {
+    private int preIndex, postIndex;
+    public TreeNode constructFromPrePost(int[] pre, int[] post) {
+        TreeNode node = new TreeNode(pre[preIndex++]);
+        if (node.val != post[postIndex]) {
+            node.left = constructFromPrePost(pre, post);
+        }
+
+        if (node.val != post[postIndex]) {
+            node.right = constructFromPrePost(pre, post);
+        }
+
+        postIndex++;
+        return node;
+    }
+}
+```
