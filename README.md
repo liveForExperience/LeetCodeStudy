@@ -1,4 +1,5 @@
 # LeetCodeStudy
+> 题目来源：力扣（LeetCode）
 ## 练习
 |周数|日期|解题数|笔记|未解题|未理解解法|心情|全站排名|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
@@ -15,7 +16,7 @@
 |11|2019/9/16 - 2019/9/22| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_011) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_011/NOTE.md) | - | [877_石子游戏_解1](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_011/LeetCode_877_1_石子游戏.java) |:smile:|1404|
 |12|2019/9/23 - 2019/9/29| [13](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_012) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_012/NOTE.md) | - | - |:star2:|1205|
 |13|2019/9/30 - 2019/10/6| [11](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_013) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_013/NOTE.md) | - | - |:grinning:|1091|
-|14|2019/10/7 - 2019/10/13| [7](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_014) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_014/NOTE.md) | - | - |||
+|14|2019/10/7 - 2019/10/13| [8](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_014) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_014/NOTE.md) | - | - |||
 ## 竞赛
 <table>
     <tr align="center">
