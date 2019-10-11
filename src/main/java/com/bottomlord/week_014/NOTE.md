@@ -755,3 +755,49 @@ class Solution {
     }
 }
 ```
+# LeetCode_1043_分隔数组以得到最大值
+## 题目
+给出整数数组 A，将该数组分隔为长度最多为 K 的几个（连续）子数组。分隔完成后，每个子数组的中的值都会变为该子数组中的最大值。
+
+返回给定数组完成分隔后的最大和。
+
+示例：
+```
+输入：A = [1,15,7,9,2,5,10], K = 3
+输出：84
+解释：A 变为 [15,15,15,9,10,10,10]
+```
+提示：
+```
+1 <= K <= A.length <= 500
+0 <= A[i] <= 10^6
+```
+## 解法
+### 思路
+动态规划：
+- dp[i]存储[0,i]范围元素的子数组最大和
+- dp[i] = Math.max(dp[i], i >= K ? dp[i - k] : 0 + k * maxK)
+    - `maxK`：K长度子序列中的最大值
+    - `i >= K ? dp[i - k] : 0`：如果下标i大小小于最小子序列K，那么dp[i]中的最大和一定就是[0,K]范围中的最大值*k，不需要管前一个状态
+- 过程是双层嵌套循环：
+    - 第一层遍历数组，获得当前元素值
+    - 内层循环K次，保存`i - k + 1`元素与当前元素的最大值，dp赋值
+### 代码
+```java
+class Solution {
+    public int maxSumAfterPartitioning(int[] A, int K) {
+        int len = A.length;
+        int[] dp = new int[len];
+
+        for (int i = 0; i < len; i++) {
+            int curMax = A[i];
+            for (int k = 1; k <= K && i - k + 1 >= 0; k++) {
+                curMax = Math.max(curMax, A[i - k + 1]);
+                dp[i] = Math.max(dp[i], (i >= k ? dp[i - k] : 0) + k * curMax);
+            }
+        }
+        
+        return dp[len - 1];
+    }
+}
+```
