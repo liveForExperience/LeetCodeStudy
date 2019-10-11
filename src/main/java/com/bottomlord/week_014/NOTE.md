@@ -836,3 +836,53 @@ class Solution {
     }
 }
 ```
+# LeetCode_347_前k个高频元素
+## 题目
+给定一个非空的整数数组，返回其中出现频率前 k 高的元素。
+
+示例 1:
+```
+输入: nums = [1,1,1,2,2,3], k = 2
+输出: [1,2]
+```
+示例 2:
+```
+输入: nums = [1], k = 1
+输出: [1]
+```
+说明：
+```
+你可以假设给定的 k 总是合理的，且 1 ≤ k ≤ 数组中不相同的元素的个数。
+你的算法的时间复杂度必须优于 O(n log n) , n 是数组的大小。
+```
+## 解法
+### 思路
+- map记录元素出现个数
+- 使用优先级队列建一个小顶堆
+- 遍历map将元素放入堆中，如果堆元素大于k，就poll堆，这样就把目前为止第k+1个多的数排除了，直到循环结束
+- 再次循环将堆中元素放入list
+### 代码
+```java
+class Solution {
+    public List<Integer> topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.comparingInt(map::get));
+        for (Integer key : map.keySet()) {
+            queue.add(key);
+            if (queue.size() > k) {
+                queue.poll();
+            }
+        }
+
+        List<Integer> list = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            list.add(queue.poll());
+        }
+        
+        return list;
+    }
+}
+```
