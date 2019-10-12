@@ -886,3 +886,28 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用list保存map对象元素
+- 比较器对value值进行降序比较
+- 遍历list并将前k个key值放入list
+### 代码
+```java
+class Solution {
+    public List<Integer> topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+
+        List<Map.Entry<Integer, Integer>> list = new ArrayList<>(map.entrySet());
+        list.sort((x, y) -> y.getValue() - x.getValue());
+        
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < k; i++) {
+            ans.add(list.get(i).getKey());
+        }
+        return ans;
+    }
+}
+```
