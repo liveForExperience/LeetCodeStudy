@@ -979,3 +979,61 @@ class Solution {
     }
 }
 ```
+# LeetCode_11_盛最多水的容器
+## 题目
+给定 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0)。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+说明：你不能倾斜容器，且 n 的值至少为 2。
+
+图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+
+示例:
+```
+输入: [1,8,6,2,5,4,8,3,7]
+输出: 49
+```
+## 解法
+### 思路
+- 嵌套循环，外层为左柱下标，内层为右柱下标
+- 将下标差与两者间高度的最小值的乘积记录，再和最大值比较取最大值
+### 代码
+```java
+class Solution {
+    public int maxArea(int[] height) {
+        int max = 0;
+        for (int i = 0; i < height.length; i++) {
+            for (int j = i + 1; j < height.length; j++) {
+                max = Math.max(max, Math.min(height[i], height[j]) * (j - i));
+            }
+        }
+        return max;
+    }
+}
+```
+## 解法二
+### 思路
+- 使用双指针来遍历数组
+- 计算双指针指向的元素最小值与下标差的乘积，与最大值进行比较取最大值
+- 如果是左指针对应的元素小，左指针移动
+- 如果是右指针对应的元素小，右指针移动
+- 之所以这么移动的原因是，移动的过程是缩小公式一个因子的过程，那么要想取得更大值，只能取求另一个因子更大的可能
+### 代码
+```java
+class Solution {
+    public int maxArea(int[] height) {
+        int left = 0, right = height.length - 1, max = 0;
+        while (left < right) {
+            int l = height[left];
+            int r = height[right];
+            if (l < r) {
+                max = Math.max(l * (right - left), max);
+                left++;
+            } else {
+                max = Math.max(r * (right - left), max);
+                right--;
+            }
+        }
+        return max;
+    }
+}
+```
