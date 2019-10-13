@@ -104,11 +104,31 @@
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_3_黄金矿工">黄金矿工</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_3_黄金矿工">黄金矿工</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_4_统计元音字母序列的数目">统计元音字母序列的数目</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_4_统计元音字母序列的数目">统计元音字母序列的数目</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td rowspan="4">2019/10/13</td>
+        <td rowspan="4">第158场周赛</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_1_分割平衡字符串">分割平衡字符串</a></td>
+        <td>:heavy_check_mark:</td>
+        <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191013/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="4">387/1216</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_2_可以攻击国王的皇后">可以攻击国王的皇后</a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_3_掷色子模拟">掷色子模拟</a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_4_最大相等频率">最大相等频率</a></td>
         <td>:x:</td>
     </tr>
 </table>
