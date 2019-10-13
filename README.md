@@ -117,7 +117,7 @@
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_1_分割平衡字符串">分割平衡字符串</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191013/NOTE.md">:page_with_curl:</a></td>
-        <td rowspan="4">387/1216</td>
+        <td rowspan="4">233/1715</td>
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_2_可以攻击国王的皇后">可以攻击国王的皇后</a></td>
