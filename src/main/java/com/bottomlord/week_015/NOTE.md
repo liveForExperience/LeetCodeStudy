@@ -78,3 +78,57 @@ class Solution {
     }
 }
 ```
+# LeetCode_318_最大单词长度乘积
+## 题目
+给定一个字符串数组 words，找到 length(word[i]) * length(word[j]) 的最大值，并且这两个单词不含有公共字母。你可以认为每个单词只包含小写字母。如果不存在这样的两个单词，返回 0。
+
+示例 1:
+```
+输入: ["abcw","baz","foo","bar","xtfn","abcdef"]
+输出: 16 
+解释: 这两个单词为 "abcw", "xtfn"。
+```
+示例 2:
+```
+输入: ["a","ab","abc","d","cd","bcd","abcd"]
+输出: 4 
+解释: 这两个单词为 "ab", "cd"。
+```
+示例 3:
+```
+输入: ["a","aa","aaa","aaaa"]
+输出: 0 
+解释: 不存在这样的两个单词。
+```
+## 解法
+### 思路
+- 遍历字符串，将字母对应到位上
+- 嵌套遍历字符串，对比两个字符串对应的位值相与是否是0，如果是就计算乘积
+- 把计算出的乘积和已有的最大值比较，取最大
+- 遍历结束后返回
+### 代码
+```java
+class Solution {
+    public int maxProduct(String[] words) {
+        int len = words.length;
+        int[] arr = new int[len];
+        
+        for (int i = 0; i < len; i++) {
+            String word = words[i];
+            for (int j = 0; j < word.length(); j++) {
+                arr[i] |= 1 << (word.charAt(j) - 'a');
+            }
+        }
+        
+        int max = 0;
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                if ((arr[i] & arr[j]) == 0) {
+                    max = Math.max(words[i].length() * words[j].length(), max);
+                }
+            }
+        }
+        return max;
+    }
+}
+```
