@@ -356,3 +356,109 @@ class Solution {
     }
 }
 ```
+# LeetCode_413_等差数列划分
+## 题目
+如果一个数列至少有三个元素，并且任意两个相邻元素之差相同，则称该数列为等差数列。
+
+例如，以下数列为等差数列:
+```
+1, 3, 5, 7, 9
+7, 7, 7, 7
+3, -1, -5, -9
+```
+以下数列不是等差数列。
+```
+1, 1, 2, 5, 7
+```
+数组 A 包含 N 个数，且索引从0开始。数组 A 的一个子数组划分为数组 (P, Q)，P 与 Q 是整数且满足 0<=P<Q<N 。
+
+如果满足以下条件，则称子数组(P, Q)为等差数组：
+
+元素 A[P], A[p + 1], ..., A[Q - 1], A[Q] 是等差的。并且 P + 1 < Q 。
+
+函数要返回数组 A 中所有为等差数组的子数组个数。
+
+示例:
+```
+A = [1, 2, 3, 4]
+
+返回: 3, A 中有三个子等差数组: [1, 2, 3], [2, 3, 4] 以及自身 [1, 2, 3, 4]。
+```
+## 解法
+### 思路
+暴力循环比较，三层循环
+- 第一层确定起始下标
+- 第二层确定结束下标
+- 第三层进行每两个元素的比较
+### 代码
+```java
+class Solution {
+    public int numberOfArithmeticSlices(int[] A) {
+        int count = 0, len = A.length;
+        for (int start = 0; start < len - 2; start++) {
+            int diff = A[start + 1] - A[start];
+            for (int end = start + 2; end < len; end++) {
+                int index = start + 1;
+                for (; index <= end; index++) {
+                    if (A[index] - A[index - 1] != diff) {
+                        break;
+                    }
+                }
+                
+                if (index > end) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+}
+```
+## 优化代码
+### 思路
+在暴力解法的基础上，进行改进：
+- 在`end`下标累加的过程中，`index`坐标重复的计算了上一个循环计算过的比较diff的过程。
+- 而如果前一个子序列是等差数列，那么只需要`A[end] - A[end - 1]`和`A[end + 1] - A[end]`进行比较就可以判断`count`是否需要增加
+### 代码
+```java
+class Solution {
+    public int numberOfArithmeticSlices(int[] A) {
+        int count = 0, len = A.length;
+        for (int start = 0; start < len - 2; start++) {
+            int diff = A[start + 1] - A[start];
+            for (int end = start + 2; end < len; end++) {
+                if (A[end] - A[end - 1] == diff) {
+                    count++;
+                } else {
+                    break;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- `dp[i]`存储的是在`A[x, i]`范围且不在`A[x,j]`范围(j < i)的所有等差数列个数，也就是求一个`A[x,i]`与`A[x,j]`的补集
+- base case：dp[2]的值取决于前三个元素是否是等差数列，如果是就是1否则是0
+- 状态转移方程：
+    - `A[i] - A[i - 1] == A[i - 1] - A[i - 2]`：`dp[i] = dp[i - 1] + 1`
+    - `A[i] - A[i - 1] != A[i - 1] - A[i - 2]`：0
+- 结果返回：遍历累加dp[i]的值
+### 代码
+```java
+class Solution {
+    public int numberOfArithmeticSlices(int[] A) {
+        int ans = 0, len = A.length;
+        int[] dp = new int[len];
+        for (int i = 2; i < len; i++) {
+            dp[i] = A[i] - A[i - 1] == A[i - 1] - A[i - 2] ? dp[i - 1] + 1 : 0;
+            ans += dp[i];
+        }
+        return ans;
+    }
+}
+```
