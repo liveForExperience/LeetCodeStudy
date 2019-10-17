@@ -251,6 +251,68 @@ class Solution {
     }
 }
 ```
+## 解法
+### 思路
+动态规划：
+- `dp[n][i][j]`：投掷n次情况下，连续j个i结尾的序列的个数
+- base case：`dp[0][i][1]`第一次投掷以i结尾的数的序列
+- 状态转移方程：
+    - 如果元素和上一个元素等：`dp[n][i][j + 1]` += `dp[n][i][j]`
+    - 如果元素和上一个元素不等：`dp[n][i][1]` += dp[n][i][j]`
+- 过程：
+    - 先初始化，将投掷第一次的6种值的那1个序列赋给dp
+    - 4层循环遍历：
+        - 第一层代表投掷次数
+        - 第二层代表当前投掷的值
+        - 第三层代表上一次投掷的值
+        - 第四层循环前判断：
+            - 如果二、三层值相同，代表转移方程的第一种，循环第三层元素对应rollMax值次数，进行状态转移
+            - 如果二、三层值不同，代表转移方程的第二种，循环第三层元素对应rollMax值-1次，进行状态转移，因为不能超过
+    - 遍历结束后，进行嵌套循环算出答案：
+        - 第一层遍历6种值的可能
+        - 第二层遍历第一层值对应的rollMax个数
+        - 将这个找到的值累加
+### 代码
+```java
+class Solution {
+    public int dieSimulator(int n, int[] rollMax) {
+        int[][][] dp = new int[n][6][16];
+        int mod = 1000000007;
+
+        for (int i = 0; i < 6; i++) {
+            dp[0][i][1] = 1;
+        }
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < 6; j++) {
+                for (int k = 0; k < 6; k++) {
+                    if (j != k) {
+                        for (int l = 1; l <= rollMax[k]; l++) {
+                            dp[i][j][1] += dp[i - 1][k][l];
+                            dp[i][j][1] %= mod;
+                        }
+                    } else {
+                        for (int l = 1; l < rollMax[k]; l++) {
+                            dp[i][j][l + 1] += dp[i - 1][k][l];
+                            dp[i][j][l + 1] %= mod;
+                        }
+                    }
+                }
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < 6; i++) {
+            for (int j = 1; j <= rollMax[i]; j++) {
+                ans += dp[n - 1][i][j];
+                ans %= mod;
+            }
+        }
+
+        return ans;
+    }
+}
+```
 # Contest_4_最大相等频率
 ## 题目
 给出一个正整数数组 nums，请你帮忙从该数组中找出能满足下面要求的 最长 前缀，并返回其长度：

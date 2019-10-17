@@ -1,41 +1,40 @@
 package com.bottomlord.contest_20191013;
 
 public class Contest_3_掷色子模拟 {
-    private long sum;
-
     public int dieSimulator(int n, int[] rollMax) {
-        recurse(n, -1, new int[6], rollMax);
-        return (int) (sum % 1000000007L);
-    }
-
-    private void recurse(int level, int pre, int[] record, int[] rollMax) {
-        if (level == 0) {
-            sum++;
-            return;
-        }
+        int[][][] dp = new int[n][6][16];
+        int mod = 1000000007;
 
         for (int i = 0; i < 6; i++) {
-            if (pre == i) {
-                if (record[i] == 0) {
-                    int[] tmp = new int[6];
-                    tmp[i]++;
-                    recurse(level - 1, i, tmp, rollMax);
-                } else {
-                    if (rollMax[i] != record[i]) {
-                        record[i]++;
-                        recurse(level - 1, i, record, rollMax);
+            dp[0][i][1] = 1;
+        }
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < 6; j++) {
+                for (int k = 0; k < 6; k++) {
+                    if (j != k) {
+                        for (int l = 1; l <= rollMax[k]; l++) {
+                            dp[i][j][1] += dp[i - 1][k][l];
+                            dp[i][j][1] %= mod;
+                        }
+                    } else {
+                        for (int l = 1; l < rollMax[k]; l++) {
+                            dp[i][j][l + 1] += dp[i - 1][k][l];
+                            dp[i][j][l + 1] %= mod;
+                        }
                     }
                 }
-            } else {
-                int[] tmp = new int[6];
-                tmp[i]++;
-                recurse(level - 1, i, tmp, rollMax);
             }
         }
-    }
 
-    public static void main(String[] args) {
-        Contest_3_掷色子模拟 t = new Contest_3_掷色子模拟();
-        t.dieSimulator(3, new int[]{1, 1, 1, 1, 1, 1});
+        int ans = 0;
+        for (int i = 0; i < 6; i++) {
+            for (int j = 1; j <= rollMax[i]; j++) {
+                ans += dp[n - 1][i][j];
+                ans &= mod;
+            }
+        }
+
+        return ans;
     }
 }
