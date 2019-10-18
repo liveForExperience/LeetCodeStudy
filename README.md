@@ -126,7 +126,7 @@
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_3_掷色子模拟">掷色子模拟</a></td>
-        <td>:heavy_check_mark:</td>
+        <td>:x:</td>
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_4_最大相等频率">最大相等频率</a></td>
