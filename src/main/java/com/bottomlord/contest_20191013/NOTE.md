@@ -348,8 +348,56 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+- 定义四个变量：
+    - `count[i]`：出现i次的元素个数
+    - `map`：i元素出现的个数
+- 遍历nums数组：
+    - 统计每种元素出现的个数，直接`count[num[i]]++`
+    - 统计出现n次的元素的个数，判断`count[num[i]]`是否大于1：
+        - 如果是，说明之前在map里已经把这个元素算在了`count[num[i]] - 1`这个key里，需要去掉，因为现在它要被算在现在这个次数的key里，如果减掉之后值变成0了，那么就把这个key从map中去掉
+        - 如果不是，就说明是第一次统计，直接放入map就可以了
+    - 之后就对`count[i]`和`map`这两个变量进行判断，以确定当前序列是否是符合题意的：
+        - map的size是1的情况下：说明元素出现的次数只有1中情况
+            - 如果map的key等于1，说明序列元素出现的个数都是1，这时候删除一个元素是符合规则的
+            - 如果map的这个唯一key的value等于1，说明这个序列的所有元素都是一样的，这是后删除一个元素也是符合规则的
+        - map的size是2的情况下：说明元素出现个数的情况有两种
+            - 如果有key等于1，并且对应的value也等于1，说明有1个元素出现了1次，这种情况下是符合规则的
+            - 如果有key的情况不等于1，但是key值比另一个key大1，且value值是1，说明有一个元素的出现个数比其他元素多1，这种情况也是符合规则的
+        - 在如上2种大情况4中情况下，可以给ans赋值当前遍历的下标值+1
+- 遍历结束，返回结果ans
 ### 代码
 ```java
+class Solution {
+    public int maxEqualFreq(int[] nums) {
+        int[] count = new int[100010];
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        int ans = 2;
+        for (int i = 0; i < nums.length; i++) {
+            count[nums[i]]++;
+            if (count[nums[i]] != 1) {
+                map.put(count[nums[i]] - 1, map.get(count[nums[i]] - 1) - 1);
+                if (map.get(count[nums[i]] - 1) == 0) {
+                    map.remove(count[nums[i]] - 1);
+                }
+            }
+            map.put(count[nums[i]], map.getOrDefault(count[nums[i]], 0) + 1);
 
+            if (map.size() == 1) {
+                if (map.firstKey() == 1) {
+                    ans = i + 1;
+                } else if (map.firstEntry().getValue() == 1) {
+                    ans = i + 1;
+                }
+            } else if (map.size() == 2) {
+                if (map.firstKey() == 1 && map.firstEntry().getValue() == 1) {
+                    ans = i + 1;
+                } else if (map.firstKey() + 1 == map.lastKey() && map.lastEntry().getValue() == 1) {
+                    ans = i + 1;
+                }
+            }
+        }
+
+        return ans;
+    }
+}
 ```
