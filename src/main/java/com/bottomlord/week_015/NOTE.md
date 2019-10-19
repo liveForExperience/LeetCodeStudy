@@ -715,3 +715,50 @@ class Solution {
     }
 }
 ```
+# LeetCode_90_1_子集
+## 题目
+给定一个可能包含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+
+说明：解集不能包含重复的子集。
+
+示例:
+```
+输入: [1,2,2]
+输出:
+[
+  [2],
+  [1],
+  [1,2,2],
+  [2,2],
+  [1,2],
+  []
+]
+```
+## 解法
+### 思路
+递归并回溯，同时为了避免重复的集合，需要先对数组进行排序，在递归的循环数组过程中，需要跳过和上一个元素一样的元素。
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> ans = new ArrayList<>();
+        backTrack(nums, 0, new LinkedList<>(), ans);
+        return ans;
+    }
+
+    private void backTrack(int[] nums, int index, LinkedList<Integer> list, List<List<Integer>> ans) {
+        ans.add(new LinkedList<>(list));
+
+        for (int i = index; i < nums.length; i++) {
+            list.addLast(nums[i]);
+            backTrack(nums, i + 1, list, ans);
+            list.removeLast();
+
+            while (i + 1 < nums.length && nums[i] == nums[i + 1]) {
+                i++;
+            }
+        }
+    }
+}
+```
