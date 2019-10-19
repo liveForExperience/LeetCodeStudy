@@ -652,3 +652,66 @@ class Solution {
     }
 }
 ```
+# LeetCode_113_路径总和
+## 题目
+给定一个二叉树和一个目标和，找到所有从根节点到叶子节点路径总和等于给定目标和的路径。
+
+说明: 叶子节点是指没有子节点的节点。
+
+示例:
+```
+给定如下二叉树，以及目标和 sum = 22，
+
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \    / \
+        7    2  5   1
+```
+返回:
+```
+[
+   [5,4,11,2],
+   [5,8,4,5]
+]
+```
+## 解法
+### 思路
+递归并回溯list，list中保存路径信息，如果叶子节点处的路径总和等于`sum`，那么就将list深度拷贝后放入`ans`集合
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> ans = new ArrayList<>();
+        backTrack(root, 0, sum, new LinkedList<>(), ans);
+        return ans;
+    }
+
+    private void backTrack(TreeNode node, int count, int sum, LinkedList<Integer> list, List<List<Integer>> ans) {
+        if (node == null) {
+            return;
+        }
+
+        count += node.val;
+
+        if (node.left == null && node.right == null) {
+            if (count == sum) {
+                list.addLast(node.val);
+                ans.add(new LinkedList<>(list));
+                list.removeLast();
+            }
+            return;
+        }
+
+        list.addLast(node.val);
+        backTrack(node.left, count, sum, list, ans);
+        list.removeLast();
+
+        list.addLast(node.val);
+        backTrack(node.right, count, sum, list, ans);
+        list.removeLast();
+    }
+}
+```

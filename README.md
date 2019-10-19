@@ -17,7 +17,7 @@
 |12|2019/9/23 - 2019/9/29| [13](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_012) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_012/NOTE.md) | - | - |:star2:|1205|
 |13|2019/9/30 - 2019/10/6| [11](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_013) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_013/NOTE.md) | - | - |:grinning:|1091|
 |14|2019/10/7 - 2019/10/13| [13](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_014) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_014/NOTE.md) | - | - |:smile:|964|
-|15|2019/10/14 - 2019/10/20| [9](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_015) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_015/NOTE.md) | - | - |||
+|15|2019/10/14 - 2019/10/20| [10](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_015) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_015/NOTE.md) | - | - |||
 ## 竞赛
 <table>
     <tr align="center">
@@ -130,6 +130,46 @@
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_4_最大相等频率">最大相等频率</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+    <td rowspan="4">2019/10/19</td>
+        <td rowspan="4">第11场双周赛</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_1_"></a></td>
+        <td>:heavy_check_mark:</td>
+        <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191019/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="4">233/1715</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_2_"></a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_3_"></a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_4_"></a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td rowspan="4">2019/10/20</td>
+        <td rowspan="4">第159场单周赛</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_1_"></a></td>
+        <td>:heavy_check_mark:</td>
+        <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191020/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="4">233/1715</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_2_"></a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_3_"></a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_4_"></a></td>
         <td>:x:</td>
     </tr>
 </table>
