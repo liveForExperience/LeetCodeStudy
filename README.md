@@ -37,139 +37,139 @@
         <td rowspan="5">433/1541</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_2_分式化简">分式化简</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_2_分式化简.java">分式化简</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_3_机器人大冒险">机器人大冒险</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_3_机器人大冒险.java">机器人大冒险</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_4_覆盖">覆盖</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_4_覆盖.java">覆盖</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5_发LeetCoin">发LeetCoin</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190924/Contest_5_发LeetCoin.java">发LeetCoin</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
         <td rowspan="4">2019/9/29</td>
         <td rowspan="4">第156场周赛</td>
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_1_独一无二的出现次数">独一无二的出现次数</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_1_独一无二的出现次数.java">独一无二的出现次数</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20190929/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="4">507/1432</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_2_尽可能使字符串相等">尽可能使字符串相等</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_2_尽可能使字符串相等.java">尽可能使字符串相等</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_3_删除字符串中的虽有响铃重复项II">删除字符串中的虽有响铃重复项II</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_3_删除字符串中的虽有响铃重复项II.java">删除字符串中的虽有响铃重复项II</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_4_穿过迷宫的最少移动次数">穿过迷宫的最少移动次数</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20190929/Contest_4_穿过迷宫的最少移动次数.java">穿过迷宫的最少移动次数</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
         <td rowspan="4">2019/10/5</td>
         <td rowspan="4">第10场双周赛</td>
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_1_三个有序数组的交集">三个有序数组的交集</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_1_三个有序数组的交集.java">三个有序数组的交集</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191005/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="4">217/738</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_2_查找两棵二叉搜索树之和">查找两棵二叉搜索树之和</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_2_查找两棵二叉搜索树之和.java">查找两棵二叉搜索树之和</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_3_步进数">步进数</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_3_步进数.java">步进数</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_4_验证回文字符串III">验证回文字符串III</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191005/Contest_4_验证回文字符串III.java">验证回文字符串III</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
         <td rowspan="4">2019/10/06</td>
         <td rowspan="4">第157场周赛</td>
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_1_玩筹码">玩筹码</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_1_玩筹码.java">玩筹码</a></td>
         <td>:x:</td>
         <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191006/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="4">387/1216</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_2_最长定差子序列">最长定差子序列</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_2_最长定差子序列.java">最长定差子序列</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_3_黄金矿工">黄金矿工</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_3_黄金矿工.java">黄金矿工</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_4_统计元音字母序列的数目">统计元音字母序列的数目</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191006/Contest_4_统计元音字母序列的数目.java">统计元音字母序列的数目</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
         <td rowspan="4">2019/10/13</td>
         <td rowspan="4">第158场周赛</td>
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_1_分割平衡字符串">分割平衡字符串</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_1_分割平衡字符串.java">分割平衡字符串</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191013/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="4">233/1715</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_2_可以攻击国王的皇后">可以攻击国王的皇后</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_2_可以攻击国王的皇后.java">可以攻击国王的皇后</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_3_掷色子模拟">掷色子模拟</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_3_掷色子模拟.java">掷色子模拟</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_4_最大相等频率">最大相等频率</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191013/Contest_4_最大相等频率.java">最大相等频率</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
     <td rowspan="4">2019/10/19</td>
         <td rowspan="4">第11场双周赛</td>
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_1_等差数列中确实的数字">等差数列中确实的数字</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_1_等差数列中确实的数字.java">等差数列中确实的数字</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191019/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="4">194/912</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_2_安排会议日程">安排会议日程</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_2_安排会议日程.java">安排会议日程</a></td>
         <td>:heavy_check_mark:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_3_抛掷硬币">抛掷硬币</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_3_抛掷硬币.java">抛掷硬币</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_4_分享巧克力">分享巧克力</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191019/Contest_4_分享巧克力.java">分享巧克力</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
         <td rowspan="4">2019/10/20</td>
         <td rowspan="4">第159场单周赛</td>
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_1_缀点成线">缀点成线</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_1_缀点成线.java`">`缀点成线</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191020/NOTE.md">:page_with_curl:</a></td>
         <td rowspan="4">495/1633</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_2_删除子文件夹">删除子文件夹</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_2_删除子文件夹.java">删除子文件夹</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_3_替换子串得到平衡字符串">替换子串得到平衡字符串</a></td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_3_替换子串得到平衡字符串.java">替换子串得到平衡字符串</a></td>
         <td>:x:</td>
     </tr>
     <tr align="center">
-        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_4_规划兼职工作"></a>规划兼职工作</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_4_规划兼职工作.java">规划兼职工作</a></td>
         <td>:x:</td>
     </tr>
 </table>
