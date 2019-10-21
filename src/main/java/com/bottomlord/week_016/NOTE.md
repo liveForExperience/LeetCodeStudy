@@ -149,3 +149,22 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+只需要使用一维数组，因为在计算当前下标可能路径时，每一列的元素可以共用一个下标，因为每一行的这一列计算得到的值会用在下一行的计算上。
+### 代码
+```java
+class Solution {
+    public int uniquePaths(int m, int n) {
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1);
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[j] = dp[j] + dp[j - 1];
+            }
+        }
+        
+        return dp[n - 1];
+    }
+}
+```
