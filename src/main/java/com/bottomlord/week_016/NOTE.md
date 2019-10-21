@@ -218,3 +218,59 @@ class Solution {
     }
 }
 ```
+# LeetCode_515_在每个树行中找最大值
+## 题目
+您需要在二叉树的每一行中找到最大的值。
+
+示例：
+```
+输入: 
+
+          1
+         / \
+        3   2
+       / \   \  
+      5   3   9 
+
+输出: [1, 3, 9]
+```
+## 解法
+### 思路
+bfs，记录每一行最大值
+### 代码
+```java
+class Solution {
+    public List<Integer> largestValues(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+        
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+        
+        while (!queue.isEmpty()) {
+            int count = queue.size(), max = Integer.MIN_VALUE;
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+                
+                max = Math.max(max, node.val);
+                
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+            ans.add(max);
+        }
+        
+        return ans;
+    }
+}
+```
