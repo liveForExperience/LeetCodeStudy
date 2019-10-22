@@ -162,10 +162,35 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+使用动态规划：
+- dp[i]：代表抛掷i个正面朝上的硬币的概率
+- base case：`dp[0] = 1`
+- 状态转移方程：`dp[i] = dp[i] * (1 - prop[i]) + dp[i - 1] * prop[i]`
+    - 前一部分代表在抛掷这个硬币之前，出现i个正面朝上的硬币的概率 + 当前这个硬币不能朝上的概率
+    - 后一部分代表在炮制这个硬币之前，出现i - 1 个正面朝上的硬币概率，因为是i - 1，所以当前的硬币需要正面朝上，所以是`prop[i]`
+- 过程：
+    - 因为prop中的所有硬币的概率之间是没有关联关系的，所以需要依次的将这些概率累乘起来才能算出所有硬币都翻一次后的概率
+    - 所以需要循环遍历所有的prop里的硬币的概率，然后使用状态转移方程来更新这个dp数组，重新计算所有次数的可能性
+- 结果：返回dp[target]
 ###  代码
 ```java
-
+class Solution {
+    public double probabilityOfHeads(double[] prob, int target) {
+        double[] dp = new double[target + 1];
+        dp[0] = 1;
+        
+        for (int i = 0; i < prob.length; i++) {
+            double[] ndp = new double[target + 1];
+            ndp[0] = dp[0] * (1 - prob[i]);
+            for (int j = 1; j <= target; j++) {
+                ndp[j] = dp[j] * (1 - prob[i]) + (dp[j - 1] * prob[i]);
+            }
+            dp = ndp;
+        }
+        
+        return dp[target];
+    }
+}
 ```
 # Contest_4_分享巧克力
 ## 题目

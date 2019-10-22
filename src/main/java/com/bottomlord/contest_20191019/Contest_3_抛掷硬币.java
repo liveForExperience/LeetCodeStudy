@@ -1,33 +1,20 @@
 package com.bottomlord.contest_20191019;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Contest_3_抛掷硬币 {
     public double probabilityOfHeads(double[] prob, int target) {
-        List<Double> list = new ArrayList<>();
-        dfs(prob, 0, target, 0, 1, list);
-        double ans = 0.0;
-        for (double num : list) {
-            ans += num;
-        }
-        return ans;
-    }
+        double[] dp = new double[target + 1];
+        dp[0] = 1;
 
-    private void dfs(double[] prob, int index, int target, int count, double pro, List<Double> list) {
-        if (target == count && index >= prob.length) {
-            list.add(pro);
-            return;
-        }
+        for (int i = 0; i < prob.length; i++) {
+            double[] ndp = new double[target + 1];
+            ndp[0] = dp[0] * (1 - prob[i]);
 
-        if (target > count) {
-            dfs(prob, index + 1, target, count + 1, pro * prob[index], list);
-            dfs(prob, index + 1, target, count + 1, pro * (1 - prob[index]), list);
-        } else {
-            for (int i = index; i < prob.length; i++) {
-                pro *= prob[i];
+            for (int j = 1; j <= target; j++) {
+                ndp[j] = dp[j] * (1 - prob[i]) + dp[j - 1] * prob[i];
             }
-            list.add(pro);
+            dp = ndp;
         }
+
+        return dp[target];
     }
 }
