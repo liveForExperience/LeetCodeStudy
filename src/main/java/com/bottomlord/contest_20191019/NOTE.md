@@ -227,8 +227,40 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+贪心算法：
+- 假设最小甜度是m，遍历数组，当大于等于m的时候就将进行切的动作，在遍历完以后计算切下来的份数是否符合`k + 1`块的要求，如果符合，就增大m再尝试，直到m不能再增大为止。
+- 使用二分法来缩短确定m的过程：
+    - 头指针为0，尾指针为1e9，代表m的取数范围
+    - 通过二分来更改头尾指针，直到头>=尾为止
+    - 循环体内的逻辑就是判断mid值是否能够将数组切分成`k + 1`份
+    - 最终返回head指针值
 ### 代码
 ```java
+class Solution {
+    public int maximizeSweetness(int[] sweetness, int K) {
+        int head = 0, tail = (int)1e9 + 1;
 
+        while (head + 1 < tail) {
+            int mid = head + (tail - head) / 2;
+
+            int count = 0, sum = 0;
+            for (int i = 0; i < sweetness.length; i++) {
+                sum += sweetness[i];
+
+                if (sum >= mid) {
+                    count++;
+                    sum = 0;
+                }
+            }
+
+            if (count >= K + 1) {
+                head = mid;
+            } else {
+                tail = mid;
+            }
+        }
+
+        return head;
+    }
+}
 ```
