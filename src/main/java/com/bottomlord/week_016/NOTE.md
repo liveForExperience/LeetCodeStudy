@@ -339,5 +339,94 @@ class Solution {
     - 如果不是：就要向上寻找<=mid的元素，同时也代表之后的每一列所累加的数也是到寻找到的那个元素所在行为止
 ### 代码
 ```java
+public class Solution {
+    public int kthSmallest(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[row - 1].length, head = matrix[0][0], tail = matrix[row - 1][col - 1];
+        while (head < tail) {
+            int mid = head + (tail - head) / 2 , count = 0, r = row - 1, c = 0;
 
+            while (r >= 0 && c < col) {
+                if (matrix[r][c] <= mid) {
+                    count += r + 1;
+                    c++;
+                } else {
+                    r--;
+                }
+            }
+
+            if (count < k) {
+                head = mid + 1;
+            } else {
+                tail = mid;
+            }
+        }
+
+        return tail;
+    }
+}
+```
+# LeetCode_835_图像重叠
+## 题目
+给出两个图像 A 和 B ，A 和 B 为大小相同的二维正方形矩阵。（并且为二进制矩阵，只包含0和1）。
+
+我们转换其中一个图像，向左，右，上，或下滑动任何数量的单位，并把它放在另一个图像的上面。之后，该转换的重叠是指两个图像都具有 1 的位置的数目。
+
+（请注意，转换不包括向任何方向旋转。）
+
+最大可能的重叠是什么？
+
+示例 1:
+```
+输入：A = [[1,1,0],
+          [0,1,0],
+          [0,1,0]]
+     B = [[0,0,0],
+          [0,1,1],
+          [0,0,1]]
+输出：3
+解释: 将 A 向右移动一个单位，然后向下移动一个单位。
+```
+注意: 
+```
+1 <= A.length = A[0].length = B.length = B[0].length <= 30
+0 <= A[i][j], B[i][j] <= 1
+```
+## 解法
+### 思路
+- 设置一个二维数组count[][]，用来记录x和y轴分别移动多少次后能够匹配到1的次数
+- 4层循环二维数组：
+    - 外面两层：遍历二维矩阵A的所有元素，如果碰到元素为1，开始内层嵌套循环
+    - 里面两层：遍历二维矩阵B的所有元素，如果碰到元素为1，就计算和外层A元素的坐标差，然后count对应的下标为止累加
+    - count的下标是坐标差+N，原因是，向上和向下或向左向右是不同的方式，不仅防止为负数也可以做到将不同的方式区分，所以`count[][]`初始化的时候需要开辟`2 * N + 1`长度(+1是因为会有类似`0 - (n - 1)`)
+- 遍历count元素个数，找到最大值返回
+### 代码
+```java
+class Solution {
+    public int largestOverlap(int[][] A, int[][] B) {
+        int len = A.length;
+        int[][] count = new int[2 * len + 1][2 * len + 1];
+        
+        for (int ra = 0; ra < len; ra++) {
+            for (int ca = 0; ca < len; ca++) {
+                if (A[ra][ca] == 1) {
+                    for (int rb = 0; rb < len; rb++) {
+                        for (int cb = 0; cb < len; cb++) {
+                            if (B[rb][cb] == 1) {
+                                count[ra - rb + len][ca - cb + len]++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        int ans = 0;
+        for (int i = 0; i < count.length; i++) {
+            for (int j = 0; j < count.length; j++) {
+                ans = Math.max(count[i][j], ans);
+            }
+        }
+        return ans;
+    }
+}
 ```
