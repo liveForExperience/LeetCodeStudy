@@ -541,3 +541,44 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用3个长度为9的数组，且元素为set的方式记录横竖和小方块的三种情况
+- 每一个数组下标对应一种情况的9个小情况
+- 如果遍历到的元素在set中存在，就返回false
+- 计算小方块的方式就是通过`r / 3 * 3 + c / 3`来计算
+### 代码
+```java
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        HashSet[] rowArr = new HashSet[9];
+        HashSet[] colArr = new HashSet[9];
+        HashSet[] boxArr = new HashSet[9];
+
+        for (int i = 0; i < 9; i++) {
+            rowArr[i] = new HashSet<Integer>();
+            colArr[i] = new HashSet<Integer>();
+            boxArr[i] = new HashSet<Integer>();
+        }
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                char c = board[i][j];
+                if (c != '.') {
+                    int box = i / 3 * 3 + j / 3;
+                    
+                    if (rowArr[i].contains(c) || colArr[j].contains(c) || boxArr[box].contains(c)) {
+                        return false;
+                    }
+                    
+                    rowArr[i].add(c);
+                    colArr[j].add(c);
+                    boxArr[box].add(c);
+                }
+            }
+        }
+        
+        return true;
+    }
+}
+```
