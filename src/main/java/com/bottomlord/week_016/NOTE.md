@@ -619,5 +619,58 @@ class Solution {
 - 结果：`dp[text1.length][text2.length]`
 ### 代码
 ```java
+class Solution {
+    public int longestCommonSubsequence(String text1, String text2) {
+        int len1 = text1.length(), len2 = text2.length();
+        int[][] dp = new int[len1 + 1][len2 + 1];
+        
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                dp[i][j] = max3(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1] + (text1.charAt(i - 1) == text2.charAt(j - 1) ? 1 : 0));
+            }
+        }
+        
+        return dp[len1][len2];
+    }
+    
+    private int max3(int x, int y, int z) {
+        return Math.max(x, Math.max(y, z));
+    }
+}
+```
+## 优化代码
+### 思路
+状态转移方程还可以在简化：
+- 两个字符串指定长度下，最后一个元素是否相等：
+    - 如果相等，那么只要计算两个长度-1状态下的dp长度再加上当前长度1就是当前长度的最长公共子序列
+    - 如果不相等，那么就计算两个字符串分别-1和另一个字符串当前长度时dp记录的长度，取最大值就可以
+- 同时将两个字符串为零的状态先初始化
+### 代码
+```java
+class Solution {
+    public int longestCommonSubsequence(String text1, String text2) {
+        int len1 = text1.length(), len2 = text2.length();
+        char[] cs1 = text1.toCharArray(), cs2 = text2.toCharArray();
+        int[][] dp = new int[len1 + 1][len2 + 1];
+        for (int i = 0; i < len1; i++) {
+            dp[i][0] = 0;
+        }
 
+        for (int i = 0; i < len2; i++) {
+            dp[0][i] = 0;
+        }
+
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (cs1[i - 1] == cs2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i][j - 1], dp[i - 1][j]);
+                }
+            }
+        }
+
+        return dp[len1][len2];
+    }
+}
 ```
