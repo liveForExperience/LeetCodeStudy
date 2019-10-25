@@ -210,8 +210,67 @@ s 中只含有 'Q', 'W', 'E', 'R' 四种字符
 ```
 ## 解法
 ### 思路
-
+- 替换子串之外的所有字符出现的个数都是小于等于`n/4`的
+- 使用双指针定义一个窗口来进行计算：
+    - 计算字符串中所有字符的个数，使用数组`bucket`记录
+    - 判断每个字符的个数是否有大于`n/4`的情况，如果没有就直接返回0，说明这个字符串是符合规定的
+    - 如果有，就说明需要确定子串的最小长度
+    - 右指针遍历字符数组，此时会出现两个概念：
+        - 需要保留的字符串：`bucket`
+        - 需要删除的子串：当前遍历的字符会从`bucket`中删除
+    - 判断保留的字符串是否有大于`n/4`，如果没有就说明是符合规则的
+    - 这是就用左右指针的距离之差和已保存的删除的子串长度进行比较，取最最小值
+    - 然后循环判断做指针，如果是符合规则的就进行如下循环：
+        - 计算下左右指针的距离与已存在的最短子序列的长度，取最小值
+        - 试一下将做指针对应的字符数加回去后，保留的字符串还符合规则，如果不符合，就不再进入下个循环
+        - 移动左指针，因为进入循环时当前左指针指向的元素字符串已经符合规则，所以删除子串的窗口就要移动一格继续判断，能不能更小，且当前这个字符的情况就不再考虑了
+    - 右指针遍历结束后，返回子串长度
 ### 代码
 ```java
-
+class Solution {
+    public int balancedString(String s) {
+        char[] cs = s.toCharArray();
+        int[] bucket = new int[26];
+        int l = 0, r = 0, ans = s.length(), len = s.length();
+        for (char c : cs) {
+            bucket[c - 'A']++;
+        }
+        
+        boolean ok = true;
+        
+        for (int num : bucket) {
+            if (num > len / 4) {
+                ok = false;
+                break;
+            }
+        }
+        
+        if (ok) {
+            return 0;
+        }
+        
+        for (; r < len; r++) {
+            bucket[cs[r] - 'A']--;
+            ok = true;
+            
+            for (int num : bucket) {
+                if (num > len / 4) {
+                    ok = false;
+                    break;
+                }
+            }
+            
+            while (ok) {
+                ans = Math.min(ans, r - l + 1);
+                bucket[cs[l] - 'A']++;
+                if (bucket[cs[l] - 'A'] > len / 4) {
+                    ok = false;
+                }
+                l++;
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
