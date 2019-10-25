@@ -164,52 +164,6 @@ s 中只含有 'Q', 'W', 'E', 'R' 四种字符
 ```
 ## 解法
 ### 思路
-
-### 代码
-```java
-
-```
-# Contest_4_规划兼职工作
-## 题目
-你打算利用空闲时间来做兼职工作赚些零花钱。
-
-这里有 n 份兼职工作，每份工作预计从 startTime[i] 开始到 endTime[i] 结束，报酬为 profit[i]。
-
-给你一份兼职工作表，包含开始时间 startTime，结束时间 endTime 和预计报酬 profit 三个数组，请你计算并返回可以获得的最大报酬。
-
-注意，时间上出现重叠的 2 份工作不能同时进行。
-
-如果你选择的工作在时间 X 结束，那么你可以立刻进行在时间 X 开始的下一份工作。
-
-示例 1：
-```
-输入：startTime = [1,2,3,3], endTime = [3,4,5,6], profit = [50,10,40,70]
-输出：120
-解释：
-我们选出第 1 份和第 4 份工作， 
-时间范围是 [1-3]+[3-6]，共获得报酬 120 = 50 + 70。
-```
-示例 2：
-```
-输入：startTime = [1,2,3,4,6], endTime = [3,5,10,6,9], profit = [20,20,100,70,60]
-输出：150
-解释：
-我们选择第 1，4，5 份工作。 
-共获得报酬 150 = 20 + 70 + 60。
-```
-示例 3：
-```
-输入：startTime = [1,1,1], endTime = [2,3,4], profit = [5,6,4]
-输出：6
-```
-提示：
-```
-1 <= startTime.length == endTime.length == profit.length <= 5 * 10^4
-1 <= startTime[i] < endTime[i] <= 10^9
-1 <= profit[i] <= 10^4
-```
-## 解法
-### 思路
 - 替换子串之外的所有字符出现的个数都是小于等于`n/4`的
 - 使用双指针定义一个窗口来进行计算：
     - 计算字符串中所有字符的个数，使用数组`bucket`记录
@@ -271,6 +225,103 @@ class Solution {
         }
         
         return ans;
+    }
+}
+```
+# Contest_4_规划兼职工作
+## 题目
+你打算利用空闲时间来做兼职工作赚些零花钱。
+
+这里有 n 份兼职工作，每份工作预计从 startTime[i] 开始到 endTime[i] 结束，报酬为 profit[i]。
+
+给你一份兼职工作表，包含开始时间 startTime，结束时间 endTime 和预计报酬 profit 三个数组，请你计算并返回可以获得的最大报酬。
+
+注意，时间上出现重叠的 2 份工作不能同时进行。
+
+如果你选择的工作在时间 X 结束，那么你可以立刻进行在时间 X 开始的下一份工作。
+
+示例 1：
+```
+输入：startTime = [1,2,3,3], endTime = [3,4,5,6], profit = [50,10,40,70]
+输出：120
+解释：
+我们选出第 1 份和第 4 份工作， 
+时间范围是 [1-3]+[3-6]，共获得报酬 120 = 50 + 70。
+```
+示例 2：
+```
+输入：startTime = [1,2,3,4,6], endTime = [3,5,10,6,9], profit = [20,20,100,70,60]
+输出：150
+解释：
+我们选择第 1，4，5 份工作。 
+共获得报酬 150 = 20 + 70 + 60。
+```
+示例 3：
+```
+输入：startTime = [1,1,1], endTime = [2,3,4], profit = [5,6,4]
+输出：6
+```
+提示：
+```
+1 <= startTime.length == endTime.length == profit.length <= 5 * 10^4
+1 <= startTime[i] < endTime[i] <= 10^9
+1 <= profit[i] <= 10^4
+```
+## 解法
+### 思路
+动态规划：
+- dp[i]：以第i份工作为开始时能获得的最大报酬
+- base case：dp[0]，从第一件工作开始递归所有的工作
+- 状态转移方程：`dp[i] = max(dp[i + 1], profit[i] + dp[next_available_job]`
+- 过程：
+    - 先获取一个工作的排序数组`jobs`，工作的顺序根据开始时间的升序，如果开始时间相同，就用结束时间的降序
+    - 创建一个dp数组，记录jobs顺序的工作为第一个工作时，可以获得的最大利润，初始值为-1
+    - 有了jobs，开始递归计算dp，从0开始：
+        - 如果开始的工作数等于工作总数，说明递归结束，返回0
+        - 如果dp的值不为-1就直接返回dp值，说明不用计算
+        - 两种退出条件结束后，开始递归的主逻辑：将`dp[i + 1]`和`profit[i] + dp[next_available_job]`作比较，取最大值
+            - 求`dp[i + 1]`的值就继续递归
+            - 求`profit[i] + dp[next_available_job]`的值就是循环找当前工作的结束时间小于等于当前工作之后的开始时间的工作，将这个工作对应的dp值通过递归计算出来，然后加上当前工作的profit
+            - 取两者的最大值作为`dp[i]`并返回
+- 结果：返回递归结果
+### 代码
+```java
+class Solution {
+    public int jobScheduling(int[] startTime, int[] endTime, int[] profit) {
+        int len = profit.length;
+        int[] dp = new int[len];
+        Integer[] jobs = new Integer[len];
+        for (int i = 0; i < len; i++) {
+            jobs[i] = i;
+        }
+
+        Arrays.fill(dp, -1);
+        Arrays.sort(jobs, Comparator.comparing(x -> startTime[(int) x]).thenComparing(x -> endTime[(int) x]));
+
+        return recurse(dp, jobs, profit, startTime, endTime, 0, len);
+    }
+
+    private int recurse(int[] dp, Integer[] jobs, int[] profit, int[] startTime, int[] endTime, int startJob, int jobNums) {
+        if (startJob == jobNums) {
+            return 0;
+        }
+
+        if (dp[startJob] != -1) {
+            return dp[startJob];
+        }
+
+        int next = recurse(dp, jobs, profit, startTime, endTime, startJob + 1, jobNums);
+        int cur = profit[jobs[startJob]];
+        for (int i = startJob + 1; i < jobNums; i++) {
+            if (startTime[jobs[i]] >= endTime[jobs[startJob]]) {
+                cur += recurse(dp, jobs, profit, startTime, endTime, i, jobNums);
+                break;
+            }
+        }
+
+        int ans = Math.max(next, cur);
+        
+        return dp[startJob] = ans;
     }
 }
 ```
