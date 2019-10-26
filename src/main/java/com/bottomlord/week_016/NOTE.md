@@ -782,10 +782,28 @@ root 的右子树将被构建为 Construct([A[i+1], A[i+2], ..., A[A.length - 1
 ```
 ## 解法
 ### 思路
-
+- 根据题意，`val`是放在生成最大树的数组的尾部。
+- 遍历树节点：
+    - 如果`val`值大于当前节点值，说明当前当前节点是`val`值所生成的节点的左子树
+    - 如果`val`值小于当前节点值，需要去右子树继续寻找
 ### 代码
 ```java
+class Solution {
+    public TreeNode insertIntoMaxTree(TreeNode root, int val) {
+        if (root == null) {
+            return new TreeNode(val);
+        }
 
+        if (root.val > val) {
+            root.right = insertIntoMaxTree(root.right, val);
+            return root;
+        }
+
+        TreeNode node = new TreeNode(val);
+        node.left = root;
+        return node;
+    }
+}
 ```
 # LeetCode_654_最大二叉树
 ## 题目
