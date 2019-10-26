@@ -697,5 +697,160 @@ N 将小于 1000 且确保是 2 的整次幂。
 - 每次递归都会把4部分的边界确定
 ### 代码
 ```java
+class Solution {
+    public Node construct(int[][] grid) {
+        return recurse(grid, 0, grid.length - 1, 0, grid[0].length - 1);
+    }
 
+    private Node recurse(int[][] grid, int rowStart, int rowEnd, int colStart, int colEnd) {
+        if (rowStart > rowEnd || colStart > colEnd) {
+            return null;
+        }
+
+        if (rowStart == rowEnd && colStart == colEnd) {
+            return new Node(grid[rowStart][colStart] == 1, true, null, null, null, null);
+        }
+
+        Node node = new Node();
+        boolean isLeaf = true;
+        for (int i = rowStart + 1; i <= rowEnd; i++) {
+            for (int j = colStart + 1; j <= colEnd; j++) {
+                if (grid[i][j] != grid[i][j - 1] || grid[i - 1][j] != grid[i][j]) {
+                    isLeaf = false;
+                    break;
+                }
+            }
+            if (!isLeaf) {
+                break;
+            }
+        }
+        
+        if (isLeaf) {
+            node.isLeaf = true;
+            node.val = grid[rowStart][colStart] == 1;
+            return node;
+        } else {
+            node.topLeft = recurse(grid, rowStart, rowStart + (rowEnd - rowStart) / 2, colStart, colStart + (colEnd - colStart) / 2);
+            node.topRight = recurse(grid, rowStart, rowStart + (rowEnd - rowStart) / 2, colStart + (colEnd - colStart) / 2 + 1, colEnd);
+            node.bottomLeft = recurse(grid, rowStart + (rowEnd - rowStart) / 2 + 1, rowEnd, colStart, colStart + (colEnd - colStart) / 2);
+            node.bottomRight = recurse(grid, rowStart + (rowEnd - rowStart) / 2 + 1, rowEnd, colStart + (colEnd - colStart) / 2 + 1, colEnd);  
+        }
+        return node;
+    }
+}
+```
+# LeetCode_998_最大二叉树II
+## 题目
+最大树定义：一个树，其中每个节点的值都大于其子树中的任何其他值。
+
+给出最大树的根节点 root。
+
+就像之前的问题那样，给定的树是从表 A（root = Construct(A)）递归地使用下述 Construct(A) 例程构造的：
+```
+如果 A 为空，返回 null
+否则，令 A[i] 作为 A 的最大元素。创建一个值为 A[i] 的根节点 root
+root 的左子树将被构建为 Construct([A[0], A[1], ..., A[i-1]])
+root 的右子树将被构建为 Construct([A[i+1], A[i+2], ..., A[A.length - 1]])
+返回 root
+请注意，我们没有直接给定 A，只有一个根节点 root = Construct(A).
+```
+假设 B 是 A 的副本，并附加值 val。保证 B 中的值是不同的。
+
+返回 Construct(B)。
+
+示例 1：
+```
+输入：root = [4,1,3,null,null,2], val = 5
+输出：[5,4,null,1,3,null,null,2]
+解释：A = [1,4,2,3], B = [1,4,2,3,5]
+```
+示例 2：
+```
+输入：root = [5,2,4,null,1], val = 3
+输出：[5,2,4,null,1,null,3]
+解释：A = [2,1,5,4], B = [2,1,5,4,3]
+```
+示例 3：
+```
+输入：root = [5,2,3,null,1], val = 4
+输出：[5,2,4,null,1,3]
+解释：A = [2,1,5,3], B = [2,1,5,3,4]
+```
+提示：
+```
+1 <= B.length <= 100
+```
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# LeetCode_654_最大二叉树
+## 题目
+给定一个不含重复元素的整数数组。一个以此数组构建的最大二叉树定义如下：
+```
+二叉树的根是数组中的最大元素。
+左子树是通过数组中最大值左边部分构造出的最大二叉树。
+右子树是通过数组中最大值右边部分构造出的最大二叉树。
+通过给定的数组构建最大二叉树，并且输出这个树的根节点。
+```
+示例 ：
+```
+输入：[3,2,1,6,0,5]
+输出：返回下面这棵树的根节点：
+
+      6
+    /   \
+   3     5
+    \    / 
+     2  0   
+       \
+        1
+```
+提示：
+```
+给定的数组的大小在 [1, 1000] 之间。
+```
+## 解法
+### 思路
+递归：
+- 参数：
+    - 数组`nums[]`
+    - 数组的开始`start`和结束`end`下标
+- 退出条件
+    - `start` > `end`：返回null
+    - `start` == `end`：返回当前元素值的节点
+- 递归过程：通过`start`和`end`来找区间中的最大值，作为当前递归层的节点值，然后通过确定左右子树所用的数组的边界来继续递归生成左右子树
+- 返回后返回当前节点
+### 代码
+```java
+class Solution {
+    public TreeNode constructMaximumBinaryTree(int[] nums) {
+        return dfs(nums, 0, nums.length - 1);
+    }
+    
+    private TreeNode dfs(int[] nums, int start, int end) {
+        if (start == end) {
+            return new TreeNode(nums[start]);
+        }
+        
+        if (start > end) {
+            return null;
+        }
+        
+        int index = start;
+        for (int i = start + 1; i <= end; i++) {
+            if (nums[i] > nums[index]) {
+                index = i;
+            }
+        }
+        
+        TreeNode node = new TreeNode(nums[index]);
+        node.left = dfs(nums, start, index - 1);
+        node.right = dfs(nums, index + 1, end);
+        return node;
+    }
+}
 ```
