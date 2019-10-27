@@ -963,5 +963,73 @@ N 是一个正整数，并且不会超过15。
 - 递归结束后，返回结果`count`
 ### 代码
 ```java
-
+class Solution {
+    private int count = 0;
+    public int countArrangement(int N) {
+        int[] nums = new int[N];
+        for (int i = 0; i < N; i++) {
+            nums[i] = i + 1;
+        }
+        backTrack(nums, 0);
+        return count;
+    }
+    
+    private void backTrack(int[] nums, int index) {
+        if (index == nums.length) {
+            count++;
+        }
+        
+        for (int i = index; i < nums.length; i++) {
+            swap(nums, i, index);
+            if (nums[index] % (index + 1) == 0 || (index + 1) % nums[index] == 0) {
+                backTrack(nums, index + 1);
+            }
+            swap(nums, i, index);
+        }
+    }
+    
+    private void swap(int[] nums, int x, int y) {
+        int temp = nums[x];
+        nums[x] = nums[y];
+        nums[y] = temp;
+    }
+}
+```
+## 解法二
+### 思路
+回溯算法：
+- 使用一个布尔数组记录N个数是否使用过
+- 递归：
+    - 参数：
+        - 布尔数组`visited`
+        - 当前下标`pos`，在递归过程中使用这个下标来判断循环的所有N个数是否在当前位置符合题目要求
+    - 退出条件：`pos > N`，说明已经遍历判断完所有可能的数，且都是符合题目要求的，`count++`
+    - 过程：
+        - 循环N个数，如果遍历到的数在`visited`是false且`pos % i == 0 || i % pos == 0`，就将`visited[i] = true`并将`pos + 1`带如下一层
+        - 返回时再将`visited[i] = false`，从而开始下一个数的判断
+- 递归结束，返回`count`
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int countArrangement(int N) {
+        boolean[] visited = new boolean[N + 1];
+        backTrack(N, 1, visited);
+        return this.count;
+    }
+    
+    private void backTrack(int n, int pos, boolean[] visited) {
+        if (pos > n) {
+            this.count++;
+        }
+        
+        for (int i = 1; i <= n; i++) {
+            if (!visited[i] && (pos % i == 0 || i % pos == 0)) {
+                visited[i] = true;
+                backTrack(n, pos + 1, visited);
+                visited[i] = false;
+            }
+        }
+    }
+}
 ```
