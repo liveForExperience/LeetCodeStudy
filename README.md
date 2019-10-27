@@ -18,7 +18,7 @@
 |13|2019/9/30 - 2019/10/6| [11](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_013) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_013/NOTE.md) | - | - |:grinning:|1091|
 |14|2019/10/7 - 2019/10/13| [13](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_014) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_014/NOTE.md) | - | - |:smile:|964|
 |15|2019/10/14 - 2019/10/20| [13](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_015) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_015/NOTE.md) | - | - |:satisfied:|883|
-|16|2019/10/21 - 2019/10/27| [12](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_016) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_016/NOTE.md) | - | - |||
+|16|2019/10/21 - 2019/10/27| [13](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_016) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_016/NOTE.md) | - | - |||
 ## 竞赛
 <table>
     <tr align="center">
@@ -173,4 +173,24 @@
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191020/Contest_4_规划兼职工作.java">规划兼职工作</a></td>
         <td>:x:</td>
     </tr>
+    <tr align="center">
+            <td rowspan="4">2019/10/27</td>
+            <td rowspan="4">第160场单周赛</td>
+            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191027/Contest_1_给出指定方程的正整数解.java`">`给出指定方程的正整数解</a></td>
+            <td>:heavy_check_mark:</td>
+            <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191027/NOTE.md">:page_with_curl:</a></td>
+            <td rowspan="4"></td>
+        </tr>
+        <tr align="center">
+            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191027/Contest_2_循环码排列.java">循环码排列</a></td>
+            <td>:x:</td>
+        </tr>
+        <tr align="center">
+            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191027/Contest_3_串联字符串的最大长度.java">串联字符串的最大长度</a></td>
+            <td>:x:</td>
+        </tr>
+        <tr align="center">
+            <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191027/Contest_4_铺瓷砖.java">铺瓷砖</a></td>
+            <td>:x:</td>
+        </tr>
 </table>
