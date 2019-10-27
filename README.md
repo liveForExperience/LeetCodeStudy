@@ -179,7 +179,7 @@
             <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191027/Contest_1_给出指定方程的正整数解.java`">`给出指定方程的正整数解</a></td>
             <td>:heavy_check_mark:</td>
             <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20191027/NOTE.md">:page_with_curl:</a></td>
-            <td rowspan="4"></td>
+            <td rowspan="4">280/1691</td>
         </tr>
         <tr align="center">
             <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191027/Contest_2_循环码排列.java">循环码排列</a></td>
@@ -187,7 +187,7 @@
         </tr>
         <tr align="center">
             <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191027/Contest_3_串联字符串的最大长度.java">串联字符串的最大长度</a></td>
-            <td>:x:</td>
+            <td>:heavy_check_mark:</td>
         </tr>
         <tr align="center">
             <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191027/Contest_4_铺瓷砖.java">铺瓷砖</a></td>
