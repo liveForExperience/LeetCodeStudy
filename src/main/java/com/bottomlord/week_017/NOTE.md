@@ -359,3 +359,45 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+从数组的尾部开始遍历：
+    1. 第一个值一定是0
+    2. 第二个值与第一个值比较：
+        - 如果小于就是1
+        - 否则就是0
+    3. 第三个值与第二个值比较：
+        - 如果大于第二个值，再通过存储的1，与其右边1位的值比较，也就是和最后一位比较
+        - 如果小于第二个值，就是1
+    4. 第n个值与第n-1个值比较，如果大于n-1，就通过下标找比它大的下一个数，一直到找到0为止，如果是0就是0
+### 代码
+```java
+class Solution {
+    public int[] dailyTemperatures(int[] T) {
+        int[] ans = new int[T.length];
+        ans[T.length - 1] = 0;
+
+        for (int i = T.length - 2; i >= 0; i--) {
+            ans[i] = recurse(i, T, ans, 1);
+        }
+
+        return ans;
+    }
+
+    private int recurse(int index, int[] T, int[] ans, int path) {
+        if (index + path >= T.length) {
+            return 0;
+        }
+
+        if (T[index] < T[index + path]) {
+            return path;
+        }
+
+        if (ans[index + path] == 0) {
+            return 0;
+        }
+
+        return recurse(index, T, ans, path + ans[index + path]);
+    }
+}
+```
