@@ -495,5 +495,50 @@ S 是平衡括号字符串，且只含有 ( 和 ) 。
 - 所以整个字符串就是多个子字符串结果相加求和，遍历完字符串后，结果也就出来了。
 ### 代码
 ```java
+class Solution {
+    public int scoreOfParentheses(String S) {
+        return divideAndConquer(S.toCharArray(), 0, S.length());
+    }
 
+    private int divideAndConquer(char[] cs, int start, int end) {
+        int balance = 0, ans = 0;
+        for (int i = start; i < end; i++) {
+            balance += cs[i] == '(' ? 1 : -1;
+            if (balance == 0) {
+                if (i - start == 1) {
+                    ans++;
+                } else {
+                    ans += 2 * divideAndConquer(cs, start + 1, i);    
+                }
+                start = i + 1;
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用栈：
+- 使用栈来记录平衡括号字符串的深度，深度代表嵌套的括号层数，`(())`的深度是2
+- 当遇到左括号就将一个0推入栈中代表第一层，如果继续碰到左括号，再推入一个0，代表深度为2，如果下一个遇到的是右括号，就将栈中的第二个0推出，+1后再推入，如果下一个又碰到右括号，就将1弹出，乘以2，再弹出0，将2塞入
+### 代码
+```java
+class Solution {
+    public int scoreOfParentheses(String S) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(0);
+        char[] cs = S.toCharArray();
+        for (char c : cs) {
+            if (c == '(') {
+                stack.push(0);
+            } else {
+                int first = stack.pop();
+                int second = stack.pop();
+                stack.push(second + Math.max(first * 2, 1));
+            }
+        }
+        return stack.pop();
+    }
+}
 ```
