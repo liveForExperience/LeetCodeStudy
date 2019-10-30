@@ -31,9 +31,4 @@ public class LeetCode_47_1_全排列II {
             }
         }
     }
-
-    public static void main(String[] args) {
-        LeetCode_47_1_全排列II t = new LeetCode_47_1_全排列II();
-        t.permuteUnique(new int[]{1,1,2});
-    }
 }
