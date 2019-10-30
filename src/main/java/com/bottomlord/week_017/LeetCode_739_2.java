@@ -27,9 +27,4 @@ public class LeetCode_739_2 {
 
         return recurse(index, T, ans, path + ans[index + path]);
     }
-
-    public static void main(String[] args) {
-        LeetCode_739_2 t = new LeetCode_739_2();
-        t.dailyTemperatures(new int[]{73,74,75,71,69,72,76,73});
-    }
 }

@@ -401,3 +401,55 @@ class Solution {
     }
 }
 ```
+# LeetCode_47_全排列II
+## 题目
+给定一个可包含重复数字的序列，返回所有不重复的全排列。
+
+示例:
+```
+输入: [1,1,2]
+输出:
+[
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
+]
+```
+## 解法
+### 思路
+- 数组排序
+- 使用一个数组记录当前下标元素是否被使用过
+- 回溯算法过程中注意去重
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> ans = new ArrayList<>();
+        int[] visited = new int[nums.length];
+        backTrace(nums, new LinkedList<>(), ans, visited);
+        return ans;
+    }
+
+    private void backTrace(int[] nums, LinkedList<Integer> list, List<List<Integer>> ans, int[] visited) {
+        if (list.size() == nums.length) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+
+        for (int i = 0; i < nums.length; i++) {
+            if (visited[i] != 1) {
+                if (i > 0 && nums[i] == nums[i - 1] && visited[i - 1] == 0) {
+                    continue;
+                }
+
+                list.addLast(nums[i]);
+                visited[i] = 1;
+                backTrace(nums, list, ans, visited);
+                visited[i] = 0;
+                list.removeLast();
+            }
+        }
+    }
+}
+```
