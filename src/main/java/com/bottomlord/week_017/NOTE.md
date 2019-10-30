@@ -542,3 +542,26 @@ class Solution {
     }
 }
 ```
+## 解法三
+### 思路
+根据解法一可以看出，分数可以通过分治字符串为多个子平衡括号字符串相加来求，而进一步观察每一个子字符串，其实就是计算`2^(n-1)`的值，n为子字符串的括号嵌套个数
+### 代码
+```java
+class Solution {
+    public int scoreOfParentheses(String S) {
+        int balance = 0, ans = 0;
+        char[] cs = S.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] == '(') {
+                balance++;
+            } else {
+                balance--;
+                if (cs[i - 1] == '(') {
+                    ans += 1 << balance;
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
