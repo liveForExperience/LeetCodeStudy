@@ -565,3 +565,55 @@ class Solution {
     }
 }
 ```
+# LeetCode_461_最少移动次数使数组元素相等II
+## 题目
+给定一个非空整数数组，找到使所有数组元素相等所需的最小移动数，其中每次移动可将选定的一个元素加1或减1。 您可以假设数组的长度最多为10000。
+
+例如:
+```
+输入:
+[1,2,3]
+
+输出:
+2
+
+说明：
+只有两个动作是必要的（记得每一步仅可使其中一个元素加1或减1）： 
+
+[1,2,3]  =>  [2,2,3]  =>  [2,2,2]
+```
+## 解法
+### 思路
+- 排序
+- 找中位数
+- 遍历算当前元素与中位数的差值，累加
+### 代码
+```java
+class Solution {
+    public int minMoves2(int[] nums) {
+        Arrays.sort(nums);
+        int len = nums.length, mid = len % 2 == 0 ? (nums[len / 2] + nums[len / 2 - 1]) / 2 : nums[len / 2], ans = 0;
+        for (int num : nums) {
+            ans += Math.abs(num - mid);
+        }
+        return ans;
+    }
+}
+```
+## 优化代码
+### 思路
+- `最大值与最小值的差` = `最大值与中位数的差的绝对值` + `最小值与中位数的差的绝对值`
+- 头尾指针同时向中心遍历，计算头尾差的累加值
+### 代码
+```java
+class Solution {
+    public int minMoves2(int[] nums) {
+        Arrays.sort(nums);
+        int start = 0, end = nums.length - 1, ans = 0;
+        while (start < end) {
+            ans += nums[end--] - nums[start++];
+        }
+        return ans;
+    }
+}
+```
