@@ -734,3 +734,160 @@ class Solution {
     }
 }
 ```
+# LeetCode_73_矩阵置零
+## 题目
+给定一个 m x n 的矩阵，如果一个元素为 0，则将其所在行和列的所有元素都设为 0。请使用原地算法。
+
+示例 1:
+```
+输入: 
+[
+  [1,1,1],
+  [1,0,1],
+  [1,1,1]
+]
+输出: 
+[
+  [1,0,1],
+  [0,0,0],
+  [1,0,1]
+]
+```
+示例 2:
+```
+输入: 
+[
+  [0,1,2,0],
+  [3,4,5,2],
+  [1,3,1,5]
+]
+输出: 
+[
+  [0,0,0,0],
+  [0,4,5,0],
+  [0,3,1,0]
+]
+```
+进阶:
+```
+一个直接的解决方案是使用  O(mn) 的额外空间，但这并不是一个好的解决方案。
+一个简单的改进方案是使用 O(m + n) 的额外空间，但这仍然不是最好的解决方案。
+你能想出一个常数空间的解决方案吗？
+```
+## 解法
+### 思路
+- 遍历二维数组，找到0所在的行和列
+- 在分别将记录的行和列置为0
+### 代码
+```java
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        Set<Integer> rows = new HashSet<>();
+        Set<Integer> cols = new HashSet<>();
+        
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    rows.add(i);
+                    cols.add(j);
+                }
+            }
+        }
+        
+        for (int num : rows) {
+            Arrays.fill(matrix[num], 0);
+        }
+        
+        for (int i = 0; i < matrix.length; i++) {
+            for (int num : cols) {
+                matrix[i][num] = 0;
+            }
+        }
+    }
+}
+```
+## 优化代码
+### 思路
+前一个解法在置零过程中，有的元素位置被置零了多了，这个重复的过程可以进行优化。
+### 代码
+```java
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        Set<Integer> rows = new HashSet<>();
+        Set<Integer> cols = new HashSet<>();
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    rows.add(i);
+                    cols.add(j);
+                }
+            }
+        }
+
+        for (int i = 0; i < matrix.length; i++) {
+            if (rows.contains(i)) {
+                Arrays.fill(matrix[i], 0);
+                continue;
+            }
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (cols.contains(j)) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+}
+```
+## 优化代码II
+### 思路
+- 直接使用数组代替set，减少构建set的开销
+- 遍历矩阵，只要遇到元素为0，就将所在行和列的0下标位置置为0，这样在下一次遍历时只要判断所在行列的0下标是否为0就能知道当前元素是否需要置为0
+- 但是如果先做标记，把行列的0下标元素置为0，那就无法判断这个位置的元素是否需要将所在行列也全部置零，所以需要前判断第一行和第一列是否需要值为零，先做一次标记，但先不置零，等其他行列标记和置零结束后，在根据标记进行操作
+### 代码
+```java
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        boolean row0 = false, col0 = false;
+        for (int[] rows : matrix) {
+            if (rows[0] == 0) {
+                col0 = true;
+                break;
+            }
+        }
+
+        for (int i = 0; i < matrix[0].length; i++) {
+            if (matrix[0][i] == 0) {
+                row0 = true;
+                break;
+            }
+        }
+                
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = matrix[0][j] = 0;
+                }
+            }
+        }
+
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[i].length; j++) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        
+        if (row0) {
+            Arrays.fill(matrix[0], 0);
+        }
+        
+        if (col0) {
+            for (int i = 0; i < matrix.length; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+}
+```
