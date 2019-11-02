@@ -1016,12 +1016,11 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-- 从观察循环码可以发现，整个过程的必定是以从start开始趋向于0再生成另一部分的过程
-- 所以过程可以模拟成dfs的中序遍历
-- 然后使用一个1作为替换使用的指针，使用指针与dfs过程中的值进行异或
-- 这个被异或的值应该是有状态的，记录的是序列中不断变化且只和相邻只差1位的值
-- 这个指针1需要先左移到n位，将移动后的1带入dfs中，每一层处理时都右移1位，移动的过程就是为了确保相邻值只会变更1位
-- 中序遍历就会导致记录的结果会分成start值的左和右两部分，相应对应了左树和右树
+- 通过生成格雷码可知，最终的结果必定是最高位是1和0两种，且剩余位为镜像排列
+- 所以过程可以模拟成dfs的中序遍历，左右子树分别作为互为镜像的两部分，根节点在当前层左中序处理时，将最高位变为1或0，带入右子树
+- 为了能起到这个目的，需要有一个初始为最高位为1其余为0的值，然后再递归进入左右子树的时候通过左移这个标志来一位位地改变数
+- 因为需要一位位地改变数，所以这个值需要有状态地被记录，方便放入结果list中
+- dfs会导致左右子树地值是从最低位开始被变更，这样使得中序可以符合题目要求产生镜像地值，从而也能理解到，这棵二叉树地根节点就是start
 ### 代码
 ```java
 class Solution {
@@ -1042,6 +1041,129 @@ class Solution {
         this.val ^= xor;
         ans.add(this.val);
         dfs(xor >> 1, ans);
+    }
+}
+```
+# LeetCode_337_打家劫舍III
+## 题目
+在上次打劫完一条街道之后和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为“根”。 除了“根”之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。
+
+计算在不触动警报的情况下，小偷一晚能够盗取的最高金额。
+
+示例 1:
+```
+输入: [3,2,3,null,3,null,1]
+
+     3
+    / \
+   2   3
+    \   \ 
+     3   1
+
+输出: 7 
+解释: 小偷一晚能够盗取的最高金额 = 3 + 3 + 1 = 7.
+```
+示例 2:
+```
+输入: [3,4,5,1,3,null,1]
+
+     3
+    / \
+   4   5
+  / \   \ 
+ 1   3   1
+
+输出: 9
+解释: 小偷一晚能够盗取的最高金额 = 4 + 5 = 9.
+```
+## 错误解法
+### 思路
+- bfs广度优先遍历二叉树，求得每一层的总和
+- 再通过动态规划求得最大值：`dp[n] = Math.max(dp[n - 2] + nums[cur], dp[n - 1])`
+### 错误原因
+不相邻的节点不是必需层与层之间隔离，可以相邻层不同路径的节点
+### 代码
+```java
+class Solution {
+    public int rob(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        List<Integer> list = new ArrayList<>();
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int count = queue.size(), sum = 0;
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                sum += node.val;
+
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+
+            list.add(sum);
+        }
+        
+        if (list.size() == 0) {
+            return 0;
+        }
+        
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        
+        if (list.size() == 2) {
+            return Math.max(list.get(0), list.get(1));
+        }
+        
+        int[] dp = new int[list.size()];
+        dp[0] = list.get(0);
+        dp[1] = Math.max(list.get(0), list.get(1));
+        
+        for (int i = 2; i < list.size(); i++) {
+            dp[i] = Math.max(dp[i - 2] + list.get(i), dp[i - 1]);
+        }
+        
+        return dp[list.size() - 1];
+    }
+}
+```
+## 解法
+### 思路
+其实题目是要求一个树形dp，所以通过dfs后序遍历来获得左右子树的dp值，然后在根节点进行状态转移方程的计算
+- dp[]值中两个元素，分别是当前节点抢劫和当前节点不抢劫的状况：
+    - 不抢劫：dp[0] = Math.max(左子树dp[0], 左子树dp[1]) + Math.max(右子树dp[0], 右子树dp[1])，当前节点不抢劫，所以下一个节点无所谓抢不抢，求两种情况的最大值就可以
+    - 抢劫：dp[1] = 左子树dp[0] + 右子树dp[0] + 当前节点值val，如果抢了，下一个节点就不能抢了，只能求两个子树不抢的状态，加上当前值
+- 最后返回结果的第1和第2元素中的最大值
+### 代码
+```java
+class Solution {
+    public int rob(TreeNode root) {
+        int[] ans = dfs(root);
+        return Math.max(ans[0], ans[1]);
+    }
+
+    private int[] dfs(TreeNode node) {
+        if (node == null) {
+            return new int[]{0, 0};
+        }
+        
+        int[] left = dfs(node.left);
+        int[] right = dfs(node.right);
+        
+        int[] cur = new int[2];
+        cur[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);
+        cur[1] = left[0] + right[0] + node.val;
+        
+        return cur;
     }
 }
 ```
