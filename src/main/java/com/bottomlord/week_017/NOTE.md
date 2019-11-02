@@ -957,3 +957,91 @@ class Solution {
     }
 }
 ```
+# LeetCode_1238_循环码排列
+## 题目
+给你两个整数 n 和 start。你的任务是返回任意 (0,1,2,,...,2^n-1) 的排列 p，并且满足：
+```
+p[0] = start
+p[i] 和 p[i+1] 的二进制表示形式只有一位不同
+p[0] 和 p[2^n -1] 的二进制表示形式也只有一位不同
+```
+示例 1：
+```
+输入：n = 2, start = 3
+输出：[3,2,0,1]
+解释：这个排列的二进制表示是 (11,10,00,01)
+     所有的相邻元素都有一位是不同的，另一个有效的排列是 [3,1,0,2]
+```
+示例 2：
+```
+输出：n = 3, start = 2
+输出：[2,6,7,5,4,0,1,3]
+解释：这个排列的二进制表示是 (010,110,111,101,100,000,001,011)
+```
+提示：
+```
+1 <= n <= 16
+0 <= start < 2^n
+```
+## 解法
+### 思路
+基于题89格雷编码：
+- 生成格雷编码
+- 找到start值的下标
+- 根据start进行旋转(将以start为起始的subList作为list的起始，将以0为起始的subList放置在尾部)
+### 代码
+```java
+class Solution {
+    public List<Integer> circularPermutation(int n, int start) {
+        List<Integer> list = new ArrayList<Integer>(){{add(0);}};
+        int head = 1, index = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = list.size() - 1; j >= 0; j--) {
+                int num = head + list.get(j);
+                list.add(num);
+                
+                if (num == start) {
+                    index = list.size() - 1;
+                }
+            }
+            head <<= 1;
+        }
+        
+        List<Integer> ans = new ArrayList<>();
+        ans.addAll(list.subList(index, list.size()));
+        ans.addAll(list.subList(0, index));
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 从观察循环码可以发现，整个过程的必定是以从start开始趋向于0再生成另一部分的过程
+- 所以过程可以模拟成dfs的中序遍历
+- 然后使用一个1作为替换使用的指针，使用指针与dfs过程中的值进行异或
+- 这个被异或的值应该是有状态的，记录的是序列中不断变化且只和相邻只差1位的值
+- 这个指针1需要先左移到n位，将移动后的1带入dfs中，每一层处理时都右移1位，移动的过程就是为了确保相邻值只会变更1位
+- 中序遍历就会导致记录的结果会分成start值的左和右两部分，相应对应了左树和右树
+### 代码
+```java
+class Solution {
+    private int val;
+    public List<Integer> circularPermutation(int n, int start) {
+        this.val = start;
+        List<Integer> ans = new ArrayList<Integer>(){{add(start);}};
+        dfs(1 << (n - 1), ans);
+        return ans;
+    }
+
+    private void dfs(int xor, List<Integer> ans) {
+        if (xor == 0) {
+            return;
+        }
+
+        dfs(xor >> 1, ans);
+        this.val ^= xor;
+        ans.add(this.val);
+        dfs(xor >> 1, ans);
+    }
+}
+```
