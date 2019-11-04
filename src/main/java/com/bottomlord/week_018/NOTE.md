@@ -150,3 +150,44 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+- 在动态规划的过程中，真正需要计算的是days中的元素代表的日期，所以不需要像解法一中一样碰到days中没有的日期就进行+1的递归，直接可以跳到下一个days的日期。
+- dp[i]表示从i天到最后旅行计划的最小花费
+- 状态转移方程是：dp(i) = min(dp(j1) + costs(0), dp(j7) + cost(1), dp(j30) + cost(2))
+    - dp(j1)代表最小的下标满足 days[j1] > days[i] + 1
+    - dp(j7)代表最小的下标满足 days[j7] > days[i] + 7
+    - dp(j30)代表最小的下标满足 days[j30] > days[i] + 30
+    - 也就意味着dp(i)是求三种(刚刚超过当前旅行日期的dp值 + 当前方案)的和中的最小值，我这个方案已经cover了这些需要旅行的日期了，那么下一个日期的最小值方案是多少？算一下，递归返回回来
+- 递归到days的最后一天，计算3中票价中的最低价，然后返回过程中再不断与前一个日期的dp进行比较，直到返回到第一个元素，货的最小值。
+### 代码
+```java
+class Solution {
+    public int mincostTickets(int[] days, int[] costs) {
+        int[] durations = new int[]{1, 7, 30};
+        return dp(0, days, costs, durations, new Integer[days.length]);
+    }
+
+    private int dp(int index, int[] days, int[] costs, int[] durations, Integer[] memo) {
+        if (index >= days.length) {
+            return 0;
+        }
+
+        if (memo[index] != null) {
+            return memo[index];
+        }
+        
+        int tmp = index, ans = Integer.MAX_VALUE;
+        for (int k = 0; k < 3; k++) {
+            while (tmp < days.length && days[tmp] < days[index] + durations[k]) {
+                tmp++;
+            }
+            
+            ans = Math.min(ans, dp(tmp, days, costs, durations, memo) + costs[k]);
+        }
+        
+        memo[index] = ans;
+        return ans;
+    }
+}
+```
