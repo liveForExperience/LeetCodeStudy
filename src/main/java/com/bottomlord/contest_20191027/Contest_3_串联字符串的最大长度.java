@@ -23,7 +23,6 @@ public class Contest_3_串联字符串的最大长度 {
         int ans = 0;
         for (int i = 0; i < list.size(); i++) {
             Set<Character> set = new HashSet<>(list.get(i));
-            int count = set.size();
             for (int j = 0; j < list.size(); j++) {
                 if (i == j) {
                     continue;
