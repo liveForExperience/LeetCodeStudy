@@ -397,3 +397,48 @@ class DSU {
     }
 }
 ```
+# LeetCode_609_在系统中查找重复文件
+## 题目
+
+## 解法
+### 思路
+- 遍历字符串数组，使用hash表记录路径、文件名和文件内容
+- hash表的key存储文件内容，value存储一个list，保存路径和文件名
+- 遍历结束后再遍历hash表的entrySet，如果value长度大于1，就把value内容放入结果list中
+### 代码
+```java
+class Solution {
+    public List<List<String>> findDuplicate(String[] paths) {
+        Map<String, List<String>> map = new HashMap<>();
+        for (String path : paths) {
+            String[] factors = path.split(" ");
+            String path1 = factors[0];
+            for (int i = 1; i < factors.length; i++) {
+                String factor = factors[i];
+                String file = factor.substring(0, factor.indexOf('('));
+                String content = factor.substring(factor.indexOf('('), factor.indexOf(')'));
+                String wholePath = path1 + "/" + file;
+
+                List<String> valueList = map.get(content);
+                if (valueList == null) {
+                    valueList = new ArrayList<>();
+                    valueList.add(wholePath);
+                } else {
+                    valueList.add(wholePath);
+                }
+                
+                map.put(content, valueList);
+            }
+        }
+        
+        List<List<String>> ans = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            if (entry.getValue().size() > 1) {
+                ans.add(entry.getValue());
+            }
+        }
+        
+        return ans;
+    }
+}
+```
