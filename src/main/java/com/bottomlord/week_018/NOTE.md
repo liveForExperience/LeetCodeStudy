@@ -568,5 +568,70 @@ class Solution {
     - 如果`cur`指向的元素为1，就`cur++`
 ### 代码
 ```java
+class Solution {
+        public void sortColors(int[] nums) {
+        int head = 0, cur = 0, tail = nums.length - 1;
+        while (cur <= tail) {
+            if (nums[cur] == 0) {
+                swap(nums, head, cur);
+                cur++;
+                head++;
+            } else if (nums[cur] == 2) {
+                swap(nums, tail, cur);
+                tail--;
+            } else {
+                cur++;   
+            }
+        }
+    }
+    
+    private void swap(int[] nums, int x, int y) {
+        int tmp = nums[x];
+        nums[x] = nums[y];
+        nums[y] = tmp;
+    }
+}
+```
+# LeetCode_86_分隔链表
+## 题目
+给定一个链表和一个特定值 x，对链表进行分隔，使得所有小于 x 的节点都在大于或等于 x 的节点之前。
 
+你应当保留两个分区中每个节点的初始相对位置。
+
+示例:
+```
+输入: head = 1->4->3->2->5->2, x = 3
+输出: 1->2->2->4->3->5
+```
+## 解法
+### 思路
+- 使用2个节点指针：
+    - 一个指向小于目标数的元素
+    - 一个指向大于目标数的元素
+- 遍历链表，根据与目标数的关系指向不同的指针
+- 最终将2个指针依次连接
+### 代码
+```java
+class Solution {
+    public ListNode partition(ListNode head, int x) {
+        ListNode lessStart = new ListNode(0), less = lessStart, moreStart = new ListNode(0), more = moreStart;
+        while (head != null) {
+            if (head.val < x) {
+                less.next = head;
+                less = less.next;
+            } else {
+                more.next = head;
+                more = more.next;
+            }
+            
+            head = head.next;
+        }
+        
+        more.next = null;
+        
+        less.next = moreStart.next;
+        
+        return lessStart.next;
+    }
+}
 ```
