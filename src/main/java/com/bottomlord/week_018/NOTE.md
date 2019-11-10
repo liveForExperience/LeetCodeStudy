@@ -635,3 +635,130 @@ class Solution {
     }
 }
 ```
+# LeetCode_1006_检查替换后的词是否有效
+## 题目
+给定有效字符串 "abc"。
+
+对于任何有效的字符串 V，我们可以将 V 分成两个部分 X 和 Y，使得 X + Y（X 与 Y 连接）等于 V。（X 或 Y 可以为空。）那么，X + "abc" + Y 也同样是有效的。
+
+例如，如果 S = "abc"，则有效字符串的示例是："abc"，"aabcbc"，"abcabc"，"abcabcababcc"。无效字符串的示例是："abccba"，"ab"，"cababc"，"bac"。
+
+如果给定字符串 S 有效，则返回 true；否则，返回 false。
+
+示例 1：
+```
+输入："aabcbc"
+输出：true
+解释：
+从有效字符串 "abc" 开始。
+然后我们可以在 "a" 和 "bc" 之间插入另一个 "abc"，产生 "a" + "abc" + "bc"，即 "aabcbc"。
+```
+示例 2：
+```
+输入："abcabcababcc"
+输出：true
+解释：
+"abcabcabc" 是有效的，它可以视作在原串后连续插入 "abc"。
+然后我们可以在最后一个字母之前插入 "abc"，产生 "abcabcab" + "abc" + "c"，即 "abcabcababcc"。
+```
+示例 3：
+```
+输入："abccba"
+输出：false
+```
+示例 4：
+```
+输入："cababc"
+输出：false
+```
+提示：
+```
+1 <= S.length <= 20000
+S[i] 为 'a'、'b'、或 'c'
+```
+## 解法
+### 思路
+通过不断删除`abc`，直到不能删除为止，如果是空字符串就是true，否则就是false
+### 代码
+```java
+class Solution {
+    public boolean isValid(String S) {
+        while (S.contains("abc")) {
+            S = S.replaceAll("abc", "");
+        }
+        return Objects.equals(S, "");
+    }
+}
+```
+## 解法二
+### 思路
+使用栈：
+- 遍历字符串，将非`c`字符放入栈中
+- 如果遇到的是`c`：
+    - 查看栈中是否已有2个元素，如果没有，就说明不是标准字符串，返回false
+    - 依次弹栈，如果不是`b`和`a`，就说明不是标准字符串，返回false
+    - 遍历结束后，如果栈大小不是0，说明整个字符串不是`x`+`abc`+`y`这样组合，返回false
+    - 其他情况返回true
+### 代码
+```java
+class Solution {
+    public boolean isValid(String S) {
+        char[] cs = S.toCharArray();
+        Stack<Character> stack = new Stack<>();
+        
+        for (char c : cs) {
+            if (c != 'c') {
+                stack.push(c);
+            } else {
+                if (stack.size() < 2) {
+                    return false;
+                } else {
+                    char c1 = stack.pop();
+                    if (c1 != 'b') {
+                        return false;
+                    }
+                    
+                    char c2 = stack.pop();
+                    if (c2 != 'a') {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return stack.size() == 0;
+    }
+}
+```
+## 优化代码
+### 思路
+使用数组代替栈，使用下标index来模拟栈的弹和压的动作
+### 代码
+```java
+class Solution {
+    public boolean isValid(String S) {
+        char[] cs = S.toCharArray(), stack = new char[S.length()];
+        int index = 0;
+        
+        for (char c : cs) {
+            if (c != 'c') {
+                stack[index++] = c;
+            } else {
+                if (index < 2) {
+                    return false;
+                } else {
+                    if (stack[--index] != 'b') {
+                        return false;
+                    }
+                    
+                    if (stack[--index] != 'a') {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return index == 0;
+    }
+}
+```
