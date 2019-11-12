@@ -38,9 +38,9 @@
         - 计算这个范围内的所有元素中的最大值，所以还需要再进行一层循环
         - 获得最大值后，存入`maxValue[i][j]`中
     - `dp[i][j]`：
-        - `dp[i][i]`：都赋值为0，因为存的是非叶子节点最大值乘积的总和，dp[i][i]代表了叶子节点，所以是0
-        - `dp[i][j]`：全部赋值为int的最大值
-- 状态转移方程：`dp[i][j] = dp[i][k] + dp[k + 1][j] + maxValue[i][k] * maxValue[k + 1][j]`
+        - `dp[i][i]`：都赋值为0，因为存的是非叶子节点最大值乘积的总和，`dp[i][i]`代表了叶子节点，所以是0
+        - `dp[i][j]`：全部赋值为int的最大值最为初始值
+- 状态转移方程：`dp[i][j] = dp[i][k] + dp[k + 1][j] + maxValue[i][k] * maxValue[k + 1][j]`(k代表了数组的中间值，也意味着左右子树的分隔)，左右子树的dp值代表左右子树的最小代价总和，再加上当前节点的值，它们是通过左右子树中的最大节点的和生成的。得到的结果和当前的节点的dp值进行比较，取最小值，这样不断更新。
 - 结果返回：`dp[0][len - 1]`
 ### 代码
 ```java
@@ -78,6 +78,60 @@ class Solution {
         }
 
         return dp[0][len - 1];
+    }
+}
+```
+## 解法二
+### 思路
+单调栈
+### 代码
+```java
+
+```
+# LeetCode_1026_节点与其祖先之间的最大差值
+## 题目
+给定二叉树的根节点 root，找出存在于不同节点 A 和 B 之间的最大值 V，其中 V = |A.val - B.val|，且 A 是 B 的祖先。
+
+（如果 A 的任何子节点之一为 B，或者 A 的任何子节点是 B 的祖先，那么我们认为 A 是 B 的祖先）
+
+示例：
+```
+输入：[8,3,10,1,6,null,14,null,null,4,7,13]
+输出：7
+解释： 
+我们有大量的节点与其祖先的差值，其中一些如下：
+|8 - 3| = 5
+|3 - 7| = 4
+|8 - 1| = 7
+|10 - 13| = 3
+在所有可能的差值中，最大值 7 由 |8 - 1| = 7 得出。
+```
+## 解法
+### 思路
+前序dfs遍历：
+- 和当前节点比较，计算路径中的最大和最小值
+- 计算差值，和对象属性进行比较，获得最大差值
+- 递归左右子树继续计算
+### 代码
+```java
+class Solution {
+    private int ans = 0;
+    public int maxAncestorDiff(TreeNode root) {
+        dfs(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return ans;
+    }
+    
+    private void dfs(TreeNode node, int max, int min) {
+        if (node == null) {
+            return;
+        }
+        
+        max = Math.max(max, node.val);
+        min = Math.min(min, node.val);
+        ans = Math.max(ans, max - min);
+        
+        dfs(node.left, max, min);
+        dfs(node.right, max, min);
     }
 }
 ```
