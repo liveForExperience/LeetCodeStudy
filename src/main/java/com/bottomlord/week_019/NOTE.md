@@ -135,3 +135,96 @@ class Solution {
     }
 }
 ```
+# LeetCode_756_金字塔转换矩阵
+## 题目
+现在，我们用一些方块来堆砌一个金字塔。 每个方块用仅包含一个字母的字符串表示，例如 “Z”。
+
+使用三元组表示金字塔的堆砌规则如下：
+
+(A, B, C) 表示，“C”为顶层方块，方块“A”、“B”分别作为方块“C”下一层的的左、右子块。当且仅当(A, B, C)是被允许的三元组，我们才可以将其堆砌上。
+
+初始时，给定金字塔的基层 bottom，用一个字符串表示。一个允许的三元组列表 allowed，每个三元组用一个长度为 3 的字符串表示。
+
+如果可以由基层一直堆到塔尖返回true，否则返回false。
+
+示例 1:
+```
+输入: bottom = "XYZ", allowed = ["XYD", "YZE", "DEA", "FFF"]
+输出: true
+解析:
+可以堆砌成这样的金字塔:
+    A
+   / \
+  D   E
+ / \ / \
+X   Y   Z
+
+因为符合('X', 'Y', 'D'), ('Y', 'Z', 'E') 和 ('D', 'E', 'A') 三种规则。
+```
+示例 2:
+```
+输入: bottom = "XXYX", allowed = ["XXX", "XXY", "XYX", "XYY", "YXZ"]
+输出: false
+解析:
+无法一直堆到塔尖。
+注意, 允许存在三元组(A, B, C)和 (A, B, D) ，其中 C != D.
+```
+注意：
+```
+bottom 的长度范围在 [2, 8]。
+allowed 的长度范围在[0, 200]。
+方块的标记字母范围为{'A', 'B', 'C', 'D', 'E', 'F', 'G'}。
+```
+## 解法
+### 思路
+递归回溯：
+- 遍历`allowed`生成map：
+    - key为字符串的前两个字符拼接
+    - value存储字符串的最后一个字符，通过位来存储7个字符，通过相加来代表有几个标记字母
+- 回溯：
+    - 参数：
+        - 生成的map，用来通过每一层的每两个字符组成的前缀，获取对应的value
+        - next：代表通过map获取的value组成的下一层的字符串
+        - cur：代表当前层的字符串，起始是bottom
+        - index：代表坐标，通过坐标来判断当前层的两两组合是否已经遍历完，同时也可以判断如果`index == cur.len - 1`，说明递归可以结束了
+### 代码
+```java
+class Solution {
+    private String str = "ABCDEFG";
+    private int[] nums = {1,2,4,8,16,32,64};
+    public boolean pyramidTransition(String bottom, List<String> allowed) {
+        Map<String, Integer> map = new HashMap<>();
+        for (String str : allowed) {
+            int num = nums[str.charAt(2) - 'A'];
+            String key = str.substring(0, 2);
+            map.put(key, map.getOrDefault(key, 0) + num);
+        }
+
+        return backTrace(map, "", bottom, 0);
+    }
+
+    private boolean backTrace(Map<String, Integer> map, String next, String cur, int index) {
+        if (index == cur.length() - 1) {
+            return cur.length() == 1 || backTrace(map, "", next, 0);
+        }
+
+        String key = cur.substring(index, index + 2);
+        if (!map.containsKey(key)) {
+            return false;
+        }
+
+        int value = map.get(key);
+        for (int i = 0; i < 7 ; i++) {
+            if ((value >> i & 1) == 1) {
+                next += str.charAt(i);
+                boolean flag = backTrace(map, next, cur, index + 1);
+                if (flag) {
+                    return true;
+                }
+                next = next.substring(0, next.length() - 1);
+            }
+        }
+        return false;
+    }
+}
+```
