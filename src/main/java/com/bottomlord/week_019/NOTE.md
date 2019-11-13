@@ -228,3 +228,110 @@ class Solution {
     }
 }
 ```
+# LeetCode_399_除法求值
+## 题目
+给出方程式 A / B = k, 其中 A 和 B 均为代表字符串的变量， k 是一个浮点型数字。根据已知方程式求解问题，并返回计算结果。如果结果不存在，则返回 -1.0。
+
+示例 :
+```
+给定 a / b = 2.0, b / c = 3.0
+问题: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? 
+返回 [6.0, 0.5, -1.0, 1.0, -1.0 ]
+```
+输入为: vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries(方程式，方程式结果，问题方程式)， 其中 equations.size() == values.size()，即方程式的长度与方程式结果长度相等（程式与结果一一对应），并且结果值均为正数。以上为方程式的描述。 返回vector<double>类型。
+
+基于上述例子，输入如下：
+```
+equations(方程式) = [ ["a", "b"], ["b", "c"] ],
+values(方程式结果) = [2.0, 3.0],
+queries(问题方程式) = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ]. 
+输入总是有效的。你可以假设除法运算中不会出现除数为0的情况，且不存在任何矛盾的结果。
+```
+## 解法
+### 思路
+- 构建一个有向图
+- 比值就是节点之间的权重，需要注意的是来回的权重是不同的，互为倒数。
+- 使用一个`Map<String, Map<String, double>>`来构建这个有向图
+- 对queries中的元素进行遍历，查找在图中是否包含两个节点，如果不包含，这个元素对应的结果就是`-0.1`
+- 之后进行dfs：
+    - 参数：
+        - 被除数：origin
+        - 除数：target
+        - 图：map
+        - memo：set
+    - 退出条件：origin == target，说明找到了最后的节点，返回权重1
+    - 过程：
+        - 将origin放入set中，代表当前节点已经访问过
+        - 从map中找到`origin`的相邻节点进行遍历
+        - 如果set中存在，就跳过
+        - 否则就递归到下一个节点
+        - 如果返回不是`-1`，代表递归结果找到了节点，就把当前到下一个节点的权重值与返回值相乘，返回到上一个节点去
+        - 否则说明这个节点的相邻节点找不到目标节点，返回`-1`
+### 代码
+```java
+class Solution {
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        Map<String, Map<String, Double>> map = new HashMap<>();
+        for (int i = 0; i < equations.size(); i++) {
+            List<String> list = equations.get(i);
+            String origin = list.get(0);
+            String target = list.get(1);
+
+            Map<String, Double> innerMapA = map.get(origin);
+            if (innerMapA == null) {
+                innerMapA = new HashMap<>();
+                innerMapA.put(target, values[i]);
+                map.put(origin, innerMapA);
+            } else {
+                innerMapA.put(target, values[i]);
+            }
+
+            Map<String, Double> innerMapB = map.get(target);
+            if (innerMapB == null) {
+                innerMapB = new HashMap<>();
+                innerMapB.put(origin, 1 / values[i]);
+                map.put(target, innerMapB);
+            } else {
+                innerMapB.put(origin, 1 / values[i]);
+            }
+        }
+
+        double[] ans = new double[queries.size()];
+        for (int i = 0; i < queries.size(); i++) {
+            List<String> query = queries.get(i);
+            String origin = query.get(0);
+            String target = query.get(1);
+
+            if (!map.containsKey(origin) || !map.containsKey(target)) {
+                ans[i] = -1.0;
+                continue;
+            }
+
+            ans[i] = dfs(origin, target, map, new HashSet<>());
+        }
+        return ans;
+    }
+
+    private double dfs(String origin, String target, Map<String, Map<String, Double>> map, Set<String> set) {
+        if (Objects.equals(origin, target)) {
+            return 1.0;
+        }
+
+        set.add(origin);
+
+        Map<String, Double> innerMap = map.get(origin);
+        for (Map.Entry<String, Double> entry : innerMap.entrySet()) {
+            if (set.contains(entry.getKey())) {
+                continue;
+            }
+
+            double value = dfs(entry.getKey(), target, map, set);
+            if (value != -1.0) {
+                return value * entry.getValue();
+            }
+        }
+
+        return -1.0;
+    }
+}
+```
