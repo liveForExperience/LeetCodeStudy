@@ -335,3 +335,82 @@ class Solution {
     }
 }
 ```
+# LeetCode_343_整数拆分
+## 题目
+给定一个正整数 n，将其拆分为至少两个正整数的和，并使这些整数的乘积最大化。 返回你可以获得的最大乘积。
+
+示例 1:
+```
+输入: 2
+输出: 1
+解释: 2 = 1 + 1, 1 × 1 = 1。
+```
+示例 2:
+```
+输入: 10
+输出: 36
+解释: 10 = 3 + 3 + 4, 3 × 3 × 4 = 36。
+说明: 你可以假设 n 不小于 2 且不大于 58。
+```
+## 解法
+### 思路
+记忆化递归：
+- 退出条件：`n == 2`，代表值再分都是等于1，返回1
+- 过程：
+    - 从缓存中查找是否有相同的n
+    - 遍历所有拆分的可能值，
+    - 定义最大值max
+    - 和被减数n相减，获得差，继续递归
+    - 返回值和当前的拆分值相乘，乘积和最大值比较，取相对大值max
+    - 记忆最大值并返回最大值max
+- 要注意：下钻后，值本身不拆分也可以视为是一个解，所以返回时需要和`i * (n - i)`本身进行比较来比大小
+### 代码
+```java
+class Solution {
+    public int integerBreak(int n) {
+        return rescue(n, new HashMap<>());
+    }
+    
+    private int rescue(int n, Map<Integer, Integer> memo) {
+        if (n <= 1) {
+            return n;
+        }
+
+        if (memo.containsKey(n)) {
+            return memo.get(n);
+        }
+
+        int max = 0;
+        for (int i  = 1; i < n; i++) {
+            max = Math.max(max, Math.max(i * rescue(n - i, memo), i * (n - i)));
+        }
+        
+        memo.put(n, max);
+        return max;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- dp[i]：数字为i时可以得到的题目要求的最大值
+- base case：dp[2] = 1，根据题意可得2被拆分后为`1 * 1`
+- 状态转移方程：dp[i] = max(dp[i], max(k * dp[i - k], k * (i - k)))
+- 返回：dp[n]
+### 代码
+```java
+class Solution {
+    public int integerBreak(int n) {
+        int[] dp = new int[n + 1];
+        dp[2] = 1;
+        
+        for (int i = 3; i <= n; i++) {
+            for (int j = 1; j < i; j++) {
+                dp[i] = Math.max(dp[i], Math.max(j * dp[i - j], j * (i - j)));
+            }
+        }
+        
+        return dp[n];
+    }
+}
+```
