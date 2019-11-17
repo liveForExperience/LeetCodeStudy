@@ -567,3 +567,109 @@ class Solution {
     }
 }
 ```
+# LeetCode_553_最优除法
+## 题目
+给定一组正整数，相邻的整数之间将会进行浮点除法操作。例如， [2,3,4] -> 2 / 3 / 4 。
+
+但是，你可以在任意位置添加任意数目的括号，来改变算数的优先级。你需要找出怎么添加括号，才能得到最大的结果，并且返回相应的字符串格式的表达式。你的表达式不应该含有冗余的括号。
+
+示例：
+```
+输入: [1000,100,10,2]
+输出: "1000/(100/10/2)"
+解释:
+1000/(100/10/2) = 1000/((100/10)/2) = 200
+但是，以下加粗的括号 "1000/((100/10)/2)" 是冗余的，
+因为他们并不影响操作的优先级，所以你需要返回 "1000/(100/10/2)"。
+```
+其他用例:
+```
+1000/(100/10)/2 = 50
+1000/(100/(10/2)) = 50
+1000/100/10/2 = 0.5
+1000/100/(10/2) = 2
+```
+说明:
+```
+输入数组的长度在 [1, 10] 之间。
+数组中每个元素的大小都在 [2, 1000] 之间。
+每个测试用例只有一个最优除法解。
+```
+## 解法
+### 思路
+记忆化搜索：
+- 将数组分成左右两部分，求得符合题意的最大值的过程就是左边为最大值，右边为最小值
+- 通过递归的方式求解左右部分的最优解
+- 定义一个类`R`用来封装最大值`max`，最大值的字符串`maxStr`，最小值`min`，最小值字符串`minStr`，并用来返回最为递归的返回值
+- 参数：
+    - 起始坐标：`start`
+    - 结束坐标：`end`
+    - 数组：`nums`
+    - 记忆缓存：`memo[][]`
+- 递归：
+    - 退出条件：
+        - `start`和`end`相等，说明当前元素只有一个，不能分为两部分，此时就返回一个R
+        - `memo`中有值就直接返回
+    - 过程:
+        - 初始化R，并初始化最大值`max`和最小值`min`
+        - 从`start`开始遍历，将数组分成`[start, i]`和`[i + 1, end]`，递归求解左边部分`left`和右边部分`right`的R值
+        - 如果`left.max / right.min`的小于`R.min`，或者大于的最大值`R.max`，就更新R值
+        - 更新过程中，字符串需要判断`start`和`end`的是否差1，也就是是否只有2个元素，如果是，就不需要在right部分增加括号
+        - 循环结束后，返回R
+- 返回：R的maxStr
+### 代码
+```java
+class Solution {
+    public String optimalDivision(int[] nums) {
+        R[][] memo = new R[nums.length + 1][nums.length + 1];
+        R r = recurse(nums, 0, nums.length - 1, memo);
+        return r.maxStr;
+    }
+
+    private R recurse(int[] nums, int start, int end, R[][] memo) {
+        if (memo[start][end] != null) {
+            return memo[start][end];
+        }
+
+        if (start == end) {
+            R r = new R();
+            r.max = nums[start];
+            r.min = nums[start];
+            r.maxStr = "" + nums[start];
+            r.minStr = "" + nums[start];
+            memo[start][end] = r;
+            return r;
+        }
+
+        R r = new R();
+        r.max = Double.MIN_VALUE;
+        r.min = Double.MAX_VALUE;
+        r.maxStr = r.minStr = "";
+
+        for (int i = start; i < end; i++) {
+            R left = recurse(nums, start, i, memo);
+            R right = recurse(nums, i + 1, end, memo);
+
+            if (r.max < (left.max / right.min)) {
+                r.max = left.max / right.min;
+                r.maxStr = left.maxStr + "/" + (i + 1 != end ? "(" : "") + right.minStr + (i + 1 != end ? ")" : "");
+            }
+
+            if (r.min > (left.min / right.max)) {
+                r.min = left.min / right.max;
+                r.minStr = left.minStr + "/" + (i + 1 != end ? "(" : "") + right.maxStr + (i + 1 != end ? ")" : "");
+            }
+        }
+
+        memo[start][end] = r;
+        return r;
+    }
+
+    private class R {
+        private double max;
+        private double min;
+        private String maxStr;
+        private String minStr;
+    }
+}
+```
