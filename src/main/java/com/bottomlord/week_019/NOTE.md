@@ -498,3 +498,72 @@ class Solution {
     }
 }
 ```
+# LeetCode_143_重排链表
+## 题目
+```
+给定一个单链表 L：L0→L1→…→Ln-1→Ln ，
+将其重新排列后变为： L0→Ln→L1→Ln-1→L2→Ln-2→…
+```
+你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+
+示例 1:
+```
+给定链表 1->2->3->4, 重新排列为 1->4->2->3.
+```
+示例 2:
+```
+给定链表 1->2->3->4->5, 重新排列为 1->5->2->4->3.
+```
+## 解法
+### 思路
+- 参数：
+    - `pre`：后半部分头节点的前一个节点
+    - `fast`：快指针
+    - `slow`：慢指针
+- 过程：
+    - 快慢指针找到链表中点，将`secondHead`置于链表尾部
+    - 将链表后半部分倒置
+    - 遍历两个链表，依次穿插着连接:
+        - 循环过程中保存两个链表节点的next副本，用来迭代使用
+        - 同时将两个部分的当前节点间隔着串在一起
+        - 退出条件是，第一部分的节点为空
+### 代码
+```java
+class Solution {
+    public void reorderList(ListNode head) {
+        ListNode slow = head, fast = head, P = null;
+
+        while (fast != null && fast.next != null) {
+            P = slow;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        if (slow != null && P != null) {
+            P.next = null;
+            ListNode pre = null;
+
+            while (slow != null) {
+                ListNode next = slow.next;
+                slow.next = pre;
+                pre = slow;
+                slow = next;
+            }
+
+            ListNode start = head;
+            while (start != null) {
+                ListNode firstNext = start.next;
+                ListNode secondNext = pre.next;
+
+                start.next = pre;
+                if (firstNext != null) {
+                    pre.next = firstNext;
+                }
+
+                start = firstNext;
+                pre = secondNext;
+            }
+        }
+    }
+}
+```
