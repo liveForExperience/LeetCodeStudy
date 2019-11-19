@@ -140,3 +140,108 @@ class Solution {
     }
 }
 ```
+# LeetCode_648_单词替换
+## 题目
+在英语中，我们有一个叫做 词根(root)的概念，它可以跟着其他一些词组成另一个较长的单词——我们称这个词为 继承词(successor)。例如，词根an，跟随着单词 other(其他)，可以形成新的单词 another(另一个)。
+
+现在，给定一个由许多词根组成的词典和一个句子。你需要将句子中的所有继承词用词根替换掉。如果继承词有许多可以形成它的词根，则用最短的词根替换它。
+
+你需要输出替换之后的句子。
+
+示例 1:
+```
+输入: dict(词典) = ["cat", "bat", "rat"]
+sentence(句子) = "the cattle was rattled by the battery"
+输出: "the cat was rat by the bat"
+```
+注:
+```
+输入只包含小写字母。
+1 <= 字典单词数 <=1000
+1 <=  句中词语数 <= 1000
+1 <= 词根长度 <= 100
+1 <= 句中词语长度 <= 1000
+```
+## 解法
+### 思路
+- 生成字典树：
+    - 结构：
+        - 节点指针存储字典中字符的所有可能的后一个字符
+        - 节点若为dict值的最后一个字符，存整个dict元素值
+    - 插入：
+        - 将当前元素按字符依次放入字典树中
+    - 查找：
+        - 遍历单词字符
+        - 从root节点开始i，如果next中包含该字符，就继续搜索，直到搜索到的节点的值非空
+        - 否则如果next中不包含字符就返回原字符串
+- 过程：
+    - 使用两个指针，用来确定`sentences`中每个单词的头尾坐标
+    - 使用字典出查询并返回符合题目要求的字符
+    - 将单子和空格`append`进StringBuilder
+    - 返回结果，注意取出左后一个空格
+### 代码
+```java
+class Solution {
+    private class TrieNode {
+        private String val;
+        private Map<Character, TrieNode> next;
+
+        public TrieNode() {
+            next = new HashMap<>();
+        }
+    }
+
+    private TrieNode root = new TrieNode();
+
+    private void insert(String str) {
+        TrieNode node = root;
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (!node.next.containsKey(c)) {
+                node.next.put(c, new TrieNode());
+            }
+            node = node.next.get(c);
+        }
+        node.val = str;
+    }
+
+    private String get(String word) {
+        TrieNode node = root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+
+            if (node.val != null) {
+                return node.val;
+            }
+
+            if (node.next.containsKey(c)) {
+                node = node.next.get(c);
+            } else {
+                return word;
+            }
+        }
+        
+        return word;
+    }
+
+    public String replaceWords(List<String> dict, String sentence) {
+        for (String str : dict) {
+            insert(str);
+        }
+        
+        int i = 0, j = 0, len = sentence.length();
+        StringBuilder sb = new StringBuilder();
+        while (j < len) {
+            while (j < len && sentence.charAt(j) != ' ') {
+                j++;
+            }
+            
+            sb.append(get(sentence.substring(i, j))).append(" ");
+            
+            i = ++j;
+        }
+        
+        return sb.toString().substring(0, sb.length() - 1);
+    }
+}
+```
