@@ -285,5 +285,77 @@ arr[i]是 [0, 1, ..., arr.length - 1]的一种排列。
 - 结果：返回`count`
 ### 代码
 ```java
+class Solution {
+    public int maxChunksToSorted(int[] arr) {
+        int count = 0, max = 0;
+        for (int i = 0; i < arr.length; i++) {
+            max = Math.max(max, arr[i]);
+            if (max == i) {
+                count++;
+            }
+        }
+        return count;
+    }
+}
+```
+# LeetCode_森林中的兔子
+## 题目
+森林中，每个兔子都有颜色。其中一些兔子（可能是全部）告诉你还有多少其他的兔子和自己有相同的颜色。我们将这些回答放在 answers 数组里。
 
+返回森林中兔子的最少数量。
+
+示例:
+```
+输入: answers = [1, 1, 2]
+输出: 5
+解释:
+两只回答了 "1" 的兔子可能有相同的颜色，设为红色。
+之后回答了 "2" 的兔子不会是红色，否则他们的回答会相互矛盾。
+设回答了 "2" 的兔子为蓝色。
+此外，森林中还应有另外 2 只蓝色兔子的回答没有包含在数组中。
+因此森林中兔子的最少数量是 5: 3 只回答的和 2 只没有回答的。
+
+输入: answers = [10, 10, 10]
+输出: 11
+
+输入: answers = []
+输出: 0
+```
+说明:
+```
+answers 的长度最大为1000。
+answers[i] 是在 [0, 999] 范围内的整数。
+```
+## 解法
+### 思路
+- 如果元素是0，代表没有其他颜色和自己一样，ans++
+- 如果元素是1，代表有一只兔子和自己颜色一样，所以2个元素1的值为1组，ans++
+- 遍历数组，使用map累计所有元素的出现次数
+- 算出当前元素所出现的合理的组数，代表如果元素key的val大于了key + 1，代表有另外一组别的颜色也是相同个数的兔子，需要把那部分的值补全
+    - 如果val可以被`key + 1`整除，则直接累加val，代表不需要补充
+    - 如果不能被整除，`ans = val + key + 1 - val % (key + 1)`
+- 累加后得到结果
+### 代码
+```java
+class Solution {
+    public int numRabbits(int[] answers) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int ans = 0;
+        for (int answer : answers) {
+            map.put(answer, map.getOrDefault(answer, 0) + 1);
+        }
+        
+        for (int key : map.keySet()) {
+            if (key == 0) {
+                ans += map.get(key);
+            } else {
+                int val = map.get(key);
+                int num = val % (key + 1);
+                ans += num == 0 ? val : val + key + 1 - num;
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
