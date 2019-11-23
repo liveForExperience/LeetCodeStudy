@@ -359,3 +359,33 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 将数组元素排序
+- 使用指针来记录当前元素的下标
+- 遍历过程中：
+    - 将当前元素累加到结果中
+    - 然后开始嵌套循环，目的是将当前元素值num + 1个的元素过滤掉，这些被过滤掉的元素代表是相同颜色的兔子
+    - 嵌套循环的退出条件是：
+        - 超出数组边界
+        - 超出num+ 1的值
+        - 元素值变了
+- 最后返回结果
+### 代码
+```java
+class Solution {
+    public int numRabbits(int[] answers) {
+        Arrays.sort(answers);
+        int ans = 0;
+        for (int i = 0 ; i < answers.length; i++) {
+            int num = answers[i], start = i;
+            ans += num + 1;
+            while (i < answers.length && answers[i] == num && i - start < num + 1) {
+                i++;
+            }
+            i--;
+        }
+        return ans;
+    }
+}
+```
