@@ -634,3 +634,27 @@ class Solution {
     }
 }
 ```
+## 解法三
+### 思路
+观察解法二可得，如果嵌套过程中出现重复元素，那么必定是这个嵌套的所有可能被循环完了，而每一个不同的循环个数结果都代表一组完全不同的元素组合。所以可以直接在`nums`数组上进行修改，将访问过的数字转换成一个题目范围外的数字，即可起到类似解法二`visited`类似的作用。
+### 代码
+```java
+class Solution {
+    public int arrayNesting(int[] nums) {
+        int ans = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != Integer.MAX_VALUE) {
+                int count = 0, num = nums[i];
+                while (nums[num] != Integer.MAX_VALUE) {
+                    int index = num;
+                    num = nums[num];
+                    count++;
+                    nums[index] = Integer.MAX_VALUE;
+                }
+                ans = Math.max(ans, count);
+            }
+        }
+        return ans;
+    }
+}
+```
