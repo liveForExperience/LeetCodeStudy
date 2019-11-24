@@ -441,3 +441,118 @@ class Solution {
     }
 }
 ```
+# LeetCode_655_输出二叉树
+## 题目
+在一个 m*n 的二维字符串数组中输出二叉树，并遵守以下规则：
+```
+行数 m 应当等于给定二叉树的高度。
+列数 n 应当总是奇数。
+根节点的值（以字符串格式给出）应当放在可放置的第一行正中间。根节点所在的行与列会将剩余空间划分为两部分（左下部分和右下部分）。你应该将左子树输出在左下部分，右子树输出在右下部分。左下和右下部分应当有相同的大小。即使一个子树为空而另一个非空，你不需要为空的子树输出任何东西，但仍需要为另一个子树留出足够的空间。然而，如果两个子树都为空则不需要为它们留出任何空间。
+每个未使用的空间应包含一个空的字符串""。
+使用相同的规则输出子树。
+```
+示例 1:
+```
+输入:
+     1
+    /
+   2
+输出:
+[["", "1", ""],
+ ["2", "", ""]]
+```
+示例 2:
+```
+输入:
+     1
+    / \
+   2   3
+    \
+     4
+输出:
+[["", "", "", "1", "", "", ""],
+ ["", "2", "", "", "", "3", ""],
+ ["", "", "4", "", "", "", ""]]
+```
+示例 3:
+```
+输入:
+      1
+     / \
+    2   5
+   / 
+  3 
+ / 
+4 
+输出:
+[["",  "",  "", "",  "", "", "", "1", "",  "",  "",  "",  "", "", ""]
+ ["",  "",  "", "2", "", "", "", "",  "",  "",  "",  "5", "", "", ""]
+ ["",  "3", "", "",  "", "", "", "",  "",  "",  "",  "",  "", "", ""]
+ ["4", "",  "", "",  "", "", "", "",  "",  "",  "",  "",  "", "", ""]]
+注意: 二叉树的高度在范围 [1, 10] 中。
+```
+## 解法
+### 思路
+- 获取树的深度`depth`
+- 根据深度获得数组每一行的列数`2 ^ depth + 1`
+- 根据列数生成整个矩阵数组，使用空字符串填充
+- 递归：
+    - 参数：
+        - `start`：起始坐标
+        - `end`：终止坐标
+        - `depth`：深度
+    - 退出条件：
+        - 节点为空
+        - `start > end`
+    - 过程：
+        - 根据`start`和`end`计算插入的中点
+        - 循环当前矩阵行的列，遇到中点时将当前节点值替换
+        - 递归下一层：
+            - 左：`start = start`，`end = mid - 1`
+            - 右：`start = mid + 1`，`end = end`
+- 返回矩阵 
+### 代码
+```java
+class Solution {
+    public List<List<String>> printTree(TreeNode root) {
+        int depth = getDepth(root), len = 0, count = depth;
+
+        while (count-- > 0) {
+            len = len * 2 + 1;
+        }
+        
+        List<List<String>> ans = new ArrayList<>();
+        for (int i = 0; i < depth; i++) {
+            List<String> list = new ArrayList<>(len);
+            for (int j = 0; j < len; j++) {
+                list.add("");
+            }
+            ans.add(list);
+        }
+
+        dfs(root, 0, len - 1, 0, ans);
+    
+        return ans;
+    }
+
+    private int getDepth(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+
+        return Math.max(getDepth(node.left), getDepth(node.right)) + 1;
+    }
+
+    private void dfs(TreeNode node, int start, int end, int depth, List<List<String>> ans) {
+        if (node == null || start > end) {
+            return;
+        }
+        
+        int mid = start + (end - start) / 2;
+        ans.get(depth).set(mid, Integer.toString(node.val));
+        
+        dfs(node.left, start, mid - 1, depth + 1, ans);
+        dfs(node.right, mid + 1, end, depth + 1, ans);
+    }
+}
+```
