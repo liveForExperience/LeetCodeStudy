@@ -597,11 +597,11 @@ class Solution {
     public int arrayNesting(int[] nums) {
         int ans = 0;
         for (int i = 0; i < nums.length; i++) {
-            int count = 0, start = nums[i];
+            int count = 0, num = nums[i];
             do {
-                start = nums[start];
+                num = nums[num];
                 count++;
-            } while (start != nums[i]);
+            } while (num != nums[i]);
             ans = Math.max(ans, count);
         }
         return ans;
@@ -610,8 +610,27 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-
+在解法一的基础上，如果外层循环的元素，在之前的循环的过程中已经被访问过，那么它一定不会得到最长的解，所以记录这些被访问过的元素就可以减少重复的访问操作。
 ### 代码
 ```java
-
+class Solution {
+    public int arrayNesting(int[] nums) {
+        boolean[] visited = new boolean[nums.length + 1];
+        int ans = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (!visited[i]) {
+                int count = 0, num = nums[i];
+                do {
+                    num = nums[num];
+                    count++;
+                    visited[num] = true;
+                } while (num != nums[i]);
+                
+                ans = Math.max(ans, count);
+            }
+        }
+        
+        return ans;
+    }
+}
 ```

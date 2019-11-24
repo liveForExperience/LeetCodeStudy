@@ -4,11 +4,11 @@ public class LeetCode_565_1_数组嵌套 {
     public int arrayNesting(int[] nums) {
         int ans = 0;
         for (int i = 0; i < nums.length; i++) {
-            int count = 0, start = nums[i];
+            int count = 0, num = nums[i];
             do {
-                start = nums[start];
+                num = nums[num];
                 count++;
-            } while (start != nums[i]);
+            } while (num != nums[i]);
             ans = Math.max(ans, count);
         }
         return ans;
