@@ -23,7 +23,7 @@
 |18|2019/11/4 - 2019/11/10| [10](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_018) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_018/NOTE.md) | - | - |:open_mouth:|671|
 |19|2019/11/11 - 2019/11/17| [8](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_019) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_019/NOTE.md) | - | - |:blush:|657|
 |20|2019/11/18 - 2019/11/25| [8](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_020) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_020/NOTE.md) | - | - |:satisfied:|653|
-|21|2019/11/26 - 2019/12/1| [1](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_021) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_021/NOTE.md) | - | - |:satisfied:|653|
+|21|2019/11/26 - 2019/12/1| [2](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_021) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_021/NOTE.md) | - | - |:satisfied:|653|
 ## 竞赛
 <table>
     <tr align="center">
