@@ -113,3 +113,49 @@ class Solution {
     }
 }
 ```
+# LeetCode_912_排序数组
+## 题目
+给定一个整数数组`nums`，将该数组升序排列。
+
+示例 1：
+```
+输入：[5,2,3,1]
+输出：[1,2,3,5]
+```
+示例 2：
+```
+输入：[5,1,1,2,0,0]
+输出：[0,0,1,1,2,5]
+```
+提示：
+```
+1 <= A.length <= 10000
+-50000 <= A[i] <= 50000
+```
+## 解法
+### 思路
+使用stream API
+### 代码
+```java
+class Solution {
+    public List<Integer> sortArray(int[] nums) {
+        return Arrays.stream(nums).boxed().sorted().collect(Collectors.toList());
+    }
+}
+```
+## 解法二
+### 思路
+使用Arrays API
+### 代码
+```java
+class Solution {
+    public List<Integer> sortArray(int[] nums) {
+        Arrays.sort(nums);
+        List<Integer> list = new ArrayList<>();
+        for (int num : nums) {
+            list.add(num);
+        }
+        return list;
+    }
+}
+```
