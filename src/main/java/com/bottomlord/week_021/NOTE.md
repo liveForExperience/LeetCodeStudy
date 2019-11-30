@@ -498,3 +498,35 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+- 使用int替换String作为返回值，所以退出条件就使用hashcode
+- 因为返回后都要put一个`count + 1`，所以就先先put再判断是否`count == 1`
+- 这样也就不需要再同时判断`contains`和`count == 1`了
+### 代码
+```java
+class Solution {
+    public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
+        List<TreeNode> ans = new ArrayList<>();
+        dfs(root, new HashMap<>(), ans);
+        return ans;
+    }
+
+    private int dfs(TreeNode node, Map<Integer, Integer> map, List<TreeNode> ans) {
+        if (node == null) {
+            return "#".hashCode();
+        }
+
+        String key = node.val + "," + dfs(node.left, map, ans) + "," + dfs(node.right, map, ans);
+
+        int uid = key.hashCode();
+        map.put(uid, map.getOrDefault(uid, 0) + 1);
+        
+        if (map.get(uid) == 2) {
+            ans.add(node);
+        }
+        
+        return uid;
+    }
+}
+```
