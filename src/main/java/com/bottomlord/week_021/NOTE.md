@@ -397,3 +397,43 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+在解法一的基础上，将链表直接截断，而不是重新创建链表。
+- 注意在内层循环时，因为没有使用头指针，所以每一段的循环次数需要-1
+### 代码
+```java
+class Solution {
+    public ListNode[] splitListToParts(ListNode root, int k) {
+        int count = 0;
+        ListNode node = root;
+        while (node != null) {
+            count++;
+            node = node.next;
+        }
+        
+        int len = count / k, left = count % k;
+        ListNode[] ans = new ListNode[k];
+        
+        node = root;
+        for (int i = 0; i < k; i++) {
+            ListNode head = node;
+            for (int j = 0; j < len + (i < left ? 0 : -1); j++) {
+                if (node != null) {
+                    node = node.next;
+                }
+            }
+            
+            if (node != null) {
+                ListNode pre = node;
+                node = node.next;
+                pre.next = null;
+            }
+            
+            ans[i] = head;
+        }
+        
+        return ans;
+    }
+}
+```
