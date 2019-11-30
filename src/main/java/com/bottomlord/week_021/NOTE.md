@@ -437,3 +437,64 @@ class Solution {
     }
 }
 ```
+# LeetCode_652_寻找重复的子树
+## 题目
+给定一棵二叉树，返回所有重复的子树。对于同一类的重复子树，你只需要返回其中任意一棵的根结点即可。
+
+两棵树重复是指它们具有相同的结构以及相同的结点值。
+
+示例 1：
+```
+        1
+       / \
+      2   3
+     /   / \
+    4   2   4
+       /
+      4
+```
+下面是两个重复的子树：
+```
+      2
+     /
+    4
+```
+和
+```
+    4
+```
+因此，你需要以列表的形式返回上述重复子树的根结点。
+## 解法
+### 思路
+- 参数：
+    - `map`：保存路径中的节点的序列化值
+    - `ans`：结果list
+- dfs递归求得每一个节点及子树的序列化值
+- 在返回过程中
+    - 查看`map`中是否已经存在，且是第一次发现重复，就将节点放入`ans`
+    - 记录当前得到的序列化值
+### 代码
+```java
+class Solution {
+    public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
+        List<TreeNode> ans = new ArrayList<>();
+        dfs(root, new HashMap<>(), ans);
+        return ans;
+    }
+
+    private String dfs(TreeNode node, Map<String, Integer> map, List<TreeNode> ans) {
+        if (node == null) {
+            return "";
+        }
+        
+        String key = node.val + "," + dfs(node.left, map, ans) + "," + dfs(node.right, map, ans);
+        
+        if (map.containsKey(key) && map.get(key) == 1) {
+            ans.add(node);
+        }
+        
+        map.put(key, map.getOrDefault(key, 0) + 1);
+        return key;
+    }
+}
+```
