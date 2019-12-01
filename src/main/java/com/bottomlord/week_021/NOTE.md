@@ -590,3 +590,42 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 解法一是O(N^2)的时间复杂度，可以优化
+- 先循环一次`timePoints`，使用一个数组`arr`暂存字符串对应的数值，如果发现数组中有对应的值，说明有重复，直接返回0
+- 循环`arr`，计算非0的两个数字之间的差值，并暂存最小值
+- 因为时间是循环的，计算`数组最小的值 + 1440 - 数组最后一个值`，再判断最小值
+### 代码
+```java
+class Solution {
+    public int findMinDifference(List<String> timePoints) {
+        int[] arr = new int[1441];
+        for (String time : timePoints) {
+            String[] times = time.split(":");
+            int num = Integer.parseInt(times[0]) * 60 + Integer.parseInt(times[1]);
+            if (arr[num] != 0) {
+                return 0;
+            }
+
+            arr[num]++;
+        }
+
+        int early = -1, first = -1, second, min = 1442;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] != 0) {
+                if (first == -1) {
+                    early = i;
+                    first = i;
+                } else {
+                    second = i;
+                    min = Math.min(min, second - first);
+                    first = i;
+                }
+            }
+        }
+        
+        return Math.min(min, early + 1440 - first);
+    }
+}
+```
