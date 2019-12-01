@@ -530,3 +530,63 @@ class Solution {
     }
 }
 ```
+# LeetCode_539_最小时间差
+## 题目
+给定一个 24 小时制（小时:分钟）的时间列表，找出列表中任意两个时间的最小时间差并已分钟数表示。
+
+示例 1：
+```
+输入: ["23:59","00:00"]
+输出: 1
+```
+备注:
+```
+列表中时间数在 2~20000 之间。
+每个时间取值在 00:00~23:59 之间。
+```
+## 解法
+### 思路
+- 嵌套遍历数组，两两比较，暂存最小值
+- 比较的时候需要判断4种情况，求它们的最小值：
+    - 第1个数大于第2个数，求它们的差
+    - 第2个数大于第1个数，求它们的差
+    - 第1个数+1440减第2个数
+    - 第2个数+1440减第1个数
+- 如果差值为0，就直接返回
+### 代码
+```java
+class Solution {
+    public int findMinDifference(List<String> timePoints) {
+        int[] arr = new int[timePoints.size()];
+        int len = arr.length;
+
+        for (int i = 0; i < len; i++) {
+            String[] times = timePoints.get(i).split(":");
+            int hour = Integer.parseInt(times[0]), minute = Integer.parseInt(times[1]);
+
+            arr[i] = hour * 60 + minute;
+        }
+
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                if (arr[i] - arr[j] == 0) {
+                    return 0;
+                }
+                
+                if (arr[i] - arr[j] > 0) {
+                    min = Math.min(min, arr[i] - arr[j]);
+                }
+                
+                if (arr[j] - arr[i] > 0) {
+                    min = Math.min(min, arr[j] - arr[i]);
+                }
+                
+                min = Math.min(min, Math.min(arr[i] + 1440 - arr[j], arr[j] + 1440 - arr[i]));
+            }
+        }
+        
+        return min;
+    }
+}
+```
