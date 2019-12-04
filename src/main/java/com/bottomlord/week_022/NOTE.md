@@ -204,5 +204,83 @@ class Solution {
         
         return 8;
     }
+} 
+```
+# LeetCode_423_从英文中重建数字
+## 题目
+给定一个非空字符串，其中包含字母顺序打乱的英文单词表示的数字0-9。按升序输出原始的数字。
+
+注意:
+```
+输入只包含小写英文字母。
+输入保证合法并可以转换为原始的数字，这意味着像 "abc" 或 "zerone" 的输入是不允许的。
+输入字符串的长度小于 50,000。
+```
+示例 1:
+```
+输入: "owoztneoer"
+
+输出: "012" (zeroonetwo)
+```
+示例 2:
+```
+输入: "fviefuro"
+
+输出: "45" (fourfive)
+```
+## 解法
+### 思路
+- 分析每个英文字母发现，所有偶数都有其他数字没有的独有字母
+    - 0：z
+    - 2：w
+    - 4：u
+    - 6：x
+    - 8：g
+- 剩下的奇数中有3个数字与偶数的数字的某个字母有交集
+    - 3 & 8：h
+    - 5 & 4：f
+    - 7 & 6：s
+- 最后剩下的1和9，各自的n和i在之前的数字中有出现
+    - 1 & 7 & 9：n
+    - 9 & 5 & 6 & 8：i
+- 根据如上的分析，过程如下：
+    - 遍历字符数组，计算所有字母的出现个数，放入数组
+    - 依次计算0，2，4，6，8的独有字母个数，算出各自代表数字的个数
+    - 依次计算3，5，7中与偶数出现交集的字母个数并减去对应偶数的个数，算出这三个值的个数
+    - 依次计算1，9的n和i，将对应重复出现的数字的个数减去，算出这两个数的值
+    - 嵌套循环：
+        - 外层遍历10个数
+        - 内层遍历每个数对应的个数，append数字
+### 代码
+```java
+class Solution {
+    public String originalDigits(String s) {
+        char[] cs = new char[26 + (int)'a'];
+
+        for (char c : s.toCharArray()) {
+            cs[c]++;
+        }
+
+        int[] nums = new int[10];
+        nums[0] = cs['z'];
+        nums[2] = cs['w'];
+        nums[4] = cs['u'];
+        nums[6] = cs['x'];
+        nums[8] = cs['g'];
+        nums[3] = cs['h'] - nums[8];
+        nums[5] = cs['f'] - nums[4];
+        nums[7] = cs['s'] - nums[6];
+        nums[9] = cs['i'] - nums[5] - nums[6] - nums[8];
+        nums[1] = cs['n'] - nums[7] - 2 * nums[9];
+        
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < nums[i]; j++) {
+                sb.append(i);
+            }
+        }
+
+        return sb.toString();
+    }
 }
 ```
