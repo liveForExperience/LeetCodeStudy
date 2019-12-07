@@ -341,3 +341,82 @@ class Solution {
     }
 }
 ```
+# LeetCode_309_最佳股票买卖时机含冷冻期
+## 题目
+设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:
+```
+你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。
+```
+示例:
+```
+输入: [1,2,3,0,2]
+输出: 3 
+解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出]
+```
+## 解法
+### 思路
+动态规划：
+- dp[i][j]：代表第i天j状态时的最大利润
+    - i：代表天数
+    - j：代表当天的状态，1为持有股票，0为没有股票
+- base case：初始会有两个状态，持有和没有
+    - `dp[0][0] = 0`：第一天不买，利润就是0
+    - `dp[0][1] = -price[0]`：第一天买，利润为负的当天价格
+- 状态转移方程：
+    - `dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + price[i])`：当天没有股票时的利润最大值，就是`前一天也没有股票`和`前一天持有今天卖掉`的两种情况中的最大值
+    - `dp[i][1]` = max(dp[i - 1][1], dp[i - 2][0] - price[i])：当天有股票时的利润最大值，就是`前一天也持有股票，今天没卖`和`两天前没有股票(冷却期1天)，今天买了`的两种情况中的最大值
+- 求的最后结果：`dp[n - 1][0]`
+- 注意：
+    - 因为有冷冻期，所以第二天有股票的情况也需要特殊处理为：`dp[1][1] = max(dp[0][1], dp[0][0] - prices[i])`
+    - 注意数组长度为0的情况
+### 代码
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        int n = prices.length;
+        if (n == 0) {
+            return 0;
+        }
+        
+        int[][] dp = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            if (i == 0) {
+                dp[i][0] = 0;
+                dp[i][1] = -prices[i];
+                continue;
+            }
+
+            if (i == 1) {
+                dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);
+                dp[i][1] = Math.max(dp[i - 1][0] - prices[i], dp[i - 1][1]);
+                continue;
+            }
+            
+            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);
+            dp[i][1] = Math.max(dp[i - 1][1], dp[i - 2][0] - prices[i]);
+        }
+
+        return dp[n - 1][0];
+    }
+}
+```
+## 代码优化
+### 思路
+因为每一天的状态只依赖于前一天持有，前一天没有持有，和两天前没有持有这3个状态，所以可以直接使用局部变量来暂存，降低了空间复杂度
+### 代码
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        int hold = Integer.MIN_VALUE, rest = 0, pre = 0;
+        for (int price : prices) {
+            int tmp = rest;
+            rest = Math.max(rest, hold + price);
+            hold = Math.max(hold, pre - price);
+            pre = tmp;
+        }
+        
+        return rest;
+    }
+}
+```
