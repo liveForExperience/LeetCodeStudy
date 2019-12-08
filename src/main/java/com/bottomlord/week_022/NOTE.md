@@ -508,3 +508,115 @@ class Solution {
     }
 }
 ```
+# LeetCode_116_填充每个节点的下一个右侧节点指针
+## 题目
+给定一个完美二叉树，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：
+```
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。
+```
+初始状态下，所有 next 指针都被设置为 NULL。
+
+示例：
+```
+输入：{"$id":"1","left":{"$id":"2","left":{"$id":"3","left":null,"next":null,"right":null,"val":4},"next":null,"right":{"$id":"4","left":null,"next":null,"right":null,"val":5},"val":2},"next":null,"right":{"$id":"5","left":{"$id":"6","left":null,"next":null,"right":null,"val":6},"next":null,"right":{"$id":"7","left":null,"next":null,"right":null,"val":7},"val":3},"val":1}
+
+输出：{"$id":"1","left":{"$id":"2","left":{"$id":"3","left":null,"next":{"$id":"4","left":null,"next":{"$id":"5","left":null,"next":{"$id":"6","left":null,"next":null,"right":null,"val":7},"right":null,"val":6},"right":null,"val":5},"right":null,"val":4},"next":{"$id":"7","left":{"$ref":"5"},"next":null,"right":{"$ref":"6"},"val":3},"right":{"$ref":"4"},"val":2},"next":null,"right":{"$ref":"7"},"val":1}
+
+解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。
+```
+提示：
+```
+你只能使用常量级额外空间。
+使用递归解题也符合要求，本题中递归程序占用的栈空间不算做额外的空间复杂度。
+```
+## 解法
+### 思路
+bfs：
+- 遍历每一层的元素时，将队列每个元素next指向同层的下一个元素
+- 如果遍历到当前层的最后一个元素，就将next指向null
+### 代码
+```java
+class Solution {
+    public Node connect(Node root) {
+        if (root == null) {
+            return null;
+        }
+        
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.offer(root);
+        
+        while (!queue.isEmpty()) {
+            int len = queue.size();
+            
+            while (len-- > 0) {
+                Node node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+                
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+                
+                if (len != 0) {
+                    node.next = queue.peek();
+                }
+            }
+        }
+        
+        return root;
+    }
+}
+```
+## 解法二
+### 思路
+- 初始化3个指针：
+    - start：指向每一层的起始节点，通过它来进行向下的一层继续的操作
+    - cur：指向当前层遍历到的节点，从每一层的第二个节点开始，同时也是判断当前层是否遍历完成的标志
+    - pre：指向cur之前的节点，next指针指向cur，从每一层的start节点开始
+- 过程：
+    - 从根节点开始，pre和start指向root，cur为null
+    - 遍历当前层时，通过pre和cur对当前层的下一层的节点的next指针进行初始化，每一次都初始化pre指向的连个子节点
+    - 同时依赖上一层进行的初始化来横向移动遍历
+    - 直到cur为null时
+        - pre只操作left节点的next指针初始化
+        - 同时pre和start指针一起向下一层移动
+    - 循环的退出条件是，start和pre向下移动的时候，pre的left节点为空，这说明整个二叉树已经遍历完了，因为这是一个完美二叉树，如果起始节点为空，那么这一行也就是空的
+### 代码
+```java
+class Solution {
+    public Node connect(Node root) {
+        if (root == null) {
+            return null;
+        }
+        
+        Node pre = root, start = pre, cur = null;
+
+        while (pre.left != null) {
+            if (cur == null) {
+                pre.left.next = pre.right;
+                pre = start.left;
+                cur = start.right;
+                start = pre;
+            } else {
+                pre.left.next = pre.right;
+                pre.right.next = cur.left;
+                pre = pre.next;
+                cur = cur.next;
+            }
+        }
+        
+        return root;
+    }
+}
+```
