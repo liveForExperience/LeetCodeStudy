@@ -110,3 +110,54 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+二分搜索：
+- 参数：
+    - 头指针：`nums[0]`
+    - 尾指针：`nums[n - 1]`
+- 循环之前：
+    - 如果数组长度为1，返回头指针
+    - 尾指针大于头指针，说明是数组是升序，直接返回头指针元素
+- 循环，条件为头指针小于等于尾指针：
+    - 计算中间指针
+    - 如果中间元素比后一个元素大，返回后一个元素
+    - 如果中间元素比前一个元素小，返回中间元素
+    - 如果中间元素大于头指针，头指针为中间下标 + 1
+    - 如果中间元素小于头指针，尾指针为中间下标 - 1
+### 代码
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        if (nums.length == 1) {
+            return nums[0];
+        }
+
+        int head = 0, tail = nums.length - 1;
+
+        if (nums[tail] > nums[head]) {
+            return nums[head];
+        }
+
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+            
+            if (nums[mid] > nums[mid + 1]) {
+                return nums[mid + 1];
+            }
+            
+            if (nums[mid] < nums[mid - 1]) {
+                return nums[mid];
+            }
+            
+            if (nums[mid] < nums[head]) {
+                tail = mid - 1;
+            } else {
+                head = mid + 1;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
