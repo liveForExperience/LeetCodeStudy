@@ -161,3 +161,102 @@ class Solution {
     }
 }
 ```
+# LeetCode_740_删除与获得点数
+## 题目
+给定一个整数数组 nums ，你可以对它进行一些操作。
+
+每次操作中，选择任意一个 nums[i] ，删除它并获得 nums[i] 的点数。之后，你必须删除每个等于 nums[i] - 1 或 nums[i] + 1 的元素。
+
+开始你拥有 0 个点数。返回你能通过这些操作获得的最大点数。
+
+示例 1:
+```
+输入: nums = [3, 4, 2]
+输出: 6
+解释: 
+删除 4 来获得 4 个点数，因此 3 也被删除。
+之后，删除 2 来获得 2 个点数。总共获得 6 个点数。
+```
+示例 2:
+```
+输入: nums = [2, 2, 3, 3, 3, 4]
+输出: 9
+解释: 
+删除 3 来获得 3 个点数，接着要删除两个 2 和 4 。
+之后，再次删除 3 获得 3 个点数，再次删除 3 获得 3 个点数。
+总共获得 9 个点数。
+```
+注意:
+```
+nums的长度最大为20000。
+每个整数nums[i]的大小都在[1, 10000]范围内。
+```
+## 解法
+### 思路
+动态规划：
+- 前提需要先进行计数排序，将元素个数统计出来放入数组bucket中，数组下标代表元素值
+- `dp[i][j]`：i元素第j种情况下的最大点数，j只可能是0或1
+- 状态转移方程，在遍历bucket过程中：
+    - 如果前值不为0：
+        - `dp[i][1] = dp[i - 1][0] + bucket[i] * i`
+        - `dp[i][0] = max(dp[i - 1][1], dp[i - 1][0]` 
+    - 如果前置为0：
+        - `dp[i][1] = max(dp[i - 1][1], dp[i - 1][0]) + bucket[i] * i`
+        - `dp[i][0] = max(dp[i - 1][0], dp[i - 1][1])`
+- base case：`dp[0][0] = 0`, `dp[0][1] = bucket[0]`
+- 返回结果：`max(dp[10000][1], dp[10000][0])`
+### 代码
+```java
+class Solution {
+    public int deleteAndEarn(int[] nums) {
+        int[] bucket = new int[10001];
+        for (int i = 0; i < nums.length; i++) {
+            bucket[nums[i]]++;
+        }
+
+        int[][] dp = new int[10001][2];
+        for (int i = 1; i < dp.length; i++) {
+            int max = Math.max(dp[i - 1][1], dp[i - 1][0]);
+            if (bucket[i - 1] > 0) {
+                dp[i][1] = dp[i - 1][0] + bucket[i] * i;
+            } else {
+                dp[i][1] = max + bucket[i] * i;
+            }
+            dp[i][0] = max;
+        }
+
+        return Math.max(dp[10000][0], dp[10000][1]);
+    }
+}
+```
+## 解法二
+### 思路
+基于解法一，为0的元素不需要进行计算，且也不需要使用二维数组，因为每一个元素的不同状态的值都只取决于之前的元素不同状态的的值，所以只需要使用两个临时变量记录取值和不取值两种状态就可以了。
+### 代码
+```java
+class Solution {
+    public int deleteAndEarn(int[] nums) {
+        int[] bucket = new int[10001];
+        for (int num : nums) {
+            bucket[num]++;
+        }
+        
+        int take = 0, avoid = 0, pre = -1;
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] > 0) {
+                int max = Math.max(take, avoid);
+                if (i - 1 == pre) {
+                    take = avoid + bucket[i] * i;
+                } else {
+                    take = max + bucket[i] * i;
+                }
+                avoid = max;
+                
+                pre = i;
+            }
+        }
+        
+        return Math.max(take, avoid);
+    }
+}
+```
