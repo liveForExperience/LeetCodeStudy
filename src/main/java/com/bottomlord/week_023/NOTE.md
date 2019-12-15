@@ -473,3 +473,139 @@ class Solution {
     }
 }
 ```
+# LeetCode_1006_笨阶乘
+## 题目
+通常，正整数 n 的阶乘是所有小于或等于 n 的正整数的乘积。例如，factorial(10) = 10 * 9 * 8 * 7 * 6 * 5 * 4 * 3 * 2 * 1。
+
+相反，我们设计了一个笨阶乘 clumsy：在整数的递减序列中，我们以一个固定顺序的操作符序列来依次替换原有的乘法操作符：乘法(*)，除法(/)，加法(+)和减法(-)。
+
+例如，clumsy(10) = 10 * 9 / 8 + 7 - 6 * 5 / 4 + 3 - 2 * 1。然而，这些运算仍然使用通常的算术运算顺序：我们在任何加、减步骤之前执行所有的乘法和除法步骤，并且按从左到右处理乘法和除法步骤。
+
+另外，我们使用的除法是地板除法（floor division），所以 10 * 9 / 8 等于 11。这保证结果是一个整数。
+
+实现上面定义的笨函数：给定一个整数 N，它返回 N 的笨阶乘。
+
+示例 1：
+```
+输入：4
+输出：7
+解释：7 = 4 * 3 / 2 + 1
+```
+示例 2：
+```
+输入：10
+输出：12
+解释：12 = 10 * 9 / 8 + 7 - 6 * 5 / 4 + 3 - 2 * 1
+```
+提示：
+```
+1 <= N <= 10000
+-2^31 <= answer <= 2^31 - 1  （答案保证符合 32 位整数。）
+```
+## 解法
+### 思路
+使用栈：
+- 使用一个队列，两个栈：
+    - `num`：栈，用来存进行乘除法运算后的结果和其余数字
+    - `num2`：栈，用来存第二次单独运算加减法的数字
+    - `operator`：队列，用来存运算符号
+- 生成一个list`operators`用来存放`*`、`/`、`+`、`-`
+- 根据输入，循环生成递减的数字
+    - 如果是`*`、`/`就直接将栈中的元素弹出，通过运算符号进行计算
+    - 如果是`+`、`-`就将数字和符号同时压入`num`和`operator`中
+- 循环`num`，将数字弹出并压入`num2`中，使第二次加减法的顺序正确
+- 循环`num2`直到剩下一个元素，循环中进行相应的加减法运算
+- 返回`num2`中的剩余元素
+### 代码
+```java
+class Solution {
+    public int clumsy(int N) {
+        Stack<Integer> num = new Stack<>();
+        Queue<Character> operator = new ArrayDeque<>();
+
+        char[] operators = new char[]{'*', '/', '+', '-'};
+        for (int i = 0; i < N - 1; i++) {
+            operator.offer(operators[i % 4]);
+        }
+
+        for (int i = N; i >= 1; i--) {
+            if (i == N) {
+                num.push(i);
+            } else {
+                Character op = operator.poll();
+                if (op == null) {
+                    return 0;
+                }
+
+                if (op == '*') {
+                    num.push(num.pop() * i);
+                    continue;
+                }
+
+                if (op == '/') {
+                    num.push(num.pop() / i);
+                    continue;
+                }
+
+                if (op == '+' || op == '-') {
+                    operator.offer(op);
+                    num.push(i);
+                }
+            }
+        }
+
+        Stack<Integer> num2 = new Stack<>();
+        while (!num.isEmpty()) {
+            num2.push(num.pop());
+        }
+
+        while (num2.size() > 1) {
+            int first = num2.pop();
+            int second = num2.pop();
+            Character op = operator.poll();
+            if (op == null) {
+                return 0;
+            }
+
+            if ('+' == op) {
+                num2.push(first + second);
+            }
+
+            if ('-' == op) {
+                num2.push(first - second);
+            }
+        }
+
+        return num2.pop();
+    }
+}
+```
+## 解法二
+### 思路
+数学：
+- 乘除部分的结果是
+```math
+(k + 2) * (k + 1) / k = k + 3 - 2 / k
+```
+- 因为除法结果使截取整数部分，所以上式在`k > 3`的情况下，`2 / k = 0`，所以可以直接约去
+- 而之后的加减部分就可容易推得：
+```math
+(k + 3) - (k + 2) * (k + 1) / k = (k + 3) - (k + 3) = 0
+```
+- 所以整个公式就只需要考虑头上的乘除部分，以及最后的，当k > 5的时候就考虑`(N - 1) % 4`的值：
+    - 0：`N + 1` + `2 - 1` = `N + 2` = ` N + 2`
+    - 1：`N + 1` + `3 - 2 * 1`  = `N + 2`
+    - 2：`N + 1` + `4 - 3 * 2 / 1` = `N - 1`
+    - 3：`N + 1` + `5 - 4 * 3 / 2 + 1` = `N + 1`
+### 代码
+```java
+class Solution {
+    public int clumsy(int N) {
+        if (N <= 4) {
+            return new int[]{1,2,6,7}[N - 1];
+        } else {
+            return N + new int[]{2, 2, -1, 1}[(N - 1) % 4];
+        }
+    }
+}
+```
