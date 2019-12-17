@@ -47,3 +47,63 @@ class Solution {
     }
 }
 ```
+# LeetCode_228_1_汇总区间
+## 题目
+给定一个无重复元素的有序整数数组，返回数组区间范围的汇总。
+
+示例 1:
+```
+输入: [0,1,2,4,5,7]
+输出: ["0->2","4->5","7"]
+解释: 0,1,2 可组成一个连续的区间; 4,5 可组成一个连续的区间。
+```
+示例 2:
+```
+输入: [0,2,3,4,6,8,9]
+输出: ["0","2->4","6","8->9"]
+解释: 2,3,4 可组成一个连续的区间; 8,9 可组成一个连续的区间。
+```
+## 解法
+### 思路
+- 定义变量：
+    - `start`：起始数字，初始化为第1个元素
+    - `pre`：上一个数字，初始化为第1个元素
+    - `ans`：字符串list
+- 遍历数组
+    - 从第2个元素开始，判断是否比`pre`大1
+        - 是：pre变为当前值，继续遍历
+        - 否：生成字符串放入`ans`，`start`和`pre`变为当前值
+- 遍历结束，将`start`和`pre`生成对应字符串放入`ans`
+### 代码
+```java
+class Solution {
+    public List<String> summaryRanges(int[] nums) {
+        List<String> ans = new ArrayList<>();
+        if (nums == null || nums.length == 0) {
+            return ans;
+        }
+
+        int start = nums[0], pre = start;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] - 1 != pre) {
+                if (start == pre) {
+                    ans.add("" + start);
+                } else {
+                    ans.add(start + "->" + pre);
+                }
+
+                start = nums[i];
+            }
+            pre = nums[i];
+        }
+        
+        if (start == pre) {
+            ans.add("" + start);
+        } else {
+            ans.add(start + "->" + pre);
+        }
+        
+        return ans;
+    }
+}
+```
