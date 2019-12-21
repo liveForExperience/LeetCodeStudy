@@ -239,3 +239,82 @@ class Solution {
     }
 }
 ```
+# LeetCode_449_序列化和反序列化二叉搜索树
+## 题目
+序列化是将数据结构或对象转换为一系列位的过程，以便它可以存储在文件或内存缓冲区中，或通过网络连接链路传输，以便稍后在同一个或另一个计算机环境中重建。
+
+设计一个算法来序列化和反序列化二叉搜索树。 对序列化/反序列化算法的工作方式没有限制。 您只需确保二叉搜索树可以序列化为字符串，并且可以将该字符串反序列化为最初的二叉搜索树。
+
+编码的字符串应尽可能紧凑。
+
+注意：不要使用类成员/全局/静态变量来存储状态。 你的序列化和反序列化算法应该是无状态的。
+## 解法
+### 思路
+- 序列化：dfs后序遍历生成以` `分隔的字符串
+- 反序列化：
+    - 通过字符串生成升序的中序遍历
+    - 通过中序和后序序列生成二叉树
+- 后序遍历生成的序列，从序列尾部开始，就是从二叉搜索树的根节点开始的先右再左的遍历过程的记录。所以生成的过程也就是：
+    - 从序列尾部开始，生成根节点
+    - 再将以这个值为序列的最小值，递归到下一层去生成这个节点的右节点
+    - 再通过同样方法，将当前值作为最大值，递归到下一层去生成这个节点的左节点
+    - 最后返回当前节点
+    - 这个过程中，在递归时，可以将保存序列的集合的当前值从集合中删去，方便下一层直接从集合尾部取到需要的值
+### 代码
+```java
+public class Codec {
+    public String serialize(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        dfs(root, sb);
+        return sb.toString().trim();
+    }
+
+    private void dfs(TreeNode node, StringBuilder sb) {
+        if (node == null) {
+            return;
+        }
+
+        dfs(node.left, sb);
+        dfs(node.right, sb);
+
+        sb.append(" ").append(node.val);
+    }
+
+    public TreeNode deserialize(String data) {
+        if (data == null) {
+            return null;
+        }
+
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+        for (String num : data.split(" ")) {
+            queue.offer(Integer.valueOf(num));
+        }
+
+        return getTree(Integer.MIN_VALUE, Integer.MAX_VALUE, queue);
+    }
+
+    private TreeNode getTree(Integer low, Integer high, ArrayDeque<Integer> queue) {
+        if (queue.isEmpty()) {
+            return null;
+        }
+
+        int val = queue.getLast();
+        
+        if (val < low || val > high) {
+            return null;
+        }
+        
+        queue.removeLast();
+        
+        TreeNode node = new TreeNode(val);
+        node.right = getTree(val, high, queue);
+        node.left = getTree(low, val, queue);
+        
+        return node;
+    }
+}
+```
