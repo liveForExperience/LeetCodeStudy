@@ -318,3 +318,108 @@ public class Codec {
     }
 }
 ```
+# LeetCode_963_最小面积矩形II
+## 题目
+给定在 xy 平面上的一组点，确定由这些点组成的任何矩形的最小面积，其中矩形的边不一定平行于 x 轴和 y 轴。
+
+如果没有任何矩形，就返回 0。
+
+示例 1：
+```
+输入：[[1,2],[2,1],[1,0],[0,1]]
+输出：2.00000
+解释：最小面积的矩形出现在 [1,2],[2,1],[1,0],[0,1] 处，面积为 2。
+```
+示例 2：
+```
+输入：[[0,1],[2,1],[1,1],[1,0],[2,0]]
+输出：1.00000
+解释：最小面积的矩形出现在 [1,0],[1,1],[2,1],[2,0] 处，面积为 1。
+```
+示例 3：
+```
+输入：[[0,3],[1,2],[3,1],[1,3],[2,1]]
+输出：0
+解释：没法从这些点中组成任何矩形。
+```
+示例 4：
+```
+输入：[[3,1],[1,1],[0,1],[2,1],[3,3],[3,2],[0,2],[2,3]]
+输出：2.00000
+解释：最小面积的矩形出现在 [2,1],[2,3],[3,3],[3,1] 处，面积为 2。
+```
+提示：
+```
+1 <= points.length <= 50
+0 <= points[i][0] <= 40000
+0 <= points[i][1] <= 40000
+所有的点都是不同的。
+与真实值误差不超过 10^-5 的答案将视为正确结果。
+```
+## 解法
+### 思路
+- 形成一个矩形的充分必要条件：
+    - 两条对角线的中点相同
+    - 端点到中点距离也相同
+- 嵌套遍历点数组
+    - 外层遍历一个点
+    - 内层遍历外层之后的所有点
+    - 计算两个点之间的距离以及中点坐标
+    - 生成一个嵌套的hash表，外层通过距离分类，内层通过中点坐标分类，存放的是外层遍历到的点
+- 遍历生成的hash表
+    - 找到长度和中点相等的两个点
+    - 通过中点求得第三个点的值`P' = 2 * center - P`
+    - 通过三个点求得矩形面，并和暂存得最小值进行比较
+- 返回最小值
+### 代码
+```java
+class Solution {
+    public double minAreaFreeRect(int[][] points) {
+        int len = points.length;
+        Point[] arr = new Point[len];
+        for (int i = 0; i < len; i++) {
+            arr[i] = new Point(points[i][0], points[i][1]);
+        }
+
+        Map<Integer, Map<Point, List<Point>>> seen = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                Point center = new Point(arr[i].x + arr[j].x, arr[i].y + arr[j].y);
+
+                int distance = (arr[i].x - arr[j].x) * (arr[i].x - arr[j].x) + (arr[i].y - arr[j].y) * (arr[i].y - arr[j].y);
+                if (!seen.containsKey(distance)) {
+                    seen.put(distance, new HashMap<>());
+                }
+
+                if (!seen.get(distance).containsKey(center)) {
+                    seen.get(distance).put(center, new ArrayList<>());
+                }
+
+                seen.get(distance).get(center).add(arr[i]);
+            }
+        }
+
+        double min = Double.MAX_VALUE;
+        for (Map<Point, List<Point>> map : seen.values()) {
+            for (Point center : map.keySet()) {
+                List<Point> candidates = map.get(center);
+                int l = candidates.size();
+
+                for (int i = 0; i < l; i++) {
+                    for (int j = i + 1; j < l; j++) {
+                        Point a = candidates.get(i);
+                        Point b = candidates.get(j);
+                        Point c = new Point(center);
+
+                        c.translate(-b.x, -b.y);
+                        double area = a.distance(b) * a.distance(c);
+                        min = Math.min(min, area);
+                    }
+                }
+            }
+        }
+        
+        return min < Double.MAX_VALUE ? min : 0;
+    }
+}
+```
