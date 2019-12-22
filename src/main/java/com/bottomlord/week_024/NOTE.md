@@ -578,3 +578,103 @@ class Solution {
     }
 }
 ```
+# LeetCode_1190_反转每对括号间的子串
+## 题目
+给出一个字符串 s（仅含有小写英文字母和括号）。
+
+请你按照从括号内到外的顺序，逐层反转每对匹配括号中的字符串，并返回最终的结果。
+
+注意，您的结果中 不应 包含任何括号。
+
+示例 1：
+```
+输入：s = "(abcd)"
+输出："dcba"
+```
+示例 2：
+```
+输入：s = "(u(love)i)"
+输出："iloveu"
+```
+示例 3：
+```
+输入：s = "(ed(et(oc))el)"
+输出："leetcode"
+```
+示例 4：
+```
+输入：s = "a(bcdefghijkl(mno)p)q"
+输出："apmnolkjihgfedcbq"
+```
+提示：
+```
+0 <= s.length <= 2000
+s 中只有小写英文字母和括号
+我们确保所有括号都是成对出现的
+```
+## 解法
+### 思路
+- 先遍历一次字符串：
+    - 使用一个数组`arr`：记录一组括号对应的下标
+    - 使用一个栈`stack`：遇到左括号压入左括号的下标，遇到右括号就出栈，将两个值存入数组
+- 第二次递归遍历字符串：
+    - 先定义当前字符串范围是否需要反转：
+        - 如果需要，就从尾部开始遍历字符串：
+            - 如果遇到右括号：
+                - 说明碰到了内层嵌套的括号，那这一组括号里的字符串就不用反转
+                - 求得范围，递归进去
+                - 标记为不反转
+            - 否则，就直接append    
+        - 如果不需要，就从头部开始遍历字符串：
+            - 如果遇到了左括号：
+                - 说明碰到了内层嵌套的括号，那这一组括号就需要反转
+                - 求得范围，递归进去
+                - 标记为反转
+            - 否则，直接append
+- 返回sb的toString
+### 代码
+```java
+class Solution {
+    public String reverseParentheses(String s) {
+        int len = s.length();
+        int[] arr = new int[len];
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < len; i++) {
+            if (s.charAt(i) == '(') {
+                stack.push(i);
+            } else if (s.charAt(i) == ')') {
+                int l = stack.pop();
+                arr[i] = l;
+                arr[l] = i;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        reserve(0, len - 1, s, arr, sb, false);
+        return sb.toString();
+    }
+    
+    private void reserve(int start, int end, String s, int[] arr, StringBuilder sb, boolean reserve) {
+        if (reserve) {
+            for (int i = end; i >= start; i--) {
+                if (s.charAt(i) == ')') {
+                    reserve(arr[i] + 1, i - 1, s, arr, sb, false);
+                    i = arr[i];
+                } else {
+                    sb.append(s.charAt(i));
+                }
+            }
+        } else {
+            for (int i = start; i <= end; i++) {
+                if (s.charAt(i) == '(') {
+                    reserve(i + 1, arr[i] - 1, s, arr, sb, true);
+                    i = arr[i];
+                } else {
+                    sb.append(s.charAt(i));
+                }
+            }
+        }
+    }
+}
+```
