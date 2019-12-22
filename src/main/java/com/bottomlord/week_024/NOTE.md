@@ -678,3 +678,132 @@ class Solution {
     }
 }
 ```
+# LeetCode_865_具有所有最深节点的最小子树
+## 题目
+给定一个根为 root 的二叉树，每个结点的深度是它到根的最短距离。
+
+如果一个结点在整个树的任意结点之间具有最大的深度，则该结点是最深的。
+
+一个结点的子树是该结点加上它的所有后代的集合。
+
+返回能满足“以该结点为根的子树中包含所有最深的结点”这一条件的具有最大深度的结点。
+
+示例：
+```
+输入：[3,5,1,6,2,0,8,null,null,7,4]
+输出：[2,7,4]
+```
+解释：
+```
+我们返回值为 2 的结点，在图中用黄色标记。
+在图中用蓝色标记的是树的最深的结点。
+输入 "[3, 5, 1, 6, 2, 0, 8, null, null, 7, 4]" 是对给定的树的序列化表述。
+输出 "[2, 7, 4]" 是对根结点的值为 2 的子树的序列化表述。
+输入和输出都具有 TreeNode 类型。
+```
+提示：
+```
+树中结点的数量介于 1 和 500 之间。
+每个结点的值都是独一无二的。
+```
+## 解法
+### 思路
+两次dfs：
+- 第一次dfs，记录节点及对应的深度
+- 通过记录的深度，算出最大深度
+- 第二次dfs：
+    - 如果找到节点与最大深度相同，返回节点
+    - 否则就继续左右节点递归
+    - 如果返回的左右节点：
+        - 都不为空，则返回当前节点，说明两个子树都有最深节点
+        - 任意一个为空，返回不为空的节点
+        - 如果都为空，返回空
+### 代码
+```java
+class Solution {
+    public TreeNode subtreeWithAllDeepest(TreeNode root) {
+        Map<TreeNode, Integer> map = new HashMap<>();
+        map.put(null, -1);
+        dfs(root, null,map);
+        
+        int max = Integer.MIN_VALUE;
+        for (int depth : map.values()) {
+            max = Math.max(max, depth);
+        }
+        
+        return answer(root, map, max);
+    }
+    
+    private void dfs(TreeNode node, TreeNode parent, Map<TreeNode, Integer> map) {
+        if (node == null) {
+            return;
+        }
+        
+        map.put(node, map.get(parent) + 1);
+        dfs(node.left, node, map);
+        dfs(node.right, node, map);
+    }
+    
+    private TreeNode answer(TreeNode node, Map<TreeNode, Integer> map, int max) {
+        if (node == null || map.get(node) == max) {
+            return node;
+        }
+        
+        TreeNode left = answer(node.left, map, max), 
+                 right = answer(node.right, map, max);
+        
+        if (left != null && right != null) {
+            return node;
+        }
+        
+        return left != null ? left : right;
+    }
+}
+```
+## 优化代码
+### 思路
+- 合并解法一中的两次dfs，在递归过程中同时计算最深的深度，和拥有最深节点的节点
+- 使用自定义的类`Result`来记录这两个变量
+    - `node`：持有最深节点的节点
+    - `dist`：最深节点的深度
+- 左右子树递归返回的时候比较它们的`dist`大小
+    - 如果左子树大于右子树，返回左子树节点`node.left`和`dist + 1`
+    - 如果右子树大于左子树，返回右子树节点`node.right`和`dist + 1`
+    - 如果两个子树相等，返回当前节点`node`和任意子树的`dist + 1`
+### 代码
+```java
+class Solution {
+    public TreeNode subtreeWithAllDeepest(TreeNode root) {
+        return dfs(root).node;
+    }
+
+    private DfsResult dfs(TreeNode node) {
+        if (node == null) {
+            return new DfsResult(null, 0);
+        }
+        
+        DfsResult left = dfs(node.left),
+                  right = dfs(node.right);
+        
+        if (left.dist > right.dist) {
+            return new DfsResult(left.node, left.dist + 1);
+        }
+        
+        if (right.dist > left.dist) {
+            return new DfsResult(right.node, right.dist + 1);
+        }
+        
+        return new DfsResult(node, left.dist + 1);
+    }
+}
+
+class DfsResult {
+    public TreeNode node;
+    public int dist;
+
+    public DfsResult(TreeNode node, int dist) {
+        this.node = node;
+        this.dist = dist;
+    }
+}
+```
