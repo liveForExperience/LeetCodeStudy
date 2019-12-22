@@ -520,3 +520,61 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+在解法一的基础上，使用二分搜索来降低时间复杂度
+- 因为搜索空间的下界是数组中的最大值，而上界则是整个数组的和
+- 所以可以通过一次遍历求得这两个值
+- 然后通过二分搜索来进行判断，找到最小的那个符合规则的值
+    - 如果中间值符合要求，则表示当前值是大于等于最小值得数
+    - 如果中间值不符合，则表示，中间值左边的所有数都不符合要求
+    - 当`head`不再小于`tail`，说明之前找到值的左侧所有值都已经被检查过，且都不符合要求
+### 代码
+```java
+class Solution {
+    public int shipWithinDays(int[] weights, int D) {
+        int max = Integer.MIN_VALUE, sum = 0;
+        for (int weight : weights) {
+            sum += weight;
+            max = Math.max(max, weight);
+        }
+
+        int head = max, tail = sum;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (isValid(weights, mid, D)) {
+                tail = mid;
+            } else {
+                head = mid + 1;
+            }
+        }
+
+        return head;
+    }
+
+    private boolean isValid(int[] weights, int num, int day) {
+        int cur = num;
+
+        for (int i = 0; i < weights.length;) {
+            if (weights[i] > num) {
+                return false;
+            }
+
+            if (cur - weights[i] < 0) {
+                cur = num;
+                day--;
+            } else {
+                cur -= weights[i];
+                i++;
+            }
+
+            if (day <= 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
