@@ -103,3 +103,60 @@ class Solution {
     }
 }
 ```
+# LeetCode_357_计算各个位数不同的数字个数
+## 题目
+给定一个非负整数 n，计算各位数字都不同的数字 x 的个数，其中 0 ≤ x < 10n 。
+
+示例:
+```
+输入: 2
+输出: 91 
+解释: 答案应为除去 11,22,33,44,55,66,77,88,99 外，在 [0,100) 区间内的所有数字。
+```
+## 解法
+### 思路
+- 归纳：
+    - 如果`n == 0`：那只有1种可能就是0
+    - 如果`n > 10`：那么不可能有任何数是由不同数字组成的，所以可能的数字和10位时可能的数字是一样的
+    - 如果`n > 0`且`n <= 10`：那么可能的数字就是`<=n`的所有位数的排列的和
+- 所以可以定义动态规划：
+    - `dp[n]`：代表参数为n的情况下，所有符合题目要求的可能值的总和
+    - 状态转移方程：`dp[n] = dp[n - 1] + fun(n)`
+    - `fun(n)`的定义：
+        - 如果`n == 1`，返回9
+        - 如果`n > 1`，返回`9 * P (n-1) (9)` 
+    - base case：`dp[0] = 1`
+    - 返回结果：`dp[n]`
+### 代码
+```java
+class Solution {
+    public int countNumbersWithUniqueDigits(int n) {
+        if (n == 0) {
+            return 1;
+        }
+        
+        int[] dp = new int[11];
+        dp[0] = 1;
+        
+        n = Math.min(n, 10);
+        for (int i = 1; i <= n; i++) {
+            dp[i] = dp[i - 1] + fun(i);
+        }
+        
+        return dp[n];
+    }
+    
+    private int fun(int n) {
+        if (n == 1) {
+            return 9;
+        }
+        
+        int ans = 9, num = 9;
+        for (int i = 1; i < n; i++) {
+            ans *= num--;
+        }
+        
+        return ans;
+    }
+}
+```
