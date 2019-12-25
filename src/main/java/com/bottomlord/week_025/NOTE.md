@@ -160,3 +160,125 @@ class Solution {
     }
 }
 ```
+# LeetCode_1031_两个非重叠子数组的最大和
+## 题目
+给出非负整数数组 A ，返回两个非重叠（连续）子数组中元素的最大和，子数组的长度分别为 L 和 M。（这里需要澄清的是，长为 L 的子数组可以出现在长为 M 的子数组之前或之后。）
+
+从形式上看，返回最大的 V，而 V = (A[i] + A[i+1] + ... + A[i+L-1]) + (A[j] + A[j+1] + ... + A[j+M-1]) 并满足下列条件之一：
+```
+0 <= i < i + L - 1 < j < j + M - 1 < A.length, 或
+0 <= j < j + M - 1 < i < i + L - 1 < A.length.
+```
+示例 1：
+```
+输入：A = [0,6,5,2,2,5,1,9,4], L = 1, M = 2
+输出：20
+解释：子数组的一种选择中，[9] 长度为 1，[6,5] 长度为 2。
+```
+示例 2：
+```
+输入：A = [3,8,1,3,2,1,8,9,0], L = 3, M = 2
+输出：29
+解释：子数组的一种选择中，[3,8,1] 长度为 3，[8,9] 长度为 2。
+```
+示例 3：
+```
+输入：A = [2,1,5,6,0,9,5,0,3,8], L = 4, M = 3
+输出：31
+解释：子数组的一种选择中，[5,6,0,9] 长度为 4，[0,3,8] 长度为 3。
+```
+提示：
+```
+L >= 1
+M >= 1
+L + M <= A.length <= 1000
+0 <= A[i] <= 1000
+```
+## 解法
+### 思路
+动态规划：
+- 数组根据L和M可以划分为2个窗口
+- `dp[i][j]`，j分为4种情况：
+    - 0：起始到`i - 1`的范围，连续个数为L
+    - 1：起始到`i - 1`的范围，连续个数为M
+    - 2：`i`到结尾的范围，连续个数为L
+    - 3：`i`到结尾的范围，连续个数为M   
+- 状态转移方程：`dp[i][j] = dp[i][j] - dp[i - L][j] + A[i]`
+- base case：
+    - `j == 0`：`dp[L - 1][j] = sum(0, L - 1)` 
+    - `j == 1`：`dp[M - 1][j] = sum(0, M - 1)`
+    - `j == 2`：`dp[L][j] = sum(L, A.length)`
+    - `j == 3`：`dp[M][j] = sum(M, A.length)`
+- 返回结果：计算如下两种情况下的最大值
+    - `j == 0`和`j == 2`
+    - `j == 1`和`j == 3`
+### 代码
+```java
+class Solution {
+    public int maxSumTwoNoOverlap(int[] A, int L, int M) {
+        int[][] dp = new int[A.length][4];
+        int len = A.length, pre = 0, max = 0;
+        for (int i = 0; i < L; i++) {
+            pre += A[i];
+        }
+        max = pre;
+        dp[L - 1][0] = pre;
+        for (int i = L; i < len; i++) {
+            pre -= A[i - L];
+            pre += A[i];
+            max = Math.max(pre, max);
+            dp[i][0] = max;
+        }
+
+        pre = 0;
+        for (int i = 0; i < M; i++) {
+            pre += A[i];
+        }
+        max = pre;
+        dp[M - 1][1] = pre;
+        for (int i = M; i < len; i++) {
+            pre -= A[i - M];
+            pre += A[i];
+            max = Math.max(max, pre);
+            dp[i][1] = max;
+        }
+
+        pre = 0;
+        for (int i = len - 1; i >= len - L; i--) {
+            pre += A[i];
+        }
+        max = pre;
+        dp[len - L][2] = pre;
+        for (int i = len - L - 1; i >= 0; i--) {
+            pre -= A[i + L];
+            pre += A[i];
+            max = Math.max(max, pre);
+            dp[i][2] = max;
+        }
+
+        pre = 0;
+        for (int i = len - 1; i >= len - M; i--) {
+            pre += A[i];
+        }
+        max = pre;
+        dp[len - M][3] = pre;
+        for (int i = len - M - 1; i >= 0; i--) {
+            pre -= A[i + M];
+            pre += A[i];
+            max = Math.max(max, pre);
+            dp[i][3] = max;
+        }
+
+        int ans = 0;
+        for (int i = L; i <= len - M; i++) {
+            ans = Math.max(ans, dp[i - 1][0] + dp[i][3]);
+        }
+
+        for (int i = M; i <= len - L; i++) {
+            ans = Math.max(ans, dp[i - 1][1] + dp[i][2]);
+        }
+
+        return ans;
+    }
+}
+```
