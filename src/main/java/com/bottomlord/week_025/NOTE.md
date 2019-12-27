@@ -389,3 +389,37 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+使用数组代替栈实现一个单调栈，逻辑和解法二基本一致。
+### 代码
+```java
+class Solution {
+    public int[] nextLargerNodes(ListNode head) {
+        int len = 0;
+        ListNode node = head;
+        while (node != null) {
+            len++;
+            node = node.next;
+        }
+
+        int[] stack = new int[2 * len], ans = new int[len];
+        int index = 0, i = 0;
+        node = head;
+        while (node != null) {
+            while (index != 0 && stack[index - 2] < node.val) {
+                ans[stack[--index]] = node.val;
+                index--;
+            }
+
+            stack[index++] = node.val;
+            stack[index++] = i;
+
+            i++;
+            node = node.next;
+        }
+
+        return ans;
+    }
+}
+```
