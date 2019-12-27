@@ -351,3 +351,41 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+单调栈：
+- 遍历链表生成list
+- 初始化栈`stack`和结果数组`ans`
+- 遍历list，如果`stack`不为空，且栈顶所存的索引值小于当前遍历到的值，弹栈，并将当前值放入`ans`中下标为弹出栈元素的位置，并继续用循环判断
+    - 如上的逻辑代表，我遍历到的值，看看栈顶元素是否比当前值小，小就意味着当前值是这个下标元素对应的符合题目要求的值
+    - 而能够只看栈顶就能确定是的原因是：每次都会执行将小于当前值的元素弹栈的动作，那么最终留在栈中的就都是比当前值大的元素了，所以这个栈就是一个从底开始单调递减的栈
+    - 既然是单调递减，那么只要遍历到的值比栈顶元素大，就天然可以不断的弹栈来完成题目的要求
+- 如果不再符合如上条件，退出了内部循环，就将当前值额索引压入栈中
+### 代码
+```java
+class Solution {
+    public int[] nextLargerNodes(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        while (head != null) {
+            list.add(head.val);
+            head = head.next;
+        }
+        
+        Stack<Integer> stack = new Stack<>();
+        int len = list.size();
+        int[] ans = new int[len];
+        
+        for (int i = 0; i < len; i++) {
+            int val = list.get(i);
+            
+            while (!stack.isEmpty() && list.get(stack.peek()) < val) {
+                ans[stack.pop()] = val;
+            }
+            
+            stack.push(i);
+        }
+        
+        return ans;
+    }
+}
+```
