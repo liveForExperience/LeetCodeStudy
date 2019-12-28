@@ -486,5 +486,131 @@ searchWord 中所有字符都是小写英文字母。
 - 外层循环结束后将`ans`返回
 ### 代码
 ```java
+class Solution {
+    private TrieNode root;
+    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        this.root = new TrieNode();
+        for (String product : products) {
+            insertProduct(product);
+        }
 
+        List<List<String>> ans = new ArrayList<>();
+        for (int i = 1; i <= searchWord.length(); i++) {
+            ans.add(search(searchWord.substring(0, i)));
+        }
+
+        return ans;
+    }
+
+    private void insertProduct(String product) {
+        TrieNode node = root;
+        for (char c : product.toCharArray()) {
+            if (node.children[c - 'a'] == null) {
+                node.children[c - 'a'] = new TrieNode();
+            }
+            node = node.children[c - 'a'];
+        }
+        if (!node.end) {
+            node.end = true;
+            node.product = product;
+        }
+        node.count++;
+    }
+
+    private List<String> search(String pattern) {
+        List<String> result = new ArrayList<>();
+        TrieNode node = root;
+        for (char c : pattern.toCharArray()) {
+            if (node.children[c - 'a'] == null) {
+                return result;
+            }
+
+            node = node.children[c - 'a'];
+        }
+
+        dfs(node, result);
+        return result;
+    }
+
+    private void dfs(TrieNode node, List<String> result) {
+        if (node.end) {
+            for (int i = 0; i < node.count; i++) {
+                result.add(node.product);
+                if (result.size() >= 3) {
+                    return;
+                }
+            }
+        }
+
+        for (TrieNode trieNode : node.children) {
+            if (trieNode != null) {
+                dfs(trieNode, result);
+            }
+
+            if (result.size() >= 3) {
+                return;
+            }
+        }
+    }
+}
+
+class TrieNode {
+    public boolean end;
+    public int count;
+    public TrieNode[] children = new TrieNode[26];
+    public String product;
+}
+```
+## 解法二
+### 思路
+- 排序`products`
+- 遍历`searchWord`的每一个字符
+- 将字符append到一个预设的`word`上
+- 内层再遍历`products`，查看当前字符的起始是否与`word`相同
+- 在过程中定义三个变量：
+    - `index`：代表遍历到`products`的第`index`个字符串，避免下一次重复遍历
+    - `count`：记录当前这个`searchWord`的字符循环中，找到了几个字符串
+    - `result`：保存匹配字符串的集合
+- 如果当前字符串的起始与`word`不同，且`count`不是0，说明已经找到过字符串，但已经没有更多符合的了
+- 如果`count`值大于等于3的时候，说明当前字符所匹配的所有字符串已经找到了
+- 在当前字符不匹配的时候，`index`会自增，模拟在字典树中向下找到对应节点的步骤，同时也代表如果不匹配，可能就没有字符串符合要求了，那么就会不断自增，直到`products`被遍历完，从而结束整个循环
+- 当前遍历到的`searchWord`的字符找到符合要求数量的字符串个数后，将`result`放入`ans`中
+- 当`searchWord`被遍历完后，返回`ans`
+### 代码
+```java
+class Solution {
+    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        Arrays.sort(products);
+
+        int index = 0, len = products.length;
+        char[] cs = searchWord.toCharArray();
+        StringBuilder builder = new StringBuilder();
+        String search;
+        List<List<String>> ans = new ArrayList<>();
+
+        for (char c : cs) {
+            builder.append(c);
+            search = builder.toString();
+            int count = 0;
+            List<String> result = new ArrayList<>();
+            for (int i = index; i < len; i++) {
+                if (products[i].startsWith(search)) {
+                    result.add(products[i]);
+                    count++;
+                    if (count >= 3) {
+                        break;
+                    }
+                } else {
+                    if (count > 0) {
+                        break;
+                    }
+                    index++;
+                }
+            }
+            ans.add(result);
+        }
+
+        return ans;
+    }
+}
 ```
