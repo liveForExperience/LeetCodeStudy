@@ -676,3 +676,39 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+使用数组交换的方式，直接在数组中进行操作，`shuffle`的时间复杂度使O(N)
+### 代码
+```java
+class Solution {
+    private Random random = new Random();
+    private int[] origin;
+    private int[] arr;
+
+    public Solution(int[] nums) {
+        this.origin = nums;
+        this.arr = origin.clone();
+    }
+
+    public int[] reset() {
+        arr = origin;
+        origin = origin.clone();
+
+        return origin;
+    }
+
+    public int[] shuffle() {
+        for (int i = 0; i < origin.length; i++) {
+            swap(i, random.nextInt(arr.length - i) + i);
+        }
+        return arr;
+    }
+
+    private void swap(int a, int b) {
+        int tmp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = tmp;
+    }
+}
+```
