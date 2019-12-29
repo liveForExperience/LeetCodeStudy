@@ -790,3 +790,44 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+- 使用布尔数组代替字符串`S`：
+    - true代表1
+    - false代表2
+- 其他逻辑与解法一类似  
+### 代码
+```java
+class Solution {
+    public int magicalString(int n) {
+        if (n == 0) {
+            return 0;
+        }
+
+        if (n <= 3) {
+            return 1;
+        }
+
+        int p1 = 2, p2 = 2, ans = 1;
+        boolean[] bs = new boolean[n];
+        bs[0] = true;
+        bs[1] = bs[2] = false;
+
+        while (true) {
+            boolean tmp = bs[p1];
+            int time = bs[p2++] ? 1 : 2;
+
+            for (int i = 0 ; i < time; i++) {
+                bs[++p1] = !tmp;
+                if (!tmp) {
+                    ans++;
+                }
+                
+                if (p1 == n - 1) {
+                    return ans;
+                }
+            }
+        }
+    }
+}
+```
