@@ -614,3 +614,65 @@ class Solution {
     }
 }
 ```
+# LeetCode_384_打乱数组
+## 题目
+打乱一个没有重复元素的数组。
+
+示例:
+```
+// 以数字集合 1, 2 和 3 初始化数组。
+int[] nums = {1,2,3};
+Solution solution = new Solution(nums);
+
+// 打乱数组 [1,2,3] 并返回结果。任何 [1,2,3]的排列返回的概率应该相同。
+solution.shuffle();
+
+// 重设数组到它的初始状态[1,2,3]。
+solution.reset();
+
+// 随机返回数组[1,2,3]打乱后的结果。
+solution.shuffle();
+```
+##解法
+### 思路
+- `reset`：
+    - 克隆传入的数组
+    - 调用这个函数的时候，就把上一次克隆的原始数组返回
+    - 同时把这个这个原始数组再克隆一次
+- `shuffle`：
+    - 根据原始数组生成动态数组，方便删除
+    - 循环数组长度次数，循环体内
+        - 使用`Random.nextInt`，根据动态数组的长度获得随机下标
+        - 将下表对用元素放入结果数组中
+        - 将动态数组中对应的下标删除
+    - 循环结束后返回结果
+### 代码
+```java
+class Solution {
+    private Random random = new Random();
+    private int[] origin;
+
+    public Solution(int[] nums) {
+        this.origin = nums;
+    }
+
+    public int[] reset() {
+        return origin;
+    }
+
+    public int[] shuffle() {
+        List<Integer> list = new ArrayList<>();
+        for (int num : origin) {
+            list.add(num);
+        }
+
+        int[] ans = new int[origin.length];
+        for (int i = 0; i < origin.length; i++) {
+            int index = random.nextInt(list.size());
+            ans[i] = list.get(index);
+            list.remove(index);
+        }
+        return ans;
+    }
+}
+```
