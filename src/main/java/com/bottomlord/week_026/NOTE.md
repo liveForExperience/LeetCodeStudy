@@ -53,3 +53,84 @@ class Solution {
     }
 }
 ```
+# LeetCode_207_课程表
+## 题目
+现在你总共有 n 门课需要选，记为 0 到 n-1。
+
+在选修某些课程之前需要一些先修课程。 例如，想要学习课程 0 ，你需要先完成课程 1 ，我们用一个匹配来表示他们: [0,1]
+
+给定课程总量以及它们的先决条件，判断是否可能完成所有课程的学习？
+
+示例 1:
+```
+输入: 2, [[1,0]] 
+输出: true
+解释: 总共有 2 门课程。学习课程 1 之前，你需要完成课程 0。所以这是可能的。
+```
+示例 2:
+```
+输入: 2, [[1,0],[0,1]]
+输出: false
+解释: 总共有 2 门课程。学习课程 1 之前，你需要先完成​课程 0；并且学习课程 0 之前，你还应先完成课程 1。这是不可能的。
+```
+说明:
+```
+输入的先决条件是由边缘列表表示的图形，而不是邻接矩阵。详情请参见图的表示法。
+你可以假定输入的先决条件中没有重复的边。
+```
+提示:
+```
+这个问题相当于查找一个循环是否存在于有向图中。如果存在循环，则不存在拓扑排序，因此不可能选取所有课程进行学习。
+通过 DFS 进行拓扑排序 - 一个关于Coursera的精彩视频教程（21分钟），介绍拓扑排序的基本概念。
+拓扑排序也可以通过 BFS 完成。
+```
+## 解法
+### 思路
+图：
+- 如果课程安排合理，可以完成所有课程，那么课程安排图可以组成一个`有向无环图`，所以对于一条边`(u,v)`，v的所有源点u都出现了，v才能出现
+- 遍历课程的入度情况，生成入度表`in`
+    - 数组下标对应课程对应的值
+    - 下标值对应入度数
+- 遍历`in`，查找值为0的下标，代表这些下标对应的课程已经没有前置需要学习的课程，可以开始学
+- 将这个下标值放入队列
+- 如果队列不为空，遍历这个队列：
+    - 取出队列头元素暂存
+    - 遍历`in`
+        - 如果课程的前置元素不是这个暂存值就跳过
+        - 否则，将暂存课程对应的入度数减1，并判断是否为0，如果是就将元素放入队列
+    - 课程数-1，代表这门课被学习
+- 循环结束后，判断课程数是否为0
+### 代码
+```java
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[] in = new int[numCourses];
+        for (int[] prerequisite : prerequisites) {
+            in[prerequisite[0]]++;
+        }
+
+        LinkedList<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (in[i] == 0) {
+                queue.offerFirst(i);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            int num = queue.pollFirst();
+            numCourses--;
+
+            for (int[] prerequisite : prerequisites) {
+                if (prerequisite[1] != num) {
+                    continue;
+                }
+                if (--in[prerequisite[0]] == 0) {
+                    queue.offerFirst(prerequisite[0]);
+                }
+            }
+        }
+
+        return numCourses == 0;
+    }
+}
+```
