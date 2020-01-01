@@ -86,7 +86,7 @@ class Solution {
 ```
 ## 解法
 ### 思路
-图：
+图，bfs：
 - 如果课程安排合理，可以完成所有课程，那么课程安排图可以组成一个`有向无环图`，所以对于一条边`(u,v)`，v的所有源点u都出现了，v才能出现
 - 遍历课程的入度情况，生成入度表`in`
     - 数组下标对应课程对应的值
@@ -131,6 +131,107 @@ class Solution {
         }
 
         return numCourses == 0;
+    }
+}
+```
+## 解法二
+### 思路
+图，dfs：
+- 根据`prerequisites`生成正向的关系图`adjacency`（上完这节课之后可以上什么课）
+- 生成数组`flag`记录当前课程是否被访问过，如果被访问过，说明生成了环图，不符合题目要求
+- 递归过程：
+    - 退出条件：
+        - `flag == 1`：说明形成了闭环，返回false
+        - `flag == -1`：说明已经遍历过，返回true
+    - 循环遍历`adjacency[i]`，如果当前遍历的下标对应值为1，且递归返回值为false，返回false，说明这个课程会形成闭环
+    - 循环结束，把当前节点i的值置为-1
+    - 返回true
+### 代码
+```java
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[][] adjacency = new int[numCourses][numCourses];
+        int[] flag = new int[numCourses];
+
+        for (int[] prerequisite : prerequisites) {
+            adjacency[prerequisite[1]][prerequisite[0]] = 1;
+        }
+
+        for (int i = 0; i < numCourses; i++) {
+            if (dfs(i, flag, adjacency)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean dfs(int i, int[] flag, int[][] adjacency) {
+        if (flag[i] == 1) {
+            return true;
+        }
+
+        if (flag[i] == -1) {
+            return false;
+        }
+
+        flag[i] = 1;
+        for (int j = 0; j < adjacency.length; j++) {
+            if (adjacency[i][j] == 1 && dfs(j, flag, adjacency)) {
+                return true;
+            }
+        }
+
+        flag[i] = -1;
+        return false;
+    }
+}
+```
+## 优化代码
+### 思路
+使用动态数组代替数组，减少查询的次数
+### 代码
+```java
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        List<List<Integer>> adjacency = new ArrayList<>();
+        for (int i = 0; i < numCourses; i++) {
+            adjacency.add(new ArrayList<>());
+        }
+        
+        int[] flag = new int[numCourses];
+
+        for (int[] prerequisite : prerequisites) {
+            adjacency.get(prerequisite[1]).add(prerequisite[0]);
+        }
+
+        for (int i = 0; i < numCourses; i++) {
+            if (dfs(i, flag, adjacency)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean dfs(int i, int[] flag, List<List<Integer>> adjacency) {
+        if (flag[i] == 1) {
+            return true;
+        }
+
+        if (flag[i] == -1) {
+            return false;
+        }
+
+        flag[i] = 1;
+        for (int j : adjacency.get(i)) {
+            if (dfs(j, flag, adjacency)) {
+                return true;
+            }
+        }
+
+        flag[i] = -1;
+        return false;
     }
 }
 ```
