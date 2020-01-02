@@ -310,3 +310,122 @@ class Solution {
     }
 }
 ```
+# LeetCode_264_丑数II
+## 题目
+编写一个程序，找出第 n 个丑数。
+
+丑数就是只包含质因数 2, 3, 5 的正整数。
+
+示例:
+```
+输入: n = 10
+输出: 12
+解释: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 是前 10 个丑数。
+```
+说明:  
+```
+1 是丑数。
+n 不超过1690。
+```
+## 失败解法
+### 失败原因
+超时
+### 思路
+- 使用两个set分别存储丑数和非丑数
+- 从1开始遍历数字，判断当前数字能否被2、3、5整除，如果可以就继续计算，直到当前数被除为1
+- 将丑数和非丑数在循环结束时放入相应的set中
+- 在循环判断时，判断set中是否有对应的数，起到缓存的作用
+- 最后当丑数值和`n`相同时，返回当前元素
+### 代码
+```java
+class Solution {
+    public int nthUglyNumber(int n) {
+        Set<Integer> set = new HashSet<>();
+        Set<Integer> no = new HashSet<>();
+        int num = 0;
+        set.add(1);
+        set.add(2);
+        set.add(3);
+        set.add(5);
+
+        for (int i = 0; true; i++) {
+            int tmp = i;
+            boolean flag = true;
+            while (tmp > 0) {
+                if (set.contains(tmp)) {
+                    break;
+                }
+
+                if (no.contains(tmp)) {
+                    flag = false;
+                    break;
+                }
+
+                if (tmp % 2 == 0) {
+                    tmp /= 2;
+                    continue;
+                }
+
+                if (tmp % 3 == 0) {
+                    tmp /= 3;
+                    continue;
+                }
+
+                if (tmp % 5 == 0) {
+                    tmp /= 5;
+                    continue;
+                }
+
+                flag = false;
+                break;
+            }
+
+            if (flag) {
+                num++;
+                if (num == n) {
+                    return i;
+                }
+                set.add(i);
+            } else {
+                no.add(i);
+            }
+        }
+    }
+}
+```
+## 解法
+### 思路
+- 因为丑数通过2、3、5组成，所以可以通过3个指针来代表能被2、3、5整除的数，初始化3个指针对应值为0
+- 在n个丑数的数组中，每个数都可能被3个中的任意一个或多个元素指向
+- 初始化一个动态数组，且令第一个元素为1
+- 令代表3个数的指针同时指向这个下标对应的元素，同时用index来代表当前指向的是第几个丑数
+- 然后开始比较3个数与当前丑数的乘积最小的一个，然后令这个数为后一个丑数
+- 同时使用的那个因数对应的下标就移动一格，代表当前因数和下一个丑数元素形成可能的丑数可能，用来在下一次循环中进行比较
+- 然后index自增，直到index和n值相同
+### 代码
+```java
+class Solution {
+    public int nthUglyNumber(int n) {
+        List<Integer> list = new ArrayList<Integer>(){{add(1);}};
+        int i2 = 0, i3 = 0, i5  =0, index = 1;
+        while (index++ < n) {
+            int num = Math.min(list.get(i2) * 2, Math.min(list.get(i3) * 3, list.get(i5) * 5));
+            list.add(num);
+
+            if (list.get(i2) * 2 == num) {
+                i2++;
+            }
+
+            if (list.get(i3) * 3 == num) {
+                i3++;
+            }
+
+            if (list.get(i5) * 5 == num) {
+                i5++;
+            }
+        }
+
+        return list.get(list.size() - 1);
+    }
+}
+```
