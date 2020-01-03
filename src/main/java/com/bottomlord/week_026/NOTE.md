@@ -429,3 +429,34 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+使用数组代替动态数组
+### 代码
+```java
+class Solution {
+    public int nthUglyNumber(int n) {
+        int[] dp = new int[n];
+        dp[0] = 1;
+        int i2 = 0, i3 = 0, i5 = 0, index = 0;
+        
+        while (++index < n) {
+            int num = Math.min(dp[i2] * 2, Math.min(dp[i3] * 3, dp[i5] * 5));
+            dp[index] = num;
+            if (num == dp[i2] * 2) {
+                i2++;
+            }
+            
+            if (num == dp[i3] * 3) {
+                i3++;
+            }
+            
+            if (num == dp[i5] * 5) {
+                i5++;
+            }
+        }
+        
+        return dp[n - 1];
+    }
+}
+```
