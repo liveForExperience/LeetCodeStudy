@@ -460,3 +460,238 @@ class Solution {
     }
 }
 ```
+# LeetCode_622_设计循环队列
+## 题目
+设计你的循环队列实现。 循环队列是一种线性数据结构，其操作表现基于 FIFO（先进先出）原则并且队尾被连接在队首之后以形成一个循环。它也被称为“环形缓冲器”。
+
+循环队列的一个好处是我们可以利用这个队列之前用过的空间。在一个普通队列里，一旦一个队列满了，我们就不能插入下一个元素，即使在队列前面仍有空间。但是使用循环队列，我们能使用这些空间去存储新的值。
+
+你的实现应该支持如下操作：
+```
+MyCircularQueue(k): 构造器，设置队列长度为 k 。
+Front: 从队首获取元素。如果队列为空，返回 -1 。
+Rear: 获取队尾元素。如果队列为空，返回 -1 。
+enQueue(value): 向循环队列插入一个元素。如果成功插入则返回真。
+deQueue(): 从循环队列中删除一个元素。如果成功删除则返回真。
+isEmpty(): 检查循环队列是否为空。
+isFull(): 检查循环队列是否已满。
+```
+示例：
+```
+MyCircularQueue circularQueue = new MycircularQueue(3); // 设置长度为 3
+
+circularQueue.enQueue(1);  // 返回 true
+
+circularQueue.enQueue(2);  // 返回 true
+
+circularQueue.enQueue(3);  // 返回 true
+
+circularQueue.enQueue(4);  // 返回 false，队列已满
+
+circularQueue.Rear();  // 返回 3
+
+circularQueue.isFull();  // 返回 true
+
+circularQueue.deQueue();  // 返回 true
+
+circularQueue.enQueue(4);  // 返回 true
+
+circularQueue.Rear();  // 返回 4
+```
+提示：
+```
+所有的值都在 0 至 1000 的范围内；
+操作数将在 1 至 1000 的范围内；
+请不要使用内置的队列库。
+```
+## 解法
+### 思路
+使用数组来实现：
+- 定义变量：
+    - `cap`：数组容量
+    - `front`：指向队列第一个有效元素的位置
+    - `rear`：指向队列最后一格有效元素的下一个位置
+- 判定状态：
+    - 为空：`front == rear`，因为要使这种判断合理，随意数组中要空出一格位置不存放有效元素
+    - 满了：`(rear + 1) % cap == front`，尾部再加1个元素的位置就追上了头部，代表数组已经满了
+- 操作：
+    - 入队：元素赋给`rear`指向的位置，然后`rear = (rear + 1) % cap`
+    - 出队：移动`front`指针，`front = (front + 1) % cap`
+    - 返回头部节点：返回`front`指向的元素
+    - 返回尾部节点：返回`(rear - 1 + cap) % cap`指向的元素
+    - 在做这些操作时，还要判断下状态，是否满了或为空
+### 代码
+```java
+class MyCircularQueue {
+        private int cap;
+        private int front;
+        private int rear;
+        private int[] queue;
+
+        public MyCircularQueue(int k) {
+            cap = k + 1;
+            front = rear = 0;
+            queue = new int[cap];
+        }
+
+        public boolean enQueue(int value) {
+            if (isFull()) {
+                return false;
+            }
+
+            queue[rear] = value;
+            rear = moveForward(rear);
+
+            return true;
+        }
+
+        public boolean deQueue() {
+            if (isEmpty()) {
+                return false;
+            }
+
+            front = moveForward(front);
+            return true;
+        }
+
+        public int Front() {
+            return isEmpty() ? -1 : queue[front];
+        }
+
+        public int Rear() {
+            return isEmpty() ? -1 : queue[moveBack(rear)];
+        }
+
+        public boolean isEmpty() {
+            return front == rear;
+        }
+
+        public boolean isFull() {
+            return (rear + 1) % cap == front;
+        }
+
+        private int moveForward(int pos) {
+            return (pos + 1) % cap;
+        }
+
+        private int moveBack(int pos) {
+            return (pos - 1 + cap) % cap;
+        }
+    }
+```
+# LeetCode_641_设计循环双端队列
+## 题目
+设计实现双端队列。
+你的实现需要支持以下操作：
+```
+MyCircularDeque(k)：构造函数,双端队列的大小为k。
+insertFront()：将一个元素添加到双端队列头部。 如果操作成功返回 true。
+insertLast()：将一个元素添加到双端队列尾部。如果操作成功返回 true。
+deleteFront()：从双端队列头部删除一个元素。 如果操作成功返回 true。
+deleteLast()：从双端队列尾部删除一个元素。如果操作成功返回 true。
+getFront()：从双端队列头部获得一个元素。如果双端队列为空，返回 -1。
+getRear()：获得双端队列的最后一个元素。 如果双端队列为空，返回 -1。
+isEmpty()：检查双端队列是否为空。
+isFull()：检查双端队列是否满了。
+```
+示例：
+```
+MyCircularDeque circularDeque = new MycircularDeque(3); // 设置容量大小为3
+circularDeque.insertLast(1);			        // 返回 true
+circularDeque.insertLast(2);			        // 返回 true
+circularDeque.insertFront(3);			        // 返回 true
+circularDeque.insertFront(4);			        // 已经满了，返回 false
+circularDeque.getRear();  				// 返回 2
+circularDeque.isFull();				        // 返回 true
+circularDeque.deleteLast();			        // 返回 true
+circularDeque.insertFront(4);			        // 返回 true
+circularDeque.getFront();				// 返回 4
+```
+提示：
+```
+所有值的范围为 [1, 1000]
+操作次数的范围为 [1, 1000]
+请不要使用内置的双端队列库。
+```
+## 解法
+### 思路
+实现上和622的循环队列基本类似：
+- 使用数组实现
+- 数组中空出一格元素位置，方便判断是否为空
+- 通过移动头尾指针来处理插入和删除的动作
+### 代码
+```java
+class MyCircularDeque {
+    private int cap;
+    private int front;
+    private int rear;
+    private int[] queue;
+
+    public MyCircularDeque(int k) {
+        cap = k + 1;
+        front = rear = 0;
+        queue = new int[cap];
+    }
+
+    public boolean insertFront(int value) {
+        if (isFull()) {
+            return false;
+        }
+
+        queue[front = moveBackward(front)] = value;
+        return true;
+    }
+
+    public boolean insertLast(int value) {
+        if (isFull()) {
+            return false;
+        }
+
+        queue[rear] = value;
+        rear = moveForward(rear);
+        return true;
+    }
+
+    public boolean deleteFront() {
+        if (isEmpty()) {
+            return false;
+        }
+
+        front = moveForward(front);
+        return true;
+    }
+
+    public boolean deleteLast() {
+        if (isEmpty()) {
+            return false;
+        }
+
+        rear = moveBackward(rear);
+        return true;
+    }
+
+    public int getFront() {
+        return isEmpty() ? -1 : queue[front];
+    }
+
+    public int getRear() {
+        return isEmpty() ? -1 : queue[moveBackward(rear)];
+    }
+
+    public boolean isEmpty() {
+        return front == rear;
+    }
+
+    public boolean isFull() {
+        return (rear + 1) % cap == front;
+    }
+
+    private int moveForward(int pos) {
+        return (pos + 1) % cap;
+    }
+
+    private int moveBackward(int pos) {
+        return (pos - 1 + cap) % cap;
+    }
+}
+```
