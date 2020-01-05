@@ -695,3 +695,158 @@ class MyCircularDeque {
     }
 }
 ```
+# LeetCode_474_一和零
+## 题目
+在计算机界中，我们总是追求用有限的资源获取最大的收益。
+
+现在，假设你分别支配着 m 个 0 和 n 个 1。另外，还有一个仅包含 0 和 1 字符串的数组。
+
+你的任务是使用给定的 m 个 0 和 n 个 1 ，找到能拼出存在于数组中的字符串的最大数量。每个 0 和 1 至多被使用一次。
+
+注意:
+```
+给定 0 和 1 的数量都不会超过 100。
+给定字符串数组的长度不会超过 600。
+```
+示例 1:
+```
+输入: Array = {"10", "0001", "111001", "1", "0"}, m = 5, n = 3
+输出: 4
+解释: 总共 4 个字符串可以通过 5 个 0 和 3 个 1 拼出，即 "10","0001","1","0" 。
+```
+示例 2:
+```
+输入: Array = {"10", "0", "1"}, m = 1, n = 1
+输出: 2
+解释: 你可以拼出 "10"，但之后就没有剩余数字了。更好的选择是拼出 "0" 和 "1" 。
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j]`：在i个0和j个1的情况下，可以拼出字符串的最大个数
+- 状态转移方程：`dp[i][j] = max(1 + dp[i - cost0][j - cost1], dp[i][j])`
+- 前提条件：`i >= cost0 && j >= cost1`
+- base case：元素值为0
+- 过程：
+    - 初始化dp数组`dp[][]`
+    - 遍历字符串数组
+    - 计算当前字符串使用的0和1的数量`count[]`
+        - `count[0]`：代表当前字符串耗费0的个数
+        - `count[1]`：代表当前字符串耗费1的个数
+    - 嵌套循环
+        - 外层从m值开始递减遍历，继续的条件是`>= count[0]`
+        - 内层从n值开始递减遍历，继续的条件是`>= count[1]`
+        - 内层循环执行状态转移方程，计算当前情况下能够得到的最大的字符串数
+    - 循环结束，返回`dp[m][n]`
+### 代码
+```java
+class Solution {
+    public int findMaxForm(String[] strs, int m, int n) {
+        int[][] dp = new int[m + 1][n + 1];
+
+        for (String str : strs) {
+            int[] count = count(str);
+            
+            for (int zeros = m; zeros >= count[0]; zeros--) {
+                for (int ones = n; ones >= count[1]; ones--) {
+                    dp[zeros][ones] = Math.max(1 + dp[zeros - count[0]][ones - count[1]], dp[zeros][ones]);
+                }
+            }
+        }
+        
+        return dp[m][n];
+    }
+
+    private int[] count(String str) {
+        int[] count = new int[2];
+        for (char c : str.toCharArray()) {
+            count[c - '0']++;
+        }
+        return count;
+    }    
+}
+```
+## 优化代码
+### 思路
+使用两个变量来代替count数组
+### 代码
+```java
+class Solution {
+    public int findMaxForm(String[] strs, int m, int n) {
+        int[][] dp = new int[m + 1][n + 1];
+        
+        for (String str : strs) {
+            int count0 = 0, count1 = 0;
+            for (char c : str.toCharArray()) {
+                 if (c == '0') {
+                     count0++;
+                 } else {
+                     count1++;
+                 }
+            }
+            
+            for (int zeros = m; zeros >= count0; zeros--) {
+                for (int ones = n; ones >= count1; ones--) {
+                    dp[zeros][ones] = Math.max(dp[zeros][ones], 1 + dp[zeros - count0][ones - count1]);
+                }
+            }
+        }
+        
+        return dp[m][n];
+    }
+}
+```
+# LeetCode_516_最长回文子序列
+## 题目
+给定一个字符串s，找到其中最长的回文子序列。可以假设s的最大长度为1000。
+
+示例 1:
+```
+输入:
+"bbbab"
+输出:
+4
+
+一个可能的最长回文子序列为 "bbbb"。
+```
+示例 2:
+```
+输入:
+"cbbd"
+输出:
+2
+
+一个可能的最长回文子序列为 "bb"。
+```
+## 解法
+### 思路
+动态规划：
+- 初始化s的长度为n
+- `dp[i][j]`：s字符串中下标i到下标j之间的最大回文子串长度
+- 状态转移方程：
+    - 如果`s[i] == s[j]`：`dp[i][j] = dp[i + 1][j - 1] + 2`
+    - 如果`s[i] != s[j]`：`dp[i][j] = max(dp[i + 1][j], dp[i][j + 1])`
+- base case：`dp[i][i] = 1`
+- 最终返回`dp[0][n - 1]`
+### 代码
+```java
+class Solution {
+    public int longestPalindromeSubseq(String s) {
+        int n = s.length();
+        int[][] dp = new int[n][n];
+
+        for (int i = n - 1; i >= 0; i--) {
+            dp[i][i] = 1;
+            for (int j = i + 1; j < n; j++) {
+                if (s.charAt(i) == s.charAt(j)) {
+                    dp[i][j] = dp[i + 1][j - 1] + 2;
+                } else {
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        
+        return dp[0][n - 1];
+    }
+}
+```
