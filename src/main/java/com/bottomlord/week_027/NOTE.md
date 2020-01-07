@@ -135,3 +135,72 @@ class Solution {
     }
 }
 ```
+# LeetCode_92_反转链表II
+## 题目
+反转从位置 m 到 n 的链表。请使用一趟扫描完成反转。
+
+说明:
+1 ≤ m ≤ n ≤ 链表长度。
+
+示例:
+```
+输入: 1->2->3->4->5->NULL, m = 2, n = 4
+输出: 1->4->3->2->5->NULL
+```
+## 解法
+### 思路
+- 通过值交换来反转链表
+- 使用两个指针
+    - `left`：通过m来移动到反转的起始位置，作为反转起始位置的起点指针，这个变量会作为类变量保存
+    - `right`：通过n递归移动到反转的结束位置，作为反转的结束位置的结尾指针
+- 过程：
+    - 递归遍历整个链表
+    - 通过每一层递减m和n的值来移动并定位left和right指针
+    - 递归的退出条件是`n == 1`，也就是遍历到了最后一个节点的位置
+    - 在递归返回后的回溯过程中，进行left和right的值交换
+    - 然后left向右移动，存于类变量中，right指针继续回溯
+    - 如果left和right指针指向同一个节点，或者right已经到了left的左边，也就是`left == right.next`，那么就不需要进行值交换
+### 代码
+```java
+class Solution {
+    private boolean stop;
+    private ListNode left;
+
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (head == null) {
+            return null;
+        }
+
+        stop = false;
+        ListNode right = left = head;
+        reserve(right, m, n);
+        
+        return head;
+    }
+
+    private void reserve(ListNode right, int m, int n) {
+        if (n == 1) {
+            return;
+        }
+
+        right = right.next;
+
+        if (m > 1) {
+            left = left.next;
+        }
+
+        reserve(right, m - 1, n - 1);
+        if (left == right || right.next == left) {
+            stop = true;
+        }
+        
+        if (!stop) {
+            int tmp = left.val;
+            left.val = right.val;
+            right.val = tmp;
+            
+            left = left.next;
+        }
+    }
+}
+```
