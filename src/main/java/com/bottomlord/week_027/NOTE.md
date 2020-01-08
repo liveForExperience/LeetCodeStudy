@@ -204,3 +204,65 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 通过改变链表结构来实现链表反转
+- 链表节点之间的反转过程：
+    - `A -> B -> C`
+    - `pre`指针指向`A`
+    - `cur`指针指向`B`
+    - `tmp`指针指向`cur.next`
+    - `cur.next = pre`
+    - `pre = cur`
+    - `cur = tmp`
+    - 实现`A <- B <- C`
+- 故本题中会用到的两个指针是：
+    - `pre`：初始指向head之前的节点，也就是null
+    - `cur`：初始指向head
+- 另外需要的节点：
+    - `con`：代表反转部分链表的头节点，初始点为m的前一个节点
+    - `tail`：代表反转部分链表的尾节点，初始点为m节点
+- 过程为迭代：
+    - 逐步移动`pre`和`cur`
+    - 直到`cur`来到m节点位置，开始反转
+    - `con`指向`pre`，`tail`指向`cur`
+    - 当`pre`指向第n个节点时
+        - `con.next`指向`pre`
+        - `tail.next`指向`cur`
+- 结束循环并返回`head`
+### 代码
+```java
+class Solution {
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (head == null) {
+            return null;
+        }
+
+        ListNode pre = null, cur = head;
+        while (m > 1) {
+            pre = cur;
+            cur = cur.next;
+            m--;
+            n--;
+        }
+
+        ListNode con = pre, tail = cur, tmp = null;
+        while (n > 0) {
+            tmp = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = tmp;
+            n--;
+        }
+
+        if (con != null) {
+            con.next = pre;
+        } else {
+            head = pre;
+        }
+        
+        tail.next = cur;
+        return head;
+    }
+}
+```
