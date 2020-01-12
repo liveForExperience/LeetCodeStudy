@@ -517,3 +517,76 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+反向思维:
+- 从`target`出发思考，先求出`target`所有4个字符一步只能能够组成的字符串可能
+- 在求的过程中要将在`deadends`中包含的内容除去
+- 如果组合为0，说明生成`target`的可能路径是没有的，返回-1
+- 遍历所有组合，把每种可能的每个字符变为0的最短路径相加，然后和暂存的最短路径比较，取最短
+- 注意每个循环的累加值都是从1开始的，因为之前已经计算过`target`的一步了
+- 遍历结束返回暂存的最短路径
+### 代码
+```java
+class Solution {
+    public int openLock(String[] deadends, String target) {
+        if (isDead(deadends, "0000")) {
+            return -1;
+        }
+
+        List<String> options = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            char[] cs = target.toCharArray();
+            char c = cs[i];
+            cs[i] = (char)((c - 48 + 1) % 10 + 48);
+            String str1 = new String(cs);
+            if (!isDead(deadends, str1)) {
+                options.add(str1);
+            }
+
+            cs[i] = (char)((c - 48 + 9) % 10 + 48);
+            String str2 = new String(cs);
+            if (!isDead(deadends, str2)) {
+                options.add(str2);
+            }
+        }
+
+        
+        if (options.size() == 0) {
+            return -1;
+        }
+        
+        int ans = 0;
+        
+        for (String option : options) {
+            int cur = 1;
+            char[] cs = option.toCharArray();
+            
+            for (int i = 0; i < 4; i++) {
+                int num = cs[i] - '0';
+                if (num > 5) {
+                    cur += 10 - num;
+                } else {
+                    cur += num;
+                }
+            }
+            
+            if (ans == 0 || cur < ans) {
+                ans = cur;
+            }
+        }
+        
+        return ans;
+    }
+
+    private boolean isDead(String[] deadends, String str) {
+        for (String deadend : deadends) {
+            if (Objects.equals(str, deadend)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```
