@@ -345,3 +345,175 @@ class Solution {
     }
 }
 ```
+# LeetCode_636_函数的独占时间
+## 题目
+给出一个非抢占单线程CPU的 n 个函数运行日志，找到函数的独占时间。
+
+每个函数都有一个唯一的 Id，从 0 到 n-1，函数可能会递归调用或者被其他函数调用。
+
+日志是具有以下格式的字符串：function_id：start_or_end：timestamp。例如："0:start:0" 表示函数 0 从 0 时刻开始运行。"0:end:0" 表示函数 0 在 0 时刻结束。
+
+函数的独占时间定义是在该方法中花费的时间，调用其他函数花费的时间不算该函数的独占时间。你需要根据函数的 Id 有序地返回每个函数的独占时间。
+
+示例 1:
+```
+输入:
+n = 2
+logs = 
+["0:start:0",
+ "1:start:2",
+ "1:end:5",
+ "0:end:6"]
+输出:[3, 4]
+说明：
+函数 0 在时刻 0 开始，在执行了  2个时间单位结束于时刻 1。
+现在函数 0 调用函数 1，函数 1 在时刻 2 开始，执行 4 个时间单位后结束于时刻 5。
+函数 0 再次在时刻 6 开始执行，并在时刻 6 结束运行，从而执行了 1 个时间单位。
+所以函数 0 总共的执行了 2 +1 =3 个时间单位，函数 1 总共执行了 4 个时间单位。
+```
+说明：
+```
+输入的日志会根据时间戳排序，而不是根据日志Id排序。
+你的输出会根据函数Id排序，也就意味着你的输出数组中序号为 0 的元素相当于函数 0 的执行时间。
+两个函数不会在同时开始或结束。
+函数允许被递归调用，直到运行结束。
+1 <= n <= 100
+```
+## 解法
+### 思路
+使用栈来模拟函数调用：
+- 初始化一个长度为n的数组`res`，每一个下标保存对应id的函数耗时
+- 初始化一个栈用来保存函数调用的顺序，栈顶元素为正在被调用的函数
+- 定义一个变量`pre`，用来保存栈顶被执行函数的起始执行时间
+    - 当遇到`start`时，`pre = str[2]`
+    - 当遇到`end`时，`pre = str[2] + 1`
+- 当遇到`start`的时候，如果栈顶有元素，那么栈顶元素的部分耗时就是`str[2] - pre`，累加至`res`的id对应下标中，并将`id`压入栈中
+- 当遇到`end`的时候，如果栈顶有元素，那么栈顶元素的耗时就是`str[2] - pre`，累加至`res`的id对应下标中，并将栈顶`id`弹出
+- 最后返回`res`
+### 代码
+```java
+class Solution {
+    public int[] exclusiveTime(int n, List<String> logs) {
+        int[] ans = new int[n];
+        Stack<Integer> stack = new Stack<>();
+        int pre = 0;
+        for (String log : logs) {
+            String[] strs = log.split(":");
+            Integer id = Integer.valueOf(strs[0]);
+            int time = Integer.parseInt(strs[2]);
+            if (Objects.equals("start", strs[1])) {
+                if (!stack.isEmpty()) {
+                    ans[stack.peek()] += time - pre;
+                }
+                pre = time;
+                stack.push(id);
+            } else {
+                ans[stack.pop()] += time - pre + 1;
+                pre = time + 1;
+            }
+        }
+
+        return ans;
+    }
+}
+```
+# LeetCode_752_打开转盘锁
+## 题目
+你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' 。每个拨轮可以自由旋转：例如把 '9' 变为  '0'，'0' 变为 '9' 。每次旋转都只能旋转一个拨轮的一位数字。
+
+锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。
+
+列表 deadends 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+
+字符串 target 代表可以解锁的数字，你需要给出最小的旋转次数，如果无论如何不能解锁，返回 -1。
+
+示例 1:
+```
+输入：deadends = ["0201","0101","0102","1212","2002"], target = "0202"
+输出：6
+解释：
+可能的移动序列为 "0000" -> "1000" -> "1100" -> "1200" -> "1201" -> "1202" -> "0202"。
+注意 "0000" -> "0001" -> "0002" -> "0102" -> "0202" 这样的序列是不能解锁的，
+因为当拨动到 "0102" 时这个锁就会被锁定。
+```
+示例 2:
+```
+输入: deadends = ["8888"], target = "0009"
+输出：1
+解释：
+把最后一位反向旋转一次即可 "0000" -> "0009"。
+```
+示例 3:
+```
+输入: deadends = ["8887","8889","8878","8898","8788","8988","7888","9888"], target = "8888"
+输出：-1
+解释：
+无法旋转到目标数字且不被锁定。
+```
+示例 4:
+```
+输入: deadends = ["0000"], target = "8888"
+输出：-1
+```
+提示：
+```
+死亡列表 deadends 的长度范围为 [1, 500]。
+目标数字 target 不会在 deadends 之中。
+每个 deadends 和 target 中的字符串的数字会在 10,000 个可能的情况 '0000' 到 '9999' 中产生。
+```
+## 解法
+### 思路
+广度优先搜索：
+- 初始化一个队列，用来进行bfs的广度优先搜索
+- 初始化一个set，用来存已经出现过的字符串
+- 初始化`depth`，作为bfs的层数也是题目的变化次数
+- 从`0000`开始，每一步都有8中可能：`0`,`1`,`2`,`3`每一个下标的值可以加减1
+- 每一层的最后一个元素塞入`null`，用来标志搜索进入下一层
+- 在每一个层的遍历中，走如下三个分支：
+    - 判断是否是`null`，如果是null就进入下一层
+    - 判断是否是`target`，是就结束遍历，并返回`depth`
+    - 判断是否是`deadends`，如果不是，就嵌套遍历所有8种可能，然后将set中没有的字符串添加到set中，并将该字符串放入队列
+- 如果都没有匹配的，就返回-1
+### 代码
+```java
+class Solution {
+    public int openLock(String[] deadends, String target) {
+        Set<String> dead = new HashSet<>();
+        Collections.addAll(dead, deadends);
+
+        Queue<String> queue = new LinkedList<>();
+        Set<String> memo = new HashSet<>();
+        int depth = 0;
+        queue.offer("0000");
+        queue.offer(null);
+
+        memo.add("0000");
+
+        while (!queue.isEmpty()) {
+            String str = queue.poll();
+            if (str == null) {
+                depth++;
+                if (queue.peek() != null) {
+                    queue.offer(null);
+                }
+            } else if (Objects.equals(target, str)) {
+                return depth;
+            } else if (!dead.contains(str)){
+                for (int i = 0; i < 4; i++) {
+                    for (int j = -1; j <= 1; j++) {
+                        int num = ((str.charAt(i) - '0') + j + 10) % 10;
+                        String tmp = str.substring(0, i) + ("" + num) + str.substring(i + 1);
+
+                        if (!memo.contains(tmp)) {
+                            memo.add(tmp);
+                            queue.offer(tmp);
+                        }
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+}
+```
