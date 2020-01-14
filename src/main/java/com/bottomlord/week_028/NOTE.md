@@ -89,3 +89,112 @@ class Solution {
     }
 }
 ```
+# LeetCode_433_最小基因变化
+## 题目
+一条基因序列由一个带有8个字符的字符串表示，其中每个字符都属于 "A", "C", "G", "T"中的任意一个。
+
+假设我们要调查一个基因序列的变化。一次基因变化意味着这个基因序列中的一个字符发生了变化。
+
+例如，基因序列由"AACCGGTT" 变化至 "AACCGGTA" 即发生了一次基因变化。
+
+与此同时，每一次基因变化的结果，都需要是一个合法的基因串，即该结果属于一个基因库。
+
+现在给定3个参数 — start, end, bank，分别代表起始基因序列，目标基因序列及基因库，请找出能够使起始基因序列变化为目标基因序列所需的最少变化次数。如果无法实现目标变化，请返回 -1。
+
+注意:
+```
+起始基因序列默认是合法的，但是它并不一定会出现在基因库中。
+所有的目标基因序列必须是合法的。
+假定起始基因序列与目标基因序列是不一样的。
+```
+示例 1:
+```
+start: "AACCGGTT"
+end:   "AACCGGTA"
+bank: ["AACCGGTA"]
+
+返回值: 1
+```
+示例 2:
+```
+start: "AACCGGTT"
+end:   "AAACGGTA"
+bank: ["AACCGGTA", "AACCGCTA", "AAACGGTA"]
+
+返回值: 2
+```
+示例 3:
+```
+start: "AAAAACCC"
+end:   "AACCCCCC"
+bank: ["AAAACCCC", "AAACCCCC", "AACCCCCC"]
+
+返回值: 3
+```
+## 解法
+### 思路
+bfs：
+- 初始化变量:
+    - `queue`：驱动bfs，将`start`压入
+    - `set`：保存生成过的字符串，添加`start`
+    - `level`：暂存改变字符串的次数，也就是bfs的层数
+- 循环：
+    - 退出条件：
+        - 队列为空：返回-1，说明所有可能遍历过了，没有匹配的
+        - 循环过程中变换成了要求的字符串，返回`level`
+    - 过程：
+        - 将每一层的所有字符串遍历一遍
+        - 如果当前字符串和目标的相同，返回
+        - 每个字符串的每个不同字符都依次替换成`A,T,G,C`，并判断是否符合基因库和是否已经生成过，如果都符合就放入队列
+        - 进行下一个循环
+### 代码
+```java
+class Solution {
+    public int minMutation(String start, String end, String[] bank) {
+        Set<String> bankSet = new HashSet<>(Arrays.asList(bank));
+        Queue<String> queue = new LinkedList<>();
+        Set<String> set = new HashSet<>();
+        int level = 0;
+
+        queue.offer(start);
+        bankSet.add(start);
+        
+        char[] genes = new char[]{'A', 'T', 'G', 'C'};
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+
+            while (size-- > 0) {
+                String str = queue.poll();
+                if (str == null) {
+                    continue;
+                }
+
+                if (Objects.equals(str, end)) {
+                    return level;
+                }
+
+                for (int i = 0; i < str.length(); i++) {
+                    char[] cs = str.toCharArray();
+                    for (int j = 0; j < 4; j++) {
+                        if (cs[i] != genes[j]) {
+                            cs[i] = genes[j];
+                        }
+
+                        String tmp = new String(cs);
+
+                        if (!set.contains(tmp) && bankSet.contains(tmp)) {
+                            set.add(tmp);
+                            queue.offer(tmp);
+                        }
+                    }
+                }
+            }
+
+            level++;
+        }
+
+        return -1;
+    }
+}
+```
