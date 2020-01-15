@@ -198,3 +198,90 @@ class Solution {
     }
 }
 ```
+# LeetCode_60_第k个排列
+## 题目
+给出集合 [1,2,3,…,n]，其所有元素共有 n! 种排列。
+
+按大小顺序列出所有排列情况，并一一标记，当 n = 3 时, 所有排列如下：
+```
+"123"
+"132"
+"213"
+"231"
+"312"
+"321"
+给定 n 和 k，返回第 k 个排列。
+```
+说明：
+```
+给定 n 的范围是 [1, 9]。
+给定 k 的范围是[1,  n!]。
+```
+示例 1:
+```
+输入: n = 3, k = 3
+输出: "213"
+```
+示例 2:
+```
+输入: n = 4, k = 9
+输出: "2314"
+```
+## 解法
+### 思路
+回溯：
+- 将整个排列组合定义成一个多叉树，每一层都是n!个节点，而每个子树都是(n - 1)!个节点
+- 先通过遍历生成阶乘的每一位对应的值，生成数组`arr[n + 1]`
+- 初始化一个布尔数组，用来保存使用过的数字，因为在每一层的dfs递归中，都会从1开始从小到大循环所有数的可能，所以如果这个数被使用过，那么就用这个布尔数组来标识
+- 然后开始dfs
+    - 递归的时候可以通过层数，到`arr`中找到对应的组合数
+    - 开始从1开始从小到大循环所有排列的可能
+        - 如果布尔数组中使用过当前数，就跳过
+        - 如果小于`k`，就将排列数从`k`中减掉，继续当前层的循环
+        - 如果大于等于`k`，说明这个子树中有第`k`个数，层数加1递归下去，同时将当前选择的数的布尔值标记为真，以及将当前值放入list中
+    - 退出条件就是层数与n值相同，代表所有的排列都已经找过了
+- 将list中的值按顺序拼接，因为是从最高位开始搜索的。
+### 代码
+```java
+class Solution {
+    public String getPermutation(int n, int k) {
+        int[] factorial = new int[n + 1];
+        factorial[0] = 1;
+        for (int i = 1; i<= n; i++) {
+            factorial[i] = factorial[i - 1] * i;
+        }
+
+        boolean[] memo = new boolean[n + 1];
+        List<Integer> list = new ArrayList<>();
+        dfs(0, list, n, k, factorial, memo);
+        
+        StringBuilder sb = new StringBuilder();
+        for (Integer num : list) {
+            sb.append(num);
+        }
+        return sb.toString();
+    }
+
+    private void dfs(int index, List<Integer> list, int n, int k, int[] factorial, boolean[] memo) {
+        if (index == n) {
+            return;
+        }
+        
+        int count = factorial[n - 1 - index];
+        for (int i = 1; i <= n; i++) {
+            if (memo[i]) {
+                continue;
+            }
+            
+            if (k > count) {
+                k -= count;
+                continue;
+            }
+            
+            memo[i] = true;
+            list.add(i);
+            dfs(index + 1, list, n, k, factorial, memo);
+        }
+    }
+}
+```
