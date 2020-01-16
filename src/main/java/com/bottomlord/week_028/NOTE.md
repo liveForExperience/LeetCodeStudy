@@ -294,6 +294,7 @@ class Solution {
     1. 计算`k / factorial[i]`的商，这个商相当于代表了k能容纳几个`factorial[i]`的阶乘数
     2. 通过商到`list`中找对应的元素作为当前位的值累加到字符串中，并把这个值从`list`中删掉
     3. 将k减去`商 * factorial[i]`，相当于当前循环走完了`商 * factorial[i]`步，还剩`k - 商 * factorial[i]`步，需要下个循环继续算
+- 注意，需要在开头对k进行减1，原因是这个解法中的k其实可以代表从第一个`[1-n]`的序列开始到第k个元素需要走的步数，所以是`k - 1`
 ### 代码
 ```java
 class Solution {
@@ -320,6 +321,67 @@ class Solution {
         }
         
         return sb.toString();
+    }
+}
+```
+# LeetCode_394_字符串解码
+## 题目
+给定一个经过编码的字符串，返回它解码后的字符串。
+
+编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
+
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入。
+
+示例:
+```
+s = "3[a]2[bc]", 返回 "aaabcbc".
+s = "3[a2[c]]", 返回 "accaccacc".
+s = "2[abc]3[cd]ef", 返回 "abcabccdcdcdef".
+```
+## 解法
+### 思路
+栈：
+初始化变量：
+    - 栈`strs`：用来暂存需要处理的字符串
+    - 栈`nums`：用来暂存转换成倍数的数字
+    - StringBuilder(内存优化)变量`str`
+    - int变量`num`
+- 遍历字符数组
+    - 如果是字母就累加到`ans`中
+    - 如果是数字就转为int，并加到`num`中
+    - 如果是`[`，将`str`和`num`放入对应的栈中，同时变量重置
+    - 如果是`]`，将`strs`和`nums`出栈，并拼接字符串`strs`的栈顶 + `num` * `str`
+- 遍历结束，返回`str.toString()`
+### 代码
+```java
+class Solution {
+    public String decodeString(String s) {
+        Stack<String> strs = new Stack<>();
+        Stack<Integer> nums = new Stack<>();
+        StringBuilder str = new StringBuilder();
+        int num = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '[') {
+                strs.push(str.toString());
+                nums.push(num);
+                num = 0;
+                str = new StringBuilder();
+            } else if (c == ']') {
+                StringBuilder tmp = new StringBuilder();
+                int time = nums.pop();
+                for (int i = 0; i < time; i++) {
+                    tmp.append(str);
+                }
+                str = new StringBuilder((strs.isEmpty() ? "" : strs.pop()) + tmp);
+            } else if (Character.isDigit(c)) {
+                num = 10 * num + (c - '0');
+            } else {
+                str.append(c);
+            }
+        }
+        return str.toString();
     }
 }
 ```
