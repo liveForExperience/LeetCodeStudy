@@ -285,3 +285,41 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+使用链表模拟dfs的过程：
+- 生成阶乘数组`factorial`
+- 将所有n个数按从小到大的顺序放入链表`list`中
+- 循环n次，从`n - 1`开始递减循环到0
+    1. 计算`k / factorial[i]`的商，这个商相当于代表了k能容纳几个`factorial[i]`的阶乘数
+    2. 通过商到`list`中找对应的元素作为当前位的值累加到字符串中，并把这个值从`list`中删掉
+    3. 将k减去`商 * factorial[i]`，相当于当前循环走完了`商 * factorial[i]`步，还剩`k - 商 * factorial[i]`步，需要下个循环继续算
+### 代码
+```java
+class Solution {
+    public String getPermutation(int n, int k) {
+        k--;
+        
+        int[] factorial = new int[n];
+        factorial[0] = 1;
+
+        for (int i = 1; i < n; i++) {
+            factorial[i] = factorial[i - 1] * i;
+        }
+
+        List<Integer> list = new LinkedList<>();
+        for (int i = 1; i <= n; i++) {
+            list.add(i);
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for (int i = n - 1; i >= 0; i--) {
+            int index = k / factorial[i];
+            sb.append(list.remove(index));
+            k -= index * factorial[i];
+        }
+        
+        return sb.toString();
+    }
+}
+```
