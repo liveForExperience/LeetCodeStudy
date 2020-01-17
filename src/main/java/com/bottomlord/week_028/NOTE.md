@@ -385,3 +385,52 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+递归：
+- 与栈的解题思路类似，区别在于：
+    - 通过`[`和`]`作为递归的进入和退出条件
+    - 不用栈而是用一个变量`num`来记录倍数
+- 在遍历字符串时：
+    - 如果遇到数字，就记录`num`
+    - 如果遇到字符，就拼接到`str`
+    - 如果遇到`]`，将当前拼接的`str`和当前`]`的下标返回
+    - 如果遇到`[`
+        - 进入递归
+        - 在这个逻辑分支中获取递归返回的字符串以及`[...]`的结尾下标
+        - 通过返回的字符串和暂存的`num`来拼接出`num[...]`组合代表的内容
+- 遍历结束，返回`str`
+### 代码
+```java
+class Solution {
+    public String decodeString(String s) {
+        return dfs(s, 0)[0];
+    }
+
+    private String[] dfs(String s, int index) {
+        int num = 0;
+        StringBuilder str = new StringBuilder();
+
+        while (index < s.length()){
+            char c = s.charAt(index);
+            if (Character.isDigit(c)) {
+                num = num * 10 + (c - '0');
+            } else if (Character.isLetter(c)) {
+                str.append(c);
+            } else if ('[' == c) {
+                String[] returns = dfs(s, index + 1);
+                index = Integer.parseInt(returns[1]);
+                while (num > 0) {
+                    str.append(returns[0]);
+                    num--;
+                }
+            } else {
+                return new String[]{str.toString(), String.valueOf(index)};
+            }
+            index++;
+        }
+
+        return new String[]{str.toString()};
+    }
+}
+```
