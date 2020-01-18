@@ -477,3 +477,79 @@ class Solution {
     }
 }
 ```
+# LeetCode_477_汉明距离总和
+## 题目
+两个整数的 汉明距离 指的是这两个数字的二进制数对应位不同的数量。
+
+计算一个数组中，任意两个数之间汉明距离的总和。
+
+示例:
+```
+输入: 4, 14, 2
+
+输出: 6
+
+解释: 在二进制表示中，4表示为0100，14表示为1110，2表示为0010。（这样表示是为了体现后四位之间关系）
+所以答案为：
+HammingDistance(4, 14) + HammingDistance(4, 2) + HammingDistance(14, 2) = 2 + 2 + 2 = 6.
+```
+注意:
+```
+数组中元素的范围为从 0到 10^9。
+数组的长度不超过 10^4。
+```
+## 失败解法
+### 失败原因
+超时
+### 思路
+- 嵌套循环遍历所有两两数字的组合
+- 两两异或
+- 求异或值中为1的位的个数，通过`(num - 1) & num`将`num`的最低位1清零，直到`num == 0`，计算清零次数
+- 累加每个循环中计算出的次数
+### 代码
+```java
+class Solution {
+    public int totalHammingDistance(int[] nums) {
+        int ans = 0;
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                int num = nums[i] ^ nums[j];
+                while (num != 0) {
+                    num = (num - 1) & num;
+                    ans++;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 可以通过分别计算数的每一位上1和0的个数，然后通过`num1 * num0`来计算所有数字之间的汉明距离
+- 通过`num & 1`来计算最低位上的值是1还是0
+### 代码
+```java
+class Solution {
+    public int totalHammingDistance(int[] nums) {
+        int ans = 0, n = nums.length;
+        int[] arr = new int[32];
+
+        for (int num : nums) {
+            int index = 0;
+            while (num > 0) {
+                arr[index] += num & 1;
+                num >>= 1;
+                index++;
+            }
+        }
+        
+        for (int num : arr) {
+            ans += num * (n - num);
+        }
+        
+        return ans;
+    }
+}
+```
