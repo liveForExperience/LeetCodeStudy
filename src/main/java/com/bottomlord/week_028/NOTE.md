@@ -553,3 +553,53 @@ class Solution {
     }
 }
 ```
+# LeetCode_611_有效三角形的个数
+## 题目
+给定一个包含非负整数的数组，你的任务是统计其中可以组成三角形三条边的三元组个数。
+
+示例 1:
+```
+输入: [2,2,3,4]
+输出: 3
+解释:
+有效的组合是: 
+2,3,4 (使用第一个 2)
+2,3,4 (使用第二个 2)
+2,2,3
+```
+注意:
+```
+数组长度不超过1000。
+数组里整数的范围为 [0, 1000]。
+```
+## 解法
+### 思路
+- 三角形三条边需要满足：`a + b > c && a + c > b && b + c > a`
+- 使用枚举，三层循环判断所有元素组合，并计数
+### 代码
+```java
+class Solution {
+    public int triangleNumber(int[] nums) {
+        int ans = 0;
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                for (int k = j + 1; k < nums.length; k++) {
+                    int a = nums[i], b = nums[j], c = nums[k];
+                    if (a + b > c && a + c > b && b + c > a) {
+                        ans++;
+                    }
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+
+### 代码
+```java
+
+```
