@@ -598,8 +598,70 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-
+二分查找：
+- 将数组排序，满足二分查找的前提条件
+- 因为从下到大排序，所以只要满足`a + b > c`，则`a + c > b`和`b + c > a`的条件一定满足
+- 使用两层循环确定`a,b`
+- 通过二分法找到`c`的位置
+- 记录`a,b,c`对应的下标`i,j,k`
+- 那么满足`a + b > c`中c的可能个数就是`k - j`个
+- 将个数累加后，在循环结束后返回
 ### 代码
 ```java
+class Solution {
+    public int triangleNumber(int[] nums) {
+        int ans = 0;
+        Arrays.sort(nums);
 
+        for (int i = 0; i < nums.length - 2; i++) {
+            for (int j = i + 1; j < nums.length - 1; j++) {
+                int c = nums[i] + nums[j], head = j + 1, tail = nums.length - 1;
+                while (head <= tail) {
+                    int mid = head + (tail - head) / 2;
+                    if (nums[mid] >= c) {
+                        tail = mid - 1;
+                    } else {
+                        head = mid + 1;
+                    }
+                }
+
+                ans += head - j - 1;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+使用双指针
+- 和二分法中的方法一样，先排序数组，使得只需考虑`a + b > c`
+- `a,b,c`同样对应数组下标`i,j,k` 
+- 双指针代表的是`j,k`
+- 一重循环来确定`i`，即三条边的第一条边
+- `j`的初始值为`i + 1`，`k`的初始值为`i + 2`
+- 然后在内层的嵌套循环，获取`j`和`k`，判断`b`和`c`与`a`是否匹配要求，如果符合就先移动`k`，然后累加可能值
+- 在`k`不符合要求后，再递增`j`，直到所有可能都不符合
+- 需要注意考虑`a == 0`的情况，因为在这种情况下`a + b > c`恒不成立
+### 代码
+```java
+class Solution {
+    public int triangleNumber(int[] nums) {
+        Arrays.sort(nums);
+        int ans = 0;
+        for (int i = 0; i < nums.length; i++) {
+            int k = i + 2;
+
+            for (int j = i + 1; j < nums.length - 1 && nums[i] != 0; j++) {
+                while (k < nums.length && nums[i] + nums[j] > nums[k]) {
+                    k++;
+                    ans += k - j - 1;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
