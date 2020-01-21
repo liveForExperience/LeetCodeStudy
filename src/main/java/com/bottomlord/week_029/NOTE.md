@@ -442,3 +442,38 @@ public class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+Floyd算法：
+- 使用两个指针，一个步长为1，一个步长为2
+- 如果这个链表有环，那么这两个指针一定会相遇
+- 将相遇的节点记录，作为一个新的指针，和head指针一起重新一步步的移动
+- 遇到的点就是环的入口
+### 代码
+```java
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+        ListNode slow = head, fast = head, meet = null;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            
+            if (fast == slow) {
+                meet = fast;
+                break;
+            }
+        }
+        
+        if (meet == null) {
+            return null;
+        }
+        
+        while (head != meet) {
+            head = head.next;
+            meet = meet.next;
+        }
+        
+        return meet;
+    }
+}
+```
