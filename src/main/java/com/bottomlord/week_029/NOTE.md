@@ -190,3 +190,101 @@ class Solution {
     }
 }
 ```
+# LeetCode_869_重新排序得到2的幂
+## 题目
+给定正整数 N ，我们按任何顺序（包括原始顺序）将数字重新排序，注意其前导数字不能为零。
+
+如果我们可以通过上述方式得到 2 的幂，返回 true；否则，返回 false。
+
+示例 1：
+```
+输入：1
+输出：true
+```
+示例 2：
+```
+输入：10
+输出：false
+```
+示例 3：
+```
+输入：16
+输出：true
+```
+示例 4：
+```
+输入：24
+输出：false
+```
+示例 5：
+```
+输入：46
+输出：true
+```
+提示：
+```
+1 <= N <= 10^9
+```
+## 解法
+### 思路
+- 通过回溯来和swap来遍历遍历全量的排列
+- 判断所有对应排列是否为2的幂
+### 代码
+```java
+class Solution {
+    public boolean reorderedPowerOf2(int N) {
+        int b = 0, num = N, index = 0;
+        while (num > 0) {
+            num /= 10;
+            b++;
+        }
+
+        int[] arr = new int[b];
+        while (N > 0) {
+            arr[index++] = N % 10;
+            N /= 10;
+        }
+
+        return backTrace(arr, 0);
+    }
+
+    private boolean isPowerOf2(int[] arr) {
+        if (arr[0] == 0) {
+            return false;
+        }
+
+        int num = 0;
+        for (int n : arr) {
+            num = num * 10 + n;
+        }
+
+        while (num > 0 && (num & 1) == 0) {
+            num >>= 1;
+        }
+
+        return num == 1;
+    }
+
+    private boolean backTrace(int[] arr, int start) {
+        if (start == arr.length) {
+            return isPowerOf2(arr);
+        }
+
+        for (int i = start; i < arr.length; i++) {
+            swap(arr, start, i);
+            if (backTrace(arr, start + 1)) {
+                return true;
+            }
+            swap(arr, start, i);
+        }
+
+        return false;
+    }
+
+    private void swap(int[] arr, int x, int y) {
+        int tmp = arr[x];
+        arr[x] = arr[y];
+        arr[y] = tmp;
+    }
+}
+```
