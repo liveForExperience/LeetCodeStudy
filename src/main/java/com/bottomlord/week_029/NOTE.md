@@ -288,3 +288,30 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 因为数字可以交换，所以只需要计算2的幂的数每一位上的值的个数，和当前值的所有位上的值的个数比价，完全一致就说明交换后可以获得2的幂的数
+### 代码
+```java
+class Solution {
+    public boolean reorderedPowerOf2(int N) {
+        int[] arr = count(N);
+        for (int i = 0; i < 31; i++) {
+            if (Arrays.equals(arr, count(1 << i))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int[] count(int num) {
+        int[] arr = new int[10];
+        while (num > 0) {
+            arr[num % 10]++;
+            num /= 10;
+        }
+        return arr;
+    }
+}
+```
