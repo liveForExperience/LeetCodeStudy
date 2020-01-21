@@ -365,3 +365,31 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用map计数
+- 使用大顶堆暂存
+- 遍历k次弹出堆顶元素
+- 遍历结束返回
+### 代码
+```java
+class Solution {
+    public List<String> topKFrequent(String[] words, int k) {
+        Map<String, Integer> map = new HashMap<>();
+        for (String word : words) {
+            map.put(word, map.getOrDefault(word, 0) + 1);
+        }
+
+        PriorityQueue<String> queue = new PriorityQueue<>((x, y) -> map.get(x).equals(map.get(y)) ? x.compareTo(y) : map.get(y) - map.get(x));
+        for (String key : map.keySet()) {
+            queue.offer(key);
+        }
+        
+        List<String> ans = new ArrayList<>(k);
+        for (int i = 0; i < k; i++) {
+            ans.add(queue.poll());
+        }
+        return ans;   
+    }
+}
+```
