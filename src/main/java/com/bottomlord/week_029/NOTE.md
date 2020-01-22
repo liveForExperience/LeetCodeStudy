@@ -484,3 +484,88 @@ public class Solution {
     }
 }
 ```
+# LeetCode_380_常数时间插入、删除和获取随机元素
+## 题目
+设计一个支持在平均 时间复杂度 O(1) 下，执行以下操作的数据结构。
+```
+insert(val)：当元素 val 不存在时，向集合中插入该项。
+remove(val)：元素 val 存在时，从集合中移除该项。
+getRandom：随机返回现有集合中的一项。每个元素应该有相同的概率被返回。
+```
+示例 :
+```
+// 初始化一个空的集合。
+RandomizedSet randomSet = new RandomizedSet();
+
+// 向集合中插入 1 。返回 true 表示 1 被成功地插入。
+randomSet.insert(1);
+
+// 返回 false ，表示集合中不存在 2 。
+randomSet.remove(2);
+
+// 向集合中插入 2 。返回 true 。集合现在包含 [1,2] 。
+randomSet.insert(2);
+
+// getRandom 应随机返回 1 或 2 。
+randomSet.getRandom();
+
+// 从集合中移除 1 ，返回 true 。集合现在包含 [2] 。
+randomSet.remove(1);
+
+// 2 已在集合中，所以返回 false 。
+randomSet.insert(2);
+
+// 由于 2 是集合中唯一的数字，getRandom 总是返回 2 。
+randomSet.getRandom();
+```
+## 解法
+### 思路
+- 常数时间获取随机数，需要获取随机下标，所以不能通过hash表的方式，需要使用动态数组
+- 通过动态数组可以做到常数时间的插入
+- 删除动作如果需要在动态数组中做到常数时间，需要做到每次删除的都是尾部的元素，那么就需要将要删除的元素和尾部元素进行交换
+- 所以可以通过如下的数据结构来完成题目要求：
+    - 动态数组保存具体元素
+    - hash表保存元素和数组下标的映射
+### 代码
+```java
+class RandomizedSet {
+    private Random random;
+    private List<Integer> list;
+    private Map<Integer, Integer> map;
+
+    public RandomizedSet() {
+        this.random = new Random();
+        this.list = new ArrayList<>();
+        this.map = new HashMap<>();
+    }
+
+    public boolean insert(int val) {
+        if (map.containsKey(val)) {
+            return false;
+        }
+
+        map.put(val, list.size());
+        list.add(val);
+        return true;
+    }
+
+    public boolean remove(int val) {
+        if (!map.containsKey(val)) {
+            return false;
+        }
+
+        int index = map.get(val);
+        int last = list.get(list.size() - 1);
+        list.set(index, last);
+        map.put(last, index);
+
+        list.remove(list.size() - 1);
+        map.remove(val);
+        return true;
+    }
+
+    public int getRandom() {
+        return list.get(random.nextInt(list.size()));
+    }
+}
+```
