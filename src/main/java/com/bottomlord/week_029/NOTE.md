@@ -756,3 +756,82 @@ class Solution {
     }
 }
 ```
+# LeetCode_1090_受标签影响的最大值
+## 题目
+我们有一个项的集合，其中第 i 项的值为 values[i]，标签为 labels[i]。
+
+我们从这些项中选出一个子集 S，这样一来：
+```
+|S| <= num_wanted
+对于任意的标签 L，子集 S 中标签为 L 的项的数目总满足 <= use_limit。
+返回子集 S 的最大可能的 和。
+```
+示例 1：
+```
+输入：values = [5,4,3,2,1], labels = [1,1,2,2,3], num_wanted = 3, use_limit = 1
+输出：9
+解释：选出的子集是第一项，第三项和第五项。
+```
+示例 2：
+```
+输入：values = [5,4,3,2,1], labels = [1,3,3,3,2], num_wanted = 3, use_limit = 2
+输出：12
+解释：选出的子集是第一项，第二项和第三项。
+```
+示例 3：
+```
+输入：values = [9,8,8,7,6], labels = [0,0,0,1,1], num_wanted = 3, use_limit = 1
+输出：16
+解释：选出的子集是第一项和第四项。
+```
+示例 4：
+```
+输入：values = [9,8,8,7,6], labels = [0,0,0,1,1], num_wanted = 3, use_limit = 2
+输出：24
+解释：选出的子集是第一项，第二项和第四项。
+```
+提示：
+```
+1 <= values.length == labels.length <= 20000
+0 <= values[i], labels[i] <= 20000
+1 <= num_wanted, use_limit <= values.length
+```
+## 解法
+### 思路
+贪心算法：
+- 使用二维数组保存value和label的映射关系
+- 根据value进行倒叙排序
+- 使用一个bucket数组统计label的出现次数
+- 遍历二维数组，根据剩余的`num_wanted`进行累加，如果`num_wanted == 0`则结束累加
+- 在累加中，如果value对应的label在bucket中计数超过了`use_limit`，那么不累加这个值
+- 遍历结束，返回累加值
+### 代码
+```java
+class Solution {
+    public int largestValsFromLabels(int[] values, int[] labels, int num_wanted, int use_limit) {
+        int[][] arrs = new int[values.length][2];
+        for (int i = 0; i < values.length; i++) {
+            arrs[i][0] = values[i];
+            arrs[i][1] = labels[i];
+        }
+        
+        Arrays.sort(arrs, (x, y) -> y[0] - x[0]);
+        int[] bucket = new int[20001];
+        int ans = 0;
+        
+        for (int[] arr : arrs) {
+            if (num_wanted == 0) {
+                break;
+            }
+            
+            if (bucket[arr[1]] < use_limit) {
+                ans += arr[0];
+                bucket[arr[1]]++;
+                num_wanted--;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
