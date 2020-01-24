@@ -835,3 +835,92 @@ class Solution {
     }
 }
 ```
+# LeetCode_621_任务调度器
+## 题目
+给定一个用字符数组表示的 CPU 需要执行的任务列表。其中包含使用大写的 A - Z 字母表示的26 种不同种类的任务。任务可以以任意顺序执行，并且每个任务都可以在 1 个单位时间内执行完。CPU 在任何一个单位时间内都可以执行一个任务，或者在待命状态。
+
+然而，两个相同种类的任务之间必须有长度为 n 的冷却时间，因此至少有连续 n 个单位时间内 CPU 在执行不同的任务，或者在待命状态。
+
+你需要计算完成所有任务所需要的最短时间。
+
+示例 1：
+```
+输入: tasks = ["A","A","A","B","B","B"], n = 2
+输出: 8
+执行顺序: A -> B -> (待命) -> A -> B -> (待命) -> A -> B.
+```
+注：
+```
+任务的总个数为 [1, 10000]。
+n 的取值范围为 [0, 100]。
+```
+## 解法
+### 思路
+贪心算法：
+- 使用bucket数组统计26个任务的出现个数，将出现个数从大到小排序
+- 根据间隔时间n，每个区间分配最多`n+1`个不同的任务，如果不同任务不够再用空闲时间代替
+- 嵌套循环：
+    - 外层循环的退出条件是`bucket[25] == 0`，也就是所有统计的任务都为0了，坐标25的元素是整个统计数组中的最大值的位置，如果是0就代表所有元素都是0了
+    - 内层循环n次，循环体内从最大元素开始向前遍历，如果元素大于0，就`--`
+        - 退出条件1：`bucket[25] == 0`
+        - 退出条件2：内层循环了n次
+### 代码
+```java
+class Solution {
+    public int leastInterval(char[] tasks, int n) {
+        int[] bucket = new int[26];
+        for (char c : tasks) {
+            bucket[c - 'A']++;
+        }
+        Arrays.sort(bucket);
+        int ans = 0;
+
+        while (bucket[25] > 0) {
+            int i = 0;
+            while (i <= n) {
+                if (bucket[25] == 0) {
+                    break;
+                }
+
+                if (i < 26 && bucket[25 - i] > 0) {
+                    bucket[25 - i]--;
+                }
+
+                i++;
+                ans++;
+            }
+
+            Arrays.sort(bucket);
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 如果任务数最多的任务A的个数是`k`，那么执行完A任务需要`(k - 1) * (n) + 1`个cpu时间，而留给其他任务的空闲时间是`(k - 1) * n`
+    - 如果B任务的个数和最多的A任务的个数相同，那么B会占据`k - 1`个空闲时间，以及一个cpu时间
+    - 如果C任务的个数比A任务少1个，则C任务就会占据`k - 1`个空闲时间
+    - 如果D任务的个数比A少2个以上，则D任务在空闲时间内可以随意放置
+- 如果将所有任务安排完以后，仍然有空余时间，那么使用的时间就是`任务个数 + 剩余空闲时间`
+- 如果空闲时间使用完，还有任务没有安排，则总时间就是任务个数
+### 代码
+```java
+class Solution {
+    public int leastInterval(char[] tasks, int n) {
+        int[] bucket = new int[26];
+        for (char c : tasks) {
+            bucket[c - 'A']++;
+        }
+        Arrays.sort(bucket);
+
+        int max = bucket[25] - 1, idle = max * n;
+        for (int i = 24; i >= 0 && bucket[i] > 0; i--) {
+            idle -= Math.min(bucket[i], max);
+        }
+
+        return idle > 0 ? tasks.length + idle : tasks.length;
+    }
+}
+```
