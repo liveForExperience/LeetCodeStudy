@@ -1089,3 +1089,27 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+- 解法一进行两次的for循环，其实可以合并成一个
+- 解法一中使用字符串来作为map中计数用的key，其实也可以通过计算hash值来作为key
+### 代码
+```java
+class Solution {
+    public int maxEqualRowsAfterFlips(int[][] matrix) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int[] row : matrix) {
+            if (row[0] == 1) {
+                for (int i = 0; i < row.length; i++) {
+                    row[i] ^= 1;
+                }
+            }
+
+            int h = Arrays.hashCode(row);
+            map.put(h, map.getOrDefault(h, 0) + 1);
+        }
+
+        return Collections.max(map.values());
+    }
+}
+```
