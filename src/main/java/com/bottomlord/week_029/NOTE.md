@@ -924,3 +924,107 @@ class Solution {
     }
 }
 ```
+# LeetCode_518_零钱兑换II
+## 题目
+给定不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。假设每一种面额的硬币有无限个。 
+
+示例 1:
+```
+输入: amount = 5, coins = [1, 2, 5]
+输出: 4
+解释: 有四种方式可以凑成总金额:
+5=5
+5=2+2+1
+5=2+1+1+1
+5=1+1+1+1+1
+```
+示例 2:
+```
+输入: amount = 3, coins = [2]
+输出: 0
+解释: 只用面额2的硬币不能凑成总金额3。
+```
+示例 3:
+```
+输入: amount = 10, coins = [10] 
+输出: 1
+```
+注意:
+```
+你可以假设：
+
+0 <= amount (总金额) <= 5000
+1 <= coin (硬币面额) <= 5000
+硬币种类不超过 500 种
+结果符合 32 位符号整数
+```
+## 失败解法
+### 失败原因:
+超出时间限制
+### 思路
+递归：
+- 退出条件：
+    - 累加值`sum`大于`amount`
+    - `sum == amount`
+- 使用类变量`ans`记录匹配的可能
+- 递归中的逻辑是遍历`coins`数组，累加`sum`后继续递归
+### 代码
+```java
+class Solution {
+    private int ans = 0;
+    public int change(int amount, int[] coins) {
+        backTrace(amount, 0, 0, coins);
+        return ans;
+    }
+
+    private void backTrace(int amount, int sum, int index, int[] coins) {
+        if (sum > amount) {
+            return;
+        }
+        
+        if (sum == amount) {
+            ans++;
+            return;
+        }
+        
+        for (int i = index; i < coins.length; i++) {
+            backTrace(amount, sum + coins[i], i, coins);
+        }
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j]`：在`[0,i]`的硬币区间内，能够累加成`j`的组合个数
+- 状态转移方程：
+    - `dp[i][j] = dp[i - 1][j]`，每一个新的数字所组成的组合个数，都基于没有当前数字的前n个数字形成组合的累加
+    - `dp[i][j] += sum(dp[i][j - coins[i]])`，当前数字组成个数相当于，所有目标值`j`减去可能数字`coins[i]`的个数的累加
+### 代码
+```java
+class Solution {
+    public int change(int amount, int[] coins) {
+        int len = coins.length;
+        if (len == 0) {
+            return amount == 0 ? 1 : 0;
+        }
+
+        int[][] dp = new int[len][amount + 1];
+        dp[0][0] = 1;
+        for (int i = coins[0]; i <= amount; i += coins[0]) {
+            dp[0][i] = 1;
+        }
+
+        for (int i = 1; i < len; i++) {
+            for (int j = 0; j <= amount; j++) {
+                dp[i][j] = dp[i - 1][j];
+                if (j - coins[i] >= 0) {
+                    dp[i][j] += dp[i][j - coins[i]];
+                }
+            }
+        }
+        
+        return dp[len - 1][amount];
+    }
+}
+```
