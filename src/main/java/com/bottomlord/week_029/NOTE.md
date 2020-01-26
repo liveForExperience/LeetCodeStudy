@@ -1225,3 +1225,64 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+动态规划，不使用最长公共子序列来解题：
+- `dp[i][j]`：s1的第i个字符和s2到第j个字符范围内，删除字符的最小次数
+- 状态转移方程：
+    - 如果`i == 0 || j == 0`：说明需要删除的次数就是非0的字符串长度范围`i + j`
+    - 如果`word1[i] == word2[j]`：那说明当前字符不需要被删除，那么需要删除的字符次数就是`dp[i][j] == dp[i - 1][j - 1]`
+    - 如果`word1[i] != word2[j]`：说明当前字符需要被删除，而删除的最小次数就是`1 + min(dp[i - 1][j], dp[i][j - 1])`
+- 最终返回dp[word1.length][word2.length]
+### 代码
+```java
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int len1 = word1.length(), len2 = word2.length();
+        int[][] dp = new int[len1 + 1][len2 + 1];
+        for (int i = 0; i <= len1; i++) {
+            for (int j = 0; j <= len2; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = i + j;
+                } else if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j -  1]);
+                }
+            }
+        }
+        
+        return dp[len1][len2];
+    }
+}
+```
+## 解法三
+### 思路
+- 在解法二的基础上，使用一维数组来代替二维数组，因为在解法二的求解过程中，状态转移只需要考虑当前行和上一行，所以可以使用一个数组暂存上一行的数组，同时用临时数组来计算当前行。
+- 每次判断的都是word2长度上字符的进行判断，word1上的字符用来最为基础字符，也就是外层循环，推进整个动态规划的过程
+- 为什么可以使用一维，还可以参考题解中的图示[583官方题解](https://leetcode-cn.com/problems/delete-operation-for-two-strings/solution/liang-ge-zi-fu-chuan-de-shan-chu-cao-zuo-by-leetco/)
+### 代码
+```java
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int len1 = word1.length(), len2 = word2.length();
+        int[] dp = new int[len2 + 1];
+        
+        for (int i = 0; i <= len1; i++) {
+            int[] tmp = new int[len2 + 1];
+            for (int j = 0; j <= len2; j++) {
+                if (i == 0 || j == 0) {
+                    tmp[j] = i + j;
+                } else if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    tmp[j] = dp[j - 1];
+                } else {
+                    tmp[j] = 1 + Math.min(dp[j], tmp[j - 1]);
+                }
+            }
+            dp = tmp;
+        }
+        
+        return dp[len2];
+    }
+}
+```
