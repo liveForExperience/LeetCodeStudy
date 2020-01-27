@@ -96,3 +96,61 @@ class Solution {
     }
 }
 ```
+# LeetCode_1014_最佳观光组合
+## 题目
+给定正整数数组 A，A[i] 表示第 i 个观光景点的评分，并且两个景点 i 和 j 之间的距离为 j - i。
+
+一对景点（i < j）组成的观光组合的得分为（A[i] + A[j] + i - j）：景点的评分之和减去它们两者之间的距离。
+
+返回一对观光景点能取得的最高分。
+
+示例：
+```
+输入：[8,1,5,2,6]
+输出：11
+解释：i = 0, j = 2, A[i] + A[j] + i - j = 8 + 5 + 0 - 2 = 11
+```
+提示：
+```
+2 <= A.length <= 50000
+1 <= A[i] <= 1000
+```
+## 失败解法
+### 失败原因
+超出时间限制
+### 思路
+暴力解法：
+遍历所有组合，求最大值
+### 代码
+```java
+class Solution {
+    public int maxScoreSightseeingPair(int[] A) {
+        int ans = Integer.MIN_VALUE, len = A.length;
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                ans = Math.max(ans, A[i] + A[j] + i - j);
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 题目公式：`A[i] + i + A[j] - j`，可以将这个公式分成两个部分`A[i] + i`和`A[j] - j`
+- `A[i] + i`的值可以通过一个临时变量来保存，只要每次移动坐标时，将临时变量与当前遍历到的`A[i] + i`进性比较取最大值暂存
+- 在比较`A[i] + i`的最大值之前，先将最大值与当前坐标对应的`A[j] + j`的和与暂存的结果比较，取最大值
+- 这样就可以通过一次遍历获得两部分最大的值
+### 代码
+```java
+class Solution {
+    public int maxScoreSightseeingPair(int[] A) {
+        int len = A.length, max = Integer.MIN_VALUE, ans = Integer.MIN_VALUE;
+        for (int i = 0; i < len; i++) {
+            ans = Math.max(ans, max + A[i] - i);
+            max = Math.max(max, A[i] + i);
+        }
+        return ans;
+    }
+}
+```
