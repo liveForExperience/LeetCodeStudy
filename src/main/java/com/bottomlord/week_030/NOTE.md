@@ -292,3 +292,79 @@ class Solution {
     }
 }
 ```
+# LeetCode_1052_爱生气的书店老板
+## 题目
+今天，书店老板有一家店打算试营业 customers.length 分钟。每分钟都有一些顾客（customers[i]）会进入书店，所有这些顾客都会在那一分钟结束后离开。
+
+在某些时候，书店老板会生气。 如果书店老板在第 i 分钟生气，那么 grumpy[i] = 1，否则 grumpy[i] = 0。 当书店老板生气时，那一分钟的顾客就会不满意，不生气则他们是满意的。
+
+书店老板知道一个秘密技巧，能抑制自己的情绪，可以让自己连续 X 分钟不生气，但却只能使用一次。
+
+请你返回这一天营业下来，最多有多少客户能够感到满意的数量。
+
+示例：
+```
+输入：customers = [1,0,1,2,1,1,7,5], grumpy = [0,1,0,1,0,1,0,1], X = 3
+输出：16
+解释：
+书店老板在最后 3 分钟保持冷静。
+感到满意的最大客户数量 = 1 + 1 + 1 + 1 + 7 + 5 = 16.
+```
+提示：
+```
+1 <= X <= customers.length == grumpy.length <= 20000
+0 <= customers[i] <= 1000
+0 <= grumpy[i] <= 1
+```
+## 解法
+### 思路
+- 求`X`分钟内不满意顾客最多的时间窗口
+- 嵌套循环：
+    - 外层移动窗口的首个下标，且累加所有老板不生气时的顾客数量
+    - 内层循环遍历所有窗口可能，累加所有可以从不满意变为满意的窗口总值作为临时值，比较与上个临时值之间的较大值，然后继续外层循环
+- 最终返回外层的累加值和内层找到的最大临时值的和
+### 代码
+```java
+class Solution {
+    public int maxSatisfied(int[] customers, int[] grumpy, int X) {
+        int ans = 0, sum = 0;
+        for (int i = 0; i < customers.length; i++) {
+            ans += grumpy[i] == 0 ? customers[i] : 0;
+            int tmp = 0;
+            for (int time = 0; time < X && i + time < customers.length; time++) {
+                tmp += grumpy[i + time] == 1 ? customers[i + time] : 0;
+            }
+            sum = Math.max(sum, tmp);
+        }
+        return ans + sum;
+    }
+}
+```
+## 解法二
+### 思路
+分析解法一可以看到，内层循环求的窗口值，主要基于窗口的第一个元素和最后一个元素以及上一个窗口的值，只要计算这三个值就可以求得新的窗口，避免重复计算过多的元素
+### 代码
+```java
+class Solution {
+    public int maxSatisfied(int[] customers, int[] grumpy, int X) {
+        int len = customers.length, ans = grumpy[0] == 0 ? customers[0] : 0, pre = 0, start = grumpy[0] == 1 ? customers[0] : 0;;
+        for (int i = 0; i < X && i < len; i++) {
+            pre += grumpy[i] == 1 ? customers[i] : 0;
+        }
+        int sum = pre;
+
+        for (int i = 1; i < len; i++) {
+            ans += grumpy[i] == 0 ? customers[i] : 0;
+            if (i <= len - X) {
+                int endIndex = i + X - 1;
+                int end = grumpy[endIndex] == 1 ? customers[endIndex] : 0;
+                int tmp = pre - start + end;
+                sum = Math.max(sum, tmp);
+                start = grumpy[i] == 1 ? customers[i] : 0;
+                pre = tmp;
+            }
+        }
+        return ans + sum;
+    }
+}
+```
