@@ -222,5 +222,73 @@ class Solution {
     - 因为判断过程就是`k`和上一层`k-1`之间发生，所以一维数组可以复用代替二维的k
 ### 代码
 ```java
+class Solution {
+    public double largestSumOfAverages(int[] A, int K) {
+        int len = A.length;
+        double[] sum = new double[len + 1];
+        for (int i = 0; i < len; i++) {
+            sum[i + 1] = sum[i] + A[i];
+        }
 
+        double[] dp = new double[len];
+        for (int i = 0; i < len; i++) {
+            dp[i] = (sum[len] - sum[i]) / (len - i);
+        }
+
+        for (int k = 0; k < K - 1; k++) {
+            for (int i = 0; i < len; i++) {
+                for (int j = i + 1; j < len; j++) {
+                    dp[i] = Math.max(dp[i], (sum[j] - sum[i]) / (j - i) + dp[j]);
+                }
+            }
+        }
+        
+        return dp[0];
+    }
+}
+```
+# LeetCode_795_区间的子数组个数
+## 题目
+给定一个元素都是正整数的数组A ，正整数 L 以及 R (L <= R)。
+
+求连续、非空且其中最大元素满足大于等于L 小于等于R的子数组个数。
+
+例如 :
+```
+输入: 
+A = [2, 1, 4, 3]
+L = 2
+R = 3
+输出: 3
+解释: 满足条件的子数组: [2], [2, 1], [3].
+```
+注意:
+```
+L, R  和 A[i] 都是整数，范围在 [0, 10^9]。
+数组 A 的长度范围在[1, 50000]。
+```
+## 解法
+### 思路
+- 最大元素x，`x >= L && x <= R`，可以理解为A数组中，小于等于R的连续子序列个数减去小于等于L-1的连续子序列个数，`count(R) - count(L-1)`
+- n个元素的连续的子序列个数等于n个相差1的等差数列求和，`1 + 2 + 3 + ... + n`
+- 过程：
+    - 求两组连续子序列个数，一组是小于等于R的，一组是小于等于L-1的，它们的差值就是题目要求的子序列个数
+    - 初始化一个变量`cur`，用来记录等差数列的元素，同时作为每次遍历累加的值，如果当元素不符合要求，这个变量就重置为0
+    - 遍历数组A，根据元素是否小于等于目标值，来判断是否`cur++`，同时累加到`ans`上，作为最终的答案
+### 代码
+```java
+class Solution {
+    public int numSubarrayBoundedMax(int[] A, int L, int R) {
+        return count(A, R) - count(A, L - 1);
+    }
+    
+    private int count(int[] A, int target) {
+        int cur = 0, ans = 0;
+        for (int num : A) {
+            cur = num <= target ? cur + 1 : 0;
+            ans += cur;
+        }
+        return ans;
+    }
+}
 ```
