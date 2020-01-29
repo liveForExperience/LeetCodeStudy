@@ -631,3 +631,31 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+根据Z字形切分，字符串中字符在每一行的分布：
+- 第一行：字符串之间间隔`2numRows - 2`
+- 最后一行：字符串之间间隔`2numRows - 2 + numRows - 1`
+- 中间行：字符串之间间隔为`(k + 1)(2numRows - 2) - rows`
+### 代码
+```java
+class Solution {
+    public String convert(String s, int numRows) {
+        if (numRows == 1) {
+            return s;
+        }
+        
+        StringBuilder ans = new StringBuilder();
+        int len = s.length(), cycle = 2 * numRows - 2;
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; i + j < len; j += cycle) {
+                ans.append(s.charAt(i + j));
+                if (i != 0 && i != numRows - 1 && j + cycle - i < len) {
+                    ans.append(s.charAt(j + cycle - i));
+                }
+            }
+        }
+        return ans.toString();
+    }
+}
+```
