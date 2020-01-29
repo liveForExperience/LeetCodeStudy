@@ -22,9 +22,4 @@ public class LeetCode_6_2 {
         }
         return ans.toString();
     }
-
-    public static void main(String[] args) {
-        LeetCode_6_2 t = new LeetCode_6_2();
-        t.convert("PAYPALISHIRING", 3);
-    }
 }
