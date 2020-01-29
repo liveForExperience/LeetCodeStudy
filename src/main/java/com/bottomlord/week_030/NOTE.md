@@ -368,3 +368,198 @@ class Solution {
     }
 }
 ```
+# LeetCode_764_最大加号标志
+## 题目
+在一个大小在 (0, 0) 到 (N-1, N-1) 的2D网格 grid 中，除了在 mines 中给出的单元为 0，其他每个单元都是 1。网格中包含 1 的最大的轴对齐加号标志是多少阶？返回加号标志的阶数。如果未找到加号标志，则返回 0。
+
+一个 k" 阶由 1 组成的“轴对称”加号标志具有中心网格  grid[x][y] = 1 ，以及4个从中心向上、向下、向左、向右延伸，长度为 k-1，由 1 组成的臂。下面给出 k" 阶“轴对称”加号标志的示例。注意，只有加号标志的所有网格要求为 1，别的网格可能为 0 也可能为 1。
+
+k 阶轴对称加号标志示例:
+```
+阶 1:
+000
+010
+000
+
+阶 2:
+00000
+00100
+01110
+00100
+00000
+
+阶 3:
+0000000
+0001000
+0001000
+0111110
+0001000
+0001000
+0000000
+```
+示例 1：
+```
+输入: N = 5, mines = [[4, 2]]
+输出: 2
+解释:
+
+11111
+11111
+11111
+11111
+11011
+
+在上面的网格中，最大加号标志的阶只能是2。一个标志已在图中标出。
+```
+示例 2：
+```
+输入: N = 2, mines = []
+输出: 1
+解释:
+
+11
+11
+
+没有 2 阶加号标志，有 1 阶加号标志。
+```
+示例 3：
+```
+输入: N = 1, mines = [[0, 0]]
+输出: 0
+解释:
+
+0
+
+没有加号标志，返回 0 。
+```
+提示：
+```
+整数N 的范围： [1, 500].
+mines 的最大长度为 5000.
+mines[i] 是长度为2的由2个 [0, N-1] 中的数组成.
+(另外,使用 C, C++, 或者 C# 编程将以稍小的时间限制进行​​判断.)
+```
+## 失败解法
+### 失败原因
+超出时间限制
+### 思路
+暴力：
+- 生成`mine`的set集合，用于快速的判断
+- 三层循环：
+    - 外部两层用来确定二维数组中的加号中点的x和y轴
+    - 内部一层用来判断这个中点最大能构成多大的加号，记录这个值，与暂存值之间取较大值
+        - 使用变量k来记录加号的臂展，通过set和N来判断当前臂展k是否符合题意
+- 返回暂存的最大值
+### 代码
+```java
+class Solution {
+    public int orderOfLargestPlusSign(int N, int[][] mines) {
+        Set<Integer> set = new HashSet<>();
+        for (int[] mine : mines) {
+            set.add(mine[0] * N + mine[1]);
+        }
+        
+        int ans = 0;
+        for (int r = 0; r < N; r++) {
+            for (int c = 0; c < N; c++) {
+                int k = 0;
+                while (k <= r && k + r < N && k <= c && k + c < N &&
+                        !set.contains((r - k) * N + c) &&
+                        !set.contains((r + k) * N + c) &&
+                        !set.contains(r * N + c - k) &&
+                        !set.contains(r * N + c + k)) {
+                    k++;
+                }
+                ans = Math.max(ans, k);
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+失败算法中，确定中点后遍历的所有臂展的过程可以被优化
+- 通过确定四个方向的有效臂展的最小值，可以确定当前中点的臂展值
+- 从二维数组的角度，如果某一行是`0111011`，那么它这个方向上每个点的臂展值可以表示为`0123012`
+- 所以就计算每一行每一列四个方向的臂展累加值，然后求当前点上的最小值
+- 当所有四个方向的值都计算完并在每个点上都确定了四个方向的最小值，就求二维数组中元素的最大值作为答案返回
+### 代码
+```java
+class Solution {
+    public int orderOfLargestPlusSign(int N, int[][] mines) {
+        Set<Integer> set = new HashSet<>();
+        for (int[] mine : mines) {
+            set.add(mine[0] * N + mine[1]);
+        }
+        int ans = 0, count;
+        int[][] dp = new int[N][N];
+
+        for (int r = 0; r < N; r++) {
+            count = 0;
+            for (int c = 0; c < N; c++) {
+                count = set.contains(r * N + c) ? 0 : count + 1;
+                dp[r][c] = count;
+            }
+
+            count = 0;
+            for (int c = N - 1; c >= 0; c--) {
+                count = set.contains(r * N + c) ? 0 : count + 1;
+                dp[r][c] = Math.min(dp[r][c], count);
+            }
+        }
+
+        for (int c = 0; c < N; c++) {
+            count = 0;
+            for (int r = 0; r < N; r++) {
+                count = set.contains(r * N + c) ? 0 : count + 1;
+                dp[r][c] = Math.min(dp[r][c], count);
+            }
+
+            count = 0;
+            for (int r = N - 1; r >= 0; r--) {
+                count = set.contains(r * N + c) ? 0 : count + 1;
+                dp[r][c] = Math.min(dp[r][c], count);
+                ans = Math.max(ans, dp[r][c]);
+            }
+        }
+        return ans;
+    }
+}
+```
+## 优化代码
+### 思路
+因为这是一个行列数相等的矩阵，可以将四个方向的臂展值的过程合成在一个嵌套循环中
+### 代码
+```java
+class Solution {
+    public int orderOfLargestPlusSign(int N, int[][] mines) {
+        int[][] dp = new int[N][N];
+        for (int[] arr : dp) {
+            Arrays.fill(arr, N);
+        }
+
+        for (int[] mine : mines) {
+            dp[mine[0]][mine[1]] = 0;
+        }
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0, k = N - 1, l = 0, r = 0, u = 0, d = 0; j < N; j++, k--) {
+                dp[i][j] = Math.min(dp[i][j], l = dp[i][j] == 0 ? 0 : l + 1);
+                dp[i][k] = Math.min(dp[i][k], r = dp[i][k] == 0 ? 0 : r + 1);
+                dp[j][i] = Math.min(dp[j][i], u = dp[j][i] == 0 ? 0 : u + 1);
+                dp[k][i] = Math.min(dp[k][i], d = dp[k][i] == 0 ? 0 : d + 1);
+            }
+        }
+        
+        int ans = 0;
+        for (int[] arr : dp) {
+            for (int num : arr) {
+                ans = Math.max(ans, num);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
