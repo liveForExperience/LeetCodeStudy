@@ -831,3 +831,61 @@ class Solution {
     }
 }
 ```
+# LeetCode_958_二叉树的完全性验证
+## 题目
+给定一个二叉树，确定它是否是一个完全二叉树。
+
+百度百科中对完全二叉树的定义如下：
+
+若设二叉树的深度为 h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，第 h 层所有的结点都连续集中在最左边，这就是完全二叉树。（注：第 h 层可能包含 1~ 2h 个节点。）
+
+示例 1：
+```
+输入：[1,2,3,4,5,6]
+输出：true
+解释：最后一层前的每一层都是满的（即，结点值为 {1} 和 {2,3} 的两层），且最后一层中的所有结点（{4,5,6}）都尽可能地向左。
+```
+示例 2：
+```
+输入：[1,2,3,4,5,null,7]
+输出：false
+解释：值为 7 的结点没有尽可能靠向左侧。
+```
+提示：
+```
+树中将会有 1 到 100 个结点。
+```
+## 解法
+### 思路
+bfs：
+- 完全二叉树每一层的节点如果依次编号，那么会发现完全二叉树的最后一个节点的编号和所有二叉树的个数相等
+- 所以遍历整个二叉树并编号后，如果最后一个节点值和个数相等就是完全二叉树，否则就不是
+### 代码
+```java
+class Solution {
+    public boolean isCompleteTree(TreeNode root) {
+        List<Anode> list = new ArrayList<>();
+        list.add(new Anode(root, 1));
+        int i = 0;
+        while (i < list.size()) {
+            Anode anode = list.get(i++);
+
+            if (anode.node != null) {
+                list.add(new Anode(anode.node.left, anode.val * 2));
+                list.add(new Anode(anode.node.right, anode.val * 2 + 1));
+            }
+        }
+        
+        return list.get(i - 1).val == list.size();
+    }
+}
+
+class Anode {
+    TreeNode node;
+    int val;
+    public Anode(TreeNode node, int val) {
+        this.node = node;
+        this.val = val;
+    }
+}
+```
