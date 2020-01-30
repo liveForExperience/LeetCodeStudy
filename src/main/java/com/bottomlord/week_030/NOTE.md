@@ -723,3 +723,111 @@ class Solution {
     }
 }
 ```
+# LeetCode_947_移除最多的同行或同列石头
+## 题目
+在二维平面上，我们将石头放置在一些整数坐标点上。每个坐标点上最多只能有一块石头。
+
+现在，move 操作将会移除与网格上的某一块石头共享一列或一行的一块石头。
+
+我们最多能执行多少次 move 操作？
+
+示例 1：
+```
+输入：stones = [[0,0],[0,1],[1,0],[1,2],[2,1],[2,2]]
+输出：5
+```
+示例 2：
+```
+输入：stones = [[0,0],[0,2],[1,1],[2,0],[2,2]]
+输出：3
+```
+示例 3：
+```
+输入：stones = [[0,0]]
+输出：0
+```
+提示：
+```
+1 <= stones.length <= 1000
+0 <= stones[i][j] < 10000
+```
+## 解法
+### 思路
+并查集：
+- 同一行同一列最终只能留下1个节点，所以能够移除的最多石头就是`len(stone的总个数) - left(剩下的石头)`
+- 可以遍历`stones`，将所有`stone`的所有节点放入并查集，每个节点的x轴和y轴也进行合并，y轴+10000放入并查集
+- 最后再遍历`stones`，并查集中的所有根节点个数，代入`len - left`中求到结果
+### 代码
+```java
+class Solution {
+    public int removeStones(int[][] stones) {
+        int len = stones.length;
+        DSU dsu = new DSU(20000);
+        for (int[] stone : stones) {
+            dsu.union(stone[0], stone[1] + 10000);
+        }
+
+        Set<Integer> set = new HashSet<>();
+        for (int[] stone : stones) {
+            set.add(dsu.find(stone[0]));
+        }
+
+        return len - set.size();
+    }
+}
+
+class DSU {
+    public int[] parent;
+
+    public DSU(int N) {
+        parent = new int[N];
+        for (int i = 0; i < N; ++i) {
+            parent[i] = i;
+        }
+    }
+
+    public int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    public void union(int x, int y) {
+        parent[find(x)] = find(y);
+    }
+}
+```
+## 解法二
+### 思路
+- 将所有能够被移除后剩下的`stone`节点看作是n棵树的根节点
+- 遍历所有`stone`节点，通过dfs递归搜索当前节点的所有联通节点，同时将它们与根节点同时标记为已搜索
+- 遍历结束后，统计根节点数量，并与`stones`的个数相减就得到了题目要求的数量
+### 代码
+```java
+class Solution {
+    public int removeStones(int[][] stones) {
+        int count = 0, len = stones.length;
+        boolean[] visited = new boolean[len];
+        
+        for (int i = 0; i < len; i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                dfs(visited, stones[i][0], stones[i][1], stones);
+                count++;
+            }
+        }
+        
+        return len - count;
+    }
+    
+    private void dfs(boolean[] visited, int x, int y, int[][] stones) {
+        for (int i = 0; i < stones.length; i++) {
+            if ((stones[i][0] == x || stones[i][1] == y) && !visited[i]) {
+                visited[i] = true;
+                dfs(visited, stones[i][0], stones[i][1], stones);
+            }
+        }
+    }
+}
+```
