@@ -889,3 +889,164 @@ class Anode {
     }
 }
 ```
+# LeetCode_863_二叉树中所有距离为K的结点
+## 题目
+给定一个二叉树（具有根结点 root）， 一个目标结点 target ，和一个整数值 K 。
+
+返回到目标结点 target 距离为 K 的所有结点的值的列表。 答案可以以任何顺序返回。
+
+示例 1：
+```
+输入：root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, K = 2
+
+输出：[7,4,1]
+
+解释：
+所求结点为与目标结点（值为 5）距离为 2 的结点，
+值分别为 7，4，以及 1
+```
+```
+注意，输入的 "root" 和 "target" 实际上是树上的结点。
+上面的输入仅仅是对这些对象进行了序列化描述。
+```
+提示：
+```
+给定的树是非空的，且最多有 K 个结点。
+树上的每个结点都具有唯一的值 0 <= node.val <= 500 。
+目标结点 target 是树上的结点。
+0 <= K <= 1000.
+```
+## 解法
+### 思路
+dfs + bfs：
+- dfs：
+    - 使用dfs将树中所有节点及其父节点的映射关系放在map中
+    - 当拥有映射关系后就可以获得一个节点所有1距离的节点，从而可以从target节点出发找到与它距离为K的所有节点
+- bfs：
+    - 以target为根节点，出发寻找第K层的节点
+    - 还需要一个set集合用来过滤已经遍历到的节点
+    - 找到后存入list中返回
+### 代码
+```java
+class Solution {
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+        Map<TreeNode, TreeNode> map = new HashMap<>();
+        dfs(root, null, map);
+
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(target);
+        
+        Set<TreeNode> set = new HashSet<>();
+        set.add(target);
+        int level = 0;
+        
+        while (!queue.isEmpty()) {
+            if (level == K) {
+                List<Integer> list = new ArrayList<>();
+                while (!queue.isEmpty()) {
+                    list.add(queue.poll().val);
+                }
+                return list;
+            }
+            
+            int count = queue.size();
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                
+                if (node.left != null && !set.contains(node.left)) {
+                    set.add(node.left);
+                    queue.add(node.left);
+                }
+
+                if (node.right != null && !set.contains(node.right)) {
+                    set.add(node.right);
+                    queue.add(node.right);
+                }
+
+                if (map.get(node) != null && !set.contains(map.get(node))) {
+                    set.add(map.get(node));
+                    queue.add(map.get(node));
+                }
+            }
+            
+            level++;
+        }
+        
+        return Collections.emptyList();
+    }
+
+    private void dfs(TreeNode node, TreeNode pre, Map<TreeNode, TreeNode> map) {
+        if (node == null) {
+            return;
+        }
+
+        map.put(node, pre);
+        dfs(node.left, node, map);
+        dfs(node.right, node, map);
+    }
+}
+```
+## 解法二
+### 思路
+嵌套dfs：
+- 解法一中是先通过dfs找到所有节点的父节点，然后再通过bfs从`target`节点开始找到K层的所有节点
+- 但起始可以直接通过dfs找到target节点
+- 然后再从`target`节点开始进行dfs，找到`target`更深的`K`距离的节点
+- 同时从`target`返回到上层节点，在上层节点获得距离`target`的距离`dist`后，再通过区分`left`和`right`，从`node`的相反方向dfs，找`K - dist`的节点，这些节点也是符合题目要求的
+### 代码
+```java
+class Solution {
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+        List<Integer> ans = new ArrayList<>();
+        if (K == 0) {
+            ans.add(target.val);
+        } else {
+            dfs(root, target, K, ans);
+        }
+        return ans;
+    }
+
+    private int dfs(TreeNode node, TreeNode target, int k, List<Integer> list) {
+        if (node == null) {
+            return -1;
+        }
+
+        if (node == target) {
+            dfs2(node.left, 1, k, list);
+            dfs2(node.right, 1, k, list);
+            return 0;
+        }
+
+        int left = dfs(node.left, target, k, list) + 1;
+        int right = dfs(node.right, target, k, list) + 1;
+
+        if (left > 0) {
+            if (left == k) {
+                list.add(node.val);
+            }
+            dfs2(node.right, left + 1, k, list);
+            return left;
+        } else if (right > 0) {
+            if (right == k) {
+                list.add(node.val);
+            }
+            dfs2(node.left, right + 1, k, list);
+            return right;
+        } else {
+            return -1;
+        }
+    }
+
+    private void dfs2(TreeNode node, int dist, int k, List<Integer> list) {
+        if (node == null || dist > k) {
+            return;
+        }
+
+        if (dist == k) {
+            list.add(node.val);
+        }
+        dfs2(node.left, dist + 1, k, list);
+        dfs2(node.right, dist + 1, k, list);
+    }
+}
+```
