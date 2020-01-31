@@ -1246,3 +1246,96 @@ class Solution {
     }
 }
 ```
+# LeetCode_846_一手顺子
+## 题目
+爱丽丝有一手（hand）由整数数组给定的牌。 
+
+现在她想把牌重新排列成组，使得每个组的大小都是 W，且由 W 张连续的牌组成。
+
+如果她可以完成分组就返回 true，否则返回 false。
+
+示例 1：
+```
+输入：hand = [1,2,3,6,2,3,4,7,8], W = 3
+输出：true
+解释：爱丽丝的手牌可以被重新排列为 [1,2,3]，[2,3,4]，[6,7,8]。
+```
+示例 2：
+```
+输入：hand = [1,2,3,4,5], W = 4
+输出：false
+解释：爱丽丝的手牌无法被重新排列成几个大小为 4 的组。
+```
+提示：
+```
+1 <= hand.length <= 10000
+0 <= hand[i] <= 10^9
+1 <= W <= hand.length
+```
+## 解法
+### 思路
+暴力：
+- 使用`TreeMap`统计牌号`num`与个数的映射关系
+- 循环：
+    - 退出条件：`TreeMap`是`size <= 0`
+    - 过程：获得`TreeMap`的第一个key，然后从`TreeMap`中找之后W个值，如果没有就返回false，否则就将其的个数对应减1
+### 代码
+```java
+class Solution {
+    public boolean isNStraightHand(int[] hand, int W) {
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        for (int num : hand) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+
+        while (map.size() > 0) {
+            int num = map.firstKey();
+            for (int i = num; i < num + W; i++) {
+                if (!map.containsKey(i)) {
+                    return false;
+                }
+                int count = map.get(i);
+                if (count == 1) {
+                    map.remove(i);
+                } else {
+                    map.replace(i, count - 1);
+                }
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+- 如果`hand`的长度不能被`W`取余，那么就是false
+- 因为是连续W个数，且能够分成W组，所以这组数必定可以通过取余获得W组`(0, W - 1)`的数
+- 初始化一个长度为`W`的数组
+- 遍历`hand`，将元素与`W`取余，并将值累加到数组中
+- 遍历结束后，再遍历`W`，查看元素是否相等
+    - 相等返回true
+    - 不相等返回false
+### 代码
+```java
+class Solution {
+    public boolean isNStraightHand(int[] hand, int W) {
+        if (hand.length % W != 0) {
+            return false;
+        }
+        
+        int[] arr = new int[W];
+        for (int num : hand) {
+            arr[num % W]++;
+        }
+        
+        for (int i = 0; i < W - 1; i++) {
+            if (arr[i] != arr[i + 1]) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
