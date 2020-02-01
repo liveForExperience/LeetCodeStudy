@@ -1389,3 +1389,109 @@ class Solution {
     }
 }
 ```
+# LeetCode_93_复原IP地址
+## 题目
+给定一个只包含数字的字符串，复原它并返回所有可能的 IP 地址格式。
+
+示例:
+```
+输入: "25525511135"
+输出: ["255.255.11.135", "255.255.111.35"]
+```
+## 解法
+### 思路
+暴力
+- ip地址分成四个部分，所以使用四层for循环
+- 因为ip地址每部分的值长度都是3，所以for循环的循环次数就是3，也因为要使用String的API，所以循环`1 <= i <= 3`
+- 循环内部的判断条件，每部分的值范围`>= 0 && <= 255`
+### 代码
+```java
+class Solution {
+    public List<String> restoreIpAddresses(String s) {
+        List<String> ans = new ArrayList<>();
+        for (int i = 1; i <= 3; i++) {
+            for (int j = 1; j <= 3; j++) {
+                for (int k = 1; k <= 3; k++) {
+                    for (int l = 1; l <= 3; l++) {
+                        if (i + j + k + l != s.length()) {
+                            continue;
+                        }
+                        
+                        int a = Integer.parseInt(s.substring(0, i));
+                        int b = Integer.parseInt(s.substring(i, i + j));
+                        int c = Integer.parseInt(s.substring(i + j, i + j + k));
+                        int d = Integer.parseInt(s.substring(i + j + k, i + j + k + l));
+
+                        if (a <= 255 && b <= 255 && c <= 255 && d <= 255) {
+                            StringBuilder ip = new StringBuilder();
+                            ip.append(a).append(".").append(b).append(".").append(c).append(".").append(d);
+
+                            if (ip.length() == s.length() + 3) {
+                                ans.add(ip.toString());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return ans;    
+    }
+}
+```
+## 解法二
+### 思路
+回溯：
+- 每次递归回溯过程中确定一个ip的点的位置
+- 函数传入参数
+    - `preDot`：上一个点的坐标
+    - `dots`：还需确定的点的数量
+    - `segments`：用来暂存ip4个部分的字符串list
+    - `ans`：最终的答案list
+- 递归过程：
+    - 遍历字符串
+    - 从`preDot + 1`开始遍历，确定下一个点的位置
+    - 判断生成的ip段是否符合要求，如果符合就放入`segments`中
+    - 判断`dots`是否已经生成完
+        - 如果是就放入ans中
+        - 如果不是就继续回溯
+    - 回溯的时候将`segments`的最后一个ip段删除
+### 代码
+```java
+class Solution {
+    public List<String> restoreIpAddresses(String s) {
+        List<String> ans = new ArrayList<>();
+        LinkedList<String> segments = new LinkedList<>();
+        backTrack(s, segments, ans, -1, 3);
+        return ans;
+    }
+
+    private void backTrack(String s, LinkedList<String> segments, List<String> ans, int prePos, int dots) {
+        int maxPos = Math.min(s.length() - 1, prePos + 4);
+        for (int curPos = prePos + 1; curPos < maxPos; curPos++) {
+            String segment = s.substring(prePos + 1, curPos + 1);
+            if (isValid(segment)) {
+                segments.add(segment);
+                if (dots > 1) {
+                    backTrack(s, segments, ans, curPos, dots - 1);
+                } else {
+                    output(s, curPos, segments, ans);
+                }
+                segments.removeLast();
+            }
+        }
+    }
+
+    private boolean isValid(String segment) {
+        return segment.length() <= 3 && (segment.charAt(0) == '0' ? segment.length() == 1 : Integer.parseInt(segment) <= 255);
+    }
+
+    private void output(String s, int curPos, LinkedList<String> segments, List<String> ans) {
+        String segment = s.substring(curPos + 1);
+        if (isValid(segment)) {
+            segments.add(segment);
+            ans.add(String.join(".", segments));
+            segments.removeLast();
+        }
+    }
+}
+```
