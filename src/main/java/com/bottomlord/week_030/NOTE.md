@@ -1339,3 +1339,53 @@ class Solution {
     }
 }
 ```
+# LeetCode_82_删除排序链表中的重复元素II
+## 题目
+给定一个排序链表，删除所有含有重复数字的节点，只保留原始链表中 没有重复出现 的数字。
+
+示例 1:
+```
+输入: 1->2->3->3->4->4->5
+输出: 1->2->5
+```
+示例 2:
+```
+输入: 1->1->1->2->3
+输出: 2->3
+```
+## 解法
+### 思路
+- 使用两个指针：
+    - `cur`：保存主要遍历链表的指针
+    - `pre`：保存前置指针，当`cur`判断完是否值相等的逻辑后，通过这个指针来实现删除的具体逻辑
+- 遍历链表：
+    - 初始`pre`和`cur`都指向同一个节点
+    - 然后移动`cur = cur.next`
+    - 判断`cur`和`cur.next`的值是否相等
+        - 如果相等，就暂存当前`val = cur.val`
+        - 继续循环，判断`cur.next == val`，如果相等就`cur = cur.next`
+        - 直到不相等，进入下一个循环，判断`112234`中的`11`遍历完后`22`的情况
+    - 如果上述嵌套循环退出后，就将`pre.next = cur`
+    - 然后继续最外层循环，直到链表遍历结束
+### 代码
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode start = new ListNode(0), pre, cur = start;
+        start.next = head;
+        while (cur != null) {
+            pre = cur;
+            cur = cur.next;
+            while (cur != null && cur.next != null && cur.val == cur.next.val) {
+                cur = cur.next;
+                int val = cur.val;
+                while (cur != null && cur.val == val) {
+                    cur = cur.next;
+                }
+            }
+            pre.next = cur;
+        }
+        return start.next;
+    }
+}
+```
