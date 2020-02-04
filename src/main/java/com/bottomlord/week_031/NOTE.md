@@ -395,3 +395,70 @@ class Solution {
     }
 }
 ```
+# LeetCode_430_扁平化多级双向链表
+## 题目
+您将获得一个双向链表，除了下一个和前一个指针之外，它还有一个子指针，可能指向单独的双向链表。这些子列表可能有一个或多个自己的子项，依此类推，生成多级数据结构，如下面的示例所示。
+
+扁平化列表，使所有结点出现在单级双链表中。您将获得列表第一级的头部。
+
+示例:
+```
+输入:
+ 1---2---3---4---5---6--NULL
+         |
+         7---8---9---10--NULL
+             |
+             11--12--NULL
+
+输出:
+1-2-3-7-8-11-12-9-10-4-5-6-NULL
+```
+## 解法
+### 思路
+dfs：
+- 将`child`和`next`作为二叉树的左右子树指针来看待
+- 通过中序遍历来遍历高维链表
+- 过程：
+    - 递归过程传入参数：
+        - 前置指针：`pre`，用来将child的节点接到主干
+        - 遍历指针：`cur`，用来遍历整个高位链表
+    - 退出条件：如果当前节点为空，返回`pre`
+    - 将当前节点接到主干上
+        - `pre.next = cur`
+        - `cur.pre = pre`
+    - 获取当前节点的`next`分支的指针`next`
+    - 递归获得`child`的分支，接到`cur`上
+    - 注意这里需要将`cur.child`置为空，否则就无法做到扁平
+    - 再将`next`接到`child`递归后返回的指针上
+    - 最后将这个接好的节点返回到上一层主干上
+### 代码
+```java
+class Solution {
+    public Node flatten(Node head) {
+        if (head == null) {
+            return null;
+        }
+        
+        Node start = new Node();
+        dfs(start, head);
+        start.next.prev = null;
+        return start.next;
+    }
+
+    private Node dfs(Node pre, Node cur) {
+        if (cur == null) {
+            return pre;
+        }
+
+        pre.next = cur;
+        cur.prev = pre;
+
+        Node next = cur.next;
+        Node child = dfs(cur, cur.child);
+
+        cur.child = null;
+        
+        return dfs(child, next);
+    }
+}
+```
