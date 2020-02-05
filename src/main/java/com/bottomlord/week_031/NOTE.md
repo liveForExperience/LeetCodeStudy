@@ -462,3 +462,159 @@ class Solution {
     }
 }
 ```
+# LeetCode_146_LRU缓存机制
+## 题目
+运用你所掌握的数据结构，设计和实现一个  LRU (最近最少使用) 缓存机制。它应该支持以下操作： 获取数据 get 和 写入数据 put 。
+```
+获取数据 get(key) - 如果密钥 (key) 存在于缓存中，则获取密钥的值（总是正数），否则返回 -1。
+写入数据 put(key, value) - 如果密钥不存在，则写入其数据值。当缓存容量达到上限时，它应该在写入新数据之前删除最近最少使用的数据值，从而为新的数据值留出空间。
+```
+进阶:
+```
+你是否可以在 O(1) 时间复杂度内完成这两种操作？
+```
+示例:
+```
+LRUCache cache = new LRUCache( 2 /* 缓存容量 */ );
+
+cache.put(1, 1);
+cache.put(2, 2);
+cache.get(1);       // 返回  1
+cache.put(3, 3);    // 该操作会使得密钥 2 作废
+cache.get(2);       // 返回 -1 (未找到)
+cache.put(4, 4);    // 该操作会使得密钥 1 作废
+cache.get(1);       // 返回 -1 (未找到)
+cache.get(3);       // 返回  3
+cache.get(4);       // 返回  4
+```
+## 解法
+### 思路
+- 可以通过继承LinkedHashMap实现LRU缓存
+- 需要重写`removeEldestEntry`来实现缓存淘汰
+> 正好最近做了LinkedHashMap的源码笔记^0^
+### 代码
+```java
+class LRUCache extends LinkedHashMap<Integer, Integer>{
+    private int capacity;
+
+    public LRUCache(int capacity) {
+        super(capacity, 0.75f, true);
+        this.capacity = capacity;
+    }
+
+    public int get(int key) {
+        return super.getOrDefault(key, -1);
+    }
+
+    public void put(int key, int value) {
+        super.put(key, value);
+    }
+
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
+        return size() > capacity;
+    }
+}
+```
+## 解法二
+### 思路
+- 因为题目的key是int，所以可以通过hash表+双向链表来实现，不需要单向链表
+- 双向链表增加伪头部`head`和伪尾部`tail`，避免多余的null判断
+- 双向链表中增加4个方法：
+    - add：添加节点到`head`之后
+    - remove：在双向链表中删除节点
+    - moveToHead：将节点移到`head`之后
+    - popTail：将尾部的节点删除，并返回
+- lru的2个方法：
+    - get：通过hash表获取节点，将节点移到双向链表头部，返回节点值，如果没有就返回-1
+    - put：
+        1. 通过hash表获取节点
+        2. 如果节点为空，生成新的双向链表节点，放入头部，判断lru的size是否大于cap，如果是，popTail
+        3. 如果节点不为空，替换节点值
+### 代码
+```java
+class LRUCache {
+    private Map<Integer, DoubleLinkedNode> map;
+    private int capacity;
+    private int size;
+    private DoubleLinkedNode head;
+    private DoubleLinkedNode tail;
+
+    public LRUCache(int capacity) {
+        this.map = new HashMap<>();
+        this.head = new DoubleLinkedNode();
+        this.tail = new DoubleLinkedNode();
+        head.next = tail;
+        tail.pre = head;
+        this.capacity = capacity;
+        this.size = 0;
+    }
+
+    public int get(int key) {
+        if (!map.containsKey(key)) {
+            return -1;
+        }
+
+        DoubleLinkedNode node = map.get(key);
+        moveToHead(node);
+        return node.val;
+    }
+
+    public void put(int key, int value) {
+        DoubleLinkedNode node = map.get(key);
+
+        if (node != null) {
+            node.val = value;
+            moveToHead(node);
+        } else {
+            node = new DoubleLinkedNode(key, value);
+            map.put(key, node);
+            addNode(node);
+            
+            size++;
+            if (size > capacity) {
+                DoubleLinkedNode tail = popTail();
+                map.remove(tail.key);
+                size--;
+            }
+        }
+    }
+
+    private void addNode(DoubleLinkedNode node) {
+        node.pre = head;
+        node.next = head.next;
+
+        head.next.pre = node;
+        head.next = node;
+    }
+
+    private void removeNode(DoubleLinkedNode node) {
+        node.pre.next = node.next;
+        node.next.pre = node.pre;
+    }
+
+    private void moveToHead(DoubleLinkedNode node) {
+        removeNode(node);
+        addNode(node);
+    }
+
+    private DoubleLinkedNode popTail() {
+        DoubleLinkedNode tail = this.tail.pre;
+        removeNode(tail);
+        return tail;
+    }
+
+    private class DoubleLinkedNode {
+        public int key;
+        public int val;
+        public DoubleLinkedNode pre;
+        public DoubleLinkedNode next;
+
+        public DoubleLinkedNode() {}
+        public DoubleLinkedNode(int key, int val){
+            this.key = key;
+            this.val = val;
+        }
+    }
+}
+```
