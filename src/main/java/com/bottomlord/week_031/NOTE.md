@@ -618,3 +618,171 @@ class LRUCache {
     }
 }
 ```
+# LeetCode_743_网络延迟时间
+## 题目
+有 N 个网络节点，标记为 1 到 N。
+
+给定一个列表 times，表示信号经过有向边的传递时间。 times[i] = (u, v, w)，其中 u 是源节点，v 是目标节点， w 是一个信号从源节点传递到目标节点的时间。
+
+现在，我们向当前的节点 K 发送了一个信号。需要多久才能使所有节点都收到信号？如果不能使所有节点收到信号，返回 -1。
+
+注意:
+```
+N 的范围在 [1, 100] 之间。
+K 的范围在 [1, N] 之间。
+times 的长度在 [1, 6000] 之间。
+所有的边 times[i] = (u, v, w) 都有 1 <= u, v <= N 且 0 <= w <= 100。
+```
+## 解法
+### 思路
+dfs：
+- 生成有向图
+- 递归遍历有向图
+- 计算所有经过该节点的耗时，取最小值
+- 遍历结束后，遍历所有节点耗时，取最大值返回
+### 代码
+```java
+class Solution {
+    public int networkDelayTime(int[][] times, int N, int K) {
+        Map<Integer, List<int[]>> graph = new HashMap<>();
+        for (int [] time : times) {
+            List<int[]> list = graph.getOrDefault(time[0], new ArrayList<>());
+            list.add(new int[]{time[1], time[2]});
+            graph.put(time[0], list);
+        }
+
+        Map<Integer, Integer> dist = new HashMap<>();
+        for (int i = 1; i <= N; i++) {
+            dist.put(i, Integer.MAX_VALUE);
+        }
+        dfs(graph, dist, K, 0);
+
+        int max = 0;
+        for (Integer time : dist.values()) {
+            if (time == Integer.MAX_VALUE) {
+                return -1;
+            } else {
+                max = Math.max(max, time);
+            }
+        }
+        return max;
+    }
+
+    private void dfs(Map<Integer, List<int[]>> graph, Map<Integer, Integer> dist, int node, int time) {
+        if (time >= dist.get(node)) {
+            return;
+        }
+
+        dist.put(node, time);
+
+        if (graph.containsKey(node)) {
+            for (int[] arr : graph.get(node)) {
+                dfs(graph, dist, arr[0], time + arr[1]);
+            }
+        }
+    }
+}
+```
+## 解法二
+### 思路
+迪杰斯特拉最短路径：
+- 每次扩展一个距离最短的点，更新与其相邻点的距离
+- 过程：
+    - 生成图
+    - 生成记录访问节点耗时的集合`dist`，并初始化
+    - 开始循环
+        - 直到节点都访问过，或已经没有可以新到达的节点时，退出循环
+        - 否则，获取当前`dist`中保存的最短节点和该节点坐标
+        - 从有向图中找到它指向的所有节点，计算出那些节点目前为止的最短耗时，放入`dist`
+        - 继续循环
+    - 循环结束，遍历`dist`，找到最大值返回
+### 代码
+```java
+class Solution {
+    public int networkDelayTime(int[][] times, int N, int K) {
+        Map<Integer, List<int[]>> graph = new HashMap<>();
+        for (int[] time : times) {
+            List<int[]> list = graph.getOrDefault(time[0], new ArrayList<>());
+            list.add(new int[]{time[1], time[2]});
+            graph.put(time[0], list);
+        }
+
+        Map<Integer, Integer> dict = new HashMap<>();
+        for (int i = 1; i <= N; i++) {
+            dict.put(i, Integer.MAX_VALUE);
+        }
+        dict.put(K, 0);
+        boolean[] visited = new boolean[N + 1];
+
+        while (true) {
+            int dist = Integer.MAX_VALUE;
+            int node = 0;
+            for (int i = 1; i <= N; i++) {
+                if (!visited[i] && dict.get(i) < dist) {
+                    dist = dict.get(i);
+                    node = i;
+                }
+            }
+
+            if (node == 0) {
+                break;
+            }
+            
+            visited[node] = true;
+            if (graph.containsKey(node)) {
+                for (int[] arr : graph.get(node)) {
+                    dict.put(arr[0], Math.min(dict.get(arr[0]), arr[1] + dist));
+                }
+            }
+        }
+        
+        int max = 0;
+        for (int i = 1; i <= N; i++) {
+            if (dict.get(i) == Integer.MAX_VALUE) {
+                return -1;
+            } else {
+                max = Math.max(max, dict.get(i));
+            }
+        }
+        return max;
+    }
+}
+```
+## 优化代码
+### 思路
+- 通过小顶堆替换解法二中的`while(true)`，直接获得最短耗时，相同节点的其他耗时选项都跳过都可以直接跳过
+- 设置一下小顶堆的比较器逻辑就可以了，其他逻辑和解法二雷同
+- 这个算法的时间复杂度因为使用了小顶堆，所以缩短为`O(NlogN)`
+### 代码
+```java
+class Solution {
+    public int networkDelayTime(int[][] times, int N, int K) {
+        Map<Integer, List<int[]>> graph = new HashMap<>();
+        for (int[] time : times) {
+            List<int[]> list = graph.getOrDefault(time[0], new ArrayList<>());
+            list.add(new int[]{time[1], time[2]});
+            graph.put(time[0], list);
+        }
+
+        Map<Integer, Integer> dict = new HashMap<>();
+        Queue<int[]> queue = new PriorityQueue<>(Comparator.comparingInt(o -> o[1]));
+        queue.offer(new int[]{K, 0});
+        
+        while (!queue.isEmpty()) {
+            int[] node = queue.poll();
+            if (dict.containsKey(node[0])) {
+                continue;
+            }
+
+            dict.put(node[0], node[1]);
+            if (graph.containsKey(node[0])) {
+                for (int[] edge : graph.get(node[0])) {
+                    queue.offer(new int[]{edge[0], edge[1] + node[1]});
+                }
+            }
+        }
+        
+        return dict.size() == N ? Collections.max(dict.values()) : -1;
+    }
+}
+```
