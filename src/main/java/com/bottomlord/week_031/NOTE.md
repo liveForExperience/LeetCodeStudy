@@ -853,3 +853,106 @@ class Solution {
     }
 }
 ```
+# LeetCode_491_1_递增子序列
+## 题目
+给定一个整型数组, 你的任务是找到所有该数组的递增子序列，递增子序列的长度至少是2。
+
+示例:
+```
+输入: [4, 6, 7, 7]
+输出: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7,7]]
+```
+说明:
+```
+给定数组的长度不会超过15。
+数组中的整数范围是 [-100,100]。
+给定数组中可能包含重复数字，相等的数字应该被视为递增的一种情况。
+```
+## 解法
+### 思路
+回溯：
+- 递归入参：
+    - 数组`arr`
+    - 坐标`index`
+    - 存储暂存子序列的集合`list`，使用`LinkedList`
+    - 存储子序列的set集合`ans`
+- 递归过程：
+    - 如果`index`越界，返回
+    - 遍历数组，判断当前`list`是否有元素且当前元素是否不符合递增，如果是，就跳过
+    - 否则就将元素放入`list`
+    - 判断`list`的元素个数是否大于1，如果是就放入`ans`
+    - 递归
+    - 返回后将尾部元素删除
+- `ans`转化为动态数组后返回
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> findSubsequences(int[] nums) {
+        Set<List<Integer>> ans = new HashSet<>();
+        LinkedList<Integer> list = new LinkedList<>();
+        backTrace(nums, 0, list, ans);
+        return new ArrayList<>(ans);
+    }
+
+    private void backTrace(int[] nums, int index, LinkedList<Integer> list, Set<List<Integer>> ans) {
+        if (index >= nums.length) {
+            return;
+        }
+
+        for (int i = index; i < nums.length; i++) {
+            if (list.size() > 0 && list.getLast() > nums[i]) {
+                continue;
+            }
+
+            list.offerLast(nums[i]);
+            if (list.size() > 1) {
+                ans.add(new ArrayList<>(list));
+            }
+            backTrace(nums, i + 1, list, ans);
+            list.removeLast();
+        }
+    }
+}
+```
+## 优化代码
+### 思路
+- 在解法一的基础上，使用标志变量来代替set去重的作用，当递归当前层遍历时，如果新的需要递归的元素与之前已经递归的元素一样，就跳过，这样就避免了重复元素的出现
+- 其他过程与解法一基本一致
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> findSubsequences(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        dfs(nums, new ArrayList<>(), ans, 0, -101);
+        return ans;
+    }
+
+    private void dfs(int[] nums, List<Integer> list, List<List<Integer>> ans, int index, int lastNum) {
+        if (list.size() > 1) {
+            ans.add(new ArrayList<>(list));
+        }
+
+        for (int i = index; i < nums.length; i++) {
+            if (nums[i] < lastNum) {
+                continue;
+            }
+
+            boolean repeat = false;
+            for (int j = index; j <= i - 1; j++) {
+                if (nums[i] == nums[j]) {
+                    repeat = true;
+                    break;
+                }
+            }
+
+            if (repeat) {
+                continue;
+            }
+
+            list.add(nums[i]);
+            dfs(nums, list, ans, i + 1, nums[i]);
+            list.remove(list.size() - 1);
+        }
+    }
+}
+```
