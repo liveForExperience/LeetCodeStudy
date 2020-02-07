@@ -786,3 +786,70 @@ class Solution {
     }
 }
 ```
+# LeetCode_424_替换后的最长重复字符
+## 题目
+给你一个仅由大写英文字母组成的字符串，你可以将任意位置上的字符替换成另外的字符，总共可最多替换 k 次。在执行上述操作后，找到包含重复字母的最长子串的长度。
+```
+注意:
+字符串长度 和 k 不会超过 104。
+```
+示例 1:
+```
+输入:
+s = "ABAB", k = 2
+
+输出:
+4
+
+解释:
+用两个'A'替换为两个'B',反之亦然。
+```
+示例 2:
+```
+输入:
+s = "AABABBA", k = 1
+
+输出:
+4
+
+解释:
+将中间的一个'A'替换为'B',字符串变为 "AABBBBA"。
+子串 "BBBB" 有最长重复字母, 答案为 4。
+```
+## 解法
+### 思路
+滑动窗口：
+- 定义变量：
+    - `left`：窗口左指针，用于在窗口溢出条件时缩小窗口
+    - `right`：窗口右指针，用于在窗口不满足条件时扩大窗口
+    - `count`：重复字母的最大值
+    - `ans`：包含最大重复字符的字符串
+    - `bucket`：字母和个数的映射关系表
+- 过程：
+    - 右指针循环遍历字符串
+    - 更新当前字母的统计个数
+    - 更新`count`值
+    - 循环判断当前窗口中是否包含超过k个的不同字母，通过`right - left + 1 - count`来计算
+        - 如果是，就缩小窗口
+    - 否则更新`ans`并扩大窗口，向右移动
+    - 最后返回`ans`
+### 代码
+```java
+class Solution {
+    public int characterReplacement(String s, int k) {
+        int left = 0, right = 0, count = 0, ans = 0;
+        int[] bucket = new int[26];
+
+        while (right < s.length()) {
+            count = Math.max(count, ++bucket[s.charAt(right) - 'A']);
+            while (right - left + 1 - count > k) {
+                bucket[s.charAt(left++) - 'A']--;
+            }
+
+            ans = Math.max(ans, right++ - left + 1);
+        }
+
+        return ans;
+    }
+}
+```
