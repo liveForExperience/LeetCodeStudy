@@ -230,3 +230,175 @@ class Solution {
     }
 }
 ```
+# LeetCode_873_最长的斐波那契子序列的长度
+## 题目
+如果序列 X_1, X_2, ..., X_n 满足下列条件，就说它是 斐波那契式 的：
+```
+n >= 3
+对于所有 i + 2 <= n，都有 X_i + X_{i+1} = X_{i+2}
+给定一个严格递增的正整数数组形成序列，找到 A 中最长的斐波那契式的子序列的长度。如果一个不存在，返回  0 。
+```
+（回想一下，子序列是从原序列 A 中派生出来的，它从 A 中删掉任意数量的元素（也可以不删），而不改变其余元素的顺序。例如， [3, 5, 8] 是 [3, 4, 5, 6, 7, 8] 的一个子序列）
+
+示例 1：
+```
+输入: [1,2,3,4,5,6,7,8]
+输出: 5
+解释:
+最长的斐波那契式子序列为：[1,2,3,5,8] 。
+```
+示例 2：
+```
+输入: [1,3,7,11,12,14,18]
+输出: 3
+解释:
+最长的斐波那契式子序列有：
+[1,11,12]，[3,11,14] 以及 [7,11,18] 。
+```
+提示：
+```
+3 <= A.length <= 1000
+1 <= A[0] < A[1] < ... < A[A.length - 1] <= 10^9
+（对于以 Java，C，C++，以及 C# 的提交，时间限制被减少了 50%）
+```
+## 解法
+### 思路
+暴力：
+- 使用set暂存所有元素
+- 嵌套循环，确定起始的两个元素
+- 在内层循环中计算它们的和`sum`
+- 再内层循环中再开始一个循环，判断set中是否含有`sum`，如果含有，就替换原来的两个元素，继续如上的过程
+- 直到set中再也找不到`sum`，计算这个循环的循环次数，与暂存值求最大值
+- 外层嵌套的循环遍历结束，返回暂存值
+### 代码
+```java
+class Solution {
+    public int lenLongestFibSubseq(int[] A) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : A) {
+            set.add(num);
+        }
+        
+        int ans = 0;
+        
+        for (int i = 0; i < A.length; i++) {
+            for (int j = i + 1; j < A.length; j++) {
+                int x = A[i], y = A[j], sum = x + y, count = 2;
+                
+                while (set.contains(sum)) {
+                    x = y;
+                    y = sum;
+                    
+                    sum = x + y;
+                    count++;
+                }
+                
+                ans = Math.max(ans, count);
+            }
+        }
+        
+        return ans < 3 ? 0 : ans;
+    }
+}
+```
+## 优化代码
+### 思路
+- 因为题目中的数组是递增且不重复的，所以可以用一个指针来替代查询set的动作
+- 初始化三个指针：
+    - 前两个指针`i`和`j`，代表所有可能的斐波那契数列的前两个元素的坐标，通过嵌套循环生成
+    - 指针`k`代表可能的斐波那契子序列中从第三个开始所有元素的坐标
+- 过程：
+    - 省去set初始化
+    - 嵌套循环数组，生成`i`和`j`，退出条件：
+        - `i < len - 2`，一直遍历到数组的倒数第3个
+        - `j < len - 1`，一直遍历到数组的倒数第2个
+    - 生成`i`时，通过`i + 2`来初始化`k`，代表`k`从`i`算起的第三个数算起
+    - 内层循环中
+        - 算出`sum = A[i] + A[j]`
+        - 向右移动`k`，直到`A[k]` 不再小于`sum`
+        - 判断`k`是否越界，如果越界直接返回`ans`，因为这说明当前两个初始元素的和已经超过了数组的最大值，之后已经没有可能的斐波那契数列了
+        - 如果`sum != A[k]`，说明当前两个初始元素无法组成斐波那契数列，重新更换组合
+        - 到这一步，当前组合能够组成斐波那契数列，开始循环，更新获取当前斐波那契可能的数列值，并统计元素个数
+        - 同暂存的`ans`个数比较取最大值
+    - 内层循环结束，判断当前`k`是否已经越界，如果越界就退出循环
+    - 返回`ans`
+### 代码
+```java
+class Solution {
+    public int lenLongestFibSubseq(int[] A) {
+        int ans = 0, len = A.length;
+        for (int i = 0; i < len - 2; i++) {
+            int k = i + 2;
+            for (int j = i + 1; j < len - 1; j++) {
+                int sum = A[i] + A[j];
+                while (k < len && A[k] < sum) {
+                    k++;
+                }
+
+                if (k == len) {
+                    return ans;
+                }
+
+                if (A[k] != sum) {
+                    continue;
+                }
+
+                int a, b = A[j], count = 2, pos = k;
+                while (pos < len && A[pos] == sum) {
+                    count++;
+                    sum = sum + b;
+                    a = b;
+                    b = sum - a;
+                    
+                    while (pos < len && A[pos] < sum) {
+                        pos++;
+                    }
+                }
+                
+                ans = Math.max(ans, count);
+            }
+            if (k == len) {
+                continue;
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- `dp[i][j]`：以`A[i]`和`A[j]`两个元素为结尾的斐波那契数列的最大长度
+- 状态转移方程：如果当前两个元素的差，在数组中能够找到且对应的下标小于i，那么`dp[i][j] = dp[j - i][i] + 1`
+- 初始化：初始化为2，意味着只有这两个元素
+- 返回，`dp[][]`中的最大值
+### 代码
+```java
+class Solution {
+    public int lenLongestFibSubseq(int[] A) {
+        int len = A.length;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            map.put(A[i], i);
+        }
+
+        int[][] dp = new int[len][len];
+        int ans = 0;
+
+        for (int j = 1; j < len; j++) {
+            for (int i = 0; i < j; i++) {
+                int k = A[j] - A[i];
+                dp[i][j] = 2;
+                if (k < A[i] && map.containsKey(k)) {
+                    dp[i][j] = Math.max(dp[i][j], dp[map.get(k)][i] + 1);
+                }
+                
+                ans = Math.max(ans, dp[i][j]);
+            }
+        }
+        
+        return ans > 2 ? ans : 0;
+    }
+}
+```
