@@ -402,3 +402,151 @@ class Solution {
     }
 }
 ```
+# LeetCode_729_我的日程安排表I
+## 题目
+实现一个 MyCalendar 类来存放你的日程安排。如果要添加的时间内没有其他安排，则可以存储这个新的日程安排。
+
+MyCalendar 有一个 book(int start, int end)方法。它意味着在 start 到 end 时间内增加一个日程安排，注意，这里的时间是半开区间，即 [start, end), 实数 x 的范围为，  start <= x < end。
+
+当两个日程安排有一些时间上的交叉时（例如两个日程安排都在同一时间内），就会产生重复预订。
+
+每次调用 MyCalendar.book方法时，如果可以将日程安排成功添加到日历中而不会导致重复预订，返回 true。否则，返回 false 并且不要将该日程安排添加到日历中。
+
+请按照以下步骤调用 MyCalendar 类: MyCalendar cal = new MyCalendar(); MyCalendar.book(start, end)
+
+示例 1:
+```
+MyCalendar();
+MyCalendar.book(10, 20); // returns true
+MyCalendar.book(15, 25); // returns false
+MyCalendar.book(20, 30); // returns true
+解释: 
+第一个日程安排可以添加到日历中.  第二个日程安排不能添加到日历中，因为时间 15 已经被第一个日程安排预定了。
+第三个日程安排可以添加到日历中，因为第一个日程安排并不包含时间 20 。
+```
+说明:
+```
+每个测试用例，调用 MyCalendar.book 函数最多不超过 100次。
+调用函数 MyCalendar.book(start, end)时， start 和 end 的取值范围为 [0, 10^9]。
+```
+## 解法
+### 思路
+暴力：
+- 使用list保存时间区间
+- 遍历这个list，查看当前时间是否**同时**符合如下条件：
+    - 当前起始时间`start`小于窗口结束时间
+    - 当前结束时间`end`大于窗口开始时间
+- 如果符合就返回false
+- 遍历结束，将窗口放入list，返回true
+### 代码
+```java
+class MyCalendar {
+    private List<int[]> list;
+    public MyCalendar() {
+        this.list = new ArrayList<>();
+    }
+
+    public boolean book(int start, int end) {
+        for (int[] arr : list) {
+            if (start < arr[1] && end > arr[0]) {
+                return false;
+            }
+        }
+
+        list.add(new int[]{start, end});
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+使用二叉搜索树：
+- 使用二叉搜索树的特性缩短定位目标窗口的时间
+- 使用TreeMap
+- 其他逻辑和解法一类似
+### 代码
+```java
+class MyCalendar {
+    private TreeMap<Integer, Integer> calendar;
+    public MyCalendar() {
+        this.calendar = new TreeMap<>();
+    }
+
+    public boolean book(int start, int end) {
+        Integer pre = calendar.floorKey(start);
+        Integer next = calendar.ceilingKey(start);
+
+        if ((pre == null || start >= calendar.get(pre)) && (next == null || end <= next)) {
+            calendar.put(start, end);
+            return true;
+        }
+
+        return false;
+    }
+}
+```
+## 解法三
+### 思路
+自己实现二叉搜索树：
+- 定义一个存储时间窗口的二叉搜索树节点`CalendarNode`
+    - `start`开始时间
+    - `end`结束时间
+    - `left`左节点
+    - `right`右节点
+- 过程：
+    - 当需要插入新的时间窗口时，递归搜索二叉搜索树
+    - 判断需要插入的时间窗口与当前节点的关系：
+        - 如果`end <= calendarNode.start`，那么去左子树继续搜索
+        - 如果`start >= calendarNode.end`，那么去右子树继续搜索
+        - 若左、右子树不存在，就插入新节点并返回true
+        - 否则，返回false
+### 代码
+```java
+class MyCalendar {
+    private CalendarNode root;
+    public MyCalendar() {}
+
+    public boolean book(int start, int end) {
+        if (root == null) {
+            root = new CalendarNode(start, end);
+            return true;
+        }
+
+        return dfs(root, start, end);
+    }
+
+    private boolean dfs(CalendarNode node, int start, int end) {
+        if (end <= node.start) {
+            if (node.left == null) {
+                node.left = new CalendarNode(start, end);
+                return true;
+            } else {
+                return dfs(node.left, start, end);
+            }
+        }
+
+        if (start >= node.end) {
+            if (node.right == null) {
+                node.right = new CalendarNode(start, end);
+                return true;
+            } else {
+                return dfs(node.right, start, end);
+            }
+        }
+
+        return false;
+    }
+    
+    private class CalendarNode {
+    public int start;
+    public int end;
+    public CalendarNode left;
+    public CalendarNode right;
+
+    public CalendarNode(int start, int end) {
+        this.start = start;
+        this.end = end;
+    }
+}
+}
+```
