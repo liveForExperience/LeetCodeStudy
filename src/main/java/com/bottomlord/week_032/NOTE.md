@@ -538,15 +538,121 @@ class MyCalendar {
     }
     
     private class CalendarNode {
-    public int start;
-    public int end;
-    public CalendarNode left;
-    public CalendarNode right;
-
-    public CalendarNode(int start, int end) {
-        this.start = start;
-        this.end = end;
+        public int start;
+        public int end;
+        public CalendarNode left;
+        public CalendarNode right;
+    
+        public CalendarNode(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
     }
 }
+```
+# LeetCode_201_数字范围按位与
+## 题目
+给定范围 [m, n]，其中 0 <= m <= n <= 2147483647，返回此范围内所有数字的按位与（包含 m, n 两端点）。
+
+示例 1: 
+```
+输入: [5,7]
+输出: 4
+```
+示例 2:
+```
+输入: [0,1]
+输出: 0
+```
+## 失败解法
+### 失败原因
+执行超时
+### 思路
+暴力：
+- 循环与
+- 当结果等于0退出
+- 当相与的值等于Integer时退出
+### 代码
+```java
+class Solution {
+    public int rangeBitwiseAnd(int m, int n) {
+        if (m == Integer.MAX_VALUE) {
+            return m;
+        }
+        
+        int ans = m;
+        for (int i = m + 1; i <= n; i++) {
+            ans &= i;
+            if (ans == 0 || i == Integer.MAX_VALUE) {
+                break;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 相邻两个数相与，最低位必定为0，而如果`m < n`，那么必定至少有2个数，所以只要`m < n`，最低位就必定是0
+- 所以可以不断右移两个数，判断这两个数是否是`m < n`，那么就能判断这些数相与后，有多少位个0
+- 右移的时候记次数，用来代表0的个数，然后左移`m`或`n`0的个数次，就获得了最后相与的值
+### 代码
+```java
+class Solution {
+    public int rangeBitwiseAnd(int m, int n) {
+        int count = 0;
+        while (m < n) {
+            count++;
+            m >>>= 1;
+            n >>>= 1;
+        }
+        
+        for (int i = 0; i < count; i++) {
+            m <<= 1;
+        }
+        
+        return m;
+    }
+}
+```
+## 优化代码
+### 思路
+- 通过`n & (n - 1)`可以将最低位的值置为0
+- 通过这一步可以将上个解法先计算0的个数，再左移生成0的步骤合并
+### 代码
+```java
+class Solution {
+    public int rangeBitwiseAnd(int m, int n) {
+        while (m < n) {
+            n &= (n - 1);
+        }
+
+        return n;
+    }
+}
+```
+## 解法二
+### 思路
+- 根据解法一可得，获得答案的关键是找到从高位到低位，第一次不同的位`x`
+- 然后要获得答案，只需要用m与一个这样的数：`x`位的左边和m的`x`位左边完全相同，`x`位的右边全是0，`x`位与m的`x`相反的值相与，就能得到结果
+- 如果S代表`x`左边的值，那么就相当于`m & SSSx000000`
+- 如果W代表`x`右边位上的值，那么`m = SSS0WWWW, n = SSS1WWWW`，因为m是较小的值，所以`m = SSS0WWWW`是一定的
+- 将`m ^ n`，获得`0001WWWW`
+- 通过`Integer.highestOneBit(m ^ n)`获得`00010000`
+- 通过取反获得`11101111`
+- 再`+1`就获得了需要的结果`11110000`
+- 将这个值与`m`相与，就能得到最终的结果
+- 如果两个值相等，不能使用如上的思路，需要特殊处理，直接返回当前值`m`即可
+### 代码
+```java
+class Solution {
+    public int rangeBitwiseAnd(int m, int n) {
+        if (m == n) {
+            return m;
+        }
+
+        return m & ~Integer.highestOneBit(m ^ n) + 1;
+    }
 }
 ```
