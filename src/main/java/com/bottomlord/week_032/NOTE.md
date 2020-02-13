@@ -751,3 +751,114 @@ class Solution {
     }
 }
 ```
+# Interview_04_1_二维数组中的查找
+## 题目
+在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
+
+示例:
+```
+现有矩阵 matrix 如下：
+
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
+给定 target = 5，返回 true。
+
+给定 target = 20，返回 false。
+```
+限制：
+```
+0 <= n <= 1000
+
+0 <= m <= 1000
+```
+## 解法
+### 思路
+从`matrix[0][0]`开始遍历，当遍历到的元素大于目标值，就换一行继续遍历，直到找到元素或者元素遍历完
+### 代码
+```java
+class Solution {
+    public boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if (matrix.length == 0) {
+            return false;
+        }
+
+        for (int[] row : matrix) {
+            for (int num : row) {
+                if (num == target) {
+                    return true;
+                }
+
+                if (num > target) {
+                    break;
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 失败解法
+### 失败原因
+超时
+### 思路
+递归遍历二维数组，方向位向下和向右，如果越界或者大于目标值，就返回false，找到了就返回true
+### 代码
+```java
+class Solution {
+    public boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if (matrix.length == 0) {
+            return false;
+        }
+        
+        return dfs(matrix, matrix.length, matrix[0].length, 0, 0, target);
+    }
+    
+    private boolean dfs(int[][] matrix, int row, int col, int x, int y, int target) {
+        if (x >= row || y >= col || matrix[x][y] > target) {
+            return false;
+        }
+        
+        if (matrix[x][y] == target) {
+            return true;
+        }
+        
+        return dfs(matrix, row, col, x + 1, y, target) || dfs(matrix, row, col, x, y + 1, target);
+    }
+}
+```
+## 解法二
+### 思路
+从[0, col - 1]开始遍历：
+- 退出条件是行或列越界
+- 如果不越界且小于target，row++
+- 如果不越界且大于target，col--
+- 否则返回true
+### 代码
+```java
+class Solution {
+    public boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if (matrix.length == 0) {
+            return false;
+        }
+        
+        int x = 0, y = matrix[0].length - 1;
+        while (x < matrix.length && y >= 0) {
+            if (matrix[x][y] > target) {
+                y--;
+            } else if (matrix[x][y] < target) {
+                x++;
+            } else {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
