@@ -656,3 +656,98 @@ class Solution {
     }
 }
 ```
+## 优化代码
+### 思路
+相反数等于一个数的取反加1，所以可以将解法二继续优化
+### 代码
+```java
+class Solution {
+    public int rangeBitwiseAnd(int m, int n) {
+        return m == n ? m : m & -Integer.highestOneBit(m ^ n);
+    }
+}
+```
+# Interview_03_数组中的重复数字
+## 题目
+找出数组中重复的数字。
+
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。
+
+示例 1：
+```
+输入：
+[2, 3, 1, 0, 2, 5, 3]
+输出：2 或 3 
+```
+限制：
+```
+2 <= n <= 100000
+```
+## 解法
+### 思路
+set：
+- 遍历数组
+- 使用set记录遍历到的元素
+- 如果遍历到的元素set中已存在就返回
+### 代码
+```java
+class Solution {
+    public int findRepeatNumber(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            if (set.contains(num)) {
+                return num;
+            }
+            
+            set.add(num);
+        }
+        
+        return 1;
+    }
+}
+```
+## 解法二
+### 思路
+- 排序数组
+- 遍历数组，如果前后元素一样就返回
+### 代码
+```java
+class Solution {
+    public int findRepeatNumber(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] == nums[i + 1]) {
+                return nums[i];
+            }
+        }
+        
+        return 1;
+    }
+}
+```
+## 解法三
+### 思路
+- 循环放置元素`nums[i]`，直到`nums[i] == i`
+- 如果发现`nums[i] == nums[nums[i]]`，说明已经有了一个放置在正确位置上的值，当前值就是重复值
+- 否则就将当前值放在这个值对应的下标下，这样当前这个值就去到了应该在的位置上了
+- 如此循环，在时间复杂度位O(N)的情况下就能找到指定的值
+### 代码
+```java
+class Solution {
+    public int findRepeatNumber(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            while (nums[i] != i) {
+                if (nums[i] == nums[nums[i]]) {
+                    return nums[i];
+                }
+                
+                int tmp = nums[i];
+                nums[i] = nums[nums[i]];
+                nums[tmp] = tmp;
+            }
+        }
+        
+        return 1;
+    }
+}
+```
