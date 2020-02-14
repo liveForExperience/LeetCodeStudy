@@ -897,3 +897,109 @@ class Solution {
     }
 }
 ```
+# Interview_06_从尾到头打印链表
+## 题目
+输入一个链表的头节点，从尾到头反过来返回每个节点的值（用数组返回）。
+
+示例 1：
+```
+输入：head = [1,3,2]
+输出：[2,3,1]
+```
+限制：
+```
+0 <= 链表长度 <= 10000
+```
+## 解法
+### 思路
+递归：
+- 退出条件：遍历到的节点位置为null
+- 递归返回时将当前节点的值放入list
+- 递归结束，返回list
+### 代码
+```java
+class Solution {
+    public int[] reversePrint(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        rescue(list, head);
+        
+        int[] ans = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            ans[i] = list.get(i);
+        }
+        
+        return ans;
+    }
+    
+    private void rescue(List<Integer> list, ListNode node) {
+        if (node == null) {
+            return;
+        }
+
+        rescue(list, node.next);
+        list.add(node.val);
+    }
+}
+```
+## 解法二
+### 思路
+- 翻转链表
+- 遍历链表，将元素放入集合
+- 返回集合
+### 代码
+```java
+class Solution {
+    public int[] reversePrint(ListNode head) {
+        ListNode node = head, pre = null, start = node;
+        int count = 0;
+
+        while (node != null) {
+            ListNode next = node.next;
+            node.next = pre;
+            pre = node;
+            if (next == null) {
+                start = node;
+            }
+            node = next;
+            count++;
+        }
+
+        int[] ans = new int[count];
+        int index = 0;
+        while (start != null) {
+            ans[index++] = start.val;
+            start = start.next;
+        }
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+- 遍历链表计算节点个数
+- 初始化数组
+- 遍历链表，从数组最后为止开始放置遍历到的节点值
+- 返回数组
+### 代码
+```java
+class Solution {
+    public int[] reversePrint(ListNode head) {
+        int count = 0;
+        ListNode node = head;
+        
+        while (node != null) {
+            node = node.next;
+            count++;
+        }
+        
+        node = head;
+        int[] ans = new int[count];
+        for (int i = count - 1; i >= 0; i--) {
+            ans[i] = node.val;
+            node = node.next;
+        }
+        
+        return ans;
+    }
+}
+```
