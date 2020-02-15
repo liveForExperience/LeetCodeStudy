@@ -6,7 +6,7 @@ import java.util.Stack;
  * @author ThinkPad
  * @date 2020/2/15 19:02
  */
-public class Interview_08_2 {
+public class Interview_09_2 {
     class CQueue {
         private Stack<Integer> in;
         private Stack<Integer> out;

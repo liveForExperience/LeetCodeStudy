@@ -8,7 +8,7 @@ import java.util.Stack;
  * @author ThinkPad
  * @date 2020/2/15 17:04
  */
-public class Interview_08_1_用两个栈实现队列 {
+public class Interview_09_1_用两个栈实现队列 {
     class CQueue {
         private Stack<Integer> in;
         private Stack<Integer> out;
