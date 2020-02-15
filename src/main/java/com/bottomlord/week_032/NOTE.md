@@ -1003,3 +1003,90 @@ class Solution {
     }
 }
 ```
+# Interview_07_重建二叉树
+## 题目
+输入某二叉树的前序遍历和中序遍历的结果，请重建该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+
+例如，给出
+```
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+返回如下的二叉树：
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+限制：
+```
+0 <= 节点个数 <= 5000
+```
+## 解法
+### 思路
+- 前序遍历的第一个节点一定是根节点
+- 通过该节点到中序遍历中找到对应的根节点：
+    - 该节点的左边部分为根节点的左子树
+    - 该节点的右边部分为根节点的右子树
+- 以此类推，生成整个二叉树
+- 过程：
+    - 生成中序遍历的坐标与值之间的映射，方便根据前序的值获得中序的坐标
+    - 开始递归：
+        - 参数：
+            - 前序的头尾指针，`preHead`，`preTail`
+            - 中序的头尾指针，`inHead`，`inTail`
+            - 这四个参数分成两部分，一一对应为当前递归层需要处理的子树
+        - 如果参数符合如下条件，返回null，说明递归过程结束
+            - `preHead > preTail`
+            - `inHead > inTail`
+        - 递归当前层使用前序的第一个节点`preHead`作为节点值，然后继续左右子树递归
+        - 左右子树递归的四个参数值：
+            - 左子树：
+                - `preHead`：`preHead + 1`
+                - `preTail`：`rootIndex - inHead(中序的左子树遍历序列的长度)` + `preHead`
+                - `inHead`：`inHead`
+                - `inTail`：`rootIndex - 1`
+            - 右子树：
+                - `preHead`：`rootIndex - inHead + preHead + 1`
+                - `preTail`：`preTail`
+                - `inHead`：`rootIndex + 1`
+                - `inTail`：`inTail`
+### 代码
+```java
+class Solution {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        int preLen = preorder.length, inLen = inorder.length;
+
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < inLen; i++) {
+            map.put(inorder[i], i);
+        }
+
+        return buildTree(0, preLen - 1, 0, inLen - 1, map, preorder);
+    }
+
+    private TreeNode buildTree(int preHead, int preTail, int inHead, int inTail, Map<Integer, Integer> map, int[] preorder) {
+        if (preHead > preTail || inHead > inTail) {
+            return null;
+        }
+
+        int rootVal = preorder[preHead], rootIndex = map.get(rootVal);
+        TreeNode root = new TreeNode(rootVal);
+        
+        root.left = buildTree(preHead + 1, preHead + rootIndex - inHead, inHead, rootIndex - 1, map, preorder);
+        root.right = buildTree(preHead + rootIndex - inHead + 1, preTail, rootIndex + 1, inTail, map, preorder);
+        return root;
+    }
+}
+```
+# Interview_08_用两个栈实现队列
+## 题目
+
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
