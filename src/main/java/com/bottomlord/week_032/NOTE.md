@@ -1082,11 +1082,100 @@ class Solution {
 ```
 # Interview_08_用两个栈实现队列
 ## 题目
+用两个栈实现一个队列。队列的声明如下，请实现它的两个函数 appendTail 和 deleteHead ，分别完成在队列尾部插入整数和在队列头部删除整数的功能。(若队列中没有元素，deleteHead 操作返回 -1 )
 
+示例 1：
+```
+输入：
+["CQueue","appendTail","deleteHead","deleteHead"]
+[[],[3],[],[]]
+输出：[null,null,3,-1]
+```
+示例 2：
+```
+输入：
+["CQueue","deleteHead","appendTail","appendTail","deleteHead","deleteHead"]
+[[],[],[5],[2],[],[]]
+输出：[null,-1,null,null,5,2]
+```
+提示：
+```
+1 <= values <= 10000
+最多会对 appendTail、deleteHead 进行 10000 次调用
+```
 ## 解法
 ### 思路
-
+- 两个栈
+    - `in`
+    - `out`
+- 入队：将元素放入`in`
+- 出队：判断`in`中有无元素
+    - 有：
+        - 将`in`的元素全部放入`out`
+        - 将栈顶元素`ans`弹出        
+        - 将`out`的元素全部放入`in`
+        - 返回`ans`
+    - 无：返回-1    
 ### 代码
 ```java
+class CQueue {
+    private Stack<Integer> in;
+    private Stack<Integer> out;
+    public CQueue() {
+        this.in = new Stack<>();
+        this.out = new Stack<>();
+    }
 
+    public void appendTail(int value) {
+        in.push(value);
+    }
+
+    public int deleteHead() {
+        if (in.isEmpty()) {
+            return -1;
+        }
+
+        while (!in.isEmpty()) {
+            out.push(in.pop());
+        }
+
+        int ans = out.pop();
+
+        while (!out.isEmpty()) {
+            in.push(out.pop());
+        }
+
+        return ans;
+    }
+}
+```
+## 优化代码
+### 思路
+- 在出队的时候，不需要每次都清空`out`，当`out`为空的时候
+    - 如果`in`不为空，就将`in`的元素压入`out`，然后返回栈顶元素
+    - 如果`in`为空，就返回-1
+### 代码
+```java
+class CQueue {
+    private Stack<Integer> in;
+    private Stack<Integer> out;
+    public CQueue() {
+        this.in = new Stack<>();
+        this.out = new Stack<>();
+    }
+
+    public void appendTail(int value) {
+        in.push(value);
+    }
+
+    public int deleteHead() {
+        if (out.isEmpty()) {
+            while (!in.isEmpty()) {
+                out.push(in.pop());
+            }
+        }
+
+        return out.isEmpty() ? -1 : out.pop();
+    }
+}
 ```
