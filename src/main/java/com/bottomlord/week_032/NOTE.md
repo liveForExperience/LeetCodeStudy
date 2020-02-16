@@ -1242,3 +1242,83 @@ class Solution {
     }
 }
 ```
+# Interview_10II_青蛙跳台阶问题
+## 题目
+一只青蛙一次可以跳上1级台阶，也可以跳上2级台阶。求该青蛙跳上一个 n 级的台阶总共有多少种跳法。
+
+答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+
+示例 1：
+```
+输入：n = 2
+输出：2
+```
+示例 2：
+```
+输入：n = 7
+输出：21
+```
+提示：
+```
+0 <= n <= 100
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i]`：跳到第i个台阶的跳法个数
+- 状态转移方程：`dp[i] = dp[i - 1] + dp[i - 2]`
+- 初始化：`dp[1] = 1, dp[2] = 2`
+- 最终返回：`dp[n]`
+### 代码
+```java
+class Solution {
+    public int numWays(int n) {
+        if (n == 0) {
+            return 1;
+        } else if (n <= 2) {
+            return n;
+        }
+        
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        dp[2] = 2;
+
+        for (int i = 3; i <= n; i++) {
+            dp[i] = (dp[i - 1] + dp[i - 2]) % 1000000007;
+        }
+
+        return dp[n];
+    }
+}
+```
+## 解法二
+### 思路
+记忆化搜索：
+- map存台阶数与走法的映射
+- 递归求解
+### 代码
+```java
+class Solution {
+    public int numWays(int n) {
+        return recurse(n, new HashMap<>());
+    }
+
+    private int recurse(int n, Map<Integer, Integer> map) {
+        if (n == 0) {
+            return 1;
+        } else if (n <= 2) {
+            return n;
+        }
+
+        if (map.containsKey(n)) {
+            return map.get(n);
+        }
+
+        int num = (recurse(n - 1, map) + recurse(n - 2, map)) % 1000000007;
+        map.put(n, num);
+
+        return num;
+    }
+}
+```
