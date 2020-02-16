@@ -36,7 +36,7 @@ rand7()调用次数的 期望值 是多少 ?
     - `(rand7() - 1) * rand7()`可以获得`[0, 7, 14, 21, ..., 42]`的等差数列
 - 将上述两组均匀概率的数字相加，去`[1, 40]`范围的值，就能获得10进制的均匀概率的值
 - 公式`1 + rand7() + (rand7() - 1) * rand7()`，并只取`[1, 40]`
-- 返回取余10的结果就是题目要求的答案
+- 因为结果需要的是`[1,10]`，所以循环中获得的结果需要先-1后取模10，获得`[0,9]`，再+1才能获得`[1,10]`
 ### 代码
 ```java
 class Solution extends SolBase {
@@ -44,8 +44,8 @@ class Solution extends SolBase {
         int index, col, row;
         do {
             col = rand7();
-            row = rand7();
-            index = col + (row - 1) * 7;
+            row = (rand7() - 1) * 7;
+            index = col + row;
         } while (index > 40);
 
         return 1 + (index - 1) % 10;
