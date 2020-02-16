@@ -1379,7 +1379,7 @@ class Solution {
         - 如果`nums[mid] > nums[tail]`：`head = mid + 1`，中间值大于尾部值，说明在中间值和结尾值之间有最小值
         - 如果`nums[mid] < nums[tail]`：`tail = mid`，中间值小于尾部值，说明中间值不在后半部
         - 如果`nums[mid] == nums[tail]`：`tail = tail - 1`，中间值和结尾值一致，减小结尾值坐标，从而改变中间值，进行下一次循环
-- 最终返回`nums[head]`，
+- 最终返回`nums[head]`
 ### 代码
 ```java
 class Solution {
@@ -1398,6 +1398,91 @@ class Solution {
         }
         
         return numbers[head];
+    }
+}
+```
+# LeetCode_154_寻找旋转排序数组中的最小值II
+## 题目
+假设按照升序排序的数组在预先未知的某个点上进行了旋转。
+
+( 例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] )。
+
+请找出其中最小的元素。
+
+注意数组中可能存在重复的元素。
+
+示例 1：
+```
+输入: [1,3,5]
+输出: 1
+```
+示例 2：
+```
+输入: [2,2,2,0,1]
+输出: 0
+```
+## 解法
+### 思路
+遍历数组，如果当前元素符合如下条件，则返回
+- 数组第一个元素比数组结尾元素大或者等于
+    - 如果元素比前一个元素小，就返回
+    - 如果没有一个元素比前一个元素小，就返回第一个元素
+- 数组第一个元素比数组结尾元素小，直接返回
+### 代码
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        if (nums.length == 1) {
+            return nums[0];
+        }
+
+        if (nums[0] < nums[nums.length - 1]) {
+            return nums[0];
+        }
+
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] < nums[i - 1]) {
+                return nums[i];
+            }
+        }
+
+        return nums[0];
+    }
+}
+```
+## 解法二
+### 思路
+二分查找：
+- 三个指针：
+    - `head`
+    - `mid`
+    - `tail`
+- 过程：
+    - 开始一个条件为`head < tail`的循环
+    - 通过`head`和`tail`生成`mid = (tail - head) / 2 + head`
+    - 判断`head`和`tail`怎么变更：
+        - 如果`nums[mid] > nums[tail]`：`head = mid + 1`，中间值大于尾部值，说明在中间值和结尾值之间有最小值
+        - 如果`nums[mid] < nums[tail]`：`tail = mid`，中间值小于尾部值，说明中间值不在后半部
+        - 如果`nums[mid] == nums[tail]`：`tail = tail - 1`，中间值和结尾值一致，减小结尾值坐标，从而改变中间值，进行下一次循环
+- 最终返回`nums[head]`，
+### 代码
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        int head = 0, tail = nums.length - 1;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (nums[mid] > nums[tail]) {
+                head = mid + 1;
+            } else if (nums[mid] < nums[tail]) {
+                tail = mid;
+            } else {
+                tail--;
+            }
+        }
+
+        return nums[head];
     }
 }
 ```
