@@ -194,3 +194,84 @@ class Solution {
     }
 }
 ```
+# Interview_14II_剪绳子II
+## 题目
+给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），每段绳子的长度记为 k[0],k[1]...k[m] 。请问 k[0]*k[1]*...*k[m] 可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+
+答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。
+
+示例 1：
+```
+输入: 2
+输出: 1
+解释: 2 = 1 + 1, 1 × 1 = 1
+```
+示例 2:
+```
+输入: 10
+输出: 36
+解释: 10 = 3 + 3 + 4, 3 × 3 × 4 = 36
+```
+提示：
+```
+2 <= n <= 1000
+```
+## 解法
+### 思路
+动态规划(与面试题14相同)：
+- `dp[i]`：长度为i的绳子能组成的乘积最大的值
+- 状态转移方程：`dp[i] = max(dp[i], max(dp[j], j) * max(dp[i - j], i - j))`
+- 初始化：`dp[1] = 1`
+- 返回`dp[n]`
+- 但是因为int和long都会溢出，需要使用BigInteger，并取模
+### 代码
+```java
+import java.math.BigInteger;
+class Solution {
+    public int cuttingRope(int n) {
+        BigInteger[] dp = new BigInteger[n + 1];
+        dp[1] = new BigInteger("1");
+        for (int i = 2; i <= n; i++) {
+            dp[i] = new BigInteger("0");
+            for (int j = 1; j <= i /2; j++) {
+                dp[i] = dp[i].max(dp[j].max(new BigInteger("" + j)).multiply(dp[i - j].max(new BigInteger(i - j + ""))));
+            }
+        }
+
+        return dp[n].mod(new BigInteger("1000000007")).intValue();
+    }
+}
+```
+## 优化代码
+### 思路
+- 根据`n <= 3`的几种特例，进行返回
+- 在dp[]方程中，将1，2，3位置的元素设置为不需要切的情况下的最大值，也分别是1,2,3，这3个值用于简化状态转移方程
+- 新的状态转移方程为：`dp[i] = dp[j] * dp[i - j]`，因为上一步中的3个值，它们切后的值比原值要小，和其他数的性质不同，所以需要特殊对待，同时修改后才能用在当前的状态转移方程中，省去比较乘积与原值之间大小这一步
+### 代码
+```java
+import java.math.BigInteger;
+class Solution {
+    public int cuttingRope(int n) {
+        if (n < 2) {
+            return 0;
+        } else if (n == 2) {
+            return 1;
+        } else if (n == 3) {
+            return 2;
+        }
+
+        BigInteger[] dp = new BigInteger[n + 1];
+        dp[1] = new BigInteger("1");
+        dp[2] = new BigInteger("2");
+        dp[3] = new BigInteger("3");
+        for (int i = 4; i <= n; i++) {
+            dp[i] = new BigInteger("0");
+            for (int j = 1; j <= i /2; j++) {
+                dp[i] = dp[i].max(dp[j].multiply(dp[i - j]));
+            }
+        }
+
+        return dp[n].mod(new BigInteger("1000000007")).intValue();
+    }
+}
+```
