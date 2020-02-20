@@ -681,6 +681,13 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+
+### 代码
+```java
+
+```
 # Interview_20_表示数值的字符串
 ## 题目
 请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。例如，字符串"+100"、"5e2"、"-123"、"3.1416"、"0123"及"-1E-16"都表示数值，但"12e"、"1a3.14"、"1.2.3"、"+-5"及"12e+5.4"都不是。
@@ -756,4 +763,101 @@ class Solution {
         return false;
     }
 }
+```
+# LeetCode_65_有效数字
+## 题目
+验证给定的字符串是否可以解释为十进制数字。
+
+例如:
+```
+"0" => true
+" 0.1 " => true
+"abc" => false
+"1 a" => false
+"2e10" => true
+" -90e3   " => true
+" 1e" => false
+"e3" => false
+" 6e-1" => true
+" 99e2.5 " => false
+"53.5e93" => true
+" --6 " => false
+"-+3" => false
+"95a54e53" => false
+```
+说明: 我们有意将问题陈述地比较模糊。在实现代码之前，你应当事先思考所有可能的情况。这里给出一份可能存在于有效十进制数字中的字符列表：
+```
+数字 0-9
+指数 - "e"
+正/负号 - "+"/"-"
+小数点 - "."
+当然，在输入中，这些字符的上下文也很重要。
+```
+## 解法
+### 思路
+和面试题20一致
+### 代码
+```java
+class Solution {
+    public static boolean isNumber(String s) {
+        s = s.trim();
+        if (s.length() == 0) {
+            return false;
+        }
+
+        int index = 0;
+        if (s.charAt(index) == '+' || s.charAt(index) == '-') {
+            index++;
+        }
+
+        int num = 0, dot = 0;
+        while (index < s.length()) {
+            if (s.charAt(index) >= '0' && s.charAt(index) <= '9') {
+                index++;
+                num++;
+            } else if (s.charAt(index) == '.') {
+                index++;
+                dot++;
+            } else {
+                break;
+            }
+        }
+        
+        if (dot > 1 || num == 0) {
+            return false;
+        }
+        
+        if (index == s.length()) {
+            return true;
+        }
+        
+        if (s.charAt(index++) == 'e') {
+            if (index == s.length()) {
+                return false;
+            }
+            
+            if (s.charAt(index) == '+' || s.charAt(index) == '-') {
+                index++;
+                if (index == s.length()) {
+                    return false;
+                }
+            }
+
+            while (index < s.length() && s.charAt(index) >= '0' && s.charAt(index) <= '9') {
+                index++;
+            }
+
+            return index == s.length();
+        }
+        
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+DFA
+### 代码
+```java
+
 ```
