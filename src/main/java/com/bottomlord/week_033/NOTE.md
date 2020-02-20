@@ -666,5 +666,94 @@ class Solution {
     - 否则就返回首字符是否匹配的结果，以及同时移动两个字符串坐标的结果的相与结果
 ### 代码
 ```java
+class Solution {
+    public boolean isMatch(String s, String p) {
+        if (p.isEmpty()) {
+            return s.isEmpty();
+        }
 
+        boolean firstMatch = !s.isEmpty() && (s.charAt(0) == p.charAt(0) || p.charAt(0) == '.');
+
+        if (p.length() >= 2 && p.charAt(1) == '*') {
+            return isMatch(s, p.substring(2)) || (firstMatch && isMatch(s.substring(1), p));
+        }
+        return firstMatch && isMatch(s.substring(1), p.substring(1));
+    }
+}
+```
+# Interview_20_表示数值的字符串
+## 题目
+请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。例如，字符串"+100"、"5e2"、"-123"、"3.1416"、"0123"及"-1E-16"都表示数值，但"12e"、"1a3.14"、"1.2.3"、"+-5"及"12e+5.4"都不是。
+## 解法
+### 思路
+- 如果字符串长度为0，就返回false
+- 如果字符串首个字符为`+`或`-`，就移动指针一步
+- 如果接下来的字符为数字或者`.`就不断移动指针，直到当前元素不再符合循环要求
+    - 在循环中记录数字和`.`的数量
+        - 如果数字为0，返回false
+        - 如果`.`大于1，返回false
+    - 如果指针越界，说明判断结束，符合要求，返回true
+- 剩下的情况，如果当前字符是e：
+    - 如果在e之后的字符是`+`或`-`，就移动一位指针
+    - 如果移动好以后，指针越界，说明不符合要求，因为加减号之后必须要有数字，所以返回false
+    - 再次开始循环判断是否是数字`.`或数字
+    - 如果循环结束，指针越界，就返回true
+- 再剩下的所有情况都是false
+### 代码
+```java
+class Solution {
+    public static boolean isNumber(String s) {
+        s = s.trim();
+        if (s.length() == 0) {
+            return false;
+        }
+
+        int index = 0;
+        if (s.charAt(index) == '+' || s.charAt(index) == '-') {
+            index++;
+        }
+
+        int num = 0, dot = 0;
+        while (index < s.length()) {
+            if (s.charAt(index) >= '0' && s.charAt(index) <= '9') {
+                index++;
+                num++;
+            } else if (s.charAt(index) == '.') {
+                index++;
+                dot++;
+            } else {
+                break;
+            }
+        }
+        
+        if (dot > 1 || num == 0) {
+            return false;
+        }
+        
+        if (index == s.length()) {
+            return true;
+        }
+        
+        if (s.charAt(index++) == 'e') {
+            if (index == s.length()) {
+                return false;
+            }
+            
+            if (s.charAt(index) == '+' || s.charAt(index) == '-') {
+                index++;
+                if (index == s.length()) {
+                    return false;
+                }
+            }
+
+            while (index < s.length() && s.charAt(index) >= '0' && s.charAt(index) <= '9') {
+                index++;
+            }
+
+            return index == s.length();
+        }
+        
+        return false;
+    }
+}
 ```
