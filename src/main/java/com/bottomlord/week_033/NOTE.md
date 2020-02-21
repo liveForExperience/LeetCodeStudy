@@ -900,10 +900,70 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-DFA
+DFA：
+- 5种元素：
+    - 数字
+    - 加减号
+    - 指数符号
+    - 点
+    - 其他
+- 构建一个有限状态机，并根据状态机生成图表
+    - 行代表状态
+    - 列代表元素
+    - 图表中的值在当前状态下，遇到当前元素时的状态
+- 状态：
+    - 初始或空格状态：
+    - 前一个为加减号的状态
+    - 只有点的状态
+    - 有数字有点的状态
+    - 数字的状态
+    - 指数符号的状态
+    - 为指数值得状态
+    - 指数上加减号的状态
+- 过程中如果是-1，就直接返回false
 ### 代码
 ```java
+class Solution {
+    public int make(char c) {
+        switch(c) {
+            case ' ': return 0;
+            case '+':
+            case '-': return 1;
+            case '.': return 3;
+            case 'e': return 4;
+            default:
+                if(c >= '0' && c <= '9') {
+                    return 2;
+                }
+        }
+        return -1;
+    }
 
+    public boolean isNumber(String s) {
+        int state = 0, finals = 0b101101000;
+        int[][] transfer = new int[][]{{ 0, 1, 6, 2,-1},
+                {-1,-1, 6, 2,-1},
+                {-1,-1, 3,-1,-1},
+                { 8,-1, 3,-1, 4},
+                {-1, 7, 5,-1,-1},
+                { 8,-1, 5,-1,-1},
+                { 8,-1, 6, 3, 4},
+                {-1,-1, 5,-1,-1},
+                { 8,-1,-1,-1,-1}};
+        char[] cs = s.toCharArray();
+        for (char c : cs) {
+            int id = make(c);
+            if (id < 0) {
+                return false;
+            }
+            state = transfer[state][id];
+            if (state < 0) {
+                return false;
+            }
+        }
+        return (finals & (1 << state)) > 0;
+    }
+}
 ```
 # LeetCode_10_正则表达式匹配
 ## 题目
