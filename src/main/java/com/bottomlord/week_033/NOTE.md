@@ -1011,3 +1011,74 @@ class Solution {
     }
 }
 ```
+# Interview_21_调整数组顺序使奇数位于偶数前面
+## 题目
+输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有奇数位于数组的前半部分，所有偶数位于数组的后半部分。
+
+示例：
+```
+输入：nums = [1,2,3,4]
+输出：[1,3,2,4] 
+注：[3,1,2,4] 也是正确的答案之一。
+```
+提示：
+```
+1 <= nums.length <= 50000
+1 <= nums[i] <= 10000
+```
+## 解法
+### 思路
+- 初始化一个与原数组一样大小的数组
+- 定义新数组的头尾指针
+- 遍历原数组
+    - 如果是奇数就放在头指针的位置，同时头指针向后移动
+    - 如果是偶数就放在尾指针的位置，同时尾指针向前移动
+### 代码
+```java
+class Solution {
+    public int[] exchange(int[] nums) {
+        int[] ans = new int[nums.length];
+        int head = 0, tail = ans.length - 1;
+        for (int num : nums) {
+            if ((num & 1) == 1) {
+                ans[head++] = num;
+            } else {
+                ans[tail--] = num;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+原地修改：
+二分法：
+- 定义头尾指针
+- 从头开始遍历数组
+- 如果元素为奇数，跳过
+- 如果元素为偶数，和tail互换，tail向前移动，head不动
+- 直到`head >= tail` 
+### 代码
+```java
+class Solution {
+    public int[] exchange(int[] nums) {
+        int head = 0, tail = nums.length - 1;
+        while (head < tail) {
+            if ((nums[head] & 1) == 1) {
+                head++;
+                continue;
+            }
+            
+            int tmp = nums[tail];
+            nums[tail] = nums[head];
+            nums[head] = tmp;
+            
+            tail--;
+        }
+        
+        return nums;
+    }
+}
+```
