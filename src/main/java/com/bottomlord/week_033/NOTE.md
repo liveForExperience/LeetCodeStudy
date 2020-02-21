@@ -660,7 +660,7 @@ class Solution {
 - 通过遍历两个字符串，通过通过正则字符的不同情况，确定不同的递归路径
 - 过程：
     - 判断两个字符串的首个字符是否匹配，暂存结果
-    - 如果当前剩余的正则字符串长度不小于2，且是否是`x*`模式，如果是：
+    - 如果当前剩余的正则字符串长度不小于2，且是`x*`模式：
         - 将当前这个模式视作空字符串，跳过，继续递归
         - 如果首个字符已经匹配了，那么就移动`s`字符串，继续匹配
     - 否则就返回首字符是否匹配的结果，以及同时移动两个字符串坐标的结果的相与结果
@@ -904,4 +904,110 @@ DFA
 ### 代码
 ```java
 
+```
+# LeetCode_10_正则表达式匹配
+## 题目
+给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
+```
+'.' 匹配任意单个字符
+'*' 匹配零个或多个前面的那一个元素
+所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
+```
+说明:
+```
+s 可能为空，且只包含从 a-z 的小写字母。
+p 可能为空，且只包含从 a-z 的小写字母，以及字符 . 和 *。
+```
+示例 1:
+```
+输入:
+s = "aa"
+p = "a"
+输出: false
+解释: "a" 无法匹配 "aa" 整个字符串。
+```
+示例 2:
+```
+输入:
+s = "aa"
+p = "a*"
+输出: true
+解释: 因为 '*' 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 'a'。因此，字符串 "aa" 可被视为 'a' 重复了一次。
+```
+示例 3:
+```
+输入:
+s = "ab"
+p = ".*"
+输出: true
+解释: ".*" 表示可匹配零个或多个（'*'）任意字符（'.'）。
+```
+示例 4:
+```
+输入:
+s = "aab"
+p = "c*a*b"
+输出: true
+解释: 因为 '*' 表示零个或多个，这里 'c' 为 0 个, 'a' 被重复一次。因此可以匹配字符串 "aab"。
+```
+示例 5:
+```
+输入:
+s = "mississippi"
+p = "mis*is*p*."
+输出: false
+```
+## 解法
+### 思路
+递归：思路和面试题19第二解一致
+### 代码
+```java
+class Solution {
+    public boolean isMatch(String s, String p) {
+        if (p.isEmpty()) {
+            return s.isEmpty();
+        }
+
+        boolean firstMatch = !s.isEmpty() && (s.charAt(0) == p.charAt(0) || p.charAt(0) == '.');
+        if (p.length() > 1 && p.charAt(1) == '*') {
+            return isMatch(s, p.substring(2)) || (firstMatch && isMatch(s.substring(1), p));
+        }
+
+        return firstMatch && isMatch(s.substring(1), p.substring(1));
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：思路与面试题19第三解一致
+### 代码
+```java
+class Solution {
+    public boolean isMatch(String s, String p) {
+        int sLen = s.length(), pLen = p.length();
+        boolean[][] dp = new boolean[sLen + 1][pLen + 1];
+        dp[0][0] = true;
+        for (int j = 2; j <= p.length(); j++) {
+            if (p.charAt(j - 1) == '*') {
+                dp[0][j] = dp[0][j - 2];
+            }
+        }
+
+        for (int i = 1; i <= sLen; i++) {
+            for (int j = 1; j <= pLen; j++) {
+                if (s.charAt(i - 1) == p.charAt(j - 1) || p.charAt(j - 1) == '.') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p.charAt(j - 1) == '*' && (s.charAt(i - 1) == p.charAt(j - 2) || p.charAt(j - 2) == '.')) {
+                    dp[i][j] = dp[i][j - 2] || dp[i - 1][j];
+                } else if (p.charAt(j - 1) == '*' && s.charAt(i - 1) != p.charAt(j - 1)) {
+                    dp[i][j] = dp[i][j - 2];
+                } else {
+                    dp[i][j] = false;
+                }
+            }
+        }
+
+        return dp[sLen][pLen];
+    }
+}
 ```
