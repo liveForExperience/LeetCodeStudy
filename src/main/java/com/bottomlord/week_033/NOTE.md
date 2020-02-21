@@ -683,10 +683,54 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-
+动态规划：
+- `dp[i][j]`：s的前i项和p的前j项是否匹配
+- 状态转移方程：
+    - 如果`s[i] == p[j] || p[j] == '.'`：`dp[i][j] = dp[i - 1][j - 1]`
+    - 如果`p[j] == '*' && s[i] != p[j - 1]`：`dp[i][j] = dp[i][j - 2]`
+    - 如果`p[j] == '*' && (s[i] == p[j - 1] || p[j - 1] == '.'`：`dp[i][j] = dp[i][j - 2] || dp[i - 1][j]`
+    - 其他情况：false
+- 初始化：
+    - `dp[0][0] = true`：空字符串，空正则，是true
+    - `dp[0][j] = dp[0][j - 2]`：空字符串，如果正则式`x*x*x*`，那么也初始化为true
+- 返回结果：`dp[s.length][p.length]`
+- 过程：
+    - 确定边界情况：
+        - 如果s为空，那么p的长度如果等于1，说明无法组成n个`x*`的模式，就是false
+        - 如果p为空：字符串为空为true，否则为false
+    - 嵌套循环，确定i和j
+    - 通过不同状态更新dp
+    - 循环结束后返回`dp[s.length][p.length]`
 ### 代码
 ```java
+class Solution {
+    public boolean isMatch(String s, String p) {
+        int sLen = s.length(), pLen = p.length();
+        boolean[][] dp = new boolean[sLen + 1][pLen + 1];
+        dp[0][0] = true;
+        for (int j = 2; j <= p.length(); j++) {
+            if (p.charAt(j - 1) == '*') {
+                dp[0][j] = dp[0][j - 2];
+            }
+        }
 
+        for (int i = 1; i <= sLen; i++) {
+            for (int j = 1; j <= pLen; j++) {
+                if (s.charAt(i - 1) == p.charAt(j - 1) || p.charAt(j - 1) == '.') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p.charAt(j - 1) == '*' && (s.charAt(i - 1) == p.charAt(j - 2) || p.charAt(j - 2) == '.')) {
+                    dp[i][j] = dp[i][j - 2] || dp[i - 1][j];
+                } else if (p.charAt(j - 1) == '*' && s.charAt(i - 1) != p.charAt(j - 1)) {
+                    dp[i][j] = dp[i][j - 2];
+                } else {
+                    dp[i][j] = false;
+                }
+            }
+        }
+
+        return dp[sLen][pLen];
+    }
+}
 ```
 # Interview_20_表示数值的字符串
 ## 题目
