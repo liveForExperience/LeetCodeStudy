@@ -1220,3 +1220,131 @@ class Solution {
     }
 }
 ```
+# Interview_25_合并两个排序的链表
+## 题目
+输入两个递增排序的链表，合并这两个链表并使新链表中的节点仍然是递增排序的。
+
+示例1：
+```
+输入：1->2->4, 1->3->4
+输出：1->1->2->3->4->4
+```
+限制：
+```
+0 <= 链表长度 <= 1000
+```
+## 解法
+### 思路
+- 遍历两个链表，暂存所有元素在list中
+- 排序list
+- 遍历list，生成链表
+### 代码
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        List<Integer> list = new ArrayList<>();
+        ListNode node = l1;
+        while (node != null) {
+            list.add(node.val);
+            node = node.next;
+        }
+        
+        node = l2;
+        while (node != null) {
+            list.add(node.val);
+            node = node.next;
+        }
+        
+        Collections.sort(list);
+        
+        ListNode fake = new ListNode(0);
+        if (list.size() == 0) {
+            return null;
+        }
+        node = new ListNode(list.get(0));
+        fake.next = node;
+        for (int i = 1; i < list.size(); i++) {
+            node.next = new ListNode(list.get(i));
+            node = node.next;
+        }
+        
+        return fake.next;
+    }
+}
+```
+## 解法二
+### 思路
+- 定义两个指针：
+    - `head`：作为链表的头指针，方便返回结果
+    - `cur`：作为新链表的遍历指针，初始指向`head`
+- 过程：
+    - 开始循环，循环条件是，两个原链表的指针没有同时为空
+    - 循环过程中：
+        - 判断是否有链表已经遍历完，如果是，将`cur.next`指向不为空的那个链表
+        - 否则判断两个指针的值的大小，如果小的，就将`cur.next`指针指向当前节点，然后移动指针`cur = cur.next`
+- 循环结束后，返回`head.next`
+### 代码
+```java
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode head = new ListNode(0), cur = head;
+        
+        while (l1 != null || l2 != null) {
+            if (l1 == null) {
+                cur.next = l2;
+                break;
+            } 
+            
+            if (l2 == null) {
+                cur.next = l1;
+                break;
+            }
+            
+            if (l1.val < l2.val) {
+                cur.next = l1;
+                l1 = l1.next;
+            } else {
+                cur.next = l2;
+                l2 = l2.next;
+            }
+            cur = cur.next;
+        }
+        
+        return head.next;
+    }
+}
+```
+## 优化代码
+### 思路
+- 将解法二的循环条件改为全部都不为空
+- 当循环退出后，再判断那个链表已经遍历完，从而接上就可以
+- 其他逻辑和解法二类似
+### 代码
+```java
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode head = new ListNode(0), cur = head;
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                cur.next = l1;
+                l1 = l1.next;
+            } else {
+                cur.next = l2;
+                l2 = l2.next;
+            }
+            cur = cur.next;
+        }
+        
+        cur.next = l1 == null ? l2 : l1;
+        return head.next;
+    }
+}
+```
