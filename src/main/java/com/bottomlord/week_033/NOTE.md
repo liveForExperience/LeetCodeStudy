@@ -1348,3 +1348,89 @@ class Solution {
     }
 }
 ```
+# Interview_26_树的子结构
+## 题目
+输入两棵二叉树A和B，判断B是不是A的子结构。(约定空树不是任意一个树的子结构)
+
+B是A的子结构， 即 A中有出现和B相同的结构和节点值。
+
+例如:
+```
+给定的树 A:
+
+     3
+    / \
+   4   5
+  / \
+ 1   2
+给定的树 B：
+
+   4 
+  /
+ 1
+返回 true，因为 B 与 A 的一个子树拥有相同的结构和节点值。
+```
+示例 1：
+```
+输入：A = [1,2,3], B = [3,1]
+输出：false
+```
+示例 2：
+```
+输入：A = [3,4,5,1,2], B = [4,1]
+输出：true
+```
+限制：
+```
+0 <= 节点个数 <= 10000
+```
+## 解法
+### 思路
+嵌套dfs：
+- 外层递归确定从A的哪个节点开始比较A和B
+- 内层递归确定A的这部分子结构是否与B完全相等
+- 外层：
+    - 退出条件：A或B是null，返回false
+    - 过程：
+        - 进入内层递归，代表开始从当前节点开始判断是否为相同子结构
+        - 递归左右子树，寻找别的节点作为内层的起点
+        - 将三个返回的布尔值相或，只要有一个节点开始返回的是true，就说明有子结构
+- 内层：
+    - 退出条件：A为null，代表当前子结构遍历完了，因为上一层如果B不是null，不会递归进来，所以A如果为空，B却不是空的，所以不是完全一样的结构
+    - 过程：
+        - 如果当前两个节点的值相等：
+            - 判断当前两个节点的左右子树是否分别也一样，于是继续递归下去
+            - 返回的结果相与，返回这个结果
+### 代码
+```java
+class Solution {
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        if (A == null || B == null) {
+            return false;
+        }
+
+        return dfs(A, B) || isSubStructure(A.left, B) || isSubStructure(A.right, B);
+    }
+
+    private boolean dfs(TreeNode a, TreeNode b) {
+        if (a == null) {
+            return false;
+        }
+
+        if (a.val == b.val) {
+            boolean ans = true;
+            if (b.left != null) {
+                ans = dfs(a.left, b.left);
+            }
+            
+            if (b.right != null) {
+                ans = ans && dfs(a.right, b.right);
+            }
+            
+            return ans;
+        }
+        
+        return false;
+    }
+}
+```
