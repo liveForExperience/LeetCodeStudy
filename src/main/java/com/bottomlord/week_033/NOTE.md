@@ -1177,3 +1177,46 @@ class Solution {
     }
 }
 ```
+# Interview_24_反转链表
+## 题目
+定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点。
+
+示例:
+```
+输入: 1->2->3->4->5->NULL
+输出: 5->4->3->2->1->NULL
+```
+限制：
+```
+0 <= 节点个数 <= 5000
+```
+## 解法
+### 思路
+- 定义前置节点指针`pre`，用于反转
+- 遍历链表
+    - 暂存`node.next`
+    - 将`node.next`指向`pre`
+    - 将`pre`指向当前节点
+    - 判断暂存的`next`是否为空
+        - 也就是是否到了链表的最后位置，如果是就中断
+        - 否则就将`node`指向暂存的`next`，继续遍历
+- 最终返回`node`，也就是原链表的尾节点
+### 代码
+```java
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        ListNode pre = null, node = head;
+        while (node != null) {
+            ListNode next = node.next;
+            node.next = pre;
+            pre = node;
+            if (next == null) {
+                break;
+            }
+            node = next;
+        }
+
+        return node;
+    }
+}
+```
