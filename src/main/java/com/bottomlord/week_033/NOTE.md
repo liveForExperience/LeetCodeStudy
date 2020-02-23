@@ -1554,3 +1554,120 @@ class Solution {
     }
 }
 ```
+# Interview_29_顺时针打印矩阵
+## 题目
+输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+
+示例 1：
+```
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+输出：[1,2,3,6,9,8,7,4,5]
+```
+示例 2：
+```
+输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+```
+限制：
+```
+0 <= matrix.length <= 100
+0 <= matrix[i].length <= 100
+```
+## 解法
+### 思路
+- 定义行和列的右、下、左、上四个方向上的值
+- 定义一个缓存存放已经遍历过的节点，用于提示遍历指针转向
+- 从`[0, 0]`开始遍历二维数组，将遍历到的节点值存入`arr`，如果越界或者碰到已经遍历过的节点，就转向
+- 直到所有节点都被遍历为止，返回`arr`
+### 代码
+```java
+class Solution {
+    public int[] spiralOrder(int[][] matrix) {
+        if (matrix.length == 0) {
+            return new int[0];
+        }
+
+        int row = matrix.length, col = matrix[0].length, r = 0, c = 0, index = 0, di = 0;
+        boolean[][] visited = new boolean[row][col];
+        int[] ans = new int[row * col], rd = {0 , 1, 0, -1}, cd = {1, 0, -1, 0};
+
+        for (int i = 0; i < row * col; i++) {
+            ans[index++] = matrix[r][c];
+            visited[r][c] = true;
+
+            int newR = r + rd[di], newC = c + cd[di];
+
+            if (newR >= 0 && newR < row && newC >= 0 && newC < col && !visited[newR][newC]) {
+                r = newR;
+                c = newC;
+            } else {
+                di = (di + 1) % 4;
+                r += rd[di];
+                c += cd[di];
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+# LeetCode_54_螺旋矩阵
+## 题目
+给定一个包含 m x n 个元素的矩阵（m 行, n 列），请按照顺时针螺旋顺序，返回矩阵中的所有元素。
+
+示例 1:
+```
+输入:
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+输出: [1,2,3,6,9,8,7,4,5]
+```
+示例 2:
+```
+输入:
+[
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9,10,11,12]
+]
+输出: [1,2,3,4,8,12,11,10,9,5,6,7]
+```
+## 解法
+### 思路
+思路等同面试题29的解法一
+### 代码
+```java
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        if (matrix.length == 0) {
+            return Collections.emptyList();
+        }
+
+        int row = matrix.length, col = matrix[0].length, r = 0, c = 0, index = 0, di = 0;
+        boolean[][] visited = new boolean[row][col];
+        int[] rd = {0 , 1, 0, -1}, cd = {1, 0, -1, 0};
+        List<Integer> ans = new ArrayList<>();
+        
+        for (int i = 0; i < row * col; i++) {
+            ans.add(matrix[r][c]);
+            visited[r][c] = true;
+
+            int newR = r + rd[di], newC = c + cd[di];
+
+            if (newR >= 0 && newR < row && newC >= 0 && newC < col && !visited[newR][newC]) {
+                r = newR;
+                c = newC;
+            } else {
+                di = (di + 1) % 4;
+                r += rd[di];
+                c += cd[di];
+            }
+        }
+
+        return ans;
+    }
+}
+```
