@@ -1485,3 +1485,72 @@ class Solution {
     }
 }
 ```
+# Interview_28_对称的二叉树
+## 题目
+请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
+
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+```
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+```
+但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+```
+    1
+   / \
+  2   2
+   \   \
+   3    3
+```
+示例 1：
+```
+输入：root = [1,2,2,3,4,4,3]
+输出：true
+```
+示例 2：
+```
+输入：root = [1,2,2,null,3,null,3]
+输出：false
+```
+限制：
+```
+0 <= 节点个数 <= 1000
+```
+## 解法
+### 思路
+dfs：
+- 参数：两个互为镜像节点的指针
+- 互为镜像的逻辑是：
+    - 互为镜像的节点值相等
+    - 镜像1的左子树节点和镜像2的右子树节点相等
+    - 镜像1的右子树节点和镜像2的左子树节点相等
+    - 这三个条件要同时满足
+- 过程：
+    - 退出条件：
+        - 同时为null，为true
+        - 其中一个为null，为false
+    - 递归逻辑 
+        - 返回如上三个条件是否同时满足
+### 代码
+```java
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        return isMirror(root, root);
+    }
+    
+    private boolean isMirror(TreeNode node1, TreeNode node2) {
+        if (node1 == null && node2 == null) {
+            return true;
+        }
+        
+        if (node1 == null || node2 == null) {
+            return false;
+        }
+        
+        return node1.val == node2.val && isMirror(node1.left, node2.right) && isMirror(node1.right, node2.left);
+    }
+}
+```
