@@ -64,3 +64,70 @@ class MinStack {
     }
 }
 ```
+# Interview_31_栈的压入和弹出序列
+## 题目
+输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。假设压入栈的所有数字均不相等。例如，序列 {1,2,3,4,5} 是某栈的压栈序列，序列 {4,5,3,2,1} 是该压栈序列对应的一个弹出序列，但 {4,3,5,1,2} 就不可能是该压栈序列的弹出序列。
+
+示例 1：
+```
+输入：pushed = [1,2,3,4,5], popped = [4,5,3,2,1]
+输出：true
+解释：我们可以按以下顺序执行：
+push(1), push(2), push(3), push(4), pop() -> 4,
+push(5), pop() -> 5, pop() -> 3, pop() -> 2, pop() -> 1
+```
+示例 2：
+```
+输入：pushed = [1,2,3,4,5], popped = [4,3,5,1,2]
+输出：false
+解释：1 不能在 2 之前弹出。
+```
+提示：
+```
+0 <= pushed.length == popped.length <= 1000
+0 <= pushed[i], popped[i] < 1000
+pushed 是 popped 的排列。
+```
+## 解法
+### 思路
+栈：
+- 初始化一个栈
+- 定义两个数组的指针
+    - push
+    - pop
+- 过程：
+    - 如果两个数组的任意一个没有遍历完，持续循环
+    - 循环中
+        1. 判断当前stack是否为空，如果不为空，查看pop指向的元素是否与栈顶元素相等
+        2. 如果相等：
+            - 栈顶元素出栈
+            - pop指针后移
+            - 继续循环
+        3. 如果不相等：
+            - 判断push是否越界，如果越界说明该push的元素都放入栈中了，还有需要pop的元素，且这些元素无法从栈顶获取，终止循环
+            - 将push指向的元素放入栈中
+        4. 最终判断栈中是否有元素，有元素说明popped数组中的元素不是有效的出栈顺序
+### 代码
+```java
+class Solution {
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        Stack<Integer> stack = new Stack<>();
+        int push = 0, pop = 0;
+        while (push < pushed.length || pop < popped.length) {
+            if (!stack.isEmpty() && stack.peek() == popped[pop]) {
+                stack.pop();
+                pop++;
+                continue;
+            }
+            
+            if (push == pushed.length) {
+                break;
+            }
+            
+            stack.push(pushed[push++]);
+        }
+
+        return stack.isEmpty();
+    }
+}
+```
