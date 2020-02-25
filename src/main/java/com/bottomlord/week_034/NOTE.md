@@ -379,3 +379,74 @@ class Solution {
     }
 }
 ```
+# Interview_33_二叉搜索树后序遍历序列
+## 题目
+输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同。
+
+参考以下这颗二叉搜索树：
+```
+     5
+    / \
+   2   6
+  / \
+ 1   3
+``` 
+示例 1：
+```
+输入: [1,6,3,2,5]
+输出: false
+```
+示例 2：
+```
+输入: [1,3,2,6,5]
+输出: true
+```
+提示：
+```
+数组长度 <= 1000
+```
+## 解法
+### 思路
+- 后序遍历生成的序列特性：
+    - 序列结尾元素为根节点
+    - 除结尾元素外，剩下的序列会被分成连续的两大部分，左子树所有节点+右子树所有节点
+- 递归：
+    - 参数：
+        - `start`：序列的起始坐标
+        - `end`：序列的结尾坐标
+    - 过程：
+        - 判断当前序列是否只有不超2个的元素，如果是就返回true
+        - 获取序列结尾元素，标记为根节点
+        - 遍历序列，找到小于根节点的所有元素，标记为左子树
+        - 遍历剩余序列，判断序列中是否还有小于根节点的元素，如果有就说明不是二叉搜索树，返回false
+        - 继续递归判断左右子树
+### 代码
+```java
+class Solution {
+    public boolean verifyPostorder(int[] postorder) {
+        return recurse(postorder, 0, postorder.length - 1);
+    }
+    
+    private boolean recurse(int[] postOrder, int start, int end) {
+        if (end - start < 2) {
+            return true;
+        }
+        
+        int root = postOrder[end], right = start;
+        
+        for (; right < end; right++) {
+            if (postOrder[right] > root) {
+                break;
+            }
+        }
+        
+        for (int i = right; i < end; i++) {
+            if (postOrder[i] < root) {
+                return false;
+            }
+        }
+        
+        return recurse(postOrder, start, right - 1) && recurse(postOrder, right, end - 1);
+    }
+}
+```
