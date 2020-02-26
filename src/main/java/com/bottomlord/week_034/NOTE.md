@@ -450,3 +450,67 @@ class Solution {
     }
 }
 ```
+# Interview_34_二叉树中和为某一值得路径
+## 题目
+输入一棵二叉树和一个整数，打印出二叉树中节点值的和为输入整数的所有路径。从树的根节点开始往下一直到叶节点所经过的节点形成一条路径。
+
+示例:
+```
+给定如下二叉树，以及目标和 sum = 22，
+
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \    / \
+        7    2  5   1
+返回:
+
+[
+   [5,4,11,2],
+   [5,8,4,5]
+]
+```
+提示：
+```
+节点总数 <= 10000
+```
+## 解法
+### 思路
+回溯
+- 路径指根节点到叶子节点
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> ans = new ArrayList<>();
+        backTrack(root, 0, sum, new LinkedList<>(), ans);
+        return ans;
+    }
+
+    private void backTrack(TreeNode node, int count, int sum, LinkedList<Integer> list, List<List<Integer>> ans) {
+        if (node == null) {
+            return;
+        }
+
+        count += node.val;
+        if (node.left == null && node.right == null) {
+            if (count == sum) {
+                list.add(node.val);
+                ans.add(new ArrayList<>(list));
+                list.removeLast();
+                return;
+            }
+        }
+
+        list.add(node.val);
+        backTrack(node.left, count, sum, list, ans);
+        list.removeLast();
+
+        list.add(node.val);
+        backTrack(node.right, count, sum, list, ans);
+        list.removeLast();
+    }
+}
+```
