@@ -718,3 +718,103 @@ class Solution {
     }
 }
 ```
+# Interview_36_二叉搜索树和双向链表
+## 题目
+输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。
+ 
+我们希望将这个二叉搜索树转化为双向循环链表。链表中的每个节点都有一个前驱和后继指针。对于双向循环链表，第一个节点的前驱是最后一个节点，最后一个节点的后继是第一个节点。
+
+特别地，我们希望可以就地完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中的第一个节点的指针。
+## 解法
+### 思路
+dfs：
+- 因为是二叉搜索树，所以中序遍历获得的是一个升序序列，符合双向链表的顺序
+- 因为要生成节点的前驱(left)和后置(right)指针，所以需要暂存树中最大值的指针，用这个指针和当前递归到的节点产生联系
+- 同时因为要闭环整个链表，所以也要保留最小值的指针，用来在遍历完二叉树后将头尾闭环
+- 过程：
+    - 中序遍历
+    - 先递归左子树
+    - 操作当前节点时：
+        - 判断最大值指针是否存在
+            - 如果存在，就开始前后节点的关联
+            - 如果不存在，说明当前节点为最小值，初始化最小和最大值的指针
+        - 变更最大值指针为当前节点
+    - 递归右子树
+### 代码
+```java
+class Solution {
+    private Node smallest;
+    private Node biggest;
+
+    public Node treeToDoublyList(Node root) {
+        if (root == null) {
+            return null;
+        }
+        
+        dfs(root);
+        smallest.left = biggest;
+        biggest.right = smallest;
+        return smallest;
+    }
+
+    private void dfs(Node node) {
+        if (node != null) {
+            dfs(node.left);
+
+            if (biggest != null) {
+                biggest.right = node;
+                node.left = biggest;
+            } else {
+                smallest = node;
+            }
+            biggest = node;
+
+            dfs(node.right);
+        }
+    }
+}
+```
+# LeetCode_426_将二叉搜索树转化为排序的双向链表
+## 题目
+将一个二叉搜索树就地转化为一个已排序的双向循环链表。可以将左右孩子指针作为双向循环链表的前驱和后继指针。
+
+我们希望将这个二叉搜索树转化为双向循环链表。链表中的每个节点都有一个前驱和后继指针。对于双向循环链表，第一个节点的前驱是最后一个节点，最后一个节点的后继是第一个节点。
+
+特别地，我们希望可以就地完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中的第一个节点的指针。
+## 解法
+### 思路
+解法与面试题36一致
+### 代码
+```java
+class Solution {
+    private Node smallest;
+    private Node biggest;
+
+    public Node treeToDoublyList(Node root) {
+        if (root == null) {
+            return null;
+        }
+        
+        dfs(root);
+        smallest.left = biggest;
+        biggest.right = smallest;
+        return smallest;
+    }
+
+    private void dfs(Node node) {
+        if (node != null) {
+            dfs(node.left);
+
+            if (biggest != null) {
+                biggest.right = node;
+                node.left = biggest;
+            } else {
+                smallest = node;
+            }
+            biggest = node;
+
+            dfs(node.right);
+        }
+    }
+}
+```
