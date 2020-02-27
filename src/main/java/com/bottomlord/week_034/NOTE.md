@@ -818,3 +818,101 @@ class Solution {
     }
 }
 ```
+# Interview_37_序列化二叉树
+## 题目
+请实现两个函数，分别用来序列化和反序列化二叉树。
+
+示例: 
+```
+你可以将以下二叉树：
+
+    1
+   / \
+  2   3
+     / \
+    4   5
+
+序列化为 "[1,2,3,null,null,4,5]"
+```
+## 解法
+### 思路
+dfs：
+- 序列化：遍历二叉树，将当前元素生成对应的字符串返回，返回过程中将元素与元素之间用逗号拼接
+- 反序列化：
+    - 将字符串根据逗号切分，并放入list
+    - 递归：
+        - 退出条件：当前list头元素为`null`，将头元素取出后，返回
+        - 否则就生成对应数值的节点，将头元素去除后继续左右子树的递归
+### 代码
+```java
+public class Codec {
+        public String serialize(TreeNode root) {
+            return root == null ? "null" : String.valueOf(root.val) + "," +  serialize(root.left) + "," + serialize(root.right);
+        }
+
+        public TreeNode deserialize(String data) {
+            return doDeserialize(new LinkedList<>(Arrays.asList(data.split(","))));
+        }
+        
+        private TreeNode doDeserialize(LinkedList<String> list) {
+            String num = list.removeFirst();
+            
+            if (Objects.equals(num, "null")) {
+                return null;
+            }
+            
+            TreeNode node = new TreeNode(Integer.parseInt(num));
+            node.left = doDeserialize(list);
+            node.right = doDeserialize(list);
+            
+            return node;
+        }
+}
+```
+# LeetCode_297_二叉树的序列化与反序列化
+## 题目
+序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
+
+请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+
+示例: 
+```
+你可以将以下二叉树：
+
+    1
+   / \
+  2   3
+     / \
+    4   5
+
+序列化为 "[1,2,3,null,null,4,5]"
+```
+## 解法
+### 思路
+思路和面试题37一致
+### 代码
+```java
+public class Codec {
+        public String serialize(TreeNode root) {
+            return root == null ? "null" : String.valueOf(root.val) + "," +  serialize(root.left) + "," + serialize(root.right);
+        }
+
+        public TreeNode deserialize(String data) {
+            return doDeserialize(new LinkedList<>(Arrays.asList(data.split(","))));
+        }
+        
+        private TreeNode doDeserialize(LinkedList<String> list) {
+            String num = list.removeFirst();
+            
+            if (Objects.equals(num, "null")) {
+                return null;
+            }
+            
+            TreeNode node = new TreeNode(Integer.parseInt(num));
+            node.left = doDeserialize(list);
+            node.right = doDeserialize(list);
+            
+            return node;
+        }
+}
+```
