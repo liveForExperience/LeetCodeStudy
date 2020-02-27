@@ -574,3 +574,147 @@ class Solution {
     }
 }
 ```
+# LeetCode_138_复制带随机指针的链表
+## 题目
+给定一个链表，每个节点包含一个额外增加的随机指针，该指针可以指向链表中的任何节点或空节点。
+
+要求返回这个链表的 深拷贝。 
+
+我们用一个由 n 个节点组成的链表来表示输入/输出中的链表。每个节点用一个 [val, random_index] 表示：
+```
+val：一个表示 Node.val 的整数。
+random_index：随机指针指向的节点索引（范围从 0 到 n-1）；如果不指向任何节点，则为  null 。
+```
+示例 1：
+```
+输入：head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+输出：[[7,null],[13,0],[11,4],[10,2],[1,0]]
+```
+示例 2：
+```
+输入：head = [[1,1],[2,1]]
+输出：[[1,1],[2,1]]
+```
+示例 3：
+```
+输入：head = [[3,null],[3,0],[3,null]]
+输出：[[3,null],[3,0],[3,null]]
+```
+示例 4：
+```
+输入：head = []
+输出：[]
+解释：给定的链表为空（空指针），因此返回 null。
+```
+提示：
+```
+-10000 <= Node.val <= 10000
+Node.random 为空（null）或指向链表中的节点。
+节点数目不超过 1000 。
+```
+## 解法
+### 思路
+思路和面试题35相一致
+### 代码
+```java
+class Solution {
+    public Node copyRandomList(Node head) {
+        Map<Node, Node> map = new HashMap<>();
+        map.put(null, null);
+
+        Node node = head;
+        while (node != null) {
+            map.put(node, new Node(node.val));
+            node = node.next;
+        }
+
+        node = head;
+        while (node != null) {
+            map.get(node).next = map.get(node.next);
+            map.get(node).random = map.get(node.random);
+            node = node.next;
+        }
+
+        return map.get(head);
+    }
+}
+```
+## 解法二
+### 思路
+dfs：
+- 遍历访问复杂链表，因为有两个指针，且一个指针为随机，所以整个链表可以看作一个可能的有环图，所以需要暂存已访问的节点，避免进入死循环
+- 初始化map用于存储已经访问过的原节点与新节点之间的关系
+- 过程：
+    - 退出条件：当前节点为空
+    - 如果当前节点已经访问过，从`map`中获取并直接返回
+    - 根据访问的节点生成新节点，并放入`map`中
+    - 继续递归原节点`next`和`random`指针指向节点
+### 代码
+```java
+class Solution {
+    public Node copyRandomList(Node head) {
+        return dfs(head, new HashMap<>());
+    }
+    
+    private Node dfs(Node node, Map<Node, Node> map) {
+        if (node == null) {
+            return null;
+        }
+        
+        if (map.containsKey(node)) {
+            return map.get(node);
+        }
+        
+        Node copy = new Node(node.val);
+        map.put(node, copy);
+        
+        copy.next = dfs(node.next, map);
+        copy.random = dfs(node.random, map);
+        
+        return copy;
+    }
+}
+```
+## 解法三
+### 思路
+迭代：
+- 遍历原链表，将新新节点放在原节点`node`与`node.next`之间，并相连
+    - `node.next = copy, copy.next = node.next.next`;
+- 再次遍历新组合的链表，根据原节点的`random`指针更新新节点的`random`指针
+    - `copy.random = node.random.next`
+- 再次遍历新组合的链表，将新节点重新组合
+    - `copy.next = copy.next.next`
+### 代码
+```java
+class Solution {
+    public Node copyRandomList(Node head) {
+        if (head == null) {
+            return null;
+        }
+
+        Node node = head;
+        while (node != null) {
+            Node copy = new Node(node.val);
+            copy.next = node.next;
+            node.next = copy;
+            node = copy.next;
+        }
+
+        node = head;
+        while (node != null) {
+            node.next.random = node.random != null ? node.random.next : null;
+            node = node.next.next;
+        }
+
+        Node oldList = head, newList = head.next, newHead = head.next;
+        while (oldList != null) {
+            oldList.next = oldList.next.next;
+            newList.next = newList.next != null ? newList.next.next : null;
+            oldList = oldList.next;
+            newList = newList.next;
+        }
+
+        return newHead;
+    }
+}
+```
