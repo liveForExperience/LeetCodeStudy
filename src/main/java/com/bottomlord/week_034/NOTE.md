@@ -916,3 +916,97 @@ public class Codec {
         }
 }
 ```
+# Interview_38_字符串的排列
+## 题目
+输入一个字符串，打印出该字符串中字符的所有排列。
+
+你可以以任意顺序返回这个字符串数组，但里面不能有重复元素。
+
+示例:
+```
+输入：s = "abc"
+输出：["abc","acb","bac","bca","cab","cba"]
+```
+限制：
+```
+1 <= s 的长度 <= 8
+```
+## 解法
+### 思路
+回溯：
+- 使用一个布尔数组`visit`记录当前一次搜索路径中已经遍历到的字符串下标
+- 回溯时处理`visit`中当前遍历到的元素为false
+- 递归中传入一个set集合用来起到保存可能结果和去重的功能
+### 代码
+```java
+class Solution {
+    public String[] permutation(String s) {
+        Set<String> set = new HashSet<>();
+        backTrack(new StringBuilder(), s.toCharArray(), set, new boolean[s.length()]);
+        return set.toArray(new String[0]);
+    }
+
+    private void backTrack(StringBuilder sb, char[] cs, Set<String> set, boolean[] visited) {
+        if (sb.length() == cs.length) {
+            set.add(sb.toString());
+            return;
+        }
+
+        for (int i = 0; i < cs.length; i++) {
+            if (visited[i]) {
+                continue;
+            }
+
+            sb.append(cs[i]);
+            visited[i] = true;
+            backTrack(sb, cs, set, visited);
+            visited[i] = false;
+            sb.delete(sb.length() - 1, sb.length());
+        }
+    }
+}
+```
+## 解法二
+### 思路
+回溯：
+- 不使用set去重
+- 布尔数组`visited`不记录遍历到的s的字符坐标，记录当前递归层使用了什么字符，如果使用过就跳过，避免了当前层字符的重复使用，从而起到去重的效果
+- 不使用StringBuilder来记录当前遍历的路径，直接值通过当前遍历到的s的下标`index`(也就是递归的层数)与当前层循环中遍历的下标`i`(也就是可以变换的字符)进行互换
+- `i >= index`，因为当前i和`index - k`的交换可能在之前层的递归处理中已经处理过了
+- 其他逻辑和解法一一致
+### 代码
+```java
+class Solution {
+    public String[] permutation(String s) {
+        List<String> list = new ArrayList<>();
+        backTrack(s.toCharArray(), 0, list);
+        return list.toArray(new String[0]);
+    }
+
+    private void backTrack(char[] cs, int index, List<String> list) {
+        if (index == cs.length - 1) {
+            list.add(new String(cs));
+            return;
+        }
+
+        boolean[] used = new boolean[256];
+        for (int i = index; i < cs.length; i++) {
+            if (used[cs[i]]) {
+                continue;
+            }
+
+            used[cs[i]] = true;
+            swap(cs, index, i);
+            backTrack(cs, index + 1, list);
+            swap(cs, index, i);
+        }
+
+    }
+
+    private void swap(char[] cs, int x, int y) {
+        char tmp = cs[x];
+        cs[x] = cs[y];
+        cs[y] = tmp;
+    }
+}
+```
