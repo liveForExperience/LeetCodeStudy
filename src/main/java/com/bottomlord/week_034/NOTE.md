@@ -1010,3 +1010,81 @@ class Solution {
     }
 }
 ```
+# Interview_39_数组中出现次数超过一半的数字
+## 题目
+数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。
+
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+示例 1:
+```
+输入: [1, 2, 3, 2, 2, 2, 5, 4, 2]
+输出: 2
+```
+限制：
+```
+1 <= 数组长度 <= 50000
+```
+## 解法
+### 思路
+用map计数
+### 代码
+```java
+class Solution {
+    public int majorityElement(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int target = nums.length / 2 + 1;
+        
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            if (map.get(num) == target) {
+                return num;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
+## 解法二
+### 思路
+排序，然后遍历数组时直接看`i`下标元素和`i + len / 2`下标元素是否相同，相同就返回
+### 代码
+```java
+class Solution {
+    public int majorityElement(int[] nums) {
+        Arrays.sort(nums);
+        int target = nums.length / 2;
+        for (int i = 0; i < target + 1; i++) {
+            if (nums[i] == nums[i + target]) {
+                return nums[i];
+            }
+        }
+        
+        return -1;
+    }
+}
+```
+## 解法三
+### 思路
+抵消法：因为有一个数字大于一半，所以如果这个数和所有不同的数相抵消，留下的一定是这个数。
+### 代码
+```java
+class Solution {
+    public int majorityElement(int[] nums) {
+        int ans = nums[0], time = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == ans) {
+                time++;
+            } else if (time == 0) {
+                ans = nums[i];
+                time++;
+            } else {
+                time--;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
