@@ -1088,3 +1088,68 @@ class Solution {
     }
 }
 ```
+# Interview_40_最小的k个数
+## 题目
+输入整数数组 arr ，找出其中最小的 k 个数。例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4。
+
+示例 1：
+```
+输入：arr = [3,2,1], k = 2
+输出：[1,2] 或者 [2,1]
+```
+示例 2：
+```
+输入：arr = [0,1,2,1], k = 1
+输出：[0]
+```
+限制：
+```
+0 <= k <= arr.length <= 10000
+0 <= arr[i] <= 10000
+```
+## 解法
+### 思路
+使用小顶堆，将元素依次放入小顶堆后，依次取出k个返回
+### 代码
+```java
+class Solution {
+    public int[] getLeastNumbers(int[] arr, int k) {
+        int[] ans = new int[k];
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+        for (int num : arr) {
+            queue.offer(num);
+        }
+        
+        for (int i = 0; i < k; i++) {
+            ans[i] = queue.poll();
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+排序并返回前k个元素
+### 代码
+```java
+class Solution {
+    public int[] getLeastNumbers(int[] arr, int k) {
+        int[] ans = new int[k];
+        Arrays.sort(arr);
+        
+        for (int i = 0; i < k; i++) {
+            ans[i] = arr[i];
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+自己实现小顶堆
+### 代码
+```java
+
+```
