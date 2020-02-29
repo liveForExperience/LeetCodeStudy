@@ -1296,3 +1296,99 @@ class Solution {
     }
 }
 ```
+# Interview_43_1~n整数中出现1的次数
+## 题目
+输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。
+
+例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次。
+
+示例 1：
+```
+输入：n = 12
+输出：5
+```
+示例 2：
+```
+输入：n = 13
+输出：6
+```
+限制：
+```
+1 <= n < 2^31
+```
+## 解法
+### 思路
+- 分别计算n的每一位为1时的数字个数
+- 假设`n = xyzdabc`，那么如果想让`d`所在的位置为1，就需要考虑n的三种情况
+    - 如果n的d位是0：那么`xyz`只能取`[0,xyz - 1]`，也就是xyz个可能，因为需要退1位。那么可能的个数就是`xyz * 1000`，1000是因为abc可以取`[0, 999]`个可能
+    - 如果n的d位是1：那么`xyz`可以取`[0,xyz]`共xyz个，而`abc`依然可以取1000个，且因为d位是1，所以还增加了`abc + 1`个值
+    - 如果n的d值大于1，那么`xyz`可以取的值`[0, xyz]`共xyz个，而`abc`就可以多取`[0,999]`共1000个
+- 过程：
+    - 遍历n的所有位
+    - 分别把`xyz`，`d`，`abc`取得
+    - 根据n的d值来判断当前位为1的可能个数
+    - 累加
+    - 遍历结束后返回
+### 代码
+```java
+class Solution {
+    public int countDigitOne(int n) {
+        int ans = 0;
+        for (int i = 1; i <= n; i *= 10) {
+            int xyzd = n / i, abc = n % i, xyz = xyzd / 10, d = xyzd % 10;
+
+            if (d == 0) {
+                ans += xyz * i;
+            } else if (d == 1) {
+                ans += xyz * i + abc + 1;
+            } else {
+                ans += xyz * i + i;
+            }
+            
+            if (xyz == 0) {
+                break;
+            }
+        }
+
+        return ans;
+    }
+}
+```
+# LeetCode_233_数字1的个数
+## 题目
+给定一个整数 n，计算所有小于等于 n 的非负整数中数字 1 出现的个数。
+
+示例:
+```
+输入: 13
+输出: 6 
+解释: 数字 1 出现在以下数字中: 1, 10, 11, 12, 13 。
+```
+## 解法
+### 思路
+思路和面试题43一致
+### 代码
+```java
+class Solution {
+    public int countDigitOne(int n) {
+        int ans = 0;
+        for (int i = 1; i <= n; i *= 10) {
+            int xyzd = n / i, abc = n % i, xyz = xyzd / 10, d = xyzd % 10;
+
+            if (d == 0) {
+                ans += xyz * i;
+            } else if (d == 1) {
+                ans += xyz * i + abc + 1;
+            } else {
+                ans += xyz * i + i;
+            }
+            
+            if (xyz == 0) {
+                break;
+            }
+        }
+
+        return ans;
+    }
+}
+```
