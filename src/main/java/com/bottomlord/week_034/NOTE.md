@@ -1482,3 +1482,59 @@ class Solution {
     }
 }
 ```
+# Interview_46_把数字翻译成字符串
+## 题目
+给定一个数字，我们按照如下规则把它翻译为字符串：0 翻译成 “a” ，1 翻译成 “b”，……，11 翻译成 “l”，……，25 翻译成 “z”。一个数字可能有多个翻译。请编程实现一个函数，用来计算一个数字有多少种不同的翻译方法。
+
+示例 1:
+```
+输入: 12258
+输出: 5
+解释: 12258有5种不同的翻译，分别是"bccfi", "bwfi", "bczi", "mcfi"和"mzi"
+```
+提示：
+```
+0 <= num < 231
+```
+## 解法
+### 思路
+递归：
+- 将数字转成字符进行递归
+- 参数：
+    - 字符串`num`
+    - 坐标`index`：代表遍历到的数字位数
+- 退出条件：
+    - `index`越界，返回0
+    - `index == num.length()`，返回1
+- 过程：
+    - `index`移动1格继续递归，代表使用当前位转换成字母放入结果
+    - `index`移动2格继续递归，但又前提条件
+        - 剩余的位数有2位
+        - 要递归的2位中的高位不是0
+        - 要递归的2位的值小于26
+    - 将两种步数的结果相加返回
+### 代码
+```java
+class Solution {
+    public int translateNum(int num) {
+        return recurse(String.valueOf(num), -1);
+    }
+    
+    private int recurse(String num, int index) {
+        if (index >= num.length()) {
+            return 0;
+        }
+        
+        if (index == num.length() - 1) {
+            return 1;
+        }
+        
+        int one = recurse(num, index + 1), two = 0;
+        if (index + 2 < num.length() && num.charAt(index + 1) != '0' && Integer.parseInt(num.substring(index + 1, index + 3)) <= 25) {
+            two = recurse(num, index + 2);
+        }
+        
+        return one + two;
+    }
+}
+```
