@@ -1392,3 +1392,46 @@ class Solution {
     }
 }
 ```
+# Interview_44_数字序列某一位的数字
+## 题目
+数字以0123456789101112131415…的格式序列化到一个字符序列中。在这个序列中，第5位（从下标0开始计数）是5，第13位是1，第19位是4，等等。
+
+请写一个函数，求任意第n位对应的数字。
+
+示例 1：
+```
+输入：n = 3
+输出：3
+```
+示例 2：
+```
+输入：n = 11
+输出：0
+```
+限制：
+```
+0 <= n < 2^31
+```
+## 解法
+### 思路
+与400题解法一致：
+- 先求这个序列的值是几位数
+- 再求在这一位的第几个数
+- 再求这个数的第几个数字
+### 代码
+```java
+class Solution {
+    public int findNthDigit(int n) {
+        int digit = 1;
+        while (n > digit * Math.pow(10, digit - 1) * 9) {
+            n -= digit * Math.pow(10, digit - 1) * 9;
+            digit++;
+        }
+
+        int num = (n - 1) / digit + (int)Math.pow(10, digit - 1);
+        
+        int index = n % digit == 0 ? digit - 1 : n % digit - 1;
+        return Integer.toString(num).charAt(index) - '0';
+    }
+}
+```
