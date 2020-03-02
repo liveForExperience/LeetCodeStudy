@@ -153,5 +153,21 @@ s.length <= 40000
 - 返回`max`
 ### 代码
 ```java
-
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        char[] cs = s.toCharArray();
+        Map<Character, Integer> map = new HashMap<>();
+        int start = 0, max = 0;
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (map.containsKey(cs[i]) && map.get(cs[i]) >= start) {
+                max = Math.max(i - start, max);
+                start = map.get(cs[i]) + 1;
+            }
+            map.put(cs[i], i);
+        }
+        
+        return Math.max(max, s.length() - start);
+    }
+}
 ```
