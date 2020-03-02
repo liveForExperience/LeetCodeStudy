@@ -171,3 +171,57 @@ class Solution {
     }
 }
 ```
+# Interview_49_丑数
+## 题目
+我们把只包含因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数。
+
+示例:
+```
+输入: n = 10
+输出: 12
+解释: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 是前 10 个丑数。
+```
+说明:  
+```
+1 是丑数。
+n 不超过1690。
+```
+## 解法
+### 思路
+堆：
+- 将1放入堆中，并计数1
+- 将1从堆中取出，并依次乘以`2,3,5`，放入堆中，同时计数
+- 再从堆顶取出数，如上继续相乘后放入堆中，以此类推，直到计数达到要求值
+- 注意溢出，需要使用long类型
+- 注意类似`2 * 3 == 3 * 2`的情况，要使用set将重复乘积去除
+### 代码
+```java
+class Solution {
+    public int nthUglyNumber(int n) {
+        PriorityQueue<Long> queue = new PriorityQueue<>();
+        Set<Long> set = new HashSet<>();
+        queue.offer(1L);
+        set.add(1L);
+        int size = 0;
+        int[] arr = new int[]{2,3,5};
+
+        while (!queue.isEmpty()) {
+            long top = queue.poll();
+            if (++size == n) {
+                return (int)top;
+            }
+            for (int num : arr) {
+                long multi = top * num;
+                if (set.contains(multi)) {
+                    continue;
+                }
+
+                queue.offer(multi);
+                set.add(multi);
+            }
+        }
+        
+        return -1;
+    }
+}
+```
