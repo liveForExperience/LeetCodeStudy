@@ -225,3 +225,40 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+动态规划：
+- dp[i]：当前第i个丑数的值
+- 状态转移方程：`dp[i] = min(dp[i2], dp[i3], dp[i5])`
+    - `i2,i3,i5`代表2，3，5作为因数，在目前的丑数集合中各自对应的最大的乘积的坐标
+    - 这些坐标对应的值可以在后续的状态转移过程中作为因数与对应的值相乘，求得最小值放入丑数数组中，同时这个坐标也就移动了
+    - 这些坐标可以同时指向同一个丑数，代表它们都是这个丑数的因数
+- 初始化`dp[0] = 1`
+- 返回结果`dp[n - 1]`
+### 代码
+```java
+class Solution {
+    public int nthUglyNumber(int n) {
+        int[] dp = new int[n];
+        dp[0] = 1;
+        int i = 0, i2 = 0, i3 = 0, i5 = 0;
+        
+        while (++i < n) {
+            int min = Math.min(dp[i2] * 2, Math.min(dp[i3] * 3, dp[i5] * 5));
+            dp[i] = min;
+            if (min == dp[i2] * 2) {
+                i2++;
+            }
+
+            if (min == dp[i3] * 3) {
+                i3++;
+            }
+
+            if (min == dp[i5] * 5) {
+                i5++;
+            }
+        }
+        return dp[n - 1];
+    }
+}
+```
