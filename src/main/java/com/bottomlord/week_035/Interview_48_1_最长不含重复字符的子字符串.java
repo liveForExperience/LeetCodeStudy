@@ -23,9 +23,4 @@ public class Interview_48_1_最长不含重复字符的子字符串 {
 
         return Math.max(max, s.length() - start);
     }
-
-    public static void main(String[] args) {
-        Interview_48_1_最长不含重复字符的子字符串 t = new Interview_48_1_最长不含重复字符的子字符串();
-        t.lengthOfLongestSubstring("abba");
-    }
 }
