@@ -368,3 +368,51 @@ class Solution {
     }
 }
 ```
+# Interview_50_第一个只出现一次的字符
+## 题目
+在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。
+
+示例:
+```
+s = "abaccdeff"
+返回 "b"
+
+s = "" 
+返回 " "
+```
+限制：
+```
+0 <= s 的长度 <= 50000
+```
+## 解法
+### 思路
+- 初始化一个对不同字符计数的数组`bucket`，长度为256
+- 初始化一个记录字符出现顺序的数组`cs`，长度为256
+- 遍历字符数组，对出现的字符进行计数，并将计数为1的字符放入`cs`中进行排序
+- 遍历`cs`并比对`bucket`，返回第一个`bucket`值为1的字符
+### 代码
+```java
+class Solution {
+    public char firstUniqChar(String s) {
+        int[] bucket = new int[256];
+        char[] cs = new char[256];
+        int index = 0;
+
+        for (char c : s.toCharArray()) {
+            bucket[c]++;
+
+            if (bucket[c] == 1) {
+                cs[index++] = c;
+            }
+        }
+
+        for (char c : cs) {
+            if (bucket[c] == 1) {
+                return c;
+            }
+        }
+        
+        return ' ';
+    }
+}
+```
