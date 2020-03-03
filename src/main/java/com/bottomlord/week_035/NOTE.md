@@ -416,3 +416,100 @@ class Solution {
     }
 }
 ```
+# Interview_51_数组中的逆序对
+## 题目
+在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组，求出这个数组中的逆序对的总数。
+
+示例 1:
+```
+输入: [7,5,6,4]
+输出: 5
+```
+限制：
+```
+0 <= 数组长度 <= 50000
+```
+## 失败解法
+### 思路
+嵌套循环比较
+### 代码
+```java
+class Solution {
+    public int reversePairs(int[] nums) {
+        int count = 0;
+        
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                if (nums[i] > nums[j]) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+```
+## 解法
+### 思路
+分治，归并排序：
+- 将数组进行归并排序
+- 在排序过程中计算逆序对个数，针对3个部分进行计算：
+    - 归并时分成的左半部分中的逆序对
+    - 归并时分成的右半部分中的逆序对
+    - 逆序的数分在左右两部分的逆序对
+- 在分治过程中，数组的区间会被划分到极致的长度为1的情况，这时候返回的逆序对一定是0，也就是说这种情况下， 这个左右两部分的上一层是长度为2的数组，这个数组的左右部分的逆序对就是0，而这个数组总的逆序对就需要通过合并时计算的，分布在两部分的逆序对的个数来决定
+- 合并的过程中，通过两个指针来比较左右两部分的元素大小来排序，如果发现左边的数大于右边的数，就通过中间`mid - left + 1`的个数来判断当前右边这个小的值一共对应多少个坐标大的值（左边部分已经是通过之前几层递归，排序过了的）
+- 参数中务必要加一个tmp数组作为合并过程中的参考数组，并只复制合并区间的元素，否则如果有超长的数组，会导致拷贝的时间过长
+### 代码
+```java
+class Solution {
+    public int reversePairs(int[] nums) {
+        int len = nums.length;
+        if (len < 2) {
+            return 0;
+        }
+
+        return divideAndConquer(nums, 0, len - 1, new int[nums.length]);
+    }
+
+    private int divideAndConquer(int[] nums, int left, int right, int[] tmp) {
+        if (left == right) {
+            return 0;
+        }
+
+        int mid = left + (right - left) / 2;
+        int l = divideAndConquer(nums, left, mid, tmp);
+        int r = divideAndConquer(nums, mid + 1, right, tmp);
+
+        if (nums[mid] <= nums[mid + 1]) {
+            return l + r;
+        }
+
+        return l + r + mergeSortAndCount(nums, left, mid, right, tmp);
+    }
+
+
+    private int mergeSortAndCount(int[] nums, int left, int mid, int right, int[] tmp) {
+        if (right + 1 - left >= 0) {
+            System.arraycopy(nums, left, tmp, left, right + 1 - left);
+        }
+
+        int l = left, r = mid + 1, ans = 0;
+        for (int i = left; i <= right; i++) {
+            if (l > mid) {
+                nums[i] = tmp[r++];
+            } else if (r > right) {
+                nums[i] = tmp[l++];
+            } else if (tmp[l] <= tmp[r]) {
+                nums[i] = tmp[l++];
+            } else {
+                nums[i] = tmp[r++];
+                ans += mid - l + 1;
+            }
+        }
+
+        return ans;
+    }
+}
+```
