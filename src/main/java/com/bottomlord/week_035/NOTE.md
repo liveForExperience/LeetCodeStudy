@@ -262,3 +262,109 @@ class Solution {
     }
 }
 ```
+# Interview_1001_合并排序的数组
+## 题目
+给定两个排序后的数组 A 和 B，其中 A 的末端有足够的缓冲空间容纳 B。 编写一个方法，将 B 合并入 A 并排序。
+
+初始化 A 和 B 的元素数量分别为 m 和 n。
+
+示例:
+```
+输入:
+A = [1,2,3,0,0,0], m = 3
+B = [2,5,6],       n = 3
+
+输出: [1,2,2,3,5,6]
+```
+## 解法
+### 思路
+- 将B插入A的尾部
+- 排序数组A
+### 代码
+```java
+class Solution {
+    public void merge(int[] A, int m, int[] B, int n) {
+        for (int i = m; i < m + n; i++) {
+            A[i] = B[i - m];
+        }
+
+        Arrays.sort(A);
+    }
+}
+```
+## 解法二
+### 思路
+- 初始化一个大小为`[m,n]`的数组`ans`
+- 双指针`a`和`b`，分别代表两个数组的下标
+- 开始循环，退出条件是两个指针同时越界
+- 循环过程中：
+    - 比较`a`数和`b`数大小，把较小数放入`ans`中，并向后移动`a`指针
+    - 如果有一个指针越界，就把另一个指针指向的数组剩余元素放入`ans`中
+- 将`ans`拷贝到数组A中
+### 代码
+```java
+class Solution {
+    public void merge(int[] A, int m, int[] B, int n) {
+        int[] ans = new int[m + n];
+        int a = 0, b = 0, index = 0;
+
+        while (a < m || b < n) {
+            if (a >= m) {
+                while (b < n) {
+                    ans[index++] = B[b++];
+                }
+                break;
+            }
+
+            if (b >= n) {
+                while (a < m) {
+                    ans[index++] = A[a++];
+                }
+                break;
+            }
+
+            if (A[a] <= B[b]) {
+                ans[index++] = A[a++];
+            } else {
+                ans[index++] = B[b++];
+            }
+        }
+
+        System.arraycopy(ans, 0, A, 0, ans.length);
+    }
+}
+```
+## 解法三
+### 思路
+逆向双指针：
+- 从A数组的尾部第`m + n - 1`位置`index`开始从后往前填充元素，元素大小为从大到小
+- 遍历数组A和数组B的尾部，从后往前，将较大数放在`index`处，并相应移动对应的指针
+### 代码
+```java
+class Solution {
+    public void merge(int[] A, int m, int[] B, int n) {
+        int index = m + n - 1, a = m - 1, b = n - 1;
+        while (a >= 0 || b >= 0) {
+            if (a < 0) {
+                while (b >= 0) {
+                    A[index--] = B[b--];
+                }
+                break;
+            } 
+            
+            if (b < 0) {
+                while (a >= 0) {
+                    A[index--] = A[a--];
+                }
+                break;
+            }
+            
+            if (A[a] >= B[b]) {
+                A[index--] = A[a--];
+            } else {
+                A[index--] = B[b--];
+            }
+        }
+    }
+}
+```
