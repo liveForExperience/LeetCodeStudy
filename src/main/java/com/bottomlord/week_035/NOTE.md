@@ -611,3 +611,69 @@ public class Solution {
     }
 }
 ```
+# Interview_53I_在排序数组中查找数字
+## 题目
+统计一个数字在排序数组中出现的次数。
+
+示例 1:
+```
+输入: nums = [5,7,7,8,8,10], target = 8
+输出: 2
+```
+示例 2:
+```
+输入: nums = [5,7,7,8,8,10], target = 6
+输出: 0
+```
+限制：
+```
+0 <= 数组长度 <= 50000
+```
+## 解法
+### 思路
+- 二分查找找到元素
+- 从找到的坐标位置前后查找相同元素的个数
+### 代码
+```java
+class Solution {
+    public int search(int[] nums, int target) {
+        int head = 0, tail = nums.length - 1, index = -1, count = 0;
+        
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+            
+            if (nums[mid] == target) {
+                index = mid;
+                count++;
+                break;
+            } else if (nums[mid] < target) {
+                head = mid + 1;
+            } else {
+                tail = mid - 1;
+            }
+        }
+        
+        if (index == -1) {
+            return 0;
+        }
+        
+        for (int i = index - 1; i >= 0; i--) {
+            if (nums[i] == target) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        
+        for (int i = index + 1; i < nums.length; i++) {
+            if (nums[i] == target) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        
+        return count;
+    }
+}
+```
