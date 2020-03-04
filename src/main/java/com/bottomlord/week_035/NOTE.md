@@ -697,8 +697,50 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+思路和面试题53I相同，使用二分查找
 ### 代码
 ```java
+class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int head = 0, tail = nums.length - 1, index = -1;
+        int[] ans = {-1, -1};
 
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (nums[mid] == target) {
+                index = mid;
+                break;
+            } else if (nums[mid] < target) {
+                head = mid + 1;
+            } else {
+                tail = mid - 1;
+            }
+        }
+
+        if (index == -1) {
+            return ans;
+        }
+
+        ans[0] = index;
+        ans[1] = index;
+        for (int i = index - 1; i >= 0; i--) {
+            if (nums[i] == target) {
+                ans[0] = i;
+            } else {
+                break;
+            }
+        }
+
+        for (int i = index + 1; i < nums.length; i++) {
+            if (nums[i] == target) {
+                ans[1] = i;
+            } else {
+                break;
+            }
+        }
+
+        return ans;
+    }
+}
 ```
