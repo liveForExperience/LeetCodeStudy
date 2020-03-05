@@ -744,3 +744,47 @@ class Solution {
     }
 }
 ```
+# Interview_53II_0~n-1中缺失的数字
+## 题目
+一个长度为n-1的递增排序数组中的所有数字都是唯一的，并且每个数字都在范围0～n-1之内。在范围0～n-1内的n个数字中有且只有一个数字不在该数组中，请找出这个数字。
+
+示例 1:
+```
+输入: [0,1,3]
+输出: 2
+```
+示例 2:
+```
+输入: [0,1,2,3,4,5,6,7,9]
+输出: 8
+```
+## 解法
+### 思路
+双指针：
+- 头尾指针同时向中间位置移动，循环条件是`head < tail`，这种条件会导致如果题目的数组是奇数个，`len / 2`坐标的值不会被遍历到
+- 因为头尾值的和是数组长度len，如果遍历到的两个元素不相等且头尾值不等于len，说明找到了缺失的元素
+    - 如果小于len，则缺失`len - 左侧小值`
+    - 如果大于len，则缺失`len - 右侧大值`
+ - 如果循环结束，没有找到缺失值：
+    - 如果len是偶数，那原来长度是奇数，没找到的值就是中间值
+    - 如果len是奇数，那原来长度是偶数，没找到的值就是`len - nums[len / 2]`，也就是长度和最后一个没有遍历到的数的差
+### 代码
+```java
+class Solution {
+    public int missingNumber(int[] nums) {
+        int len = nums.length, head = 0, tail = len - 1;
+        
+        while (head < tail) {
+            if (nums[head] + nums[tail] < len) {
+                return len - nums[head];
+            } else if(nums[head] + nums[tail] > len) {
+                return len - nums[tail];
+            }
+            head++;
+            tail--;
+        }
+        
+        return (len & 1) == 0 ? len / 2 : len - nums[len / 2];
+    }
+}
+```
