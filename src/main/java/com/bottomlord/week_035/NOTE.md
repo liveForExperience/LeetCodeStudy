@@ -788,3 +788,60 @@ class Solution {
     }
 }
 ```
+# Interview_54_二叉搜索树的第k大节点
+## 题目
+给定一棵二叉搜索树，请找出其中第k大的节点。
+
+示例 1:
+```
+输入: root = [3,1,4,null,2], k = 1
+   3
+  / \
+ 1   4
+  \
+   2
+输出: 4
+```
+示例 2:
+```
+输入: root = [5,3,6,2,4,null,null,1], k = 3
+       5
+      / \
+     3   6
+    / \
+   2   4
+  /
+ 1
+输出: 4
+```
+限制：
+```
+1 ≤ k ≤ 二叉搜索树元素个数
+
+通过次数3,391提交次数4,746
+```
+## 解法
+### 思路
+dfs
+- 中序遍历生成升序序列
+- 遍历序列，找到第k大节点
+### 代码
+```java
+class Solution {
+    public int kthLargest(TreeNode root, int k) {
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list);
+        return list.get(list.size() - k);
+    }
+    
+    private void dfs(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, list);
+        list.add(node.val);
+        dfs(node.right, list);
+    }
+}
+```
