@@ -875,3 +875,71 @@ class Solution {
     }
 }
 ```
+# Interview_57II_和为s的连续正数序列
+## 题目
+输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。
+
+序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
+
+示例 1：
+```
+输入：target = 9
+输出：[[2,3,4],[4,5]]
+```
+示例 2：
+```
+输入：target = 15
+输出：[[1,2,3,4,5],[4,5,6],[7,8]]
+```
+限制：
+```
+1 <= target <= 10^5
+```
+## 解法
+### 思路
+嵌套循环
+- 外层确定可能序列的起始元素
+- 内层从外层元素开始遍历并累加，如果超过target就终止，否则就加入结果list中
+### 代码
+```java
+class Solution {
+    public int[][] findContinuousSequence(int target) {
+        List<int[]> ansList = new ArrayList<>();
+        for (int i = 1; i < target; i++) {
+            int sum = 0;
+            boolean find = false;
+            List<Integer> list = new ArrayList<>();
+            for (int j = i; j < target; j++) {
+                sum += j;
+                if (sum > target) {
+                    break;
+                }
+                list.add(j);
+                if (sum == target) {
+                    find = true;
+                    break;
+                }
+            }
+            
+            if (find) {
+                int[] arr = new int[list.size()];
+                int index = 0;
+                for (int num : list) {
+                    arr[index++] = num;
+                }
+                ansList.add(arr);
+            }
+        }
+        
+        return ansList.toArray(new int[0][0]);
+    }
+}
+```
+## 解法二
+### 思路
+- 利用等差数列求和公式` (x + y) * (y - x + 1) / 2 = target`
+- 求`
+### 代码
+```java
+
+```
