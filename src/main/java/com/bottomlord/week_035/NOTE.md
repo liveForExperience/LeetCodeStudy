@@ -935,6 +935,77 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 等差数列求和公式
+```math
+target = a1 * n + \frac{n * (n - 1)}{2}
+a1 = \frac{target - \frac{n * (n - 1)}{2}}{n}
+```
+- 循环遍历求长度n，从2到target + 1
+- 根据当前n求得首项
+- 根据首项和长度确定序列并放入结果中
+- 注意结果需要根据首个元素排序，所以还要在返回接过钱做一次排序
+### 代码
+```java
+class Solution {
+    public int[][] findContinuousSequence(int target) {
+        List<int[]> ansList = new ArrayList<>();
+        for (int n = 2; n <= target; n++) {
+            int xn = target - n * (n - 1) / 2;
+            if (xn <= 0) {
+                break;
+            }
+
+            if (xn % n == 0) {
+                int x = xn / n;
+                int[] arr = new int[n];
+                for (int i = 0; i < n; i++) {
+                    arr[i] = x + i;
+                }
+                ansList.add(arr);
+            }
+        }
+        ansList.sort(Comparator.comparingInt(x -> x[0]));
+        return ansList.toArray(new int[0][0]);
+    }
+}
+```
+## 解法三
+### 思路
+双指针
+- 初始化头尾指针`head`和`tail`
+- 因为结果是以序列的首字母排序，所以头指针在确定无法找到结果的时候再移动
+- 整个判断过程中使用等差数列求和公式得到`sum`值，而根据`sum`与`target`之间的关系可以分为3种情况
+    1. `sum < target`，说明序列不够大，`tail`继续增加
+    2. `sum > target`，这个起始为`head`的序列无法找到匹配`target`的`sum`，向右移动`head`
+    3. `sum == target`，将序列放入结果中，且因为再移动`tail`也没法获得新的序列，所以同时移动`head`和`tail`
+### 代码
+```java
+class Solution {
+    public int[][] findContinuousSequence(int target) {
+        int head = 1, tail = 2, sum = 3;
+        List<int[]> ansList = new ArrayList<>();
+
+        while (head < target - 1 && tail < target) {
+            if (sum == target) {
+                int[] arr = new int[tail - head + 1];
+                for (int i = 0; i < tail - head + 1; i++) {
+                    arr[i] = head + i;
+                }
+                ansList.add(arr);
+                sum -= head++;
+            } else if (sum < target) {
+                sum += ++tail;
+            } else {
+                sum -= head++;
+            }
+        }
+        
+        return ansList.toArray(new int[0][0]);
+    }
+}
+```
 # Interview_55II_平衡二叉树
 ## 题目
 输入一棵二叉树的根节点，判断该树是不是平衡二叉树。如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树。
