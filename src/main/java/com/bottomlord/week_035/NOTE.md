@@ -1122,3 +1122,73 @@ class Solution {
     }
 }
 ```
+# Interview_59II_队列的最大值
+## 题目
+请定义一个队列并实现函数 max_value 得到队列里的最大值，要求函数max_value、push_back 和 pop_front 的时间复杂度都是O(1)。
+
+若队列为空，pop_front 和 max_value 需要返回 -1
+
+示例 1：
+```
+输入: 
+["MaxQueue","push_back","push_back","max_value","pop_front","max_value"]
+[[],[1],[2],[],[],[]]
+输出: [null,null,null,2,1,2]
+```
+示例 2：
+```
+输入: 
+["MaxQueue","pop_front","max_value"]
+[[],[],[]]
+输出: [null,-1,-1]
+```
+限制：
+```
+1 <= push_back,pop_front,max_value的总操作数 <= 10000
+1 <= value <= 10^5
+```
+## 解法
+### 思路
+- 使用两个队列：
+    - 一个队列`queue`操作出入队列
+    - 一个双端队列`max`单调递减的保存最大值
+- max_value：返回`max`队列头部的元素
+- push_back：从`max`尾部开始判断，将`max`中比推入的元素更小的元素全部出队，因为这些都是之前的元素在入队时记录下来的最大值，这些值在以后出队的过程中都不再影响最大值的变更
+- pop_front：将`queue`的队列头的元素推出，同时查看推出的元素是否与`max`队列头的元素大小一致，如果一致，这个元素也被推出
+### 代码
+```java
+class MaxQueue {
+    private Queue<Integer> queue;
+    private Deque<Integer> max;
+    public MaxQueue() {
+        this.queue = new ArrayDeque<>();
+        this.max = new ArrayDeque<>();
+    }
+
+    public int max_value() {
+        return max.isEmpty() ? -1 : max.peek();
+    }
+
+    public void push_back(int value) {
+        queue.offer(value);
+
+        while (!max.isEmpty() && value > max.getLast()) {
+            max.pollLast();
+        }
+        max.offer(value);
+    }
+
+    public int pop_front() {
+        if (queue.isEmpty()) {
+            return -1;
+        }
+
+        int value = queue.poll();
+        if (value == max.peek()) {
+            max.poll();
+        }
+
+        return value;
+    }
+}
+```
