@@ -1192,3 +1192,68 @@ class MaxQueue {
     }
 }
 ```
+# Interview_56II_数组中数字出现的次数II
+## 题目
+在一个数组 nums 中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
+
+示例 1：
+```
+输入：nums = [3,4,3,3]
+输出：4
+```
+示例 2：
+```
+输入：nums = [9,1,7,9,7,9,7]
+输出：1
+```
+限制：
+```
+1 <= nums.length <= 10000
+1 <= nums[i] < 2^31
+```
+## 解法
+### 思路
+嵌套循环：
+- 外层循环32位
+- 内层遍历数组的所有元素
+- 计算当前位有多少个1，如果得到的计数值不能被3整除，说明出现唯一一次的值在这一位是1
+- 将这一位或在结果上
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            int bit = 1 << i, count = 0;
+            for (int num : nums) {
+                if ((num & bit) != 0) {
+                    count++;
+                }
+            }
+            
+            
+            if (count % 3 != 0) {
+                ans |= bit;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+//todo 未知解法
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int ans = 0, sup = 0;
+        for (int num : nums) {
+            ans = (ans ^ num) & ~sup;
+            sup = (sup ^ num) & ~ans;
+        }
+        return ans;
+    }
+}
+```
