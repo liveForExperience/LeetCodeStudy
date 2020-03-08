@@ -1304,3 +1304,99 @@ class Solution {
     }
 }
 ```
+# LeetCode_322_零钱兑换
+## 题目
+给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。
+
+示例 1:
+```
+输入: coins = [1, 2, 5], amount = 11
+输出: 3 
+解释: 11 = 5 + 5 + 1
+```
+示例 2:
+```
+输入: coins = [2], amount = 3
+输出: -1
+说明:
+你可以认为每种硬币的数量是无限的。
+```
+## 解法
+### 思路
+dfs+记忆化搜索：
+- 退出条件：
+    - 金额值小于0，说明当前路径不能获得答案，返回-1
+    - 金额值为0，说明当前路径可以获得答案，答案从上一层开始计算，返回0
+    - 记忆搜索中如果存在当前金额，直接返回
+- 递归逻辑：
+    - 遍历所有硬币面值，递归获得当前面值减去遍历到的硬币值计算到的硬币数`count`
+    - 如果`count != -1`，将`count + 1`与暂存的最小值比较，取最小值
+    - 所有硬币面值遍历完后：
+        - 记录当前变化过的最小值
+        - 返回最小值 + 1
+### 代码
+```java
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+        if (amount < 1) {
+            return 0;
+        }
+
+        return dfs(coins, amount, new int[amount + 1]);
+    }
+
+    private int dfs(int[] coins, int amount, int[] mem) {
+        if (amount < 0) {
+            return -1;
+        }
+
+        if (amount == 0) {
+            return 0;
+        }
+
+        if (mem[amount] != 0) {
+            return mem[amount];
+        }
+        
+        int min = Integer.MAX_VALUE;
+        for (int coin : coins) {
+            int count = dfs(coins, amount - coin, mem);
+            if (count != -1) {
+                min = Math.min(count + 1, min);
+            }
+        }
+        
+        mem[amount] = min == Integer.MAX_VALUE ? -1 : min;
+        return mem[amount];
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- `dp[i]`：金额为i时的硬币数量最小值
+- 状态转移方程：`dp[i] = dp[i - coin] + 1`
+- 初始化：
+    - dp数组填充为`amount + 1`
+    - `dp[0] = 0`
+- 返回：看`dp[amount]`是否是`amount + 1`，如果是说明没有找到正确的组合，返回-1，否则就返回`dp[amount]`
+### 代码
+```java
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0;
+        
+        for (int i = 1; i <= amount; i++) {
+            for (int coin : coins) {
+                if (coin <= i) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+}
+```

@@ -29,9 +29,4 @@ public class Contest_2_统计优美子数组 {
     public int numberOfSubarrays2(int[] nums, int k) {
         return 0;
     }
-
-    public static void main(String[] args) {
-        Contest_2_统计优美子数组 t = new Contest_2_统计优美子数组();
-        t.numberOfSubarrays(new int[]{2044,96397,50143}, 1);
-    }
 }

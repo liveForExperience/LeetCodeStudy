@@ -37,7 +37,7 @@
 |32|2019/2/10 - 2020/2/16| [15](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_032) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_032/NOTE.md) | - | - |:mask:|474|
 |33|2019/2/17 - 2020/2/23| [21](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_033) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_033/NOTE.md) | - | - |:mask:|458|
 |34|2019/2/24 - 2020/3/1| [23](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_034) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_034/NOTE.md) | - | - |:mask:|423|
-|35|2019/3/2 - 2020/3/8| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_035) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_035/NOTE.md) | - | [56II_数组中数字出现的次数II_解2](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_035/Interview_56II_2.java)  |||
+|35|2019/3/2 - 2020/3/8| [19](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_035) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_035/NOTE.md) | - | [56II_数组中数字出现的次数II_解2](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_035/Interview_56II_2.java)  |||
 ## 竞赛
 <table>
     <tr align="center">
@@ -230,6 +230,26 @@
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20191103/Contest_4_检查好数组.java">检查好数组</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td rowspan="4">2020/03/08</td>
+        <td rowspan="4">第179场单周赛</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200308/Contest_1_生成每种字符都是奇数个的字符串.java`">生成每种字符都是奇数个的字符串</a></td>
+        <td>:heavy_check_mark:</td>
+        <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20200308/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="4">587/3605</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200308/Contest_2_灯泡开关III.java">灯泡开关III</a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200308/Contest_3_通知所有员工所需的时间.java">通知所有员工所需的时间</a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200308/Contest_4_T秒后青蛙的位置.java">T秒后青蛙的位置</a></td>
         <td>:x:</td>
     </tr>
 </table>
