@@ -238,7 +238,7 @@
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200308/Contest_1_生成每种字符都是奇数个的字符串.java`">生成每种字符都是奇数个的字符串</a></td>
         <td>:heavy_check_mark:</td>
         <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20200308/NOTE.md">:page_with_curl:</a></td>
-        <td rowspan="4">587/3605</td>
+        <td rowspan="4">597/3605</td>
     </tr>
     <tr align="center">
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200308/Contest_2_灯泡开关III.java">灯泡开关III</a></td>
