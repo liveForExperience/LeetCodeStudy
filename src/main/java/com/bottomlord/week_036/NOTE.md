@@ -89,3 +89,58 @@ class Solution {
     }
 }
 ```
+# Interview_58II_左旋转字符串
+## 题目
+字符串的左旋转操作是把字符串前面的若干个字符转移到字符串的尾部。请定义一个函数实现字符串左旋转操作的功能。比如，输入字符串"abcdefg"和数字2，该函数将返回左旋转两位得到的结果"cdefgab"。
+
+示例 1：
+```
+输入: s = "abcdefg", k = 2
+输出: "cdefgab"
+```
+示例 2：
+```
+输入: s = "lrloseumgh", k = 6
+输出: "umghlrlose"
+```
+限制：
+```
+1 <= k < s.length <= 10000
+```
+## 解法
+### 思路
+- 定义两个StringBuilder对象：
+    - left：暂存前n个字符，并拼接成的字符串
+    - right：暂存剩下的字符，并拼接成的字符串
+- 遍历字符串
+    - 如果当前坐标`i < n`，就拼接入`left`
+    - 否则就拼接入`right`
+- 遍历结束返回`right + left`
+### 代码
+```java
+class Solution {
+    public String reverseLeftWords(String s, int n) {
+        StringBuilder left = new StringBuilder(), right = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (i < n) {
+                left.append(s.charAt(i));
+            } else {
+                right.append(s.charAt(i));
+            }
+        }
+        
+        return right.append(left).toString();
+    }
+}
+```
+## 解法二
+### 思路
+使用String的API：`subString`
+### 代码
+```java
+class Solution {
+    public String reverseLeftWords(String s, int n) {
+        return s.substring(n) + s.substring(0, n);
+    }
+}
+```
