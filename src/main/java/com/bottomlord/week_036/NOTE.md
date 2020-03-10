@@ -144,3 +144,200 @@ class Solution {
     }
 }
 ```
+# LeetCode_151_1_翻转字符串里的单词
+## 题目
+给定一个字符串，逐个翻转字符串中的每个单词。
+
+示例 1：
+```
+输入: "the sky is blue"
+输出: "blue is sky the"
+```
+示例 2：
+```
+输入: "  hello world!  "
+输出: "world! hello"
+解释: 输入字符串可以在前面或者后面包含多余的空格，但是反转后的字符不能包括。
+```
+示例 3：
+```
+输入: "a good   example"
+输出: "example good a"
+解释: 如果两个单词间有多余的空格，将反转后单词间的空格减少到只含一个。
+```
+说明：
+```
+无空格字符构成一个单词。
+输入字符串可以在前面或者后面包含多余的空格，但是反转后的字符不能包括。
+如果两个单词间有多余的空格，将反转后单词间的空格减少到只含一个。
+```
+## 解法
+### 思路
+思路和面试题58第二解相等
+### 代码
+```java
+class Solution {
+    public String reverseWords(String s) {
+        s = s.trim();
+        if (s.length() == 0) {
+            return "";
+        }
+
+        String[] ss = s.split(" ");
+        if (ss.length == 1) {
+            return ss[0];
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = ss.length - 1; i >= 0; i--) {
+            if (!"".equals(ss[i])) {
+                sb.append(" ").append(ss[i]);
+            }
+        }
+
+        return sb.deleteCharAt(0).toString();
+    }
+}
+```
+# Interview_59I_滑动窗口的最大值
+## 题目
+给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+
+示例:
+```
+输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+输出: [3,3,5,5,6,7] 
+解释: 
+
+  滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+```
+提示：
+```
+你可以假设 k 总是有效的，在输入数组不为空的情况下，1 ≤ k ≤ 输入数组的大小。
+```
+## 解法
+### 思路
+- 定义临时变量：
+    - max：暂存窗口中的最大值，初始为int的最小值
+    - maxIndex：暂存窗口中最大值的坐标，初始为-1
+- 遍历数组，遍历范围为`[i, len - k + 1]`
+    - 判断`maxIndex`是否在窗口范围内
+        - 如果在，就拿新的值与原最大值比较，大就更新两个变量
+        - 如果不在，就遍历窗口，判断当前的最大值和对应的坐标
+    - 记录这个窗口的max
+### 代码
+```java
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if(nums.length == 0 || k == 0) {
+            return new int[0];
+        }
+        
+        int len = nums.length, max = Integer.MIN_VALUE, maxIndex = -1;
+        int[] ans = new int[len - k + 1];
+
+        for (int i = 0; i < len - k + 1; i++) {
+            if (maxIndex >= i && maxIndex < i + k) {
+                if (nums[i + k - 1] > max) {
+                    maxIndex = i + k - 1;
+                    max = nums[i + k - 1];
+                }
+            } else {
+                max = nums[i];
+                for (int j = i; j < i + k; j++) {
+                    if (max < nums[j]) {
+                        max = nums[j];
+                        maxIndex = j;
+                    }
+                }
+
+            }
+
+            ans[i] = max;
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+双向队列：
+### 代码
+```java
+
+```
+# LeetCode_239_滑动窗口的最大值
+## 题目
+给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。
+
+示例:
+```
+输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+输出: [3,3,5,5,6,7] 
+解释: 
+
+  滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+```
+提示：
+```
+你可以假设 k 总是有效的，在输入数组不为空的情况下，1 ≤ k ≤ 输入数组的大小。
+```
+进阶：
+```
+你能在线性时间复杂度内解决此题吗？
+```
+## 解法
+### 思路
+解题思路和面试题59I第一解相同
+### 代码
+```java
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if(nums.length == 0 || k == 0) {
+            return new int[0];
+        }
+        
+        int len = nums.length, max = Integer.MIN_VALUE, maxIndex = -1;
+        int[] ans = new int[len - k + 1];
+
+        for (int i = 0; i < len - k + 1; i++) {
+            if (maxIndex >= i && maxIndex < i + k) {
+                if (nums[i + k - 1] > max) {
+                    maxIndex = i + k - 1;
+                    max = nums[i + k - 1];
+                }
+            } else {
+                max = nums[i];
+                for (int j = i; j < i + k; j++) {
+                    if (max < nums[j]) {
+                        max = nums[j];
+                        maxIndex = j;
+                    }
+                }
+
+            }
+
+            ans[i] = max;
+        }
+
+        return ans;
+    }
+}
+```

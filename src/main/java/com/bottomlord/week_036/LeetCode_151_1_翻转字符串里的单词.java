@@ -2,9 +2,9 @@ package com.bottomlord.week_036;
 
 /**
  * @author ThinkPad
- * @date 2020/3/9 12:33
+ * @date 2020/3/9 18:52
  */
-public class Interview_58I_2 {
+public class LeetCode_151_1_翻转字符串里的单词 {
     public String reverseWords(String s) {
         s = s.trim();
         if (s.length() == 0) {
