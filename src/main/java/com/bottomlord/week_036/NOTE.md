@@ -510,8 +510,35 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-
+动态规划：
+- `dp[i]`：i个人的时候幸存的人的位置
+- 状态转移方程：`dp[i] = （dp[i - 1] + m) % n`，代表dp[i - 1]位置是上一个安全的位置，当前安全的位置就是从这个位置出发走m步的位置(包括循环)
+- 初始化：`dp[1] = 0`
+- 返回`dp[n]`
 ### 代码
 ```java
-
+class Solution {
+    public int lastRemaining(int n, int m) {
+        int[] dp = new int[n + 1];
+        for (int i = 2; i <= n; i++) {
+            dp[i] = (dp[i - 1] + m) % i;
+        }
+        return dp[n];
+    }
+}
+```
+## 优化代码
+### 思路
+用局部变量`ans`代替dp数组
+### 代码
+```java
+class Solution {
+    public int lastRemaining(int n, int m) {
+        int ans = 0;
+        for (int i = 2; i <= n; i++) {
+            ans = (ans + m) % i;
+        }
+        return ans;
+    }
+}
 ```
