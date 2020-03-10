@@ -456,3 +456,62 @@ class Solution {
     }
 }
 ```
+# Interview_62_圆圈中最后剩下的数字
+## 题目
+0,1,,n-1这n个数字排成一个圆圈，从数字0开始，每次从这个圆圈里删除第m个数字。求出这个圆圈里剩下的最后一个数字。
+
+例如，0、1、2、3、4这5个数字组成一个圆圈，从数字0开始每次删除第3个数字，则删除的前4个数字依次是2、0、4、1，因此最后剩下的数字是3。
+
+示例 1：
+```
+输入: n = 5, m = 3
+输出: 3
+```
+示例 2：
+```
+输入: n = 10, m = 17
+输出: 2
+```
+限制：
+```
+1 <= n <= 10^5
+1 <= m <= 10^6
+```
+## 解法
+### 思路
+- 初始化链表
+- 初始删除的位置是`index = (m -  1) % len` 
+- 循环删除元素，直到链表长度为1
+- 每次删除第index位置的元素后，因为是继续从删除元素的后一个元素开始遍历，所以还要更新一下`index`
+    - `index = (index + m - 1) % list.size()`
+### 代码
+```java
+class Solution {
+    public int lastRemaining(int n, int m) {
+        if (n == 0) {
+            return -1;
+        }
+        
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            list.add(i);
+        }
+        
+        int index = (m - 1) % list.size();
+        while (list.size() > 1) {
+            list.remove(index);
+            index = (index + m -  1) % list.size();
+        }
+
+
+        return list.get(0);
+    }
+}
+```
+## 解法二
+### 思路
+
+### 代码
+```java
+
+```
