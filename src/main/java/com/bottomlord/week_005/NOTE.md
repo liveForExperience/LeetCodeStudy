@@ -1561,7 +1561,9 @@ class Solution {
     public boolean containsDuplicate(int[] nums) {
         Arrays.sort(nums);
         for (int i = 0; i < nums.length - 1; ++i) {
-            if (nums[i] == nums[i + 1]) return true;
+            if (nums[i] == nums[i + 1]) {
+                return true;
+            }
         }
         return false;
     }
@@ -1578,8 +1580,9 @@ class Solution {
             
         boolean[] bc = new boolean[1024];
         for (int num : nums) {
-            if (bc[num & 1023])
+            if (bc[num & 1023]) {
                 return true;
+            }
             bc[num & 1023] = true;
         }
         return false;
@@ -2609,10 +2612,11 @@ class Solution {
 小时不会以零开头，比如 “01:00” 是不允许的，应为 “1:00”。
 分钟必须由两位数组成，可能会以零开头，比如 “10:2” 是无效的，应为 “10:02”。
 ```
-## 解法
+## 错误解法
 ### 思路
 - 使用位运算中 x = x & (x - 1)可以消去最低位的1的特性，计算0-59的1的个数
 - 嵌套循环计算小时和分钟的1的个数是否与num相等
+- 但是这个解法没有考虑到如果和为0，那么类似`[1,-1,1,-1]`或`[10,-10,10,10,10,-10,10,10]`这种情况下，如果只是从左往右计数并与sum比较，会出现count值多的情况，从而出现错误判断
 ### 代码
 ```java
 class Solution {
@@ -2638,6 +2642,45 @@ class Solution {
         }
         
         return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 因为是分成3个部分，所以可以先计算最左和最右两个序列部分，在总和能够被3整除的情况下，如果找到这两个序列，同时两个指针没有相交，那么说明剩余的部分也是相同的和
+- 初始化两个指针：
+    - `left`：从0开始向右移动
+    - `right`：从尾部元素开始向左移动
+- 先计算总和，从而求得每一部分的和`s`
+- 从左向右移动`left`累加，直到总和等于`s`
+- 从右向左移动`right`累加，直到总和等于`s`
+- 如果此时的`left < right`那么就是正确的，否则就不是
+### 代码
+```java
+class Solution {
+    public boolean canThreePartsEqualSum(int[] A) {
+        int sum = 0;
+        for (int num : A) {
+            sum += num;
+        }
+
+        if (sum % 3 != 0) {
+            return false;
+        }
+
+        int left = 0, right = A.length - 1, leftSum = A[left], rightSum = A[A.length - 1];
+        while (leftSum != sum / 3 && left + 1 < right) {
+            leftSum += A[++left];
+        }
+        if (left + 1 >= right) {
+            return false;
+        }
+
+        while (rightSum != sum / 3 && left + 1 < right) {
+            rightSum += A[--right];
+        }
+
+        return left + 1 < right;
     }
 }
 ```
