@@ -662,3 +662,47 @@ class Solution {
     }
 }
 ```
+# Interview_66_构建乘积数组
+## 题目
+给定一个数组 A[0,1,…,n-1]，请构建一个数组 B[0,1,…,n-1]，其中 B 中的元素 B[i]=A[0]×A[1]×…×A[i-1]×A[i+1]×…×A[n-1]。不能使用除法。
+
+示例:
+```
+输入: [1,2,3,4,5]
+输出: [120,60,40,30,24]
+```
+提示：
+```
+所有元素乘积之和不会溢出 32 位整数
+a.length <= 100000
+```
+## 解法
+### 思路
+- 从左往右遍历数组A
+    - 使用变量`left`，用来记录当前`i`的左边所有元素的乘积，如果`i`是0，那么`left`就是1
+    - 将`left`放入数组`ans`中的第i个元素中
+    - 将`left`与当前`A[i]`元素累乘，用于下一个循环
+- 再从右往左遍历数组A
+    - 使用变量`right`记录坐标`i`右边所有元素的累乘，`right`初始化为1
+    - 将`right`与`ans[i]`中记录的i左边的累乘值相乘，得到了题目要求的答案
+    - 将`right`与`A[i]`累乘，用于下一次循环
+### 代码
+```java
+class Solution {
+    public int[] constructArr(int[] a) {
+        int len = a.length, left = 1, right = 1;
+        int[] ans = new int[len];
+        for (int i = 0; i < len; i++) {
+            ans[i] = left;
+            left *= a[i];
+        }
+        
+        for (int i = len - 1; i >= 0; i--) {
+            ans[i] *= right;
+            right *= a[i];
+        }
+        
+        return ans;
+    }
+}
+```
