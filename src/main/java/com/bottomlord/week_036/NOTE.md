@@ -1036,3 +1036,25 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用int的32位来存储26个字母
+- 遍历字符串，如果有一位上之前已经存储，就返回falase
+- 否则就将当前字符代表的位数或到存储用的数字上
+### 代码
+```java
+class Solution {
+    public boolean isUnique(String astr) {
+        int check = 0;
+        for (char c : astr.toCharArray()) {
+            int mask = 1 << c;
+            if ((check & mask) != 0) {
+                return false;
+            } else {
+                check  |= mask;
+            }
+        }
+        return true;
+    }
+}
+```
