@@ -1058,3 +1058,56 @@ class Solution {
     }
 }
 ```
+LeetCode_300_最长上升子序列
+## 题目
+给定一个无序的整数数组，找到其中最长上升子序列的长度。
+
+示例:
+```
+输入: [10,9,2,5,3,7,101,18]
+输出: 4 
+解释: 最长的上升子序列是 [2,3,7,101]，它的长度是 4。
+```
+说明:
+```
+可能会有多种最长上升子序列的组合，你只需要输出对应的长度即可。
+你算法的时间复杂度应该为 O(n2) 。
+```
+```
+进阶: 你能将算法的时间复杂度降低到 O(n log n) 吗?
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i]`：以第 i 个数字结尾的最长上升子序列的长度
+- 状态转移方程：`dp[i] = max(dp[j], maxvalue)`
+    - dp[j]的范围`[0, i - 1]`
+    - 如果i元素比其之前的j元素大，就计算j元素对应的dp值是否时`[0, i - 1]`范围中的最大值
+    - 最终将暂存的最大值置于`dp[i]`
+- 初始化：`dp[0] = 1`，代表第一个元素上升序列是其本身，长度就是1
+- 返回dp数组中的最大值
+### 代码
+```java
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        int ans = 0, len = nums.length;
+        int[] dp = new int[len];
+        dp[0] = 1;
+        for (int i = 0; i < len; i++) {
+            int max = 0;
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j]) {
+                    max = Math.max(max, dp[j]);
+                }
+            }
+            dp[i] = max + 1;
+            ans = Math.max(ans, dp[i]);
+        }
+        return ans;
+    }
+}
+```
