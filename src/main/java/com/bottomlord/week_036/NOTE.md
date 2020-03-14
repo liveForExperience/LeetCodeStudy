@@ -1147,3 +1147,82 @@ class Solution {
     }
 }
 ```
+# Interview_0103_URL化
+## 题目
+URL化。编写一种方法，将字符串中的空格全部替换为%20。假定该字符串尾部有足够的空间存放新增字符，并且知道字符串的“真实”长度。（注：用Java实现的话，请使用字符数组实现，以便直接在数组上操作。）
+
+示例1:
+```
+ 输入："Mr John Smith    ", 13
+ 输出："Mr%20John%20Smith"
+```
+示例2:
+```
+ 输入："               ", 5
+ 输出："%20%20%20%20%20"
+```
+提示：
+```
+字符串长度在[0, 500000]范围内。
+```
+## 解法
+### 思路
+- 生成`length`长度的字符串数组
+- 将S拆分为字符串数组`splits`
+- 遍历`splits`，区间长度为`lenght`
+- 将遍历到的元素放入指定下标位置
+- 如果遍历到的元素时空格，就转换为`%20`放入指定下标为止
+- 将数组转换为字符串返回
+### 代码
+```java
+class Solution {
+    public String replaceSpaces(String S, int length) {
+        String[] ans = new String[length], splits = S.split("");
+        for (int i = 0; i < length; i++) {
+            if (Objects.equals(splits[i], " ")) {
+                ans[i] = "%20";
+            } else {
+                ans[i] = splits[i];       
+            }
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for (String str : ans) {
+            sb.append(str);
+        }
+        
+        return sb.toString();
+    }
+}
+```
+## 优化代码
+### 思路
+只是用char数组
+- S的字符串长度一定大于新的结果的字符串长度
+- 需要被转义的字符串长度是`length`
+- 生成一个`S.length`长度的char数组作为结果数组
+- 从S的第`length - 1`位置开始向前遍历
+    - 如果是空格，就一次写入char数组中
+    - 如果不是空格，就正常放入char数组中
+### 代码
+```java
+class Solution {
+    public String replaceSpaces(String S, int length) {
+        char[] cs = new char[S.length()], s = S.substring(0, length).toCharArray();
+        int ci = cs.length - 1, si = length - 1;
+        while (si >= 0) {
+            if (s[si] == ' ') {
+                cs[ci--] = '0';
+                cs[ci--] = '2';
+                cs[ci--] = '%';
+            } else {
+                cs[ci--] = s[si];
+            }
+
+            si--;
+        }
+
+        return String.valueOf(cs, ci + 1, cs.length - ci - 1);
+    }
+}
+```
