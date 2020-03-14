@@ -1111,3 +1111,39 @@ class Solution {
     }
 }
 ```
+# Interview_0102_判断是否互为字符重排
+## 题目
+给定两个字符串 s1 和 s2，请编写一个程序，确定其中一个字符串的字符重新排列后，能否变成另一个字符串。
+
+示例 1：
+```
+输入: s1 = "abc", s2 = "bca"
+输出: true 
+```
+示例 2：
+```
+输入: s1 = "abc", s2 = "bad"
+输出: false
+```
+说明：
+```
+0 <= len(s1) <= 100
+0 <= len(s2) <= 100
+```
+## 解法
+### 思路
+- 字符串转化为字符数组
+- 对字符数组排序
+- 遍历比较两个数组
+### 代码
+```java
+class Solution {
+    public boolean CheckPermutation(String s1, String s2) {
+        char[] cs1 = s1.toCharArray(), cs2 = s2.toCharArray();
+        Arrays.sort(cs1);
+        Arrays.sort(cs2);
+
+        return Arrays.equals(cs1, cs2);
+    }
+}
+```
