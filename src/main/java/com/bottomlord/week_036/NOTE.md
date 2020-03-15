@@ -1278,5 +1278,89 @@ class Solution {
 - 返回`count <= 1`
 ### 代码
 ```java
+class Solution {
+    public boolean canPermutePalindrome(String s) {
+        int[] bucket = new int[256];
+        int count = 0;
+        
+        for (char c : s.toCharArray()) {
+            if ((++bucket[c] & 1) == 1) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+        
+        return count <= 1;
+    }
+}
+```
+# Interview_0105_一次编辑
+## 题目
+字符串有三种编辑操作:插入一个字符、删除一个字符或者替换一个字符。 给定两个字符串，编写一个函数判定它们是否只需要一次(或者零次)编辑。
 
+示例 1:
+```
+输入: 
+first = "pale"
+second = "ple"
+输出: True
+```
+示例 2:
+```
+输入: 
+first = "pales"
+second = "pal"
+输出: False
+```
+## 解法
+### 思路
+递归：
+- 退出条件：
+    - 两个字符串都遍历完成，且记录的不同数不大于1，返回true
+    - 两个字符串中不同数大于1，返回false
+- 过程中：
+    - 如果有一个字符串遍历完成，就移动另一个指针并且增加不同数
+    - 如果两个指针指向的元素相等，同时移动指针，继续递归
+    - 如果两个指针指向的元素不相等：
+        - 只移动一个指针，并且增加不同数
+        - 同时移动两个指针，并且增加不同数，代表这两个字母需要通过替换来确保相同
+### 代码
+```java
+class Solution {
+    public boolean oneEditAway(String first, String second) {
+        int fLen = first.length(), sLen = second.length();
+        if (Math.abs(fLen - sLen) > 1) {
+            return false;
+        }
+        
+        return backTrack(first, 0, fLen, second, 0, sLen, 0);
+    }
+    
+    private boolean backTrack(String f, int fi, int fLen, String s, int si, int sLen, int count) {
+        if (si == sLen && fi == fLen && count <= 1) {
+            return true;
+        }
+        
+        if (count > 1) {
+            return false;
+        }
+        
+        if (fi == fLen) {
+            return backTrack(f, fi, fLen, s, si + 1, sLen, count + 1);
+        }
+        
+        if (si == sLen) {
+            return backTrack(f, fi + 1, fLen, s, si, sLen, count + 1);
+        }
+        
+        if (f.charAt(fi) == s.charAt(si)) {
+            return backTrack(f, fi + 1, fLen, s, si + 1, sLen, count);
+        } else {
+            return backTrack(f, fi + 1, fLen, s, si, sLen, count + 1) || 
+                    backTrack(f, fi, fLen, s, si + 1, sLen, count + 1) ||
+                    backTrack(f, fi + 1, fLen, s, si + 1, sLen, count + 1);
+        }
+    }
+}
 ```
