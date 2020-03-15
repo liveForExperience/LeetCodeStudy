@@ -1226,3 +1226,57 @@ class Solution {
     }
 }
 ```
+# Interview_0104_回文排列
+## 题目
+给定一个字符串，编写一个函数判定其是否为某个回文串的排列之一。
+
+回文串是指正反两个方向都一样的单词或短语。排列是指字母的重新排列。
+
+回文串不一定是字典当中的单词。
+
+示例1：
+```
+输入："tactcoa"
+输出：true（排列有"tacocat"、"atcocta"，等等）
+```
+## 解法
+### 思路
+- 遍历字符串，用桶计算字符出现的个数
+- 如果只有一个字符出现次数是奇数次，其他都是偶数次，那么这个字符串可以组成回文串
+### 代码
+```java
+class Solution {
+    public boolean canPermutePalindrome(String s) {
+        int[] bucket = new int[256];
+        for (char c : s.toCharArray()) {
+            bucket[c]++;
+        }
+        
+        int count = 0;
+        for (int num : bucket) {
+            if ((num & 1) == 1) {
+                count++;
+            }
+            
+            if (count > 1) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 优化代码
+### 思路
+只进行一次遍历：
+- 初始化一个变量`count`，记录次数为奇数的个数
+- 统计当前字符出现的次数
+    - 如果当前字符计数后是奇数就`count++`
+    - 如果当前字符计数后是偶数就`count--`
+    - 因为是先奇再偶，所以如果是偶数的字符，最后该字符作用在`count`值上一定是0
+- 返回`count <= 1`
+### 代码
+```java
+
+```
