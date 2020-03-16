@@ -140,3 +140,113 @@ class Solution {
     }
 }
 ```
+# Interview_0108_零矩阵
+## 题目
+编写一种算法，若M × N矩阵中某个元素为0，则将其所在的行与列清零。
+
+示例 1：
+```
+输入：
+[
+  [1,1,1],
+  [1,0,1],
+  [1,1,1]
+]
+输出：
+[
+  [1,0,1],
+  [0,0,0],
+  [1,0,1]
+]
+```
+示例 2：
+```
+输入：
+[
+  [0,1,2,0],
+  [3,4,5,2],
+  [1,3,1,5]
+]
+输出：
+[
+  [0,0,0,0],
+  [0,4,5,0],
+  [0,3,1,0]
+]
+```
+## 解法
+### 思路
+- 遍历二维数组，获得所有为0的坐标
+- 初始化2个set，分别存放获得的0的坐标的行与列的值
+- 循环结束，遍历两个set，确定需要修改为0的行与列
+### 代码
+```java
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        if (matrix.length == 0 || matrix[0].length == 0) {
+            return;
+        }
+        
+        int row = matrix.length, col = matrix[0].length;
+        Set<Integer> rows = new HashSet<>(), cols = new HashSet<>();
+        
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (matrix[i][j] == 0) {
+                    rows.add(i);
+                    cols.add(j);
+                }
+            }
+        }
+        
+        for (int i : rows) {
+            Arrays.fill(matrix[i], 0);
+        }
+        
+        for (int i : cols) {
+            for (int j = 0; j < row; j++) {
+                matrix[j][i] = 0;
+            }
+        }
+    }
+}
+```
+## 优化代码
+### 思路
+使用布尔数组作为哈希表实现，记录需要清零的行列
+### 代码
+```java
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        if (matrix.length == 0 || matrix[0].length == 0) {
+            return;
+        }
+
+        int row = matrix.length, col = matrix[0].length;
+        boolean[] rows = new boolean[row], cols = new boolean[col];
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (matrix[i][j] == 0) {
+                    rows[i] = true;
+                    cols[j] = true;
+                }
+            }
+        }
+
+        for (int i = 0; i < row; i++) {
+            if (rows[i]) {
+                Arrays.fill(matrix[i], 0);
+            }
+        }
+
+        for (int i = 0; i < col; i++) {
+            if (cols[i]) {
+                for (int j = 0; j < row; j++) {
+                    matrix[j][i] = 0;
+                }
+            }
+        }
+    }
+}
+```
