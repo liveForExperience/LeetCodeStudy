@@ -42,3 +42,101 @@ class Solution {
     }
 }
 ```
+# Interview_0107_旋转矩阵
+## 题目
+
+给定一幅由N × N矩阵表示的图像，其中每个像素的大小为4字节，编写一种方法，将图像旋转90度。
+
+不占用额外内存空间能否做到？
+
+示例 1:
+```
+给定 matrix = 
+[
+  [1,2,3],
+  [4,5,6],
+  [7,8,9]
+],
+
+原地旋转输入矩阵，使其变为:
+[
+  [7,4,1],
+  [8,5,2],
+  [9,6,3]
+]
+```
+示例 2:
+```
+给定 matrix =
+[
+  [ 5, 1, 9,11],
+  [ 2, 4, 8,10],
+  [13, 3, 6, 7],
+  [15,14,12,16]
+], 
+
+原地旋转输入矩阵，使其变为:
+[
+  [15,13, 2, 5],
+  [14, 3, 4, 1],
+  [12, 6, 8, 9],
+  [16, 7,10,11]
+]
+```
+## 解法
+### 思路
+- 初始化一个新的二维数组
+- 嵌套遍历原来的二维数组，并放入新数组中
+    - 从第一列开始到最后一列开始遍历
+    - 从最后一行到第一行开始遍历
+### 代码
+```java
+class Solution {
+    public void rotate(int[][] matrix) {
+        if (matrix.length == 0 || matrix[0].length == 0) {
+            return;
+        }
+        
+        int row = matrix.length, col = matrix[0].length;
+        int[][] ans = new int[col][row];
+        
+        for (int i = 0; i < col; i++) {
+            for (int j = row - 1; j >= 0; j--) {
+                ans[i][row - j - 1] = matrix[j][i];
+            }
+        }
+        
+        for (int i = 0; i < row; i++) {
+            System.arraycopy(ans[i], 0, matrix[i], 0, col);
+        }
+    }
+}
+```
+## 解法二
+### 思路
+矩阵旋转90度，相当于：
+1. 对角线反转
+2. 左右翻转
+### 代码
+```java
+class Solution {
+    public void rotate(int[][] matrix) {
+        int row = matrix.length, col = matrix[0].length;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < i; j++) {
+                matrix[i][j] += matrix[j][i];
+                matrix[j][i] = matrix[i][j] - matrix[j][i];
+                matrix[i][j] = matrix[i][j] - matrix[j][i];
+            }
+        }
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col / 2; j++) {
+                matrix[i][j] += matrix[i][col - 1 - j];
+                matrix[i][col - 1 - j] = matrix[i][j] - matrix[i][col - 1 - j];
+                matrix[i][j] = matrix[i][j] - matrix[i][col - 1 - j];
+            }
+        }
+    }
+}
+```
