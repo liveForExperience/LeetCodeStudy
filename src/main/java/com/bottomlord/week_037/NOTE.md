@@ -316,3 +316,66 @@ class Solution {
     }
 }
 ```
+# Interview_0109_字符串轮转
+## 题目
+字符串轮转。给定两个字符串s1和s2，请编写代码检查s2是否为s1旋转而成（比如，waterbottle是erbottlewat旋转后的字符串）。
+
+示例1:
+```
+ 输入：s1 = "waterbottle", s2 = "erbottlewat"
+ 输出：True
+```
+示例2:
+```
+ 输入：s1 = "aa", "aba"
+ 输出：False
+```
+提示：
+```
+字符串长度在[0, 100000]范围内。
+```
+说明:
+```
+你能只调用一次检查子串的方法吗？
+```
+## 解法
+### 思路
+- 移动旋转字符串的指针i，判断`i`指向的字符与原字符串的第一个字符是否相等
+- 如果相等，尝试比较从当前位置到字符串尾部和从头到当前位置的两部分字符串拼接后，是否与原字符串相等
+- 如果不是相同字符串，继续移动`i`，直到找到或`i`越界为止
+### 代码
+```java
+class Solution {
+    public boolean isFlipedString(String s1, String s2) {
+        if (s1.length() != s2.length()) {
+            return false;
+        }
+
+        if (Objects.equals(s1, "") && Objects.equals(s2, "")) {
+            return true;
+        }
+
+        int len2 = s2.length();
+        for (int i = 0; i < len2; i++) {
+            if (s1.charAt(0) == s2.charAt(i)) {
+                if (Objects.equals(s1, String.valueOf(s2.toCharArray(), i, len2 - i) + String.valueOf(s2.toCharArray(), 0, i))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+如果`s2`是`s1`旋转后的字符串，那么将两个`s2`拼接后，必然能包含一个完整的字符串`s1`
+### 代码
+```java
+class Solution {
+    public boolean isFlipedString(String s1, String s2) {
+        return s1.length() == s2.length() && (s2 + s2).contains(s1);
+    }
+}
+```
