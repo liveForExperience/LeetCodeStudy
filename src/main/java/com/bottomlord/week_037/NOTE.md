@@ -379,3 +379,78 @@ class Solution {
     }
 }
 ```
+# Interview_0201_移除重复节点
+## 题目
+编写代码，移除未排序链表中的重复节点。保留最开始出现的节点。
+
+示例1:
+```
+ 输入：[1, 2, 3, 3, 2, 1]
+ 输出：[1, 2, 3]
+```
+示例2:
+```
+ 输入：[1, 1, 1, 1, 2]
+ 输出：[1, 2]
+```
+提示：
+```
+链表长度在[0, 20000]范围内。
+链表元素在[0, 20000]范围内。
+```
+进阶：
+```
+如果不得使用临时缓冲区，该怎么解决？
+```
+## 解法
+### 思路
+- 遍历链表
+- hash表缓存遍历过的节点
+- 将出现在缓存中的节点去除
+### 代码
+```java
+class Solution {
+    public ListNode removeDuplicateNodes(ListNode head) {
+        ListNode node = head, fake = new ListNode(0), pre = fake;
+        fake.next = head;
+        Set<Integer> set = new HashSet<>();
+        while (node != null) {
+            if (!set.contains(node.val)) {
+                set.add(node.val);
+                pre = node;
+            } else {
+                pre.next = node.next;
+            }
+            node = node.next;
+        }
+        
+        return fake.next;
+    }
+}
+```
+## 解法二
+### 思路
+- 嵌套循环链表
+- 外层依次循环每一个节点
+- 内层从外层遍历的节点开始依次循环剩余链表，如果返现遍历到的节点与外层节点值相等，就做删除操作
+### 代码
+```java
+class Solution {
+    public ListNode removeDuplicateNodes(ListNode head) {
+        ListNode node = head;
+        while (node != null) {
+            ListNode innerNode = node.next, pre = node;
+            while (innerNode != null) {
+                if (node.val == innerNode.val) {
+                    pre.next = innerNode.next;
+                } else {
+                    pre = innerNode;
+                }
+                innerNode = innerNode.next;
+            }
+            node = node.next;
+        }
+        return head;
+    }
+}
+```
