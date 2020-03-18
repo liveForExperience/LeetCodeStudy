@@ -454,3 +454,68 @@ class Solution {
     }
 }
 ```
+# Interview_0202_返回倒数第k个节点
+## 题目
+
+实现一种算法，找出单向链表中倒数第 k 个节点。返回该节点的值。
+
+注意：本题相对原题稍作改动
+
+示例：
+```
+输入： 1->2->3->4->5 和 k = 2
+输出： 4
+```
+说明：
+```
+给定的 k 保证是有效的。
+```
+## 解法
+### 思路
+- 遍历单向链表
+    - 计算链表长度
+    - 使用动态数组记录节点值
+- 返回第`len - k`个节点
+### 代码
+```java
+class Solution {
+    public int kthToLast(ListNode head, int k) {
+        List<Integer> list = new ArrayList<>();
+        ListNode node = head;
+        int len = 0;
+        while (node != null) {
+            len++;
+            list.add(node.val);
+            node = node.next;
+        }
+        
+        return list.get(len - k);
+    }
+}
+```
+## 解法二
+### 思路
+遍历两次链表：
+- 第一次计算长度
+- 第二次根据长度找到倒数第K个节点为止
+### 代码
+```java
+class Solution {
+    public int kthToLast(ListNode head, int k) {
+        ListNode node = head;
+        int len = 0;
+        while (node != null) {
+            len++;
+            node = node.next;
+        }
+        
+        node = head;
+        int num = len - k;
+        while (num-- > 0) {
+            node = node.next;
+        }
+        
+        return node.val;
+    }
+}
+```
