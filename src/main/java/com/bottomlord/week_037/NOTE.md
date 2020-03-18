@@ -542,3 +542,65 @@ class Solution {
     }
 }
 ```
+# Interview_0204_分割链表
+## 题目
+编写程序以 x 为基准分割链表，使得所有小于 x 的节点排在大于或等于 x 的节点之前。如果链表中包含 x，x 只需出现在小于 x 的元素之后(如下所示)。分割元素 x 只需处于“右半部分”即可，其不需要被置于左右两部分之间。
+
+示例:
+```
+输入: head = 3->5->8->5->10->2->1, x = 5
+输出: 3->1->2->10->5->5->8
+```
+## 解法
+### 思路
+- 5个指针：
+    - 遍历指针：node
+    - 左半部分假头：fakeLeftHead
+    - 左半部分指针：left
+    - 右半部分假头：fakeRightHead
+    - 右半部分指针：right
+- 过程：
+    - 遍历链表，比较当前节点值与x的大小
+    - 将对应指针指向当前节点，并重新建立关系
+    - 遍历结束需要处理`right`的`next`为空，否则会不断循环溢出
+### 代码
+```java
+class Solution {
+    public ListNode partition(ListNode head, int x) {
+        ListNode fakeLeftHead = new ListNode(0), fakeRightHead = new ListNode(0), left = null, right  = null, node = head;
+        
+        while (node != null) {
+            if (node.val < x) {
+                if (left == null) {
+                    left = node;
+                    fakeLeftHead.next = left;
+                } else {
+                    left.next = node;
+                    left = left.next;
+                }
+            } else {
+                if (right == null) {
+                    right = node;
+                    fakeRightHead.next = right;
+                } else {
+                    right.next = node;
+                    right = right.next;
+                }
+            }
+            node = node.next;
+        }
+        
+        
+        if (right != null) {
+            right.next = null;
+        }
+        
+        if (left == null) {
+            return fakeRightHead.next;
+        }
+        
+        left.next = fakeRightHead.next;
+        return fakeLeftHead.next;
+    }
+}
+```
