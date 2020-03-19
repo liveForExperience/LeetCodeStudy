@@ -675,3 +675,77 @@ class Solution {
     }
 }
 ```
+# Interview_0206_回文链表
+## 题目
+编写一个函数，检查输入的链表是否是回文的。
+
+示例 1：
+```
+输入： 1->2
+输出： false 
+```
+示例 2：
+```
+输入： 1->2->2->1
+输出： true 
+```
+进阶：
+```
+你能否用 O(n) 时间复杂度和 O(1) 空间复杂度解决此题？
+```
+## 解法
+### 思路
+- 遍历链表记录值，放入list
+- 双指针从两头遍历list，判断值是否指针对应的值是否相等
+### 代码
+```java
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        ListNode node = head;
+        while (node != null) {
+            list.add(node.val);
+            node = node.next;
+        }
+        
+        int left = 0, right = list.size() - 1;
+        while (left < right) {
+            if (!Objects.equals(list.get(left), list.get(right))) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+- 生成一个反转链表
+- 两个链表比较
+### 代码
+```java
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        ListNode node = head, pre = null;
+        while (node != null) {
+            ListNode cur = new ListNode(node.val);
+            cur.next = pre;
+            pre = cur;
+            node = node.next;
+        }
+        
+        while (pre != null && head != null) {
+            if (pre.val != head.val) {
+                return false;
+            }
+            pre = pre.next;
+            head = head.next;
+        }
+        
+        return pre == null && head == null;
+    }
+}
+```
