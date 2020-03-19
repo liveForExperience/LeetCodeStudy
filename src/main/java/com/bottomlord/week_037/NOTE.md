@@ -604,3 +604,74 @@ class Solution {
     }
 }
 ```
+# Interview_0205_链表求和
+## 题目
+给定两个用链表表示的整数，每个节点包含一个数位。
+
+这些数位是反向存放的，也就是个位排在链表首部。
+
+编写函数对这两个整数求和，并用链表形式返回结果。
+
+示例：
+```
+输入：(7 -> 1 -> 6) + (5 -> 9 -> 2)，即617 + 295
+输出：2 -> 1 -> 9，即912
+进阶：假设这些数位是正向存放的，请再做一遍。
+```
+示例：
+```
+输入：(6 -> 1 -> 7) + (2 -> 9 -> 5)，即617 + 295
+输出：9 -> 1 -> 2，即912
+```
+## 解法
+### 思路
+- 初始一个链表节点作为答案节点的头节点
+- 初始化指针
+    - `pre`用来遍历和连接这个答案链表
+    - `head`代表答案节点的假头指针
+- 同时遍历两个入参链表
+    - 如果两个节点同时存在：
+        - 计算2个节点的值以及进位的和sum
+        - 如果大于10，记录进位为1，否则进位为0
+    - 如果有一个节点不存在：
+        - 计算存在的那个节点值和进位的和
+    - 初始化值为sum的节点，与`pre`连接
+    - `pre`移动到当前节点
+- 遍历结束，如果`carry`为1，要再加一位节点，值为1
+- 返回头指针的`next`节点
+### 代码
+```java
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode head = new ListNode(0), pre = head;
+        int carry = 0;
+        while (l1 != null || l2 != null) {
+            int sum = 0;
+            if (l1 == null) {
+                sum += l2.val + carry;
+                l2 = l2.next;
+            } else if (l2 == null) {
+                sum += l1.val + carry;
+                l1 = l1.next;
+            } else {
+                sum += l1.val + l2.val + carry;
+                l1 = l1.next;
+                l2 = l2.next;
+            }
+            
+            carry = sum >= 10 ? 1 : 0;
+            sum %= 10;
+            
+            ListNode cur = new ListNode(sum);
+            pre.next = cur;
+            pre = cur;
+        }
+        
+        if (carry == 1) {
+            pre.next = new ListNode(1);
+        }
+        
+        return head.next;
+    }
+}
+```
