@@ -749,3 +749,49 @@ class Solution {
     }
 }
 ```
+## 解法三
+### 思路
+- 使用快慢指针，找到链表的中间节点
+    - 如果链表长度是偶数的，也就是最后快指针不为null，那么需要再移动一次慢指针
+- 从新的盘指针的为止开始翻转链表
+- 最终从原链表的两头开始比较节点的值
+### 代码
+```java
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        if (fast != null) {
+            slow = slow.next;
+        }
+
+        ListNode right = slow == null ? head : slow;
+        while (slow != null) {
+            if (slow == right) {
+                slow = slow.next;
+                right.next = null;
+                continue;
+            }
+            ListNode next = slow.next;
+            slow.next = right;
+            right = slow;
+            slow = next;
+        }
+        
+        ListNode left = head;
+        while (left != null && right != null) {
+            if (left.val != right.val) {
+                return false;
+            }
+            left = left.next;
+            right = right.next;
+        }
+        
+        return true;
+    }
+}
+```
