@@ -1011,3 +1011,108 @@ class TripleInOne {
     }
 }
 ```
+# Interview_0302_栈的最小值
+## 题目
+请设计一个栈，除了常规栈支持的pop与push函数以外，还支持min函数，该函数返回栈元素中的最小值。执行push、pop和min操作的时间复杂度必须为O(1)。
+
+示例：
+```
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin();   --> 返回 -3.
+minStack.pop();
+minStack.top();      --> 返回 0.
+minStack.getMin();   --> 返回 -2.
+```
+## 解法
+### 思路
+- 初始化变量：
+    - 一个栈`data`用来维护数据
+    - 一个栈`stack`用来最为单向栈，保存最小值
+- 过程：
+    - 如果压栈：查看value是否小于stack的栈顶元素，如果是就压入栈中
+    - 如果弹栈，查看value是否为栈顶元素，如果是，就弹出stack的栈顶元素
+### 代码
+```java
+class MinStack {
+    private Stack<Integer> data;
+    private Stack<Integer> stack;
+    public MinStack() {
+        this.data = new Stack<>();
+        this.stack = new Stack<>();
+    }
+
+    public void push(int x) {
+        if (stack.isEmpty() || stack.peek() >= x) {
+            stack.push(x);
+        }
+
+        data.push(x);
+    }
+
+    public void pop() {
+        if (data.isEmpty()) {
+            return;
+        }
+
+        if (!stack.isEmpty() && Objects.equals(data.peek(), stack.peek())) {
+            stack.pop();
+        }
+
+        data.pop();
+    }
+
+    public int top() {
+        return data.isEmpty() ? -1 : data.peek();
+    }
+
+    public int getMin() {
+        return stack.isEmpty() ? -1 : stack.peek();
+    }
+}
+```
+## 解法二
+### 思路
+使用一个栈同时保存值和最小值：
+- 初始变量
+    - 一个变量`min`暂存当前的最小值
+    - 一个栈存储值和以前的最小值
+- 过程：
+    - 压栈：判断压入的值与当前最小值的大小，如果小等于就将当前最小值压入栈中，并将当前值作为最小值暂存在`min`中
+    - 弹栈：如果出栈值和当前值相等，就将栈顶元素弹出，并将第二个元素也弹出，作为当前的最小值
+### 代码
+```java
+class MinStack {
+    private int min;
+    private Stack<Integer> stack;
+    public MinStack() {
+        this.min = Integer.MAX_VALUE;
+        this.stack = new Stack<>();
+    }
+
+    public void push(int x) {
+        if (x <= min) {
+            stack.push(min);
+            min = x;
+        }
+
+        stack.push(x);
+    }
+
+    public void pop() {
+        if (stack.pop() == min) {
+            min = stack.pop();
+        }
+    }
+
+    public int top() {
+        return stack.peek();
+    }
+
+    public int getMin() {
+        return min;
+    }
+}
+```
