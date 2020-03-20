@@ -1148,10 +1148,56 @@ class Solution {
 ```
 ## 解法三
 ### 思路
-自己实现小顶堆
+简易快速排序：
+- 根据头尾坐标，确定一个中间坐标及其对应的值`pivot`
+- 根据这个值，移动头尾指针，向中间靠拢，并判断
+    - `left`对应的值是否比`pivot`大
+    - `right`对应的值是否比`pivot`小
+    - `left`是否与`right`相遇
+- 如果符合如上情况，头尾指针的移动停止，将指针对应的左右元素交换
+- 继续循环移动头尾指针，直到`left`与`right`相遇
+- 判断`right`指针对应的下标大小是否大于k，
+    - 如果大于k，右边的元素还有部分没有放在应该在的区间，继续递归，区间时`start`到`right`之间
+    - 否则，就检查一下左边部分的元素，看左指针是否没有移动够，也继续递归，区间时`left`到`end`之间
 ### 代码
 ```java
+class Solution {
+    public int[] getLeastNumbers(int[] arr, int k) {
+        quickSelect(arr, k, 0, arr.length - 1);
+        return Arrays.copyOf(arr, k);
+    }
 
+    private void quickSelect(int[] arr, int k, int start, int end) {
+        if (start >= end) {
+            return;
+        }
+
+        int left = start, right = end, pivot = arr[start + (end - start) / 2];
+        while (left <= right) {
+            while (left  <= right && arr[left] < pivot) {
+                left++;
+            }
+
+            while (left <= right && arr[right] > pivot) {
+                right--;
+            }
+
+            if (left <= right) {
+                int tmp = arr[left];
+                arr[left] = arr[right];
+                arr[right] = tmp;
+                left++;
+                right--;
+            }
+        }
+        
+        if (right >= k) {
+            quickSelect(arr, k, start, right);
+        } else {
+            quickSelect(arr, k, left, end);
+        }
+    }
+}
 ```
 # Interview_41_数据流中的中位数
 ## 题目
