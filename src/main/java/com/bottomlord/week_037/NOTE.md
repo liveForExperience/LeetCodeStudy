@@ -934,3 +934,80 @@ public class Solution {
     }
 }
 ```
+# Interview_0301_三合一
+## 题目
+三合一。描述如何只用一个数组来实现三个栈。
+
+你应该实现push(stackNum, value)、pop(stackNum)、isEmpty(stackNum)、peek(stackNum)方法。stackNum表示栈下标，value表示压入的值。
+
+构造函数会传入一个stackSize参数，代表每个栈的大小。
+
+示例1:
+```
+ 输入：
+["TripleInOne", "push", "push", "pop", "pop", "pop", "isEmpty"]
+[[1], [0, 1], [0, 2], [0], [0], [0], [0]]
+ 输出：
+[null, null, null, 1, -1, -1, true]
+说明：当栈为空时`pop, peek`返回-1，当栈满时`push`不压入元素。
+```
+示例2:
+```
+ 输入：
+["TripleInOne", "push", "push", "push", "pop", "pop", "pop", "peek"]
+[[2], [0, 1], [0, 2], [0, 3], [0], [0], [0], [0]]
+ 输出：
+[null, null, null, null, 2, 1, -1, -1]
+```
+## 解法
+### 思路
+- 初始化变量：
+    - 长度为`stackSize`的3倍，作为三个栈的存储空间
+    - 一个数组，存储三个栈指针
+- 根据栈的编号查找栈指针，并操作压栈出栈的操作
+### 代码
+```java
+class TripleInOne {
+    private int[] stack;
+    private int[] indexs;
+    private int stackSize;
+
+    public TripleInOne(int stackSize) {
+        this.stackSize = stackSize;
+        stack = new int[3 * stackSize];
+        indexs = new int[3];
+
+        for (int i = 0; i < indexs.length; i++) {
+            indexs[i] = i * stackSize - 1;
+        }
+    }
+
+    public void push(int stackNum, int value) {
+        if (indexs[stackNum] >= (stackNum + 1) * stackSize - 1) {
+            return;
+        }
+
+        stack[++indexs[stackNum]] = value;
+    }
+
+    public int pop(int stackNum) {
+        if (isEmpty(stackNum)) {
+            return -1;
+        }
+
+        return stack[indexs[stackNum]--];
+    }
+
+    public int peek(int stackNum) {
+        if (isEmpty(stackNum)) {
+            return -1;
+        }
+
+        return stack[indexs[stackNum]];
+    }
+
+    public boolean isEmpty(int stackNum) {
+        return indexs[stackNum] < stackNum * stackSize;
+    }
+}
+```
