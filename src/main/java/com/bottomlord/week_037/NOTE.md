@@ -855,3 +855,82 @@ public class Solution {
     }
 }
 ```
+# Interview_0208_环路检测
+## 题目
+给定一个有环链表，实现一个算法返回环路的开头节点。
+```
+有环链表的定义：在链表中某个节点的next元素指向在它前面出现过的节点，则表明该链表存在环路。
+```
+示例 1：
+```
+输入：head = [3,2,0,-4], pos = 1
+输出：tail connects to node index 1
+解释：链表中有一个环，其尾部连接到第二个节点。
+```
+示例 2：
+```
+输入：head = [1,2], pos = 0
+输出：tail connects to node index 0
+解释：链表中有一个环，其尾部连接到第一个节点。
+```
+示例 3：
+```
+输入：head = [1], pos = -1
+输出：no cycle
+解释：链表中没有环。
+```
+进阶：
+```
+你是否可以不用额外空间解决此题？
+```
+## 解法
+### 思路
+使用快慢指针：
+- 将有环链表的距离分解成：
+    - 链表头`head`到环的起始点`start`的距离是`a`
+    - `start`到快漫之阵相遇的点`meet`的距离是`b`
+    - `meet`到`start`的距离是`c`
+- 在快慢指针第一次相遇的时候，快慢指针各自走的距离
+    - `slow`：`a + b`
+    - `fast`：`a + (b + c) * k + b`，其中`k`代表快指针绕圈的次数，且一定大于等于1，否则就和慢指针走的距离一样，不符合题意
+- 因为快指针走的距离是慢指针的2倍，所以得到等式
+```math
+(a + b) * 2 = a + (b + c) * k + b
+```
+- 简化后得到
+```math
+a = (k - 1) * (b + c) + c
+```
+- 如上等式中，因为`(k - 1) * (b + c)`中`b + c`在题目中代表的是环的总距离，所以可以简化为`a = c`
+- 所以当找到两个指针的相遇节点后，再让一个节点从`head`出发，一个从`meet`出发，同时同速，那么它们相遇时就是入环点`start`
+- 过程：
+    - 通过快慢指针同时遍历，找到`meet`或`fast`为null，判断没有相遇点
+    - 然后从`head`和`meet`同时遍历，找到入环点`start`
+### 代码
+```java
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+
+            if (slow == fast) {
+                break;
+            }
+        }
+
+        if (fast == null || fast.next == null) {
+            return null;
+        }
+        
+        slow = head;
+        while (slow != fast) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        
+        return slow;
+    }
+}
+```
