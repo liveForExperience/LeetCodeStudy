@@ -1116,3 +1116,185 @@ class MinStack {
     }
 }
 ```
+# LeetCode_365_水壶问题
+## 题目
+有两个容量分别为 x升 和 y升 的水壶以及无限多的水。请判断能否通过使用这两个水壶，从而可以得到恰好 z升 的水？
+
+如果可以，最后请用以上水壶中的一或两个来盛放取得的 z升 水。
+
+你允许：
+```
+装满任意一个水壶
+清空任意一个水壶
+从一个水壶向另外一个水壶倒水，直到装满或者倒空
+```
+示例 1: (From the famous "Die Hard" example)
+```
+输入: x = 3, y = 5, z = 4
+输出: True
+```
+示例 2:
+```
+输入: x = 2, y = 6, z = 5
+输出: False
+```
+## 解法
+### 思路
+bfs：
+- 两个水壶的状态：
+    - x被倒满
+    - y被倒满
+    - x被清空
+    - y被清空
+    - x的水倒满了y，x还有剩余
+    - y的水倒满了x，y还有剩余
+    - x的水全倒入y，x被清空
+    - y的水全倒入x，y被清空
+- 定义一个类`state`定义当前两个水壶的状态
+- 使用set对bfs的过程剪纸
+- 状态变化的过程中，判断每种状态与对应的现有状况是否相符
+### 代码
+```java
+class Solution {
+    public boolean canMeasureWater(int x, int y, int z) {
+        if (z == 0) {
+            return true;
+        }
+
+        if (x + y < z) {
+            return false;
+        }
+
+        Queue<State> queue = new ArrayDeque<>();
+        Set<State> memo = new HashSet<>();
+
+        State init = new State(0, 0);
+        queue.offer(init);
+        memo.add(init);
+
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+
+            while (count-- != 0) {
+                State state = queue.poll();
+
+                if (state == null) {
+                    continue;
+                }
+
+                int curX = state.x, curY = state.y;
+                if (curX == z || curY == z || curX + curY == z) {
+                    return true;
+                }
+
+                for (State next : getNextStates(x, y, curX, curY)) {
+                    if (!memo.contains(next)) {
+                        queue.offer(next);
+                        memo.add(next);
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private List<State> getNextStates(int x, int y, int curX, int curY) {
+        List<State> nextStates = new ArrayList<>();
+
+        State fullX = new State(x, curY);
+        State fullY = new State(curX, y);
+        State emptyX = new State(0, curY);
+        State emptyY = new State(curX, 0);
+        State x2yLeft = new State(curX - (y - curY), y);
+        State y2xLeft = new State(x, curY - (x - curX));
+        State x2yNoLeft = new State(0, curX + curY);
+        State y2xNotLeft = new State(curX + curY, 0);
+
+        if (curX < x) {
+            nextStates.add(fullX);
+        }
+
+        if (curY < y) {
+            nextStates.add(fullY);
+        }
+
+        if (curX > 0) {
+            nextStates.add(emptyX);
+        }
+
+        if (curY > 0) {
+            nextStates.add(emptyY);
+        }
+
+        if (curX - (y - curY) > 0) {
+            nextStates.add(x2yLeft);
+        }
+
+        if (curY - (x - curX) > 0) {
+            nextStates.add(y2xLeft);
+        }
+
+        if (curX + curY < y) {
+            nextStates.add(x2yNoLeft);
+        }
+
+        if (curX + curY < x) {
+            nextStates.add(y2xNotLeft);
+        }
+
+        return nextStates;
+    }
+
+    private class State {
+        private int x;
+        private int y;
+
+        public State(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            State state = (State) o;
+            return x == state.x &&
+                    y == state.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+    }
+}
+```
+## 解法二
+### 思路
+贝祖定理：
+- 找到x和y的最大公约数gcd，如果z是gcd的倍数，那么就可以满足
+```math
+ax + by = z
+```
+### 代码
+```java
+class Solution {
+    public boolean canMeasureWater(int x, int y, int z) {
+        if (x == 0 && y == 0) {
+            return z == 0;
+        }
+        
+        return z == 0 || (z % gcd(x, y) == 0 && x + y >= z);
+    }
+    
+    private int gcd(int x, int y) {
+        return y == 0 ? x : gcd(y, x % y);
+    }
+}
+```
