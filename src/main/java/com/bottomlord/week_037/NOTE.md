@@ -1455,3 +1455,120 @@ class MyQueue {
     }
 }
 ```
+# LeetCode_945_使数组唯一的最小增量
+## 题目
+给定整数数组 A，每次 move 操作将会选择任意 A[i]，并将其递增 1。
+
+返回使 A 中的每个值都是唯一的最少操作次数。
+
+示例 1:
+```
+输入：[1,2,2]
+输出：1
+解释：经过一次 move 操作，数组将变为 [1, 2, 3]。
+```
+示例 2:
+```
+输入：[3,2,1,2,1,7]
+输出：6
+解释：经过 6 次 move 操作，数组将变为 [3, 4, 1, 2, 5, 7]。
+可以看出 5 次或 5 次以下的 move 操作是不能让数组的每个值唯一的。
+```
+提示：
+```
+0 <= A.length <= 40000
+0 <= A[i] < 40000
+```
+## 解法
+### 思路
+- 排序数组
+- 遍历数组，记录遍历到的最大值
+- 如果当前元素小于最大值，就累加到最大值+1（因为题目要求只能自增，所以所有被遍历到的数字只能增加到比最大值大1就可以确保数字唯一）
+- 记录累加的值
+- 遍历结束后返回累加值
+### 代码
+```java
+class Solution {
+    public int minIncrementForUnique(int[] A) {
+        Arrays.sort(A);
+        int max = -1, sum = 0;
+        for (int num : A) {
+            if (num <= max) {
+                sum += (max - num + 1);
+                max++;
+            } else {
+                max = num;
+            }
+        }
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+并查集：
+- 初始化一个并查集：
+    - 初始化并查集中小标对应的值都为-1，代表没有值
+    - 并查集union时，必须是小的合到大的值里
+    - 将遍历到的值放入并查集中时，需要查看当前值左右两边的值是否在并查集中，如果是，就要union
+- 遍历数组
+    - 如果并查集中不包含当前值，将值放入
+    - 如果有值，就查找到当前这个值的parent值，加1后计算差值，进行累加
+    - 同时将这个加1后的值放入并查集中
+### 代码
+```java
+class Solution {
+    public int minIncrementForUnique(int[] A) {
+        UnionFind unionFind = new UnionFind();
+        int ans = 0;
+        for (int num : A) {
+            if (unionFind.contains(num)) {
+                int root = unionFind.find(num);
+                ans += root - num + 1;
+                unionFind.init(root + 1);
+            } else {
+                unionFind.init(num);
+            }
+        }
+        
+        return ans;
+    }
+
+    private class UnionFind {
+        private int[] parent;
+
+        public UnionFind() {
+            parent = new int[79999];
+            Arrays.fill(parent, -1);
+        }
+
+        public void init(int num) {
+            parent[num] = num;
+
+            if (num > 0 && parent[num - 1] != -1) {
+                union(num - 1, num);
+            }
+
+            if (parent[num + 1] != -1) {
+                union(num, num + 1);
+            }
+        }
+
+        public boolean contains(int num) {
+            return parent[num] != -1;
+        }
+        
+        public int find(int num) {
+            if (num != parent[num]) {
+                parent[num] = find(parent[num]);
+            }
+
+            return parent[num];
+        }
+
+        public void union(int x, int y) {
+            parent[parent[x]] = find(y);
+        }
+    }
+}
+```
