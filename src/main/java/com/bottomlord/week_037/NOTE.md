@@ -1572,3 +1572,79 @@ class Solution {
     }
 }
 ```
+# Interview_0305_栈排序
+## 题目
+栈排序。 编写程序，对栈进行排序使最小元素位于栈顶。最多只能使用一个其他的临时栈存放数据，但不得将元素复制到别的数据结构（如数组）中。该栈支持如下操作：push、pop、peek 和 isEmpty。当栈为空时，peek 返回 -1。
+
+示例1:
+```
+ 输入：
+["SortedStack", "push", "push", "peek", "pop", "peek"]
+[[], [1], [2], [], [], []]
+ 输出：
+[null,null,null,1,null,2]
+```
+示例2:
+```
+ 输入： 
+["SortedStack", "pop", "pop", "push", "pop", "isEmpty"]
+[[], [], [], [1], [], []]
+ 输出：
+[null,null,null,null,null,true]
+```
+说明:
+```
+栈中的元素数目在[0, 5000]范围内。
+```
+## 解法
+### 思路
+单向栈：
+- 初始两个栈：
+    - 栈a存储元素
+    - 栈b用来辅助排序
+- push：
+    - 如果元素小于栈顶元素，就直接压入栈中
+    - 如果大于栈顶元素，就将栈a的元素弹出，知道栈顶元素大于元素，将元素压入栈a后，将栈b的元素弹出压回到栈a中
+- pop：直接弹出栈a的元素
+### 代码
+```java
+class SortedStack {
+    private Stack<Integer> a;
+    private Stack<Integer> b;
+    public SortedStack() {
+        this.a = new Stack<>();
+        this.b = new Stack<>();
+    }
+
+    public void push(int val) {
+        if (a.isEmpty() || val < a.peek()) {
+            a.push(val);
+            return;
+        }
+
+        while (!a.isEmpty() && a.peek() < val) {
+            b.push(a.pop());
+        }
+
+        a.push(val);
+
+        while (!b.isEmpty()) {
+            a.push(b.pop());
+        }
+    }
+
+    public void pop() {
+        if (!a.isEmpty()) {
+           a.pop();
+        }
+    }
+
+    public int peek() {
+        return a.isEmpty() ? -1 : a.peek();
+    }
+
+    public boolean isEmpty() {
+        return a.isEmpty();
+    }
+}
+```
