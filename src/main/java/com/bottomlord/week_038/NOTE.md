@@ -140,3 +140,99 @@ class Solution {
     }
 }
 ```
+# Interview_0403_特定深度节点链表
+## 题目
+给定一棵二叉树，设计一个算法，创建含有某一深度上所有节点的链表（比如，若一棵树的深度为 D，则会创建出 D 个链表）。返回一个包含所有深度的链表的数组。
+
+示例：
+```
+输入：[1,2,3,4,5,null,7,8]
+
+        1
+       /  \ 
+      2    3
+     / \    \ 
+    4   5    7
+   /
+  8
+
+输出：[[1],[2,3],[4,5,7],[8]]
+```
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+    public ListNode[] listOfDepth(TreeNode tree) {
+        if (tree == null) {
+            return new ListNode[0];
+        }
+
+        List<ListNode> ansList = new ArrayList<>();
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(tree);
+        
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            ListNode head = new ListNode(-1), pre = head;
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+                
+                ListNode cur = new ListNode(node.val);
+                pre.next = cur;
+                pre = cur;
+                
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+            
+            ansList.add(head.next);
+        }
+        
+        return ansList.toArray(new ListNode[0]);
+    }
+}
+```
+## 解法二
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public ListNode[] listOfDepth(TreeNode tree) {
+        List<ListNode> list = new ArrayList<>();
+        dfs(list, tree, 0);
+        return list.toArray(new ListNode[0]);
+    }
+
+    private void dfs(List<ListNode> list, TreeNode node, int depth) {
+        if (node == null) {
+            return;
+        }
+
+        if (depth >= list.size()) {
+            list.add(new ListNode(node.val));
+        } else {
+            ListNode listNode = list.get(depth);
+            while (listNode.next != null) {
+                listNode = listNode.next;
+            }
+            
+            listNode.next = new ListNode(node.val);
+        }
+        
+        depth++;
+        dfs(list, node.left, depth);
+        dfs(list, node.right, depth);
+    }
+}
+```
