@@ -399,3 +399,84 @@ class Solution {
     }
 }
 ```
+# Interview_0405_合法二叉搜索树
+## 题目
+实现一个函数，检查一棵二叉树是否为二叉搜索树。
+
+示例 1:
+```
+输入:
+    2
+   / \
+  1   3
+输出: true
+```
+示例 2:
+```
+输入:
+    5
+   / \
+  1   4
+     / \
+    3   6
+输出: false
+解释: 输入为: [5,1,4,null,null,3,6]。
+     根节点的值为 5 ，但是其右子节点值为 4 。
+```
+## 解法
+### 思路
+- 获取中序遍历序列
+- 检查是否升序
+### 代码
+```java
+class Solution {
+    public boolean isValidBST(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list);
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i) <= list.get(i - 1)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private void dfs(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, list);
+        list.add(node.val);
+        dfs(node.right, list);
+    }
+}
+```
+## 解法二
+### 思路
+- 二叉搜索树：
+    - 左子树的值范围的上界是其根结点的值
+    - 右子树的值范围的下界是其根节点的值
+- 过程：
+    - 递归过程中判断当前值是否在上下界之间
+    - 如果递归左子树，上界定为当前节点的值
+    - 如果递归右子树，下界定位当前节点的值
+### 代码
+```java
+class Solution {
+    public boolean isValidBST(TreeNode root) {
+        return dfs(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    private boolean dfs(TreeNode node, long min, long max) {
+        if (node == null) {
+            return true;
+        }
+        
+        return node.val < max && node.val > min && 
+                dfs(node.left, min, node.val) && 
+                dfs(node.right, node.val, max);
+    }
+}
+```
