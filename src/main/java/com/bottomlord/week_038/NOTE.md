@@ -314,3 +314,88 @@ class Solution {
     }
 }
 ```
+# Interview_0404_检查平衡性
+## 题目
+实现一个函数，检查二叉树是否平衡。在这个问题中，平衡树的定义如下：任意一个节点，其两棵子树的高度差不超过 1。
+
+示例 1:
+```
+给定二叉树 [3,9,20,null,null,15,7]
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回 true 。
+```
+示例 2:
+```
+给定二叉树 [1,2,2,3,3,null,null,4,4]
+      1
+     / \
+    2   2
+   / \
+  3   3
+ / \
+4   4
+返回 false 。
+```
+## 解法
+### 思路
+两层dfs，从上往下判断：
+- 内层dfs获得当前节点得左右子树的最长长度
+- 外层dfs确定内层dfs的起始节点，并根据返回的左右子树长度判断是否是平衡
+### 代码
+```java
+class Solution {
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+
+        int left = dfs(root.left), right = dfs(root.right);
+        if (Math.abs(left - right) > 1) {
+            return false;
+        }
+
+        return isBalanced(root.left) && isBalanced(root.right);
+    }
+
+    private int dfs(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+
+        int left = dfs(node.left), right = dfs(node.right);
+
+        return Math.max(left, right) + 1;
+    }
+}
+```
+## 解法二
+### 思路
+dfs从底向上判断：
+- 从树的叶子节点开始获取左右子树的长度
+- 判断左右子树的长度是否是平衡的
+- 如果不是就返回-1，用作标识
+### 代码
+```java
+class Solution {
+    public boolean isBalanced(TreeNode root) {
+        return dfs(root) != -1;
+    }
+    
+    private int dfs(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        
+        int left = dfs(node.left), right = dfs(node.right);
+        if (left == -1 || right == -1) {
+            return -1;
+        }
+        
+        return Math.abs(left - right) > 1 ? -1 : Math.max(left, right) + 1;
+    }
+}
+```
