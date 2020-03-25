@@ -480,3 +480,93 @@ class Solution {
     }
 }
 ```
+# Interview_0406_后继者
+## 题目
+设计一个算法，找出二叉搜索树中指定节点的“下一个”节点（也即中序后继）。
+
+如果指定节点没有对应的“下一个”节点，则返回null。
+
+示例 1:
+```
+输入: root = [2,1,3], p = 1
+
+  2
+ / \
+1   3
+
+输出: 2
+```
+示例 2:
+```
+输入: root = [5,3,6,2,4,null,null,1], p = 6
+
+      5
+     / \
+    3   6
+   / \
+  2   4
+ /   
+1
+
+输出: null
+```
+## 解法
+### 思路
+- dfs中序遍历获取序列
+- 遍历序列，找到后继
+### 代码
+```java
+class Solution {
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if (root == null) {
+            return null;
+        }
+        
+        List<TreeNode> list = new ArrayList<>();
+        inOrder(root, list);
+        
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) == p) {
+                return i == list.size() - 1 ? null : list.get(i + 1);
+            }
+        }
+        
+        return null;
+    }
+    
+    private void inOrder(TreeNode node, List<TreeNode> list) {
+        if (node == null) {
+            return;
+        }
+        
+        inOrder(node.left, list);
+        list.add(node);
+        inOrder(node.right, list);
+    }
+}
+```
+## 解法二
+### 思路
+- 不使用额外的数据结构
+- 利用二叉搜索树的特性， 递归比较当前节点和p节点的值
+    - 如果小于等于p，p在当前节点的右子树，目标节点也在右子树，所以往右子树递归
+    - 如果大于p，说明要么：
+        - p和目标节点还在当前节点的左子树里
+        - 要么p就是当前节点的父节点，当前节点的就是目标值，而在这种情况下，当前节点的左子树一定是空
+### 代码
+```java
+class Solution {
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if (root == null || p == null) {
+            return null;
+        }
+        
+        if (root.val <= p.val) {
+            return inorderSuccessor(root.right, p);
+        } else {
+            TreeNode left = inorderSuccessor(root.left, p);
+            return left == null ? root : left;
+        }
+    }
+}
+```

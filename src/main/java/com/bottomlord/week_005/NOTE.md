@@ -64,22 +64,22 @@ class Solution {
                 
                 if (!outOfRnage(i - 1, j, grid)) {
                     int dif = grid[i][j] - grid[i - 1][j];
-                    sum += dif > 0 ? dif : 0;
+                    sum += Math.max(dif,0);
                 }
 
                 if (!outOfRnage(i + 1, j, grid)) {
                     int dif = grid[i][j] - grid[i + 1][j];
-                    sum += dif > 0 ? dif : 0;
+                    sum += Math.max(dif,0);
                 }
 
                 if (!outOfRnage(i, j - 1, grid)) {
                     int dif = grid[i][j] - grid[i][j - 1];
-                    sum += dif > 0 ? dif : 0;
+                    sum += Math.max(dif,0);
                 }
 
                 if (!outOfRnage(i, j + 1, grid)) {
                     int dif = grid[i][j] - grid[i][j + 1];
-                    sum += dif > 0 ? dif : 0;
+                    sum += Math.max(dif,0);
                 }
             }
         }
