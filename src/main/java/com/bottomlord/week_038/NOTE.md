@@ -638,3 +638,84 @@ class Solution {
     }
 }
 ```
+# Interview_0409_二叉搜索树序列
+## 题目
+从左向右遍历一个数组，通过不断将其中的元素插入树中可以逐步地生成一棵二叉搜索树。给定一个由不同节点组成的二叉树，输出所有可能生成此树的数组。
+
+示例:
+```
+给定如下二叉树
+
+        2
+       / \
+      1   3
+返回:
+
+[
+   [2,1,3],
+   [2,3,1]
+]
+```
+## 解法
+### 思路
+回溯：
+- 根据题意，遍历数组生成树的过程中，必须要现有根节点，才能有左右子树，其他顺序可以随意变换
+- 过程：
+    - 初始化一个队列存储queue，初始化存储根节点
+    - 初始化一个动态数组path，用来暂存探索路径中的节点值
+    - 初始化一个动态数组ans，用来存储所有的可能路径
+    - dfs搜索树
+    - 退出条件：
+        - 当前节点为空，此时生成一个空的list放入ans中
+        - queue为空，代表已经没有待探索的节点，将当前传入的path生成一个新的list放入ans中
+    - 将当前节点的左右子节点放入queue
+    - 遍历queue，开始回溯，在循环体中：
+        - 将节点从queue中弹出
+        - 将节点值放入path
+        - 将当前节点作为下一层的根节点递，基于queue生成新的list，继续递归下去
+        - 返回时将节点放回queue中
+        - 从path中将当前节点值去除
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> BSTSequences(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (root == null) {
+            ans.add(new LinkedList<>());
+            return ans;
+        }
+
+        LinkedList<Integer> path = new LinkedList<>();
+        path.add(root.val);
+
+        backTrack(root, new LinkedList<>(), path, ans);
+        return ans;
+    }
+
+    private void backTrack(TreeNode node, LinkedList<TreeNode> queue, LinkedList<Integer> path, List<List<Integer>> ans) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.left != null) {
+            queue.add(node.left);
+        }
+
+        if (node.right != null) {
+            queue.add(node.right);
+        }
+
+        if (queue.isEmpty()) {
+            ans.add(new LinkedList<>(path));
+        }
+
+        for (int i = 0; i < queue.size(); i++) {
+            TreeNode tmp = queue.remove(i);
+            path.add(tmp.val);
+            backTrack(tmp, new LinkedList<>(queue), path, ans);
+            queue.add(i, tmp);
+            path.removeLast();
+        }
+    }
+}
+```
