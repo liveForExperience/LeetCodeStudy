@@ -782,3 +782,101 @@ class Solution {
     }
 }
 ```
+# Interview_0412_求和路径
+## 题目
+给定一棵二叉树，其中每个节点都含有一个整数数值(该值或正或负)。设计一个算法，打印节点数值总和等于某个给定值的所有路径的数量。注意，路径不一定非得从二叉树的根节点或叶节点开始或结束，但是其方向必须向下(只能从父节点指向子节点方向)。
+
+示例:
+```
+给定如下二叉树，以及目标和 sum = 22，
+
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \    / \
+        7    2  5   1
+返回:
+
+3
+解释：和为 22 的路径有：[5,4,11,2], [5,8,4,5], [4,11,7]
+```
+提示：
+```
+节点总数 <= 10000
+```
+## 解法
+### 思路
+嵌套dfs
+- 外层确定其实节点
+- 内层搜索所有路径
+- 每一层判断当前节点与累加值是否与sum相等
+- 因为有负值，所以获得sum后还可以继续遍历
+### 代码
+```java
+class Solution {
+    private int ans;
+    public int pathSum(TreeNode root, int sum) {
+        dfs1(root,sum);
+        return ans;
+    }
+
+    private void dfs1(TreeNode node, int sum) {
+        if (node == null) {
+            return;
+        }
+
+        dfs2(node, sum, 0);
+        dfs1(node.left, sum);
+        dfs1(node.right, sum);
+    }
+
+    private void dfs2(TreeNode node, int sum, int tmp) {
+        if (node == null) {
+            return;
+        }
+
+        tmp += node.val;
+        if (tmp == sum) {
+            ans++;
+        }
+
+        dfs2(node.left, sum, tmp);
+        dfs2(node.right, sum, tmp);
+    }
+}
+```
+## 解法二
+### 思路
+前缀+dfs：
+- 使用一个数组来存储已经搜索过的路径，下标值对应树的深度
+- 使用一个变量来记录当前搜索的深度
+- 递归过程中，遍历记录的已经遍历过的路径值，累加，查看是否有匹配sum的值，如果有就累加。代表以当前节点为重点的路径中，能够找到的所有可能路径的个数之和
+- 最终返回当前的累加值和左右子树递归后返回的值之和
+### 代码
+```java
+class Solution {
+    public int pathSum(TreeNode root, int sum) {
+        return dfs(root, new int[1000], 0, sum);
+    }
+
+    private int dfs(TreeNode node, int[] arr, int depth, int sum) {
+        if (node == null) {
+            return 0;
+        }
+
+        int val = 0, cur = 0;
+        arr[depth] = node.val;
+
+        for (int i = depth; i >= 0; i--) {
+            val += arr[i];
+            if (val == sum) {
+                cur++;
+            }
+        }
+
+        return cur + dfs(node.left, arr, depth + 1, sum) + dfs(node.right, arr, depth + 1, sum);
+    }
+}
+```
