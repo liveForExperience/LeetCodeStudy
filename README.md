@@ -40,7 +40,7 @@
 |35|2019/3/2 - 2020/3/8| [19](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_035) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_035/NOTE.md) | - | [56II_数组中数字出现的次数II_解2](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_035/Interview_56II_2.java)  |:mask:|411|
 |36|2019/3/9 - 2020/3/15| [22](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_036) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_036/NOTE.md) | - | - |:mask:|367|
 |37|2019/3/16 - 2020/3/22| [21](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_037) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_037/NOTE.md) | - | - |:mask:|364|
-|38|2019/3/23 - 2020/3/29| [11](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_038) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_038/NOTE.md) | - | - |:mask:||
+|38|2019/3/23 - 2020/3/29| [12](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_038) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_038/NOTE.md) | - | - |:mask:||
 ## 竞赛
 <table>
     <tr align="center">
