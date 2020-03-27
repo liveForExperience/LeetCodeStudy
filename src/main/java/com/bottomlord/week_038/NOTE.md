@@ -915,3 +915,51 @@ class Solution {
     }
 }
 ```
+# Interview_0502_二进制数转字符串
+## 题目
+二进制数转字符串。给定一个介于0和1之间的实数（如0.72），类型为double，打印它的二进制表达式。如果该数字不在0和1之间，或者无法精确地用32位以内的二进制表示，则打印“ERROR”。
+
+示例1:
+```
+ 输入：0.625
+ 输出："0.101"
+```
+示例2:
+```
+ 输入：0.1
+ 输出："ERROR"
+ 提示：0.1无法被二进制准确表示
+```
+提示：
+```
+32位包括输出中的"0."这两位。
+```
+## 解法
+### 思路
+如果数字为0.625,使用二进制表示的过程
+1. 0.625 * 2 = 1.25
+2. 1.3 - 1 = 0.25 => 1
+3. 0.25 * 2 = 0.5 => 10
+4. 0.5 * 2 = 1
+5. 1 - 1 = 0 => 101
+### 代码
+```java
+class Solution {
+    public String printBin(double num) {
+        StringBuilder ans = new StringBuilder("0.");
+        int time = 0;
+        while (num != 0 && time <= 32) {
+            num *= 2;
+            if (num >= 1) {
+                num--;
+                ans.append("1");
+            } else {
+                ans.append("0");
+            }
+            time++;
+        }
+        
+        return time > 32 ? "ERROR" : ans.toString();
+    }
+}
+```
