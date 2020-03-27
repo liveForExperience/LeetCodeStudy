@@ -963,3 +963,92 @@ class Solution {
     }
 }
 ```
+# Interview_0503_翻转数位
+## 题目
+给定一个32位整数 num，你可以将一个数位从0变为1。请编写一个程序，找出你能够获得的最长的一串1的长度。
+
+示例 1：
+```
+输入: num = 1775(110111011112)
+输出: 8
+```
+示例 2：
+```
+输入: num = 7(01112)
+输出: 4
+```
+## 解法
+### 思路
+嵌套循环：
+- 外层从目标值的第一位开始遍历
+- 内层从该位开始计算最长的1长度：
+    - 第一次遇到0时可以转为1继续累加
+    - 并记录这一位0的位置，下次外层的开始位置从该位开始
+- 返回遍历中得到的最大值
+### 代码
+```java
+class Solution {
+    public int reverseBits(int num) {
+        int[] bits = new int[32];
+        int t = 1;
+        for (int i = 0; i < 32; i++) {
+            if ((num & (t << i)) != 0) {
+                bits[i] = 1;
+            } else {
+                bits[i] = 0;
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            int count = 0, life = 1;
+            for (int j = i; j < 32; j++) {
+                if (bits[j] == 1) {
+                    count++;
+                } else if (life == 1) {
+                    count++;
+                    life--;
+                } else {
+                    break;
+                }
+            }
+
+            ans = Math.max(ans, count);
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 初始化两个变量：
+    - pre：记录遇到0的时候，前一段连续1的长度
+    - cur：记录当前连续1的长度，如果遇到0时候，将当前记录的值，减去上一段的值(包括被翻转的0)，因为只能有一个0可以被翻转成1，所以被题目视为有效的连续1的长度其实可以被分成2部分，当遇到第2个0时，就去掉前一部分，第二部分可以继续累加
+    - cur的初始值为1，因为有一个0是可以被翻转的
+- 遍历32位数字从低到高的每一位
+    - 遇到1就累加，并将得到的值和最大值比较，取较大值
+    - 遇到0的时候
+        - 就先将累加值减去上一段pre的长度，作为继续累加的值
+        - 再将这个继续累加的部分，作为下一次遇到0时候的pre
+### 代码
+```java
+class Solution {
+    public int reverseBits(int num) {
+        int time = 32, cur = 1, pre = 0, ans = 0;
+
+        while (time-- > 0) {
+            if ((num & 1) == 0) {
+                cur = cur - pre;
+                pre = cur;
+            }
+
+            ans = Math.max(ans, cur);
+            num >>= 1;
+            cur++;
+        }
+
+        return ans;
+    }
+}
+```
