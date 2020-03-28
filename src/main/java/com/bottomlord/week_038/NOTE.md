@@ -1193,3 +1193,143 @@ class Solution {
     }
 }
 ```
+# Interview_0504_下一个数
+## 题目
+下一个数。给定一个正整数，找出与其二进制表达式中1的个数相同且大小最接近的那两个数（一个略大，一个略小）。
+
+示例1:
+```
+ 输入：num = 2（或者0b10）
+ 输出：[4, 1] 或者（[0b100, 0b1]）
+```
+示例2:
+```
+ 输入：num = 1
+ 输出：[2, -1]
+```
+提示:
+```
+num的范围在[1, 2147483647]之间；
+如果找不到前一个或者后一个满足条件的正数，那么输出 -1。
+```
+## 解法
+### 思路
+暴力：
+- 算出当前值的1的个数
+- 从当前值+1和-1分别遍历，找到和当前值的1的个数相同的值
+- 但如果输入值是Integer.MAX_VALUE，那会超时
+### 代码
+```java
+class Solution {
+    public int[] findClosedNumbers(int num) {
+        int count = count1(num);
+        int[] ans = new int[]{-1, -1};
+        int large =  num + 1;
+        while (large >= 1) {
+            if (count == count1(large)) {
+                ans[0] = large;
+                break;
+            }
+
+            large++;
+        }
+
+        int small = num - 1;
+        while (small >= 1) {
+            if (count == count1(small)) {
+                ans[1] = small;
+                break;
+            }
+
+            small--;
+        }
+
+        return ans;
+    }
+
+    private int count1(int num) {
+        int count = 0;
+        while (num != 0) {
+            if ((num & 1) == 1) {
+                count++;
+            }
+            num >>= 1;
+        }
+
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+- 比当前值大，从低位开始，找到第一组`01`，将其转换为`10`，且将其之前的所有1移到相对低位上
+- 比当前值小，从地位开始，找到第一组`10`，将其转换成`01`，并将其之前的所有1移到`01`前的相对高位
+### 代码
+```java
+class Solution {
+    public int[] findClosedNumbers(int num) {
+        String str = Integer.toBinaryString(num);
+        int len = str.length(), count = 0, index = -1;
+        char[] small = str.toCharArray();
+        int[] ans = new int[]{-1, -1};
+
+        for (int i = len - 1; i > 0; i--) {
+            if (small[i] == '0' && small[i - 1] == '1') {
+                 small[i] = '1';
+                 small[i - 1] = '0';
+                 index = i + 1;
+                 break;
+            }
+
+            if (small[i] == '1') {
+                count++;
+            }
+        }
+
+        if (index != -1) {
+            for (; index < len; index++) {
+                if (count-- > 0) {
+                    small[index] = '1';
+                } else {
+                    small[index] = '0';
+                }
+            }
+            ans[1] = Integer.parseInt(new String(small), 2);
+            index = -1;
+        }
+
+        char[] large = ("0" + str).toCharArray();
+        count = 0;
+        for (int i = len; i > 0; i--) {
+            if (large[i] == '1' && large[i - 1] == '0') {
+                large[i] = '0';
+                large[i - 1] = '1';
+                index = i + 1;
+                break;
+            }
+
+            if (large[i] == '1') {
+                count++;
+            }
+        }
+
+        if (index != -1) {
+            for (int i = len; i >= index; i--) {
+                if (count-- > 0) {
+                    large[i] = '1';
+                } else {
+                    large[i] = '0';
+                }
+            }
+
+            long largeNum = Long.parseLong(new String(large), 2);
+
+            if (largeNum <= Integer.MAX_VALUE) {
+                ans[0] = (int) largeNum;
+            }
+        }
+
+        return ans;
+    }
+}
+```
