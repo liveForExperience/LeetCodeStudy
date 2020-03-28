@@ -1087,3 +1087,109 @@ class Solution {
     }
 }
 ```
+# LeetCode_820_单词的压缩编码
+## 题目
+给定一个单词列表，我们将这个列表编码成一个索引字符串 S 与一个索引列表 A。
+
+例如，如果这个列表是 ["time", "me", "bell"]，我们就可以将其表示为 S = "time#bell#" 和 indexes = [0, 2, 5]。
+
+对于每一个索引，我们可以通过从字符串 S 中索引的位置开始读取字符串，直到 "#" 结束，来恢复我们之前的单词列表。
+
+那么成功对给定单词列表进行编码的最小字符串长度是多少呢？
+
+示例：
+```
+输入: words = ["time", "me", "bell"]
+输出: 10
+说明: S = "time#bell#" ， indexes = [0, 2, 5] 。
+```
+提示：
+```
+1 <= words.length <= 2000
+1 <= words[i].length <= 7
+每个单词都是小写字母 。
+```
+## 解法
+### 思路
+- 如果某一个单词是另一个单词的后缀，那么这个单词就不需要出现在生成的压缩编码中
+- 将单词序列初始化为set集合，用来快速判定当前单词的某一个后缀可能是否在所有单词中存在
+- 嵌套循环：
+    - 外层遍历这个单词序列
+    - 内层遍历当前遍历到的单词，从第二个字符开始，查看当前这个后缀是否在set中存在
+    - 如果存在就将这个与后缀相同的单词从set中删除
+- 遍历set集合，累加单词长度，且因为每个单词后面都需要一个`#`作为提示，所以还要再加1
+- 返回累加值
+### 代码
+```java
+class Solution {
+    public int minimumLengthEncoding(String[] words) {
+        Set<String> set = new HashSet<>(Arrays.asList(words));
+        for (String word : words) {
+            for (int i = 1; i < word.length(); i++) {
+                set.remove(word.substring(i));
+            }
+        }
+
+        int ans = 0;
+        for (String word : set) {
+            ans += word.length() + 1;
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+字典树：
+- 初始化一个字典树的根节点
+- 因为找的是后缀，所以字典树的节点根据单词的倒序顺序进行插入，这样后缀单词会被包含在对应路径中
+- 遍历单词数组
+- 根据倒序将当前单词插入到字典树中，并记录当前节点被使用的次数，当使用次数为0时，代表是叶子节点
+- 生成当前单词在字典树中的节点后，将当前单词的第一个单词对应的节点放入一个map中，这个节点可能是叶子节点，也可能不是
+- 最后遍历map，将节点中使用次数为0的叶子节点对应的单词长度，累加，同时还要加上`#`代表的长度1
+- 将累加值返回
+### 代码
+```java
+class Solution {
+    public int minimumLengthEncoding(String[] words) {
+        TrieNode root = new TrieNode();
+        Map<TrieNode, Integer> map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            TrieNode cur = root;
+            for (int j = words[i].length() - 1; j >= 0; j--) {
+                cur = cur.get(words[i].charAt(j));
+            }
+            map.put(cur, i);
+        }
+        
+        int ans = 0;
+        for (TrieNode node : map.keySet()) {
+            if (node.count == 0) {
+                ans += words[map.get(node)].length() + 1;
+            }
+        }
+        
+        return ans;
+    }
+
+
+    private class TrieNode {
+        private TrieNode[] children;
+        private int count;
+
+        public TrieNode() {
+            children = new TrieNode[26];
+            count = 0;
+        }
+
+        public TrieNode get(char c) {
+            if (children[c - 'a'] == null) {
+                children[c - 'a'] = new TrieNode();
+                count++;
+            }
+
+            return children[c - 'a'];
+        }
+    }
+}
+```
