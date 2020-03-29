@@ -1364,3 +1364,159 @@ class Solution {
     }
 }
 ```
+# LeetCode_1162_地图分析
+## 题目
+你现在手里有一份大小为 N x N 的『地图』（网格） grid，上面的每个『区域』（单元格）都用 0 和 1 标记好了。其中 0 代表海洋，1 代表陆地，你知道距离陆地区域最远的海洋区域是是哪一个吗？请返回该海洋区域到离它最近的陆地区域的距离。
+
+我们这里说的距离是『曼哈顿距离』（ Manhattan Distance）：(x0, y0) 和 (x1, y1) 这两个区域之间的距离是 |x0 - x1| + |y0 - y1| 。
+
+如果我们的地图上只有陆地或者海洋，请返回 -1。
+
+示例 1：
+```
+输入：[[1,0,1],[0,0,0],[1,0,1]]
+输出：2
+解释： 
+海洋区域 (1, 1) 和所有陆地区域之间的距离都达到最大，最大距离为 2。
+```
+示例 2：
+```
+输入：[[1,0,0],[0,0,0],[0,0,0]]
+输出：4
+解释： 
+海洋区域 (2, 2) 和所有陆地区域之间的距离都达到最大，最大距离为 4。
+```
+提示：
+```
+1 <= grid.length == grid[0].length <= 100
+grid[i][j] 不是 0 就是 1
+```
+## 解法
+### 思路
+bfs：
+- 将所有陆地节点放入队列作为第一层节点
+- 每一次都将从陆地节点出发的新节点是海洋的部分放入队列
+- 记录层数，直到队列中没有节点为止
+- 最后一层就是最远的距离
+### 代码
+```java
+class Solution {
+    public int maxDistance(int[][] grid) {
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return -1;
+        }
+
+        int row = grid.length, col = grid[0].length;
+
+        Queue<int[]> queue = new ArrayDeque<>();
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 1) {
+                    queue.offer(new int[]{i, j});
+                }
+            }
+        }
+
+        if (queue.isEmpty() || queue.size() == row * col) {
+            return -1;
+        }
+
+        int[][] directions = new int[][]{{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+        int ans = -1;
+        while (!queue.isEmpty()) {
+            ans++;
+            int n = queue.size();
+            for (int i = 0; i < n; i++) {
+                int[] arr = queue.poll();
+                if (arr == null) {
+                    continue;
+                }
+
+                int x = arr[0], y = arr[1];
+
+                for (int[] direction : directions) {
+                    int nx = x + direction[0], ny = y + direction[1];
+                    if (nx >= 0 && nx < row && ny >= 0 && ny < col && grid[nx][ny] == 0) {
+                        grid[nx][ny] = 1;
+                        queue.offer(new int[]{nx, ny});
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- `dp[i][j]`：横坐标i，纵坐标j的位置上，离出发陆地最大的距离
+- 初始化：将所有陆地设置为0，并将海洋设置为int最大值，这样在状态转移过程中可以通过递增并和原有值比较，取最小值的方式来计算距离
+- 状态转移方程：从左上到右下和从右上到左下
+    - `dp[i][j] = min(dp[i][j], dp[i - 1][j] + 1)`
+    - `dp[i][j] = min(dp[i][j], dp[i + 1][j] + 1)`
+    - `dp[i][j] = min(dp[i][j], dp[i][j - 1] + 1)`
+    - `dp[i][j] = min(dp[i][j], dp[i][j + 1] + 1)`
+### 代码
+```java
+class Solution {
+    public int maxDistance(int[][] grid) {
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return -1;
+        }
+
+        int row = grid.length, col = grid[0].length;
+        int[][] dp = new int[row][col];
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                dp[i][j] = grid[i][j] == 0 ? Integer.MAX_VALUE : 0;
+            }
+        }
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] != 0) {
+                    continue;
+                }
+
+                if (i - 1 >= 0) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i - 1][j] + 1 < 0 ? Integer.MAX_VALUE : dp[i - 1][j] + 1);
+                }
+
+                if (j - 1 >= 0) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i][j - 1] + 1 < 0 ? Integer.MAX_VALUE : dp[i][j - 1] + 1);
+                }
+            }
+        }
+
+        for (int i = row - 1; i >= 0; i--) {
+            for (int j = col - 1; j >= 0; j--) {
+                if (grid[i][j] != 0) {
+                    continue;
+                }
+
+                if (i + 1 < row) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i + 1][j] + 1 < 0 ? Integer.MAX_VALUE : dp[i + 1][j] + 1);
+                }
+
+                if (j + 1 < col) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i][j + 1] + 1 < 0 ? Integer.MAX_VALUE : dp[i][j + 1] + 1);
+                }
+            }
+        }
+        
+        int ans = -1;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 0) {
+                    ans = Math.max(dp[i][j], ans);
+                }
+            }
+        }
+
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+}
+```
