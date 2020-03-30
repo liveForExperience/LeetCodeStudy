@@ -97,3 +97,52 @@ class Solution {
     }
 }
 ```
+# Interview_0804_幂集
+## 题目
+幂集。编写一种方法，返回某集合的所有子集。集合中不包含重复的元素。
+
+说明：解集不能包含重复的子集。
+
+示例:
+```
+ 输入： nums = [1,2,3]
+ 输出：
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+```
+## 解法
+### 思路 
+回溯：
+- 退出条件：数组元素被全部遍历
+- 过程：
+    - 将path放入ans中作为一种集合可能
+    - 遍历数组元素，将当前元素放入path中，继续递归
+    - 返回后将当前循环加入path的元素删去，继续下一个元素的递归
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        backTrack(0, nums, new LinkedList<>(), ans);
+        return ans;
+    }
+
+    private void backTrack(int index, int[] nums, LinkedList<Integer> path, List<List<Integer>> ans) {
+        ans.add(new ArrayList<>(path));
+
+        for (int i = index; i < nums.length; i++) {
+            path.offerLast(nums[i]);
+            backTrack(i + 1, nums, path, ans);
+            path.removeLast();
+        }
+    }
+}
+```
