@@ -159,6 +159,52 @@ class Solution {
     }
 }
 ```
+## 解法三
+### 思路
+快排：
+- 获取最左边的元素开始，确定该元素`pivot`应在排序数组中的位置：
+    - 先从最右元素开始，如果头尾指针没有相遇，且遍历到的元素大于`pivot`，那么就继续将尾指针向前移动，直到相遇头指针或者比`pivot`小位置
+    - 此时，将`pivot`对应的数组元素与尾指针对应的元素交换位置，此时`pivot`值右边的数都是比`pivot`大的
+    - 然后从头指针开始遍历，查看是否有比`pivot`大的元素，和如上步骤相同，如果有的话就和右指针交换，这样`pivot`左边的元素就肯定`pivot`小了
+    - 如上步骤重复执行，直到头尾指针相遇，这样就确定了`pivot`在排序后的数组中应该处在的位置
+- 得到`pivot`的位置后，开始分治递归，不断的获取下一层的`pivot`并将其放置在应该在的位置
+- 最终完成排序
+### 代码
+```java
+class Solution {
+    public int[] sortArray(int[] nums) {
+        quickSort(nums, 0, nums.length - 1);
+        return nums;
+    }
+    
+    private void quickSort(int[] nums, int left, int right) {
+        if (left >= right) {
+            return;
+        }
+        
+        int index = partition(nums, left, right);
+        quickSort(nums, left, index);
+        quickSort(nums, index + 1, right);
+    }
+    
+    private int partition(int[] nums, int left, int right) {
+        int pivot = nums[left];
+        while (left < right) {
+            while (left < right && nums[right] >= pivot) {
+                right--;
+            }
+            nums[left] = nums[right];
+            
+            while (left < right && nums[left] <= pivot) {
+                left++;
+            }
+            nums[right] = nums[left];
+        }
+        nums[left] = pivot;
+        return left;
+    }
+}
+```
 # LeetCode_495_提莫攻击
 ## 题目
 在《英雄联盟》的世界中，有一个叫 “提莫” 的英雄，他的攻击可以让敌方英雄艾希（编者注：寒冰射手）进入中毒状态。现在，给出提莫对艾希的攻击时间序列和提莫攻击的中毒持续时间，你需要输出艾希的中毒状态总时长。
