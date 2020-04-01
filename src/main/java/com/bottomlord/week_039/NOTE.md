@@ -229,3 +229,147 @@ class Solution {
     }
 }
 ```
+# Interview_0807_无重复字符串的排列组合
+## 题目
+无重复字符串的排列组合。编写一种方法，计算某字符串的所有排列组合，字符串每个字符均不相同。
+
+示例1:
+```
+ 输入：S = "qwe"
+ 输出：["qwe", "qew", "wqe", "weq", "ewq", "eqw"]
+```
+示例2:
+```
+ 输入：S = "ab"
+ 输出：["ab", "ba"]
+```
+提示:
+```
+字符都是英文字母。
+字符串长度在[1, 9]之间。
+```
+## 解法
+### 思路
+回溯：
+- 使用变量：
+    - 一个变量path记录递归路径上组成的字符串组合
+    - 一个set集合记录所有可使用的字符串，并做到去重
+    - 一个变量memo记录当前使用过的字符
+- 过程：
+    - 递归的退出条件是path的长度和S的长度一致，将该字符串放入set中
+    - 每一层递归都从字符串头部开始遍历，如果memo有记录，就跳过
+    - 否则就记录这个memo，并拼接当前字符后递归下去
+    - 循环中返回时候，做两件事
+        - 从memo中将刚才标记为true的字符改为false，方便下一个循环中使用别的字符时，该字符在下一次递归时可以继续使用
+        - 将path的最后一个字符删去，这个动作的含义与改memo含义一样
+### 代码
+```java
+class Solution {
+    public String[] permutation(String S) {
+        Set<String> set = new HashSet<>();
+        backTrack(S, new StringBuilder(), new boolean[S.length()], set);
+        return set.toArray(new String[0]);
+    }
+
+    private void backTrack(String s, StringBuilder path, boolean[] memo, Set<String> set) {
+        if (path.length() == s.length()) {
+            set.add(path.toString());
+            return;
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (!memo[i]) {
+                memo[i] = true;
+                backTrack(s, path.append(s.charAt(i)), memo, set);
+                path.deleteCharAt(path.length() - 1);
+                memo[i] = false;
+            }
+        }
+    }
+}
+```
+## 解法二
+### 思路
+使用list代替set
+- 将字符串排序
+- 在递归遍历的过程中跳过相同过的字符
+### 代码
+```java
+class Solution {
+    public String[] permutation(String S) {
+        char[] cs = S.toCharArray();
+        Arrays.sort(cs);
+        List<String> list = new LinkedList<>();
+        backTrack(cs, new StringBuilder(), new boolean[cs.length], list);
+        return list.toArray(new String[0]);
+    }
+
+    private void backTrack(char[] cs, StringBuilder path, boolean[] memo, List<String> list) {
+        if (path.length() == cs.length) {
+            list.add(path.toString());
+            return;
+        }
+        
+        for (int i = 0; i < cs.length; i++) {
+            if (i != 0 && cs[i] == cs[i - 1]) {
+                continue;
+            }
+            
+            if (!memo[i]) {
+                memo[i] = true;
+                backTrack(cs, path.append(cs[i]), memo, list);
+                path.deleteCharAt(path.length() - 1);
+                memo[i] = false;
+            }
+        }
+    }
+}
+```
+## 解法三
+### 思路
+- 使用字符交换代替StringBuilder拼接
+- 使用递归算阶乘的方法，用数组代替动态数组
+- 使用类变量记录结果对应的下标
+### 代码
+```java
+class Solution {
+    private int a = 0;
+
+    public String[] permutation(String S) {
+        String[] ans = new String[cal(S.length())];
+        process(S.toCharArray(), 0, ans);
+        return ans;
+    }
+
+    private void process(char[] cs, int index, String[] ans) {
+        if (index == cs.length) {
+            ans[a++] = new String(cs);
+            return;
+        }
+
+        for (int i = index; i < cs.length; i++) {
+            swap(cs, index, i);
+            process(cs, index + 1, ans);
+            swap(cs, index, i);
+        }
+    }
+
+    private void swap(char[] cs, int x, int y) {
+        if (x == y) {
+            return;
+        }
+
+        char c = cs[x];
+        cs[x] = cs[y];
+        cs[y] = c;
+    }
+
+    private int cal(int len) {
+        if (len <= 2) {
+            return len;
+        }
+
+        return cal(len - 1) * len;
+    }
+}
+```
