@@ -1,12 +1,14 @@
 package com.bottomlord.week_039;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author ChenYue
- * @date 2020/3/31 22:34
+ * @date 2020/4/1 8:15
  */
-public class Interview_0807_2 {
+public class Interview_0808_1_有重复字符串的排列组合 {
     public String[] permutation(String S) {
         char[] cs = S.toCharArray();
         Arrays.sort(cs);
@@ -21,10 +23,12 @@ public class Interview_0807_2 {
             return;
         }
 
-        char lastUsed = ' ';
         for (int i = 0; i < cs.length; i++) {
-            if (!memo[i] && cs[i] != lastUsed) {
-                lastUsed = cs[i];
+            if (i != 0 && cs[i] == cs[i - 1]) {
+                continue;
+            }
+
+            if (!memo[i]) {
                 memo[i] = true;
                 backTrack(cs, path.append(cs[i]), memo, list);
                 path.deleteCharAt(path.length() - 1);

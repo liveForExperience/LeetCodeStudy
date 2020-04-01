@@ -292,7 +292,7 @@ class Solution {
 ### 思路
 使用list代替set
 - 将字符串排序
-- 在递归遍历的过程中跳过相同过的字符
+- 在递归遍历的过程中跳过上次使用过的字符
 ### 代码
 ```java
 class Solution {
@@ -310,12 +310,10 @@ class Solution {
             return;
         }
         
-        for (int i = 0; i < cs.length; i++) {
-            if (i != 0 && cs[i] == cs[i - 1]) {
-                continue;
-            }
-            
-            if (!memo[i]) {
+        char lastUsed = ' ';
+        for (int i = 0; i < cs.length; i++) {            
+            if (!memo[i] && cs[i] != lastUsed) {
+                lastUsed = cs[i];
                 memo[i] = true;
                 backTrack(cs, path.append(cs[i]), memo, list);
                 path.deleteCharAt(path.length() - 1);
@@ -370,6 +368,89 @@ class Solution {
         }
 
         return cal(len - 1) * len;
+    }
+}
+```
+# Interview_0808_有重复字符串的排列组合
+## 题目
+有重复字符串的排列组合。编写一种方法，计算某字符串的所有排列组合。
+
+示例1:
+```
+ 输入：S = "qqe"
+ 输出：["eqq","qeq","qqe"]
+```
+示例2:
+```
+ 输入：S = "ab"
+ 输出：["ab", "ba"]
+```
+提示:
+```
+字符都是英文字母。
+字符串长度在[1, 9]之间。
+```
+## 解法
+### 思路
+和0807解法一类似，使用set
+### 代码
+```java
+class Solution {
+    public String[] permutation(String S) {
+        Set<String> set = new HashSet<>();
+        backTrack(S, new StringBuilder(), new boolean[S.length()], set);
+        return set.toArray(new String[0]);
+    }
+
+    private void backTrack(String s, StringBuilder path, boolean[] memo, Set<String> set) {
+        if (path.length() == s.length()) {
+            set.add(path.toString());
+            return;
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (!memo[i]) {
+                memo[i] = true;
+                backTrack(s, path.append(s.charAt(i)), memo, set);
+                path.deleteCharAt(path.length() - 1);
+                memo[i] = false;
+            }
+        }
+    }
+}
+```
+## 解法二
+### 思路
+和0807解法二类似：
+- 字符串排序
+- 使用临时变量记录当前层使用过的相同字符
+### 代码
+```java
+class Solution {
+    public String[] permutation(String S) {
+        char[] cs = S.toCharArray();
+        Arrays.sort(cs);
+        List<String> list = new LinkedList<>();
+        backTrack(cs, new StringBuilder(), new boolean[cs.length], list);
+        return list.toArray(new String[0]);
+    }
+
+    private void backTrack(char[] cs, StringBuilder path, boolean[] memo, List<String> list) {
+        if (path.length() == cs.length) {
+            list.add(path.toString());
+            return;
+        }
+        
+        char lastUsed = ' ';
+        for (int i = 0; i < cs.length; i++) {            
+            if (!memo[i] && cs[i] != lastUsed) {
+                memo[i] = true;
+                lastUsed = cs[i];
+                backTrack(cs, path.append(cs[i]), memo, list);
+                path.deleteCharAt(path.length() - 1);
+                memo[i] = false;
+            }
+        }
     }
 }
 ```
