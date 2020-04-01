@@ -454,3 +454,54 @@ class Solution {
     }
 }
 ```
+# Interview_0809_括号
+## 题目
+括号。设计一种算法，打印n对括号的所有合法的（例如，开闭一一对应）组合。
+
+说明：解集不能包含重复的子集。
+
+例如，给出 n = 3，生成结果为：
+```
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+```
+## 解法
+### 思路
+dfs：
+- 根节点时左括号
+- 退出条件：左右括号总数是否等于2n
+- 递归时判断：
+    - 如果左括号数小于n，可以继续append左括号递归
+    - 如果右括号数小于n且左括号数大于右括号数，可以append右括号递归
+### 代码
+```java
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> ans = new ArrayList<>();
+        dfs(ans, 0, 0, n, new StringBuilder());
+        return ans;
+    }
+    
+    private void dfs(List<String> list, int left, int right, int n, StringBuilder sb) {
+        if (left + right == n * 2) {
+            list.add(sb.toString());
+            return;
+        }
+        
+        if (left < n) {
+            dfs(list, left + 1, right, n, sb.append('('));
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        
+        if (right < n && right < left) {
+            dfs(list, left, right + 1, n, sb.append(')'));
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+}
+```
