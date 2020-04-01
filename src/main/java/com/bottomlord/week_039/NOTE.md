@@ -560,3 +560,35 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+不使用记忆化搜索，其实只有当要改的颜色和目标颜色一致的时候才需要判断是否已经搜索过，所以当颜色一样时就直接返回image即可
+### 代码
+```java
+class Solution {
+    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+        if (image == null || image.length == 0 || image[0].length == 0 || image[sr][sc] == newColor) {
+            return image;
+        }
+
+        int color = image[sr][sc], row = image.length, col = image[0].length;
+
+
+        dfs(image, sr, sc, row, col, color, newColor);
+        return image;
+    }
+
+    private void dfs(int[][] image, int x, int y, int row, int col, int color, int newColor) {
+        if (x < 0 || x >= row || y < 0 || y >= col || image[x][y] != color) {
+            return;
+        }
+
+        image[x][y] = newColor;
+
+        dfs(image, x + 1, y, row, col, color, newColor);
+        dfs(image, x - 1, y, row, col, color, newColor);
+        dfs(image, x, y + 1, row, col, color, newColor);
+        dfs(image, x, y - 1, row, col, color, newColor);
+    }
+}
+```
