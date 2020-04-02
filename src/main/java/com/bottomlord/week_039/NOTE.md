@@ -704,3 +704,95 @@ class Solution {
     }
 }
 ```
+# Interview_0812_八皇后
+## 题目
+设计一种算法，打印 N 皇后在 N × N 棋盘上的各种摆法，其中每个皇后都不同行、不同列，也不在对角线上。这里的“对角线”指的是所有的对角线，不只是平分整个棋盘的那两条对角线。
+
+注意：本题相对原题做了扩展
+
+示例:
+```
+ 输入：4
+ 输出：[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+ 解释: 4 皇后问题存在如下两个不同的解法。
+[
+ [".Q..",  // 解法 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // 解法 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+```
+## 解法
+### 思路
+回溯：
+- 判断是否能放置的三个因素：
+    - 该行是否有皇后
+    - 该列是否有皇后
+    - 该点是否在有皇后的点的1和-1斜率的直线上
+- 递归：
+    - 参数：
+        - 层数depth
+        - 暂存的皇后的坐标值放入数组records中，下标为行，值为列，初始化为-1
+    - 退出条件：判断当前递归层数是否为皇后个数，也就是矩阵行数
+    - 递归过程：
+        - 循环n列，根据records的记录判断当前点是否可以放置皇后
+        - 记录到相应records中并递归
+        - 回溯后重新置为-1，标记该行
+### 代码
+```java
+class Solution {
+public List<List<String>> solveNQueens(int n) {
+        List<List<String>> ans = new ArrayList<>();
+        backTrack(0, new int[n], ans, n);
+        return ans;
+    }
+
+    private void backTrack(int row, int[] records, List<List<String>> ans, int n) {
+        if (row == n) {
+            ans.add(print(records));
+            return;
+        }
+
+        for (int col = 0; col < n; col++) {
+            if (isValid(records, row, col)) {
+                records[row] = col;
+                backTrack(row + 1, records, ans, n);
+            }
+        }
+    }
+
+    private boolean isValid(int[] records, int row, int col) {
+        for (int r = 0; r < row; r++) {
+            if (records[r] == col || Math.abs(row - r) == Math.abs(col - records[r])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<String> print(int[] records) {
+        int len = records.length;
+        List<String> ans = new ArrayList<>(len);
+
+        for (int record : records) {
+            StringBuilder sb = new StringBuilder();
+            for (int col = 0; col < len; col++) {
+                if (record == col) {
+                    sb.append('Q');
+                } else {
+                    sb.append('.');
+                }
+            }
+            ans.add(sb.toString());
+        }
+
+        return ans;
+    }
+}
+```
