@@ -796,3 +796,53 @@ public List<List<String>> solveNQueens(int n) {
     }
 }
 ```
+# Interview_0813_堆箱子
+## 题目
+堆箱子。给你一堆n个箱子，箱子宽 wi、深 di、高 hi。箱子不能翻转，将箱子堆起来时，下面箱子的宽度、高度和深度必须大于上面的箱子。实现一种方法，搭出最高的一堆箱子。箱堆的高度为每个箱子高度的总和。
+
+输入使用数组[wi, di, hi]表示每个箱子。
+
+示例1:
+```
+ 输入：box = [[1, 1, 1], [2, 2, 2], [3, 3, 3]]
+ 输出：6
+```
+示例2:
+```
+ 输入：box = [[1, 1, 1], [2, 3, 4], [2, 6, 7], [3, 4, 5]]
+ 输出：10
+```
+提示:
+```
+箱子的数目不大于3000个。
+```
+## 解法
+### 思路
+动态规划：
+- 根据宽度升序排列，如果宽度相同，根据深度升序排列，如果深度相同，根据高度排序，这样所有前面的箱子都可以放在后面的箱子上面
+- 然后计算dp：
+    - `dp[i]`：前i个元素能堆积出的最大的高度
+    - 状态转移方程：遍历i之前的所有箱子，判断i的深度和高度是否大于该箱子，如果是，就将高度与该dp值累加，并和最大值作比较
+    - 初始化：`dp[0] = box[0][2]`
+### 代码
+```java
+class Solution {
+    public int pileBox(int[][] box) {
+        Arrays.sort(box, (x, y) -> x[0] == y[0] ? x[1] == y[1] ? y[2] - x[2] : y[1] - x[1] : x[0] - y[0]);
+        int[] dp = new int[box.length];
+        dp[0] = box[0][2];
+        int ans = dp[0];
+        for (int i = 0; i < box.length; i++) {
+            int depth = box[i][1], hight = box[i][2], max = 0;
+            for (int j = 0; j < i; j++) {
+                if (box[j][1] < depth && box[j][2] < hight) {
+                    max = Math.max(max, dp[j]);
+                }
+            }
+            dp[i] = max + hight;
+            ans = Math.max(ans, dp[i]);
+        }
+        return ans;
+    }
+}
+```
