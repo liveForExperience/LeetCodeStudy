@@ -984,3 +984,70 @@ class Solution {
     }
 }
 ```
+# Interview_1003_搜索旋转数组
+## 题目
+搜索旋转数组。给定一个排序后的数组，包含n个整数，但这个数组已被旋转过很多次了，次数不详。请编写代码找出数组中的某个元素，假设数组元素原先是按升序排列的。若有多个相同元素，返回索引值最小的一个。
+
+示例1:
+```
+ 输入: arr = [15, 16, 19, 20, 25, 1, 3, 4, 5, 7, 10, 14], target = 5
+ 输出: 8（元素5在该数组中的索引）
+```
+示例2:
+```
+ 输入：arr = [15, 16, 19, 20, 25, 1, 3, 4, 5, 7, 10, 14], target = 11
+ 输出：-1 （没有找到）
+```
+提示:
+```
+arr 长度范围在[1, 1000000]之间
+```
+## 解法
+### 思路
+二分查找：
+- 退出条件，头尾指针相遇
+- 指针移动过程：
+    - 计算中间点
+    - 头元素小于中间元素，说明`头中`这一段是一个升序
+        - 如果target在`头中`这一段中，就将尾指针移到中点
+        - 如果不在，就把头指针移到中+1
+    - 头元素大于中间元素，说明`头中`这段可能包含了一旋转点
+        - 如果target比头元素大，或者比中间元素小，就说明在这前半段里，尾指针移到中间点
+        - 如果target不是如上状态，就将头指针移到中+1的位置
+    - 如果头元素和中间元素相等，说明可能找到了target或者元素出现了重复
+        - 如果头元素是target，那就是头尾元素相遇，返回这个坐标
+        - 如果头元素不是target，说明是出现了重复的状态，向右移动头指针，逐一判断头元素之后的元素
+### 代码
+```java
+class Solution {
+    public int search(int[] arr, int target) {
+        
+        int head = 0, tail = arr.length - 1;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (arr[head] < arr[mid]) {
+                if (arr[head] <= target && target <= arr[mid]) {
+                    tail = mid;
+                } else {
+                    head = mid + 1;
+                }
+            } else if (arr[head] > arr[mid]) {
+                if (arr[head] <= target || target <= arr[mid]) {
+                    tail = mid;
+                } else {
+                    head = mid + 1;
+                }
+            } else if (arr[head] == arr[mid]) {
+                if (arr[head] != target) {
+                    head++;
+                } else {
+                    tail = head;
+                }
+            }
+        }
+
+        return arr[head] == target ? head : -1;
+    }
+}
+```
