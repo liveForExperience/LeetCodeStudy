@@ -846,3 +846,98 @@ class Solution {
     }
 }
 ```
+# Interview_0814_布尔运算
+## 题目
+给定一个布尔表达式和一个期望的布尔结果 result，布尔表达式由 0 (false)、1 (true)、& (AND)、 | (OR) 和 ^ (XOR) 符号组成。实现一个函数，算出有几种可使该表达式得出 result 值的括号方法。
+
+示例 1:
+```
+输入: s = "1^0|0|1", result = 0
+
+输出: 2
+解释: 两种可能的括号方法是
+1^(0|(0|1))
+1^((0|0)|1)
+```
+示例 2:
+```
+输入: s = "0&0&0&1^1|0", result = 1
+
+输出: 10
+```
+提示：
+```
+运算符的数量不超过 19 个
+```
+## 解法
+### 思路
+记忆化分治搜索；
+- `memo[i][j][r]`：记录坐标i与j之间能够计算成r的可能个数，初始化为-1
+- 因为是布尔计算，所以结果只有1和-1两种，样本空间只有4，方便遍历
+- 递归：
+    - 参数：
+        - 当前递归区间的表达式头尾指针，start，end
+        - 目标结果`result`
+        - 暂存的结果集合`memo`
+        - 表达式`s`
+    - 退出条件：
+        - `start == end`：判断当前结果是否
+        - `memo中的值不为-1`，返回该值
+    - 过程：
+        - 定义一个游标k遍历表达式区间，将表达式切割为左右两个部分，步长为2
+        - 遍历下一层递归的左右两个子区间的值，都是1或0的两种可能
+        - 判断遍历得到的两个值是否能通过当前层的表达式获得对应的结果
+            - 如果可以，就以k为中点，递归下去
+            - 将返回的结果相乘得到这种组合可能的所有可能数字
+### 代码
+```java
+class Solution {
+    public int countEval(String s, int result) {
+        int n = s.length();
+        int[][][] memo = new int[n][n][2];
+        for (int start = 0; start < n; start++) {
+            for (int end = 0; end < n; end++) {
+                Arrays.fill(memo[start][end], -1);
+            }
+        }
+        
+        return rec(0, n - 1, memo, result, s);
+    }
+
+    private int rec(int start, int end, int[][][] memo, int result, String s) {
+        if (start == end) {
+            return s.charAt(start) - '0' == result ? 1 : 0;
+        }
+
+        if (memo[start][end][result] != -1) {
+            return memo[start][end][result];
+        }
+
+        int ans = 0;
+
+        for (int k = start; k < end; k += 2) {
+            char operator = s.charAt(k + 1);
+            for (int left = 0; left <= 1; left++) {
+                for (int right = 0; right <= 1; right++) {
+                    if (cal(left, right, operator) == result) {
+                        ans += rec(start, k, memo, left, s) * rec(k + 2, end, memo, right, s);
+                    }
+                }
+            }
+        }
+
+        memo[start][end][result] = ans;
+        return ans;
+    }
+
+    private int cal(int left, int right, char operator) {
+        if (operator == '|') {
+            return left | right;
+        } else if (operator == '&') {
+            return left & right;
+        } else {
+            return left ^ right;
+        }
+    }
+}
+```
