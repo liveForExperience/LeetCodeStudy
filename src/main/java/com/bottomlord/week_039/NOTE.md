@@ -1051,3 +1051,154 @@ class Solution {
     }
 }
 ```
+# LeetCode_42_接雨水
+## 题目
+给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 感谢 Marcos 贡献此图。
+
+示例:
+```
+输入: [0,1,0,2,1,0,1,3,2,1,2,1]
+输出: 6
+```
+## 解法
+### 思路
+嵌套循环：
+- 遍历数组，获得当前高度
+- 从当前元素开始向左右分别遍历，获得左右两边的最高值
+- 求左右两边最高值之间的较小值，这个值比当前高度高的话，就可以盛水
+- 将可以盛的水的值进行累加
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        int ans = 0, len = height.length;
+        for (int i = 0; i < len; i++) {
+            int maxL = 0, maxR = 0;
+            
+            for (int l = i; l >= 0; l--) {
+                maxL = Math.max(maxL, height[l]);
+            }
+            
+            for (int r = i; r < len; r++) {
+                maxR = Math.max(maxR, height[r]);
+            }
+            
+            ans += Math.min(maxL, maxR) - height[i];
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 先分别遍历数组，记录当前坐标左右两边的最大值
+- 再遍历数组，计算当前元素左右两边的最大值的最小值，累加这个最小值与当前元素的差值
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        int len = height.length;
+        if (len == 0) {
+            return 0;
+        }
+        
+        int[] lMax = new int[len], rMax = new int[len];
+        lMax[0] = height[0];
+        rMax[len - 1] = height[len - 1];
+        for (int i = 1; i < len; i++) {
+            lMax[i] = Math.max(height[i], lMax[i - 1]);
+        }
+        
+        for (int i = len - 2; i >= 0; i--) {
+            rMax[i] = Math.max(height[i], rMax[i + 1]);
+        }
+        
+        int ans = 0;
+        for (int i = 0; i < len; i++) {
+            ans += Math.min(lMax[i], rMax[i]) - height[i];
+        }
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+单调栈：
+- 遍历数组，使用栈记录数组下标：
+    - 如果栈为空，直接入栈元素
+    - 如果当前元素比栈顶元素小，说明当前这个高度是可以被之前遍历到的元素被覆盖住的，入栈元素
+    - 如果当前元素比栈顶元素大，那说明当前元素和栈顶元素之前的元素形成了一个洼地
+        - 将该元素出栈，记录这个坐标
+        - 计算之前的坐标与当前元素坐标的距离
+        - 计算当前元素和栈顶元素的最小值，减去出栈元素的高度，再乘以距离，获得当前元素与栈顶元素之间形成的没有被计算的洼地面积，累加到答案中
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        if (height == null || height.length == 0) {
+            return 0;
+        }
+        int len = height.length;
+        Stack<Integer> stack = new Stack<>();
+        stack.push(0);
+        int ans = 0;
+        for (int i = 1; i < len; i++) {
+            while (height[i] > height[stack.peek()]) {
+                int top = stack.pop();
+                if (stack.isEmpty()) {
+                    break;
+                }
+                int distance = i - stack.peek() - 1;
+                int num = Math.min(height[i], height[stack.peek()]) - height[top];
+                ans += distance * num;
+            }
+            stack.push(i);
+        }
+        return ans;
+    }
+}
+```
+## 解法四
+### 思路
+双指针：
+- 变量：
+    - 左右指针
+    - 左右最大值
+- 退出条件：左右指针相遇
+- 过程：
+    - 判断左右指针对应的元素大小：
+        - 左元素小于右元素，
+            - 如果左边已经遍历过的元素，有比当前的元素大的，那么就能形成一个洼地，可以累加这个洼地值
+            - 如果当前元素比左边遍历过的元素大，那么就把当前值作为下一个洼地的左边高度，记录下来
+        - 左边元素大于等于右边元素：
+            - 逻辑和左边时类似
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        int l = 0, lMax = 0, r = height.length - 1, rMax = 0, ans = 0;
+        while (l < r) {
+            if (height[l] < height[r]) {
+                if (lMax > height[l]) {
+                    ans += lMax - height[l];
+                } else {
+                    lMax = height[l];
+                }
+                l++;
+            } else {
+                if (rMax > height[r]) {
+                    ans += rMax - height[r];
+                } else {
+                    rMax = height[r];
+                }
+                r--;
+            }
+        }
+
+        return ans;
+    }
+}
+```
