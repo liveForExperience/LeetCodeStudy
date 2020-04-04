@@ -1277,3 +1277,117 @@ class Solution {
     }
 }
 ```
+# Interview_1009_排序矩阵查找
+## 题目
+给定M×N矩阵，每一行、每一列都按升序排列，请编写代码找出某元素。
+
+示例:
+```
+现有矩阵 matrix 如下：
+
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
+给定 target = 5，返回 true。
+
+给定 target = 20，返回 false。
+```
+## 解法
+### 思路
+dfs+记忆化搜索
+### 代码
+```java
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return false;
+        }
+        int row = matrix.length, col = matrix[0].length;
+        return dfs(matrix, 0, 0, matrix.length, matrix[0].length, target, new boolean[row][col]);
+    }
+
+    private boolean dfs(int[][] matrix, int x, int y, int row, int col, int target, boolean[][] memo) {
+        if (x >= row || y >= col || target < matrix[x][y] || memo[x][y]) {
+            return false;
+        }
+
+        if (matrix[x][y] == target) {
+            return true;
+        }
+        
+        memo[x][y] = true;
+
+        return dfs(matrix, x + 1, y, row, col, target, memo) ||
+                dfs(matrix, x, y + 1, row, col, target, memo);
+    }
+}
+```
+## 解法二
+### 思路
+逐行二分查找
+### 代码
+```java
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        for (int[] row : matrix) {
+            if (search(row, target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean search(int[] row, int target) {
+        int l = 0, r = row.length - 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            
+            if (row[mid] == target) {
+                return true;
+            }
+            
+            if (row[mid] < target) {
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+        return false;
+    }
+}
+```
+## 解法三
+### 思路
+- 从矩阵的左上和右下两个方向向中间走
+- 行从右边开始从大到小搜索，如果比target大就左移
+- 列从上边开始从小到大搜索，如果比target小就下移
+### 代码
+```java
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return false;
+        }
+
+        int row = matrix.length, col = matrix[0].length, ri = 0, ci = col - 1;
+
+        while (ri < row && ci >= 0) {
+            if (matrix[ri][ci] == target) {
+                return true;
+            }
+            
+            if (matrix[ri][ci] > target) {
+                ci--;
+            } else {
+                ri++;
+            }
+        }
+        
+        return false;
+    }
+}
+```
