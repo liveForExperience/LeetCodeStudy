@@ -1202,3 +1202,78 @@ class Solution {
     }
 }
 ```
+# Interview_1005_稀疏数组搜索
+## 题目
+稀疏数组搜索。有个排好序的字符串数组，其中散布着一些空字符串，编写一种方法，找出给定字符串的位置。
+
+示例1:
+```
+ 输入: words = ["at", "", "", "", "ball", "", "", "car", "", "","dad", "", ""], s = "ta"
+ 输出：-1
+ 说明: 不存在返回-1。
+```
+示例2:
+```
+ 输入：words = ["at", "", "", "", "ball", "", "", "car", "", "","dad", "", ""], s = "ball"
+ 输出：4
+```
+提示:
+```
+words的长度在[1, 1000000]之间
+```
+## 解法
+### 思路
+遍历匹配
+### 代码
+```java
+class Solution {
+    public int findString(String[] words, String s) {
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if ("".equals(word)) {
+                continue;
+            }
+            
+            if (word.equals(s)) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
+## 解法二
+### 思路
+二分搜索
+### 代码
+```java
+class Solution {
+    public int findString(String[] words, String s) {
+        int l = 0, r = words.length - 1;
+        while (l <= r) {
+            while (l <= r && "".equals(words[l])) {
+                l++;
+            }
+            while (l <= r && "".equals(words[r])) {
+                r--;
+            }
+            int mid = l + (r - l) / 2;
+            while (mid < r && "".equals(words[mid])) {
+                mid++;
+            }
+            if (words[mid].equals(s)) {
+                return mid;
+            }
+            
+            if (s.compareTo(words[mid]) > 0) {
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
