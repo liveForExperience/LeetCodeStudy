@@ -1518,3 +1518,26 @@ class Node {
     }
 }
 ```
+# Interview_1607_最大数值
+## 题目
+编写一个方法，找出两个数字a和b中最大的那一个。不得使用if-else或其他比较运算符。
+
+示例：
+```
+输入： a = 1, b = 2
+输出： 2
+```
+## 解法
+### 思路
+- 使用逻辑右移判断`a-b`获得是整数还是负数
+- 用这个值乘以b，加上这个值与1的异或值乘以a，就获得了最大值
+- 大的值乘以的是1，小的值乘以的是0
+### 代码
+```java
+class Solution {
+    public int maximum(int a, int b) {
+        int bit = (int) (((long)a - (long)b) >>> 63);
+        return a * (bit ^ 1) + b * bit;
+    }
+}
+```
