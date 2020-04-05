@@ -1391,3 +1391,130 @@ class Solution {
     }
 }
 ```
+# LeetCode_460_LFU缓存
+## 题目
+设计并实现最不经常使用（LFU）缓存的数据结构。它应该支持以下操作：get 和 put。
+```
+get(key) - 如果键存在于缓存中，则获取键的值（总是正数），否则返回 -1。
+put(key, value) - 如果键不存在，请设置或插入值。当缓存达到其容量时，它应该在插入新项目之前，使最不经常使用的项目无效。在此问题中，当存在平局（即两个或更多个键具有相同使用频率）时，最近最少使用的键将被去除。
+```
+进阶：
+```
+你是否可以在 O(1) 时间复杂度内执行两项操作？
+```
+示例：
+```
+LFUCache cache = new LFUCache( 2 /* capacity (缓存容量) */ );
+
+cache.put(1, 1);
+cache.put(2, 2);
+cache.get(1);       // 返回 1
+cache.put(3, 3);    // 去除 key 2
+cache.get(2);       // 返回 -1 (未找到key 2)
+cache.get(3);       // 返回 3
+cache.put(4, 4);    // 去除 key 1
+cache.get(1);       // 返回 -1 (未找到 key 1)
+cache.get(3);       // 返回 3
+cache.get(4);       // 返回 4
+```
+## 解法
+### 思路
+两个散列表和一个双向链表：
+- 参数：
+    - 散列表cache保存节点
+    - 散列表freqs保存次数与对应的节点链表
+- 过程：
+    - get：
+        - 如果没有返回-1
+        - 如果有，返回节点值，且移动其再freqs中的节点
+    - put：
+        - 如果大小超过了容量，就删除最近出现次数最少的节点，并插入新的节点
+        - 如果没有，就新增一个节点，并查看是否有出现次数为1的，如果有就新增到链表头，否则就新增一个链表，并将节点插入
+        - 如果有，就覆盖该值，并移动其在freq中的位置
+### 代码
+```java
+class LFUCache {
+    private Map<Integer, Node> cache;
+    private Map<Integer, LinkedHashSet<Node>> freqs;
+    private int size;
+    private int cap;
+    private int min;
+
+    public LFUCache(int capacity) {
+        this.cache = new HashMap<>();
+        this.freqs = new HashMap<>();
+        this.size = 0;
+        this.cap = capacity;
+        this.min = 0;
+    }
+
+    public int get(int key) {
+        Node node = cache.get(key);
+        if (node == null) {
+            return -1;
+        }
+        incrFreq(node);
+        return node.value;
+    }
+
+    public void put(int key, int value) {
+        if (cap == 0) {
+            return;
+        }
+
+        Node node = cache.get(key);
+        if (node != null) {
+            node.value = value;
+            incrFreq(node);
+        } else {
+            if (size == cap) {
+                Node toDelNode = removeNode();
+                cache.remove(toDelNode.key);
+                size--;
+            }
+            Node newNode = new Node(key, value);
+            cache.put(key, newNode);
+            addNode(newNode);
+            size++;
+        }
+    }
+
+    private void addNode(Node newNode) {
+        LinkedHashSet<Node> set = freqs.computeIfAbsent(1, k -> new LinkedHashSet<>());
+        set.add(newNode);
+        min = 1;
+    }
+
+    private Node removeNode() {
+        LinkedHashSet<Node> set = freqs.get(min);
+        Node toDelNode = set.iterator().next();
+        set.remove(toDelNode);
+        return toDelNode;
+    }
+
+    private void incrFreq(Node node) {
+        int freq = node.freq;
+        LinkedHashSet<Node> set = freqs.get(freq);
+        set.remove(node);
+        if (freq == min && set.size() == 0) {
+            min = freq + 1;
+        }
+
+        node.freq++;
+        LinkedHashSet<Node> newSet = freqs.computeIfAbsent(freq + 1, k -> new LinkedHashSet<>());
+        newSet.add(node);
+    }
+}
+
+class Node {
+    public int key;
+    public int value;
+    public int freq;
+
+    public Node(int key, int value) {
+        this.key = key;
+        this.value = value;
+        this.freq = 1;
+    }
+}
+```
