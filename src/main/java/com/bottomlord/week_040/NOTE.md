@@ -104,3 +104,36 @@ class Solution {
     }
 }
 ```
+# Interview_1704_消失的数字
+## 题目
+数组nums包含从0到n的所有整数，但其中缺了一个。请编写代码找出那个缺失的整数。你有办法在O(n)时间内完成吗？
+
+示例 1：
+```
+输入：[3,0,1]
+输出：2
+```
+示例 2：
+```
+输入：[9,6,4,2,3,5,7,0,1]
+输出：8
+```
+## 解法
+### 思路
+- 通过数组长度和等差数列求和公式，求得总和
+- 遍历数组求得元素总和
+- 相减获得目标值
+### 代码
+```java
+class Solution {
+    public int missingNumber(int[] nums) {
+        int origin = nums.length * (nums.length + 1) / 2;
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        
+        return origin - sum;
+    }
+}
+```
