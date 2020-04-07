@@ -137,3 +137,135 @@ class Solution {
     }
 }
 ```
+# Interview_1010_数字流的秩
+## 题目
+假设你正在读取一串整数。每隔一段时间，你希望能找出数字 x 的秩(小于或等于 x 的值的个数)。请实现数据结构和算法来支持这些操作，也就是说：
+
+实现 track(int x) 方法，每读入一个数字都会调用该方法；
+
+实现 getRankOfNumber(int x) 方法，返回小于或等于 x 的值的个数。
+
+示例:
+```
+输入:
+["StreamRank", "getRankOfNumber", "track", "getRankOfNumber"]
+[[], [1], [0], [0]]
+输出:
+[null,0,null,1]
+```
+提示：
+```
+x <= 50000
+track 和 getRankOfNumber 方法的调用次数均不超过 2000 次
+```
+## 解法
+### 思路
+使用优先级队列
+### 代码
+```java
+class StreamRank {
+    private PriorityQueue<Integer> queue;
+    public StreamRank() {
+        this.queue = new PriorityQueue<>();
+    }
+
+    public void track(int x) {
+        this.queue.offer(x);
+    }
+
+    public int getRankOfNumber(int x) {
+        int count = 0;
+        List<Integer> list = new ArrayList<>(); 
+        while (!this.queue.isEmpty()) {
+            if (this.queue.peek() > x) {
+                break;
+            }
+
+            list.add(this.queue.poll());
+            count++;
+        }
+
+        for (int num : list) {
+            this.queue.offer(num);
+        }
+
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+二叉搜索树：
+- 树的节点类中有一个用来记录，比当前值小或等于的节点个数的属性count
+- track：遍历二叉树
+    - 如果当前节点和x相等，当前节点的count值加1
+    - 如果当前节点比x小，去右子树搜索
+    - 如果当前节点比x大，说明x可以放在当前节点的左子树中，当前节点的count加1，这个count代表当前节点的左子树个数
+- getRankOfNumber：遍历二叉树
+    - 搜索所有比x大的节点，将这些节点的count值累加
+    - 直到搜索到和x值相等的值，或没有节点为止    
+### 代码
+```java
+class StreamRank {
+    private Node root;
+    public StreamRank() {
+    }
+
+    public void track(int x) {
+        if (root == null) {
+            this.root = new Node(x);
+        } else {
+            Node node = this.root;
+            while (true) {
+                if (node.val == x) {
+                    node.count++;
+                    break;
+                } else if (node.val > x) {
+                    node.count++;
+                    if (node.left != null) {
+                        node = node.left;
+                    } else {
+                        node.left = new Node(x);
+                        break;
+                    }
+                } else {
+                    if (node.right != null) {
+                        node = node.right;
+                    } else {
+                        node.right = new Node(x);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public int getRankOfNumber(int x) {
+        int ans = 0;
+        Node node = root;
+        while (node != null) {
+            if (node.val == x) {
+                ans += node.count;
+                break;
+            } else if (node.val > x) {
+                node = node.left;
+            } else {
+                ans += node.count;
+                node = node.right;
+            }
+        }
+        return ans;
+    }
+}
+
+class Node {
+    public int val;
+    public int count;
+    public Node left;
+    public Node right;
+    public Node(int val) {
+        this.val = val;
+        this.count = 1;
+    }
+}
+```
