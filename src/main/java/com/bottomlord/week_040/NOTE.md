@@ -610,3 +610,46 @@ class Solution {
     }
 }
 ```
+# Interview_1606_最小差
+## 题目
+给定两个整数数组a和b，计算具有最小差绝对值的一对数值（每个数组中取一个值），并返回该对数值的差
+
+示例：
+```
+输入：{1, 3, 15, 11, 2}, {23, 127, 235, 19, 8}
+输出： 3，即数值对(11, 8)
+```
+提示：
+```
+1 <= a.length, b.length <= 100000
+-2147483648 <= a[i], b[i] <= 2147483647
+正确结果在区间[-2147483648, 2147483647]内
+```
+## 解法
+### 思路
+双指针：
+- 两个数组排序
+- 同时遍历两个数组的下标，直到有一个下标越界
+- 求两个值的差值的绝对值，并暂存相对最小值
+- 比较两个数组的元素，如果a元素小就移动a元素，否则移动b元素
+- 小心int最小值减0取绝对值的溢出情况
+- 这样移动可以使得两个元素相对的接近
+### 代码
+```java
+class Solution {
+    public int smallestDifference(int[] a, int[] b) {
+        Arrays.sort(a);
+        Arrays.sort(b);
+        long ans = Integer.MAX_VALUE;
+        for (int i = 0, j = 0; i < a.length && j < b.length;) {
+            ans = Math.min(Math.abs((long)a[i] - (long)b[j]), ans);
+            if (a[i] < b[j]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return (int)ans;
+    }
+}
+```
