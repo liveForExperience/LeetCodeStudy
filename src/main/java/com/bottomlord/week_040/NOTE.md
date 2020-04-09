@@ -653,3 +653,82 @@ class Solution {
     }
 }
 ```
+# Interview_1608_整数的英语表示
+## 题目
+给定一个整数，打印该整数的英文描述。
+
+示例 1:
+```
+输入: 123
+输出: "One Hundred Twenty Three"
+```
+示例 2:
+```
+输入: 12345
+输出: "Twelve Thousand Three Hundred Forty Five"
+```
+示例 3:
+```
+输入: 1234567
+输出: "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+```
+示例 4:
+```
+输入: 1234567891
+输出: "One Billion Two Hundred Thirty Four Million Five Hundred Sixty Seven Thousand Eight Hundred Ninety One"
+```
+## 解法
+### 思路
+- 把字符串分成三类：
+    - 小于20的
+    - 100以内的10的倍数
+    - 千，百万，10亿
+- 将整数按每三位分割，每一段的内容是一致的，区别在最后是千，百万，十亿还是没有
+- 所以可以使用递归来算每一段，每一段里面用字符串的前两种做判断和拼接
+### 代码
+```java
+class Solution {
+    private String[] ones = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+            "Nine", "Ten", "Eleven","Twelve", "Thirteen", "Fourteen", "Fifteen",
+            "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    private String[] tens = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+    private String[] gens = {"Billion", "Million", "Thousand", ""};
+    public String numberToWords(int num) {
+        if (num == 0) {
+            return "Zero";
+        }
+
+        String ans = "";
+        int[] factors = new int[]{1000000000, 1000000, 1000, 1};
+        for (int i = 0; i < factors.length; i++) {
+            ans += recurse(num / factors[i]);
+            if (num / factors[i] != 0) {
+                ans += " " + gens[i] + " ";
+            }
+            num %= factors[i];
+        }
+        
+        return ans.trim();
+    }
+
+    private String recurse(int num) {
+        if (num < 20) {
+            return ones[num];
+        }
+
+        if (num < 100) {
+            String ans = tens[num / 10];
+            if (num % 10 != 0) {
+                ans += " " + ones[num % 10];
+            }
+            return ans;
+        }
+
+        String ans = ones[num / 100] + " Hundred";
+        if (num % 100 != 0) {
+            ans += " " + recurse(num % 100);
+        }
+        return ans;
+    }
+}
+```
