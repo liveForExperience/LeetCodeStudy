@@ -804,3 +804,121 @@ class Solution {
     }
 }
 ```
+# Interview_1609_运算
+## 题目
+请实现整数数字的乘法、减法和除法运算，运算结果均为整数数字，程序中只允许使用加法运算符和逻辑运算符，允许程序中出现正负常数，不允许使用位运算。
+
+你的实现应该支持如下操作：
+```
+Operations() 构造函数
+minus(a, b) 减法，返回a - b
+multiply(a, b) 乘法，返回a * b
+divide(a, b) 除法，返回a / b
+```
+示例：
+```
+Operations operations = new Operations();
+operations.minus(1, 2); //返回-1
+operations.multiply(3, 4); //返回12
+operations.divide(5, -2); //返回-2
+```
+提示：
+```
+你可以假设函数输入一定是有效的，例如不会出现除法分母为0的情况
+单个用例的函数调用次数不会超过1000次
+```
+## 解法
+### 思路
+- 减法：使用负号
+- 乘法：
+    - 判断正负
+    - 如果b小于等于10，那就直接累加b次的a
+    - 如果b大于10，从b尾部开始获取每一位的值，累加这个值，再乘以相应的位数个10，将获得的值累加
+    - 根据正负号返回值
+- 除法：
+    - 判断正负
+    - 如果a是0，返回0
+    - 如果a和b的绝对值相等，根据正负号返回正负1
+    - 从a的头部开始获取a每一位的值，前一位上的值10倍和余数的和，与当前这一位的值的和，计算能被b累减几次，这个次数与之前暂存的次数的10倍相加，直到a被遍历完，返回这个次数的累加值即可  
+### 代码
+```java
+class Operations {
+    public Operations() {
+
+    }
+
+    public int minus(int a, int b) {
+        return a + (-b);
+    }
+
+    public int multiply(int a, int b) {
+        if (a == 0 || b == 0) {
+            return 0;
+        }
+
+        boolean negative = isNegative(a, b);
+
+        a = Math.abs(a);
+        b = Math.abs(b);
+        
+        int ans = 0;
+        if (b <= 10) {
+            for (int i = 0; i < b; i++) {
+                ans += a;
+            }
+            return negative ? -ans : ans;
+        }
+
+        String sb = String.valueOf(b);
+        for (int i = sb.length() - 1; i >= 0; i--) {
+            int bit = sb.charAt(i) - '0';
+            int multi = multiply(a, bit);
+            for (int j = 0; j < sb.length() - 1 - i; j++) {
+                multi = multiply(multi, 10);
+            }
+            ans += multi;
+        }
+
+        return negative ? -ans : ans;
+    }
+
+    public int divide(int a, int b) {
+        if (b == 1) {
+            return a;
+        }
+
+        if (b == -1) {
+            return -a;
+        }
+
+        boolean negative = isNegative(a, b);
+        a = Math.abs(a);
+        b = Math.abs(b);
+        if (a < b) {
+            return 0;
+        }
+
+        if (a == b) {
+            return negative ? -1 : 1;
+        }
+
+        int ans = 0, cur = 0;
+        String sa = String.valueOf(a);
+        for (int i = 0; i < sa.length(); i++) {
+            int bit = sa.charAt(i) - '0', count = 0;
+            cur = multiply(cur, 10) + bit;
+            while (cur >= b) {
+                cur = minus(cur, b);
+                count++;
+            }
+            ans = multiply(ans, 10) + count;
+        }
+
+        return negative ? -ans : ans;
+    }
+
+    private boolean isNegative(int a, int b) {
+        return (a < 0 && b > 0) || (a > 0 && b < 0);
+    }
+}
+```
