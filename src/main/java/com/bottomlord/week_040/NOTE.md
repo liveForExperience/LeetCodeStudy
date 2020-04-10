@@ -732,3 +732,75 @@ class Solution {
     }
 }
 ```
+# Interview_1611_跳水板
+## 题目
+你正在使用一堆木板建造跳水板。有两种类型的木板，其中长度较短的木板长度为shorter，长度较长的木板长度为longer。你必须正好使用k块木板。编写一个方法，生成跳水板所有可能的长度。
+
+返回的长度需要从小到大排列。
+
+示例：
+```
+输入：
+shorter = 1
+longer = 2
+k = 3
+输出： {3,4,5,6}
+```
+提示：
+```
+0 < shorter <= longer
+0 <= k <= 100000
+```
+## 解法
+### 思路
+循环：
+- 遍历获得一种木板的使用个数
+- 循环内根据使用的木板个数累加不同结果，存入set中
+- 排序
+### 代码
+```java
+class Solution {
+    public int[] divingBoard(int shorter, int longer, int k) {
+        if (k == 0) {
+            return new int[0];
+        }
+        
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i <= k; i++) {
+            set.add(shorter * (k - i) + longer * i);
+        }
+        return set.stream().mapToInt(x -> x).sorted().toArray();
+    }
+}
+```
+## 解法二
+### 思路
+- 解法一中，每一种可能的结果中，都大于等于k个最短木板的长度
+- 每一种不同结果的区别在于这个最短木板长度的基础上，到底有多少个长短木板的差值
+- 应为答案不能有重复，所以如果长短木板一样长，那么起始结果就只有一个
+- 过程：
+    - 特殊处理k是0、长短木板长度一样的情况
+    - 计算长短木板的差`diff`
+    - 循环`k + 1`次，计算`k个短木板长度 + i个diff`的结果，放入数组中
+    - 循环结束返回 
+### 代码
+```java
+class Solution {
+    public int[] divingBoard(int shorter, int longer, int k) {
+        if (k == 0) {
+            return new int[0];
+        }
+        
+        if (shorter == longer) {
+            return new int[]{shorter * k};
+        }
+        
+        int diff = longer - shorter;
+        int[] ans = new int[k + 1];
+        for (int i = 0; i <= k; i++) {
+            ans[i] = shorter * k + diff * i;
+        }
+        return ans;
+    }
+}
+```
