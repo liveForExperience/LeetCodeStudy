@@ -1042,3 +1042,213 @@ class Solution {
     }
 }
 ```
+# LeetCode_887_鸡蛋掉落
+## 题目
+你将获得 K 个鸡蛋，并可以使用一栋从 1 到 N  共有 N 层楼的建筑。
+
+每个蛋的功能都是一样的，如果一个蛋碎了，你就不能再把它掉下去。
+
+你知道存在楼层 F ，满足 0 <= F <= N 任何从高于 F 的楼层落下的鸡蛋都会碎，从 F 楼层或比它低的楼层落下的鸡蛋都不会破。
+
+每次移动，你可以取一个鸡蛋（如果你有完整的鸡蛋）并把它从任一楼层 X 扔下（满足 1 <= X <= N）。
+
+你的目标是确切地知道 F 的值是多少。
+
+无论 F 的初始值如何，你确定 F 的值的最小移动次数是多少？
+
+ 
+
+示例 1：
+```
+输入：K = 1, N = 2
+输出：2
+解释：
+鸡蛋从 1 楼掉落。如果它碎了，我们肯定知道 F = 0 。
+否则，鸡蛋从 2 楼掉落。如果它碎了，我们肯定知道 F = 1 。
+如果它没碎，那么我们肯定知道 F = 2 。
+因此，在最坏的情况下我们需要移动 2 次以确定 F 是多少。
+```
+示例 2：
+```
+输入：K = 2, N = 6
+输出：3
+```
+示例 3：
+```
+输入：K = 3, N = 14
+输出：4
+```
+提示：
+```
+1 <= K <= 100
+1 <= N <= 10000
+```
+## 解法
+### 思路
+//todo 待解释
+### 代码
+```java
+public class Solution {
+
+    public int superEggDrop(int K, int N) {
+        // dp[i][j]：一共有 i 层楼梯的情况下，使用 j 个鸡蛋的最少仍的次数
+        int[][] dp = new int[N + 1][K + 1];
+        
+        // 初始化
+        for (int i = 0; i <= N; i++) {
+            Arrays.fill(dp[i], i);
+        }
+        for (int j = 0; j <= K; j++) {
+            dp[0][j] = 0;
+        }
+
+        dp[1][0] = 0;
+        for (int j = 1; j <= K; j++) {
+            dp[1][j] = 1;
+        }
+        for (int i = 0; i <= N; i++) {
+            dp[i][0] = 0;
+            dp[i][1] = i;
+        }
+
+        // 开始递推
+        for (int i = 2; i <= N; i++) {
+            for (int j = 2; j <= K; j++) {
+                // 在区间 [1, i] 里确定一个最优值
+                int left = 1;
+                int right = i;
+                while (left < right) {
+                    // 找 dp[k - 1][j - 1] <= dp[i - mid][j] 的最大值 k
+                    int mid = left + (right - left + 1) / 2;
+                    
+                    int breakCount = dp[mid - 1][j - 1];
+                    int notBreakCount = dp[i - mid][j];
+                    if (breakCount > notBreakCount) {
+                        // 排除法（减治思想）写对二分见第 35 题，先想什么时候不是解
+                        // 严格大于的时候一定不是解，此时 mid 一定不是解
+                        // 下一轮搜索区间是 [left, mid - 1]
+                        right = mid - 1;
+                    } else {
+                        // 这个区间一定是上一个区间的反面，即 [mid, right]
+                        // 注意这个时候取中间数要上取整，int mid = left + (right - left + 1) / 2;
+                        left = mid;
+                    }
+                }
+                // left 这个下标就是最优的 k 值，把它代入转移方程 Math.max(dp[k - 1][j - 1], dp[i - k][j]) + 1) 即可
+                dp[i][j] = Math.max(dp[left - 1][j - 1], dp[i - left][j]) + 1;
+            }
+        }
+        return dp[N][K];
+    }
+}
+```
+# Interview_1614_最佳直线
+## 题目
+给定一个二维平面及平面上的 N 个点列表Points，其中第i个点的坐标为Points[i]=[Xi,Yi]。请找出一条直线，其通过的点的数目最多。
+
+设穿过最多点的直线所穿过的全部点编号从小到大排序的列表为S，你仅需返回[S[0],S[1]]作为答案，若有多条直线穿过了相同数量的点，则选择S[0]值较小的直线返回，S[0]相同则选择S[1]值较小的直线返回。
+
+示例：
+```
+输入： [[0,0],[1,1],[1,0],[2,0]]
+输出： [0,2]
+解释： 所求直线穿过的3个点的编号为[0,2,3]
+```
+提示：
+```
+2 <= len(Points) <= 300
+len(Points[i]) = 2
+```
+## 解法
+### 思路
+- 嵌套循环，遍历所有两两坐标之间的组合
+- 嵌套中计算两两之间的`ax + by +c = 0`中的abc的值
+- 嵌套中再遍历所有节点，算出能够带入`ax + by + c = 0`的坐标，计数
+- 计数值和最大值做比较，如果是最大值，就记录坐标。如果和最大值相等，就取x值最小的点
+### 代码
+```java
+class Solution {
+    public int[] bestLine(int[][] points) {
+        int[] ans = new int[2];
+        int max = 0;
+
+        for (int i = 0; i < points.length - 1; i++) {
+            for (int j = i + 1; j < points.length; j++) {
+                int x1 = points[i][0], y1 = points[i][1];
+                int x2 = points[j][0], y2 = points[j][1];
+
+                int a = y2 - y1, b = x1 - x2, c = y1 * (x2 - x1) - x1 * (y2 - y1);
+                int count = 0;
+                for (int[] point : points) {
+                    if (atLine(a, b, c, point[0], point[1])) {
+                        count++;
+                    }
+                }
+
+                if (count > max) {
+                    max = count;
+                    ans[0] = i;
+                    ans[1] = j;
+                } else if (count == max) {
+                    if (i == ans[0] && j < ans[1]) {
+                        ans[1] = j;
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean atLine(int a, int b, int c, int x, int y) {
+        return a * x + b * y + c == 0;
+    }
+}
+```
+# Interview_1615_珠玑妙算
+## 题目
+珠玑妙算游戏（the game of master mind）的玩法如下。
+
+计算机有4个槽，每个槽放一个球，颜色可能是红色（R）、黄色（Y）、绿色（G）或蓝色（B）。例如，计算机可能有RGGB 4种（槽1为红色，槽2、3为绿色，槽4为蓝色）。作为用户，你试图猜出颜色组合。打个比方，你可能会猜YRGB。要是猜对某个槽的颜色，则算一次“猜中”；要是只猜对颜色但槽位猜错了，则算一次“伪猜中”。注意，“猜中”不能算入“伪猜中”。
+
+给定一种颜色组合solution和一个猜测guess，编写一个方法，返回猜中和伪猜中的次数answer，其中answer[0]为猜中的次数，answer[1]为伪猜中的次数。
+
+示例：
+```
+输入： solution="RGBY",guess="GGRR"
+输出： [1,1]
+解释： 猜中1次，伪猜中1次。
+```
+## 解法
+### 思路
+- 先算两个字符串中相同字符的个数`all`
+- 然后算相同位置字符一样的个数`same`
+- 答案第一个`same`，第二个返回`all - same`
+### 代码
+```java
+class Solution {
+    public int[] masterMind(String solution, String guess) {
+        char[] css = solution.toCharArray(), csg = guess.toCharArray();
+
+        int same = 0;
+        for (int i = 0; i < solution.length(); i++) {
+            if (css[i] == csg[i]) {
+                same++;
+            }
+        }
+
+        int all = 0;
+        int[] bucket1 = new int[26], bucket2 = new int[26];
+        for (int i = 0; i < solution.length(); i++) {
+            bucket1[css[i] - 'A']++;
+            bucket2[csg[i] - 'A']++;
+        }
+        
+        for (int i = 0; i < bucket1.length; i++) {
+            all += Math.min(bucket1[i], bucket2[i]);
+        }
+        
+        return new int[]{same, all - same};
+    }
+}
+```
