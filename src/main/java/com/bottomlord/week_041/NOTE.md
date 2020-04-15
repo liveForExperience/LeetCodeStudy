@@ -174,3 +174,88 @@ class Solution {
     }
 }
 ```
+# LeetCode_542_01矩阵
+## 题目
+给定一个由 0 和 1 组成的矩阵，找出每个元素到最近的 0 的距离。
+
+两个相邻元素间的距离为 1 。
+
+示例 1:
+```
+输入:
+
+0 0 0
+0 1 0
+0 0 0
+输出:
+
+0 0 0
+0 1 0
+0 0 0
+```
+示例 2:
+```
+输入:
+
+0 0 0
+0 1 0
+1 1 1
+输出:
+
+0 0 0
+0 1 0
+1 2 1
+```
+注意:
+```
+给定矩阵的元素个数不超过 10000。
+给定矩阵中至少有一个元素是 0。
+矩阵中的元素只在四个方向上相邻: 上、下、左、右。
+```
+## 解法
+### 思路
+bfs
+- 遍历二维数组获取所有0的坐标
+- 将所有为1的坐标改为-1，代表未搜索过
+- bfs所有值为0的坐标，如果周边的坐标是-1，则其值为当前坐标的值+1
+- 新生成的坐标继续放入队列中，直到队列为空为止
+### 代码
+```java
+class Solution {
+    public int[][] updateMatrix(int[][] matrix) {
+        Queue<int[]> queue = new ArrayDeque<>();
+        int row = matrix.length, col = matrix[0].length;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (matrix[i][j] == 0) {
+                    queue.offer(new int[]{i, j});
+                } else {
+                    matrix[i][j] = -1;
+                }
+            }
+        }
+
+        int[] dx = new int[]{-1, 1, 0 ,0},
+              dy = new int[]{0, 0, -1, 1};
+        
+        while (!queue.isEmpty()) {
+            int[] arr = queue.poll();
+            if (arr == null) {
+                continue;
+            }
+            
+            for (int i = 0; i < 4; i++) {
+                int x = arr[0] + dx[i],
+                    y = arr[1] + dy[i];
+                
+                if (x >= 0 && x < row && y >= 0 && y < col && matrix[x][y] == -1) {
+                    matrix[x][y] = matrix[arr[0]][arr[1]] + 1;
+                    queue.offer(new int[]{x, y});
+                }
+            }
+        }
+        
+        return matrix;
+    }
+}
+```
