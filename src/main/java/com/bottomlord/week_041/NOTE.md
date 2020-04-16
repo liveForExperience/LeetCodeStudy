@@ -487,3 +487,122 @@ class Solution {
     }
 }
 ```
+# Interview_1618_模式匹配
+## 题目
+你有两个字符串，即pattern和value。 pattern字符串由字母"a"和"b"组成，用于描述字符串中的模式。例如，字符串"catcatgocatgo"匹配模式"aabab"（其中"cat"是"a"，"go"是"b"），该字符串也匹配像"a"、"ab"和"b"这样的模式。但需注意"a"和"b"不能同时表示相同的字符串。编写一个方法判断value字符串是否匹配pattern字符串。
+
+示例 1：
+```
+输入： pattern = "abba", value = "dogcatcatdog"
+输出： true
+```
+示例 2：
+```
+输入： pattern = "abba", value = "dogcatcatfish"
+输出： false
+```
+示例 3：
+```
+输入： pattern = "aaaa", value = "dogcatcatdog"
+输出： false
+```
+示例 4：
+```
+输入： pattern = "abba", value = "dogdogdogdog"
+输出： true
+解释： "a"="dogdog",b=""，反之也符合规则
+```
+## 解法
+### 思路
+- 通过模式串，确定a和b组成的字符串的所有长度的可能性`a_num * a + b_num * b = value.length`
+- 遍历所有长度可能，匹配是否和value相等
+### 代码
+```java
+class Solution {
+    public boolean patternMatching(String pattern, String value) {
+        if ("".equals(pattern) && "".equals(value)) {
+            return true;
+        }
+
+        if ("".equals(pattern)) {
+            return false;
+        }
+
+        if ("".equals(value)) {
+            return pattern.length() == 1;
+        }
+
+        int aNum = 0, bNum = 0, len = value.length();
+        for (char c : pattern.toCharArray()) {
+            if (c == 'a') {
+                aNum++;
+            } else {
+                bNum++;
+            }
+        }
+
+        if (aNum == 0 || bNum == 0) {
+            int num = aNum != 0 ? aNum : bNum, numLen = len / num, start = 0;
+            if (numLen == 0) {
+                return false;
+            }
+            
+            String str = null;
+
+            for (int i = 0; i < pattern.length(); i++) {
+                if (str == null) {
+                    str = value.substring(start, start + numLen);
+                } else {
+                    if (!Objects.equals(str, value.substring(start, start + numLen))) {
+                        return false;
+                    }
+                }
+                start += numLen;
+            }
+
+            return true;
+        }
+
+        boolean flag = false;
+        for (int i = 0; i <= len; i++) {
+            if (len - aNum * i < 0 || (len - aNum * i) % bNum != 0) {
+                continue;
+            }
+
+            int aLen = i, bLen = (len - aNum * i) / bNum, start = 0;
+            String a = null, b = null;
+            boolean innerFlag = true;
+            for (int j = 0; j < pattern.length(); j++) {
+                if (pattern.charAt(j) == 'a') {
+                    if (a == null) {
+                        a = value.substring(start, start + aLen);
+                    } else {
+                        if (!Objects.equals(a, value.substring(start, start + aLen))) {
+                            innerFlag = false;
+                            break;
+                        }
+                    }
+                    start += aLen;
+                } else {
+                    if (b == null) {
+                        b = value.substring(start, start + bLen);
+                    } else {
+                        if (!Objects.equals(b, value.substring(start, start + bLen))) {
+                            innerFlag = false;
+                            break;
+                        }
+                    }
+                    start += bLen;
+                }
+            }
+
+            if (innerFlag && !Objects.equals(a, b)) {
+                flag = true;
+                break;
+            }
+        }
+
+        return flag;
+    }
+}
+```
