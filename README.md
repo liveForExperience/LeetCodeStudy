@@ -43,7 +43,7 @@
 |38|2019/3/23 - 2020/3/29| [21](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_038) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_038/NOTE.md) | - |[0508_绘制直线_解1](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_038/Interview_0508_1_绘制直线.java)  |:mask:|336|
 |39|2019/3/30 - 2020/4/5| [21](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_039) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_039/NOTE.md) | - | - |:mask:|324|
 |40|2019/4/6 - 2020/4/12| [18](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_040) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_040/NOTE.md) | - | - |:mask:|316|
-|41|2019/4/13 - 2020/4/19| [3](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_041) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_041/NOTE.md) | - | - |:mask:|316|
+|41|2019/4/13 - 2020/4/19| [4](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_041) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_041/NOTE.md) | - | - |:mask:|316|
 ## 竞赛
 <table>
     <tr align="center">

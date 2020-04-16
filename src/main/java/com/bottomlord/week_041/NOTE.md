@@ -259,3 +259,109 @@ class Solution {
     }
 }
 ```
+# LeetCode_56_合并区间
+## 题目
+给出一个区间的集合，请合并所有重叠的区间。
+
+示例 1:
+```
+输入: [[1,3],[2,6],[8,10],[15,18]]
+输出: [[1,6],[8,10],[15,18]]
+解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+```
+示例 2:
+```
+输入: [[1,4],[4,5]]
+输出: [[1,5]]
+解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。
+```
+## 解法
+### 思路
+- 二维数组排序，根据第一个元素升序，再根据第二个元素升序
+- 初始化一个动态数组ans用来存放结果
+- 遍历二维数组:
+    - 如果ans为空，将当前数组放入ans中
+    - 如果ans的最后一个数组的第二个元素小于当前数组的第一个元素，说明不能合并，将当前数组放入ans中
+    - 否则，说明可以合并，依据当前数组的第二个元素和ans最后数组的第二个元素的最大值，修改ans中的最后数组的第二个元素
+- 遍历结束，转换ans为二维数组并返回
+### 代码
+```java
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals, (x1, x2) -> {
+            if (x1[0] != x2[0]) {
+                return x1[0] - x2[0];
+            } else {
+                return x1[1] - x2[1];
+            }
+        });
+
+        List<int[]> ans = new ArrayList<>();
+        for (int[] interval : intervals) {
+            int l = interval[0], r = interval[1];
+            if (ans.size() == 0 || ans.get(ans.size() - 1)[1] < l) {
+                ans.add(interval);
+            } else {
+                ans.get(ans.size() - 1)[1] = Math.max(r, ans.get(ans.size() - 1)[1]);
+            }
+        }
+        
+        return ans.toArray(new int[0][0]);
+    }
+}
+```
+## 解法二
+### 思路
+- 遍历二维数组，获取二维数组中的最大值
+- 根据最大值生成一个一维数组
+- 遍历二维数组，将范围内的数字标记为1
+- 遍历一维数组，根据一维数组中的1的范围生成二维数组
+### 代码
+```java
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        if (intervals.length == 0) {
+            return new int[0][0];
+        }
+        
+        int max = Integer.MIN_VALUE;
+        for (int[] interval : intervals) {
+            max = Math.max(interval[1], max);
+        }
+
+        int[] arr = new int[max + 1];
+        for (int[] interval : intervals) {
+            for (int i = interval[0]; i < interval[1]; i++) {
+                arr[i] = 1;
+            }
+
+            if (arr[interval[1]] != 1) {
+                arr[interval[1]] = -1;
+            }
+        }
+
+        List<int[]> ans = new ArrayList<>();
+        int[] tmp = new int[2];
+        boolean flag = false;
+        for (int i = 0; i <= max; i++) {
+            if ((i == 0 || !flag) && arr[i] == 1) {
+                flag = true;
+                tmp = new int[2];
+                tmp[0] = i;
+            }
+
+            if (arr[i] == -1) {
+                if (flag) {
+                    tmp[1] = i;
+                    ans.add(tmp);
+                } else {
+                    ans.add(new int[]{i, i});
+                }
+                flag = false;
+            }
+        }
+
+        return ans.toArray(new int[0][0]);
+    }
+}
+```
