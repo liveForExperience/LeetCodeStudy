@@ -420,3 +420,70 @@ class Solution {
     }
 }
 ```
+# Interview_1617_连续数列
+## 题目
+给定一个整数数组（有正数有负数），找出总和最大的连续数列，并返回总和。
+
+示例：
+```
+输入： [-2,1,-3,4,-1,2,1,-5,4]
+输出： 6
+解释： 连续子数组 [4,-1,2,1] 的和最大，为 6。
+```
+进阶：
+```
+如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的分治法求解。
+```
+## 解法
+### 思路
+嵌套遍历：
+- 外层确定起始元素位置
+- 内层遍历起始元素的所有可能的总和结果
+- 暂存最大值
+- 遍历结束返回结果
+### 代码
+```java
+class Solution {
+    public int maxSubArray(int[] nums) {
+        if (nums.length == 0) {
+            return 0;
+        }
+        
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            int sum = 0;
+            for (int j = i; j < nums.length; j++) {
+                max = Math.max(sum += nums[j], max);
+            }
+        }
+        return max;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- `dp[i]`：结尾是第i个元素的连续数列中的最大值
+- 状态转移方程：`dp[i] = max(dp[i - 1] + dp[i], dp[i])`
+- 初始化：所有元素初始化为与nums元素相同
+- 过程：在计算dp过程中，暂存计算出的连续数列的最大值
+- 返回暂存的最大值
+### 代码
+```java
+class Solution {
+    public int maxSubArray(int[] nums) {
+        if (nums.length == 0) {
+            return 0;
+        }
+        
+        int max = nums[0];
+        
+        for (int i = 1; i < nums.length; i++) {
+            nums[i] = Math.max(nums[i - 1] + nums[i], nums[i]);
+            max = Math.max(nums[i], max);
+        }
+        
+        return max;
+    }
+}
+```
