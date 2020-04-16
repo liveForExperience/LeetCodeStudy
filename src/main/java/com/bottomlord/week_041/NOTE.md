@@ -259,6 +259,61 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+动态规划：
+- `dp[i][j]`：二维数组坐标[i,j]上的元素离最近值为0的元素的距离
+- 状态转移方程：
+    - 如果`matrix[i][j]`值为0，`dp[i][j] = 0`
+    - 如果`matrix[i][j]`的值不为0，`dp[i][j] = min(dp[i][j], min(dp[i - 1][j], dp[i + 1][j], dp[i][j - 1], dp[i][j + 1]))`
+    - 因为dp的方向分为四个方向，所以状态转移需要通过从四个方向开始遍历二维数组才能得到最终的最小值
+- 初始化：如果当前值不是0，则将值设为相对大值，如果用int最大值可能会越界
+- 最终返回dp二维数组
+### 代码
+```java
+class Solution {
+    public int[][] updateMatrix(int[][] matrix) {
+        if (matrix.length == 0) {
+            return new int[0][0];
+        }
+
+        int row = matrix.length, col = matrix[0].length;
+        int[][] dp = new int[row][col];
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                dp[i][j] = matrix[i][j] == 0 ? 0 : 10000;
+            }
+        }
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (i - 1 >= 0) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i - 1][j] + 1);
+                }
+                
+                if (j - 1 >= 0) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i][j - 1] + 1);
+                }
+            }
+        }
+        
+        for (int i = row - 1; i >= 0; i--) {
+            for (int j = col - 1; j >= 0; j--) {
+                if (i + 1 < row) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i + 1][j] + 1);
+                }
+                
+                if (j + 1 < col) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i][j + 1] + 1);
+                }
+            }
+        }
+        
+        return dp;
+    }
+}
+```
 # LeetCode_56_合并区间
 ## 题目
 给出一个区间的集合，请合并所有重叠的区间。
