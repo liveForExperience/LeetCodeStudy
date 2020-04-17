@@ -739,3 +739,96 @@ class Solution {
     }
 }
 ```
+# Interview_1620_T9键盘
+## 题目
+在老式手机上，用户通过数字键盘输入，手机将提供与这些数字相匹配的单词列表。每个数字映射到0至4个字母。给定一个数字序列，实现一个算法来返回匹配单词的列表。你会得到一张含有有效单词的列表。映射如下图所示：
+
+示例 1:
+```
+输入: num = "8733", words = ["tree", "used"]
+输出: ["tree", "used"]
+```
+示例 2:
+```
+输入: num = "2", words = ["a", "b", "c", "d"]
+输出: ["a", "b", "c"]
+```
+提示：
+```
+num.length <= 1000
+words.length <= 500
+words[i].length == num.length
+num中不会出现 0, 1 这两个数字
+```
+## 解法
+### 思路
+- 使用长度26的数组，下标对应字母，值对应数字，建立映射关系
+- 遍历字符串数组，逐次求出每个字符串对应的数字组合，与提供的数字进行比较
+- 将是的放入结果中，最终返回
+### 代码
+```java
+class Solution {
+    public List<String> getValidT9Words(String num, String[] words) {
+        int[] bucket = new int[26];
+        bucket[0] = bucket[1] = bucket[2] = 2;
+        bucket[3] = bucket[4] = bucket[5] = 3;
+        bucket[6] = bucket[7] = bucket[8] = 4;
+        bucket[9] = bucket[10] = bucket[11] = 5;
+        bucket[12] = bucket[13] = bucket[14] = 6;
+        bucket[15] = bucket[16] = bucket[17] = bucket[18] = 7;
+        bucket[19] = bucket[20] = bucket[21] = 8;
+        bucket[22] = bucket[23] = bucket[24] = bucket[25] = 9;
+
+        List<String> ans = new ArrayList<>();
+        
+        for (String word : words) {
+            StringBuilder sb = new StringBuilder();
+            for (char c : word.toCharArray()) {
+                sb.append(bucket[c - 'a']);
+            }
+            
+            if (Objects.equals(sb.toString(), num)) {
+                ans.add(word);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+修改解法一种比对的逻辑，不用StringBuilder
+### 代码
+```java
+class Solution {
+    public List<String> getValidT9Words(String num, String[] words) {
+        int[] bucket = new int[26];
+        bucket[0] = bucket[1] = bucket[2] = 2;
+        bucket[3] = bucket[4] = bucket[5] = 3;
+        bucket[6] = bucket[7] = bucket[8] = 4;
+        bucket[9] = bucket[10] = bucket[11] = 5;
+        bucket[12] = bucket[13] = bucket[14] = 6;
+        bucket[15] = bucket[16] = bucket[17] = bucket[18] = 7;
+        bucket[19] = bucket[20] = bucket[21] = 8;
+        bucket[22] = bucket[23] = bucket[24] = bucket[25] = 9;
+
+        List<String> ans = new ArrayList<>();
+        
+        for (String word : words) {
+            boolean flag = true;
+            for (int i = 0; i < word.length(); i++) {
+                if (bucket[word.charAt(i) - 'a'] != num.charAt(i) - '0') {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                ans.add(word);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
