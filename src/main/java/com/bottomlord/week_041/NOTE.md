@@ -682,3 +682,60 @@ class Solution {
     }
 }
 ```
+# Interview_1619_水域大小
+## 题目
+你有一个用于表示一片土地的整数矩阵land，该矩阵中每个点的值代表对应地点的海拔高度。若值为0则表示水域。由垂直、水平或对角连接的水域为池塘。池塘的大小是指相连接的水域的个数。编写一个方法来计算矩阵中所有池塘的大小，返回值需要从小到大排序。
+
+示例：
+```
+输入：
+[
+  [0,2,1,0],
+  [0,1,0,1],
+  [1,1,0,1],
+  [0,1,0,1]
+]
+输出： [1,2,4]
+```
+提示：
+```
+0 < len(land) <= 1000
+0 < len(land[i]) <= 1000
+```
+## 解法
+### 思路
+dfs+涂色
+### 代码
+```java
+class Solution {
+    public int[] pondSizes(int[][] land) {
+        List<Integer> ans = new ArrayList<>();
+        int row = land.length, col = land[0].length;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (land[i][j] == 0) {
+                    ans.add(dfs(land, i, row, j, col));
+                }
+            }
+        }
+        return ans.stream().mapToInt(x -> x).sorted().toArray();
+    }
+
+    private int dfs(int[][] land, int x, int row, int y, int col) {
+        if (x < 0 || x >= row || y < 0 || y >= col || land[x][y] != 0) {
+            return 0;
+        }
+
+        land[x][y] = -1;
+
+        return dfs(land, x + 1, row, y, col) +
+                dfs(land, x + 1, row, y - 1, col) +
+                dfs(land, x + 1, row, y + 1, col) +
+                dfs(land, x - 1, row, y, col) +
+                dfs(land, x - 1, row, y + 1, col) +
+                dfs(land, x - 1, row, y - 1, col) +
+                dfs(land, x, row, y + 1, col) +
+                dfs(land, x, row, y - 1, col) + 1;
+    }
+}
+```
