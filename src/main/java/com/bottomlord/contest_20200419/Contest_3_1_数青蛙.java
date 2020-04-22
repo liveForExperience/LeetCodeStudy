@@ -4,7 +4,7 @@ package com.bottomlord.contest_20200419;
  * @author ChenYue
  * @date 2020/4/19 11:15
  */
-public class Contest_3_数青蛙 {
+public class Contest_3_1_数青蛙 {
     public int minNumberOfFrogs(String croakOfFrogs) {
         int c = 0, r = 0, o = 0, a = 0, k = 0, ans = 0;
         for (char ch : croakOfFrogs.toCharArray()) {

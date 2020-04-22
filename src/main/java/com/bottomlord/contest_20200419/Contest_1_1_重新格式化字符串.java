@@ -7,7 +7,7 @@ import java.util.List;
  * @author ChenYue
  * @date 2020/4/19 10:41
  */
-public class Contest_1_重新格式化字符串 {
+public class Contest_1_1_重新格式化字符串 {
     public String reformat(String s) {
         List<Character> nums = new ArrayList<>(), alps = new ArrayList<>();
         for (char c : s.toCharArray()) {

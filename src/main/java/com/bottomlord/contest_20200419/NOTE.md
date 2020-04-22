@@ -281,3 +281,104 @@ class Solution {
     }
 }
 ```
+# Contest_4_生成数组
+## 题目
+给你三个整数 n、m 和 k 。下图描述的算法用于找出正整数数组中最大的元素。
+```
+search_cost = 0
+n = arr.length
+for (i = 0; i < n; i++) {
+    if (maximum_value < arr[i]) {
+        maximum_value = arr[i]
+        maximum_index = i
+        search_cost = search_cost + 1
+    }
+}
+return maximum_index
+```
+请你生成一个具有下述属性的数组 arr ：
+```
+arr 中有 n 个整数。
+1 <= arr[i] <= m 其中 (0 <= i < n) 。
+将上面提到的算法应用于 arr ，search_cost 的值等于 k 。
+返回上述条件下生成数组 arr 的 方法数 ，由于答案可能会很大，所以 必须 对 10^9 + 7 取余。
+```
+示例 1：
+```
+输入：n = 2, m = 3, k = 1
+输出：6
+解释：可能的数组分别为 [1, 1], [2, 1], [2, 2], [3, 1], [3, 2] [3, 3]
+```
+示例 2：
+```
+输入：n = 5, m = 2, k = 3
+输出：0
+解释：没有数组可以满足上述条件
+```
+示例 3：
+```
+输入：n = 9, m = 1, k = 1
+输出：1
+解释：可能的数组只有 [1, 1, 1, 1, 1, 1, 1, 1, 1]
+```
+示例 4：
+```
+输入：n = 50, m = 100, k = 25
+输出：34549172
+解释：不要忘了对 1000000007 取余
+```
+示例 5：
+```
+输入：n = 37, m = 17, k = 7
+输出：418930126
+```
+提示：
+```
+1 <= n <= 50
+1 <= m <= 100
+0 <= k <= n
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j][k]`：在数组长度为i+1，第i个元素为j的情况下，cost为k的可能数组的个数
+- 初始条件：
+    - `dp[0][j][1] = 1`，数组长度为1，cost为1，第i个元素为[1,m]的情况下，可能的个数都是1
+- 状态转移方程：
+    - 四层嵌套：
+        - 前三层嵌套遍历整个三维数组的空间
+        - 第四层遍历第i + 1个位置元素的可能值ij
+    - 如果ij大于j，那么就生成ik = k + 1
+    - 那么`dp[i + 1][ij][k + 1] = dp[i][j][k] + 1`
+- 返回结果：遍历`dp[N - 1][1...M][K]`情况下所有的可能的和
+### 代码
+```java
+class Solution {
+    public int numOfArrays(int n, int m, int k) {
+        int mod = 1000000007;
+        long[][][] dp = new long[n][m + 1][k + 2];
+        for (int j = 1; j <= m; j++) {
+            dp[0][j][1] = 1;
+        }
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j <= m; j++) {
+                for (int l = 1; l <= k; l++) {
+                    for (int ij = 1; ij <= m; ij++) {
+                        int ik = l + (ij > j ? 1 : 0);
+                        dp[i][Math.max(ij, j)][ik] += dp[i - 1][j][l];
+                        dp[i][Math.max(ij, j)][ik] %= mod;
+                    }
+                }
+            }
+        }
+
+        long ans = 0;
+        for (int i = 1; i <= m; i++) {
+            ans += dp[n - 1][i][k];
+            ans %= mod;
+        }
+        return (int)ans;
+    }
+}
+```

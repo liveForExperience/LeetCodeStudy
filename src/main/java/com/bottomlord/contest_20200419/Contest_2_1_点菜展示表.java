@@ -6,7 +6,7 @@ import java.util.*;
  * @author ChenYue
  * @date 2020/4/19 10:52
  */
-public class Contest_2_点菜展示表 {
+public class Contest_2_1_点菜展示表 {
     public List<List<String>> displayTable(List<List<String>> orders) {
         Set<String> foodSet =  new HashSet<>();
         Set<Integer> tableSet = new HashSet<>();

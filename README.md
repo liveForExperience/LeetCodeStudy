@@ -278,4 +278,24 @@
         <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200315/Contest_4_最大的团队表现值.java">最大的团队表现值</a></td>
         <td>:x:</td>
     </tr>
+    <tr align="center">
+        <td rowspan="4">2020/04/19</td>
+        <td rowspan="4">第185场单周赛</td>
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200419/Contest_1_Contest_1_1_重新格式化字符串.java`">重新格式化字符串</a></td>
+        <td>:heavy_check_mark:</td>
+        <td rowspan="4"><a href="https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/contest_20200419/NOTE.md">:page_with_curl:</a></td>
+        <td rowspan="4">1251/5001</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200419/Contest_2_1_点菜展示表.java">点菜展示表</a></td>
+        <td>:heavy_check_mark:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200308/Contest_3_1_数青蛙.java">数青蛙</a></td>
+        <td>:x:</td>
+    </tr>
+    <tr align="center">
+        <td><a href="https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/contest_20200308/Contest_4_1_生成数组.java">生成数组</a></td>
+        <td>:x:</td>
+    </tr>
 </table>
