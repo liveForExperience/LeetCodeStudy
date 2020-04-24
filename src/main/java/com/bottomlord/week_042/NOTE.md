@@ -166,3 +166,53 @@ class Solution {
     }
 }
 ```
+# Interview_1621_交换和
+## 题目
+给定两个整数数组，请交换一对数值（每个数组中取一个数值），使得两个数组所有元素的和相等。
+
+返回一个数组，第一个元素是第一个数组中要交换的元素，第二个元素是第二个数组中要交换的元素。若有多个答案，返回任意一个均可。若无满足条件的数值，返回空数组。
+
+示例:
+```
+输入: array1 = [4, 1, 2, 1, 1, 2], array2 = [3, 6, 3, 3]
+输出: [1, 3]
+```
+示例:
+```
+输入: array1 = [1, 2, 3], array2 = [4, 5, 6]
+输出: []
+```
+## 解法
+### 思路
+- 遍历求两个数组并求和
+    - sum1
+    - sum2
+- 求出两个数组的和的差值
+- 判断如果差值是奇数，说明没有可行的交换方式，因为交换后差值为数字差值的2倍
+- 将差值除以2生成diff
+- 将第二个数组生成set
+- 遍历第一个数组，判断`num - diff`是否在set中存在，如果存在就返回
+### 代码
+```java
+class Solution {
+    public int[] findSwapValues(int[] array1, int[] array2) {
+        int sum1 = Arrays.stream(array1).sum(),
+            sum2 = Arrays.stream(array2).sum(),
+            diff = sum1 - sum2;
+
+        if ((diff & 1) == 1) {
+            return new int[0];
+        }
+
+        diff /= 2;
+        Set<Integer> set = Arrays.stream(array2).boxed().collect(Collectors.toSet());
+        for (int num : array1) {
+            if (set.contains(num - diff)) {
+                return new int[]{num, num - diff};
+            }
+        }
+        
+        return new int[0];
+    }
+}
+```
