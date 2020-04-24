@@ -55,3 +55,114 @@ class Solution {
     }
 }
 ```
+# LeetCode_466_统计重复个数
+## 题目
+由 n 个连接的字符串 s 组成字符串 S，记作 S = [s,n]。例如，["abc",3]=“abcabcabc”。
+
+如果我们可以从 s2 中删除某些字符使其变为 s1，则称字符串 s1 可以从字符串 s2 获得。例如，根据定义，"abc" 可以从 “abdbec” 获得，但不能从 “acbbe” 获得。
+
+现在给你两个非空字符串 s1 和 s2（每个最多 100 个字符长）和两个整数 0 ≤ n1 ≤ 106 和 1 ≤ n2 ≤ 106。现在考虑字符串 S1 和 S2，其中 S1=[s1,n1] 、S2=[s2,n2] 。
+
+请你找出一个可以满足使[S2,M] 从 S1 获得的最大整数 M 。
+
+示例：
+```
+输入：
+s1 ="acb",n1 = 4
+s2 ="ab",n2 = 2
+
+返回：
+2
+```
+## 解法
+### 思路
+嵌套循环计数：
+- 变量：
+    - i2：字符串s2的下标
+    - loop2：字符串s2在遍历s1的过程中循环的次数
+- 嵌套循环：
+    - 外层循环n1次
+    - 内层循环s1的长度次
+        - 判断当前s1遍历到的字符是否与当前s2的字符相等
+            - 如果是就自增i2
+        - 判断i2是否与s2长度相等
+            - 如果是，循环次数+1，且i2坐标重置为0
+- 返回loop2 / n2，循环的总次数处理n2的次数 
+### 代码
+```java
+class Solution {
+    public int getMaxRepetitions(String s1, int n1, String s2, int n2) {
+        int len1 = s1.length(), len2 = s2.length();
+        
+        char[] cs1 = s1.toCharArray(), cs2 = s2.toCharArray();
+        
+        int i2 = 0, loop2 = 0;
+        
+        for (int loop1 = 0; loop1 < n1; loop1++) {
+            for (int i1 = 0; i1 < len1; i1++) {
+                if (cs1[i1] == cs2[i2]) {
+                    i2++;
+                    
+                    if (i2 == len2) {
+                        loop2++;
+                        i2 = 0;
+                    }
+                }
+            }
+        }
+        
+        return loop2 / n2;
+    }
+}
+```
+## 解法二
+### 思路
+找循环节：
+- 循环节，相当于某个重复出现的s1的子字符串，包含了若干个个s2
+- [s1,n1]和[s2,n2]两个字符串中存在的循环节，一般都是错位存在的。
+- 所以只要找到循环节，就不需要再遍历完所有的字符串，通过计算循环节的个数和循环节中s2的个数，加上头部和尾部非循环节的字符串中s2的个数，把它们的和除以n1就可以了
+### 代码
+```java
+class Solution {
+    public int getMaxRepetitions(String s1, int n1, String s2, int n2) {
+        int len1 = s1.length(), len2 = s2.length();
+
+        if (len1 == 0 || n1 == 0 || len2 == 0 || n2 == 0) {
+            return 0;
+        }
+
+        char[] cs1 = s1.toCharArray(), cs2 = s2.toCharArray();
+
+        int[] times = new int[n1], next = new int[n1];
+
+        int i2 = 0, loop2 = 0;
+        for (int loop1 = 0; loop1 < n1; loop1++) {
+            for (int i1 = 0; i1 < len1; i1++) {
+                if (cs1[i1] == cs2[i2]) {
+                    i2++;
+                }
+
+                if (i2 == len2) {
+                    loop2++;
+                    i2 = 0;
+                }
+            }
+
+            times[loop1] = loop2;
+            next[loop1] = i2;
+
+            if (loop1 > 0 && next[0] == i2) {
+                int head = times[0];
+
+                int mid = ((n1 - 1) / loop1) * (times[loop1] - times[0]);
+
+                int end = times[(n1 - 1) % loop1] - times[0];
+                
+                return (head + mid + end) / n2;
+            }
+        }
+        
+        return times[n1 - 1] / n2;
+    }
+}
+```
