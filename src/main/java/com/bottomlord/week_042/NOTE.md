@@ -216,3 +216,97 @@ class Solution {
     }
 }
 ```
+# Interview_1622_兰顿蚂蚁
+## 题目
+一只蚂蚁坐在由白色和黑色方格构成的无限网格上。开始时，网格全白，蚂蚁面向右侧。每行走一步，蚂蚁执行以下操作。
+```
+(1) 如果在白色方格上，则翻转方格的颜色，向右(顺时针)转 90 度，并向前移动一个单位。
+(2) 如果在黑色方格上，则翻转方格的颜色，向左(逆时针方向)转 90 度，并向前移动一个单位。
+```
+编写程序来模拟蚂蚁执行的前 K 个动作，并返回最终的网格。
+
+网格由数组表示，每个元素是一个字符串，代表网格中的一行，黑色方格由 'X' 表示，白色方格由 '_' 表示，蚂蚁所在的位置由 'L', 'U', 'R', 'D' 表示，分别表示蚂蚁 左、上、右、下 的朝向。只需要返回能够包含蚂蚁走过的所有方格的最小矩形。
+
+示例 1:
+```
+输入: 0
+输出: ["R"]
+```
+示例 2:
+```
+输入: 2
+输出:
+[
+  "_X",
+  "LX"
+]
+```
+示例 3:
+```
+输入: 5
+输出:
+[
+  "_U",
+  "X_",
+  "XX"
+]
+```
+说明：
+```
+K <= 100000
+```
+## 解法
+### 思路
+map
+- key记录坐标`x + " " + y`
+- value记录黑白或者方向
+- 递归遍历并生成这个map
+### 代码
+```java
+class Solution {
+    private int dir = 0, top = 0, bottom = 0, left = 0, right = 0;
+    private int[][] dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    private String[] dirChars = {"R", "D", "L", "U"};
+    private Map<String, String> map = new HashMap<>();
+
+    public List<String> printKMoves(int K) {
+        recurse(0, 0, K);
+        List<String> ans = new ArrayList<>();
+        for (int i = top; i <= bottom; i++) {
+            StringBuilder sb = new StringBuilder();
+            for (int j = left; j <= right; j++) {
+                String path = i + " " + j;
+                sb.append(map.getOrDefault(path, "_"));
+            }
+            ans.add(sb.toString());
+        }
+
+        return ans;
+    }
+
+    private void recurse(int x, int y, int K) {
+        top = Math.min(x, top);
+        bottom = Math.max(x, bottom);
+        left = Math.min(y, left);
+        right = Math.max(y, right);
+
+        if (K == 0) {
+            map.put(x + " " + y, dirChars[dir]);
+            return;
+        }
+
+        String path = x + " " + y;
+        String str = map.getOrDefault(path, "_");
+
+        map.put(path, Objects.equals(str, "_") ? "X" : "_");
+
+        if (Objects.equals(str, "_")) {
+            dir = (dir + 1) % 4;
+        } else {
+            dir = (dir + 3) % 4;
+        }
+
+        recurse(x + dirs[dir][0], y + dirs[dir][1], K - 1);
+    }
+}
+```
