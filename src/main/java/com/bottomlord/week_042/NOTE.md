@@ -407,3 +407,88 @@ class Solution {
     }
 }
 ```
+# Interview_1624_数对和
+## 题目
+设计一个算法，找出数组中两数之和为指定值的所有整数对。一个数只能属于一个数对。
+
+示例 1:
+```
+输入: nums = [5,6,5], target = 11
+输出: [[5,6]]
+```
+示例 2:
+```
+输入: nums = [5,6,5,6], target = 11
+输出: [[5,6],[5,6]]
+```
+提示：
+```
+nums.length <= 100000
+```
+## 失败解法
+### 失败原因
+超时
+### 思路
+嵌套遍历+记忆化搜索
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> pairSums(int[] nums, int target) {
+        int len = nums.length;
+        boolean[] memo = new boolean[len];
+        List<List<Integer>> ans = new ArrayList<>();
+        
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                if (memo[i] || memo[j]) {
+                    continue;
+                }
+                
+                if (nums[i] + nums[j] == target) {
+                    memo[i] = true;
+                    memo[j] = true;
+                    List<Integer> list = new ArrayList<>();
+                    list.add(nums[i]);
+                    list.add(nums[j]);
+                    ans.add(list);
+                    break;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+排序+双指针
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> pairSums(int[] nums, int target) {
+        Arrays.sort(nums);
+        int head = 0, tail = nums.length - 1;
+        List<List<Integer>> ans = new ArrayList<>();
+        
+        while (head < tail) {
+            int sum = nums[head] + nums[tail];
+            
+            if (sum < target) {
+                head++;
+            } else if (sum > target) {
+                tail--;
+            } else {
+                List<Integer> list = new ArrayList<>();
+                list.add(nums[head]);
+                list.add(nums[tail]);
+                ans.add(list);
+                head++;
+                tail--;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
