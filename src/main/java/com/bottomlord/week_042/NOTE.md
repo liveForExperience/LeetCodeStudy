@@ -310,3 +310,100 @@ class Solution {
     }
 }
 ```
+# LeetCode_26_合并K个排序链表
+## 题目
+合并 k 个排序链表，返回合并后的排序链表。请分析和描述算法的复杂度。
+
+示例:
+```
+输入:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+输出: 1->1->2->3->4->4->5->6
+```
+## 解法
+### 思路
+- 遍历所有链表，将元素值放入优先级队列
+- 遍历优先级队列并生成链表
+### 代码
+```java
+class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+        for (ListNode list : lists) {
+            ListNode node = list;
+            while (node != null) {
+                queue.offer(node.val);
+                node = node.next;
+            }
+        }
+        
+        ListNode start = new ListNode(0), pre = start;
+        while (!queue.isEmpty()) {
+            pre.next = new ListNode(queue.poll());
+            pre = pre.next;
+        }
+        
+        return start.next;
+    }
+}
+```
+## 解法二
+### 思路
+分治合并：
+- 遍历链表数组，将相邻的两个链表合并
+- 最后返回最后合并成的链表
+### 代码
+```java
+class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        int len = lists.length;
+        if (len == 0) {
+            return null;
+        }
+        
+        while (len > 1) {
+            int i = 0;
+
+            for (i = 0; i < len / 2; i++) {
+                lists[i] = merge(lists[2 * i], lists[2 * i + 1]);
+            }
+
+            if ((len & 1) == 1) {
+                lists[i] = lists[len - 1];
+                len++;
+            }
+
+            len /= 2;
+        }
+        
+        return lists[0];
+    }
+    
+    private ListNode merge(ListNode l1, ListNode l2) {
+        ListNode start = new ListNode(0), pre = start;
+        while (l1 != null || l2 != null) {
+            if (l1 == null) {
+                pre.next = l2;
+                l2 = l2.next;
+            } else if (l2 == null) {
+                pre.next = l1;
+                l1 = l1.next;
+            } else if (l1.val < l2.val) {
+                pre.next = l1;
+                l1 = l1.next;
+            } else {
+                pre.next = l2;
+                l2 = l2.next;
+            }
+            
+            pre = pre.next;
+        }
+        
+        return start.next;
+    }
+}
+```
