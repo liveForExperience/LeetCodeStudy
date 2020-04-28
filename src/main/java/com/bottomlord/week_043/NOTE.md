@@ -163,3 +163,93 @@ class DoubleLinkedNode {
     }
 }
 ```
+# Interview_1626_计算器
+## 题目
+给定一个包含正整数、加(+)、减(-)、乘(*)、除(/)的算数表达式(括号除外)，计算其结果。
+
+表达式仅包含非负整数，+， - ，*，/ 四种运算符和空格  。 整数除法仅保留整数部分。
+
+示例 1:
+```
+输入: "3+2*2"
+输出: 7
+```
+示例 2:
+```
+输入: " 3/2 "
+输出: 1
+```
+示例 3:
+```
+输入: " 3+5 / 2 "
+输出: 5
+```
+说明：
+```
+你可以假设所给定的表达式都是有效的。
+请不要使用内置的库函数 eval。
+```
+## 解法
+### 思路
+栈：
+- 遍历字符串
+    - 如果是数字就记录数字和位数，并继续循环
+    - 如果是符号，开始判断上一个符号，该符号的默认值是加号：
+        - 加号：将数字压入栈中
+        - 减号：将该数字的负值压入栈中
+        - 乘号：将前一个元素出栈并乘以当前数字，放入栈中
+        - 除号：将前一个元素出栈并除以当前数字，放入栈中
+        - 将当前符号作为下一次判断的符号进行暂存
+    - 如果是最后一个元素，执行和遇到符号时一样的计算过程
+- 遍历栈，累加值并作为结果返回
+- 注意去除头尾和中间的空格
+### 代码
+```java
+class Solution {
+    public int calculate(String s) {
+        if (s == null) {
+            return 0;
+        }
+        
+        s = s.trim();
+        
+        int num = 0;
+        char operator = '+';
+        Stack<Integer> stack = new Stack<>();
+        
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            
+            if (c == ' ') {
+                continue;
+            }
+            
+            if (Character.isDigit(c)) {
+                num = 10 * num + (c - '0');
+            }
+            
+            if (!Character.isDigit(c) || i == s.length() - 1) {
+                if (operator == '+') {
+                    stack.push(num);
+                } else if (operator == '-') {
+                    stack.push(-num);
+                } else if (operator == '*') {
+                    stack.push(stack.pop() * num);
+                } else if (operator == '/') {
+                    stack.push(stack.pop() / num);
+                }
+                
+                num = 0;
+                operator = c;
+            }
+        }
+        
+        int ans = 0;
+        while (!stack.isEmpty()) {
+            ans += stack.pop();
+        }
+        
+        return ans;
+    }
+}
+```
