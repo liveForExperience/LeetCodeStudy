@@ -253,3 +253,74 @@ class Solution {
     }
 }
 ```
+# Interview_1705_字母与数字
+## 题目
+给定一个放有字符和数字的数组，找到最长的子数组，且包含的字符和数字的个数相同。
+
+返回该子数组，若存在多个最长子数组，返回左端点最小的。若不存在这样的数组，返回一个空数组。
+
+示例 1:
+```
+输入: ["A","1","B","C","D","2","3","4","E","5","F","G","6","7","H","I","J","K","L","M"]
+
+输出: ["A","1","B","C","D","2","3","4","E","5","F","G","6","7"]
+```
+示例 2:
+```
+输入: ["A","A"]
+
+输出: []
+```
+提示：
+```
+array.length <= 100000
+```
+## 解法
+### 思路
+前缀和 + map
+- 遍历字符串，求每一个位置上，两种字符个数累加值之间的差值
+- 将差值作为key，如果key为第一个值，那么就保存该值
+- 每次生成累加值的差值，就在map中查询，并计算当前坐标和key对应的value的值的差，如果差大于暂存的最大值，取该值作为暂存的最大值
+### 代码
+```java
+class Solution {
+    public String[] findLongestSubarray(String[] array) {
+        int max = 0, sum = 0, start = 0, end = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < array.length; i++) {
+            for (char c : array[i].toCharArray()) {
+                if (Character.isDigit(c)) {
+                    sum++;
+                    break;
+                } else {
+                    sum--;
+                    break;
+                }
+            }
+
+            if (sum == 0) {
+                start = 0;
+                end = i;
+                max = i + 1;
+                continue;
+            }
+
+            if (!map.containsKey(sum)) {
+                map.put(sum, i);
+            } else {
+                if (max < i - map.get(sum)) {   
+                    start = map.get(sum) + 1;
+                    end = i;
+                    max = i - map.get(sum) + 1;
+                }
+            }
+        }
+
+        if (start == 0) {
+            return Arrays.copyOf(array, max);
+        }
+
+        return Arrays.copyOfRange(array, start, end + 1);
+    }
+}
+```
