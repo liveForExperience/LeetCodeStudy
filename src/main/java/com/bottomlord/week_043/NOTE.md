@@ -502,3 +502,72 @@ class Solution {
     }
 }
 ```
+# Interview_1707_婴儿名字
+## 题目
+每年，政府都会公布一万个最常见的婴儿名字和它们出现的频率，也就是同名婴儿的数量。有些名字有多种拼法，例如，John 和 Jon 本质上是相同的名字，但被当成了两个名字公布出来。给定两个列表，一个是名字及对应的频率，另一个是本质相同的名字对。设计一个算法打印出每个真实名字的实际频率。注意，如果 John 和 Jon 是相同的，并且 Jon 和 Johnny 相同，则 John 与 Johnny 也相同，即它们有传递和对称性。
+
+在结果列表中，选择字典序最小的名字作为真实名字。
+
+示例：
+```
+输入：names = ["John(15)","Jon(12)","Chris(13)","Kris(4)","Christopher(19)"], synonyms = ["(Jon,John)","(John,Johnny)","(Chris,Kris)","(Chris,Christopher)"]
+输出：["John(27)","Chris(36)"]
+```
+提示：
+```
+names.length <= 100000
+```
+## 解法
+### 思路
+hash表实现并查集
+- 一个map模拟并查集，并操作union
+- 一个map记录所有name的count值
+- 在union的过程中，将nickname的count值累加到trulyname的count值里
+- 最后遍历count的map来返回最后的结果
+### 代码
+```java
+class Solution {
+    public String[] trulyMostPopular(String[] names, String[] synonyms) {
+        List<String[]> list = new ArrayList<>();
+        Map<String, Integer> countMap = new HashMap<>();
+        Map<String, String> dsuMap = new HashMap<>();
+
+        for (String name : names) {
+            int count = Integer.parseInt(name.substring(name.indexOf('(') + 1, name.indexOf(')')));
+            countMap.put(name.substring(0, name.indexOf('(')), count);
+        }
+
+        for (String synonym : synonyms) {
+            String name1 = synonym.substring(synonym.indexOf('(') + 1, synonym.indexOf(','));
+            String name2 = synonym.substring(synonym.indexOf(',') + 1, synonym.indexOf(')'));
+
+            while (dsuMap.containsKey(name1)) {
+                name1 = dsuMap.get(name1);
+            }
+
+            while (dsuMap.containsKey(name2)) {
+                name2 = dsuMap.get(name2);
+            }
+
+            if (!Objects.equals(name1, name2)) {
+                int count = countMap.getOrDefault(name1, 0) + countMap.getOrDefault(name2, 0);
+
+                String trulyName = name1.compareTo(name2) < 0 ? name1 : name2;
+                String nickName = name1.compareTo(name2) < 0 ? name2 : name1;
+
+                dsuMap.put(nickName, trulyName);
+
+                countMap.remove(nickName);
+                countMap.put(trulyName, count);
+            }
+        }
+
+        String[] ans = new String[countMap.size()];
+        int index = 0;
+        for (Map.Entry<String, Integer> entry : countMap.entrySet()) {
+            ans[index++] = entry.getKey() + "(" + entry.getValue() + ")";
+        }
+        return ans;
+    }
+}
+```
