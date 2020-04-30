@@ -430,3 +430,75 @@ class Solution {
     }
 }
 ```
+# Interview_1706_2出现的次数
+## 题目
+编写一个方法，计算从 0 到 n (含 n) 中数字 2 出现的次数。
+
+示例:
+```
+输入: 25
+输出: 9
+解释: (2, 12, 20, 21, 22, 23, 24, 25)(注意 22 应该算作两次)
+```
+提示：
+```
+n <= 10^9
+```
+## 失败解法
+### 失败原因
+超时
+### 思路
+暴力：
+- 嵌套遍历：
+    - 外层循环所有数字
+    - 内层逐位判断是否是2
+### 代码
+```java
+class Solution {
+    public int numberOf2sInRange(int n) {
+        int ans = 0;
+        for (int i = 0; i <= n; i++) {
+            int num = i;
+            while (num > 0) {
+                ans += num % 10 == 2 ? 1 : 0;
+                num /= 10;
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 计算每一位固定为2时，可能出现的个数
+- 将数字按位拆分成3部分，xby
+    - b代表当前位
+    - x代表当前位左边的数，它的值要判断是否`b > 2`，如果是，那么最终要计算的值就是x+1，因为0也可以是选择
+    - y代表当前位右边的数，它的值基于该值的长度，即pow(10, len(y))，且如果`b == 2`，那么这时2y也是可能的选择，所以是y + 1种可能
+### 代码
+```java
+class Solution {
+    public int numberOf2sInRange(int n) {
+        String str = String.valueOf(n);
+        int count = 0, len = str.length();
+
+        for (int i = len - 1; i >= 0; i--) {
+            int left = i == 0 ? 0 : Integer.parseInt(str.substring(0, i));
+            int cur = Integer.parseInt(Character.toString(str.charAt(i)));
+            if (cur > 2) {
+                left++;
+            }
+
+            int right = (int) Math.pow(10, len - i - 1);
+            count += left * right;
+
+            if (cur == 2) {
+                right = i + 1 < len ? Integer.parseInt(str.substring(i + 1)) + 1 : 1;
+                count += right;
+            }
+        }
+
+        return count;
+    }
+}
+```
