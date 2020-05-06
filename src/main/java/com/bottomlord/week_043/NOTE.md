@@ -571,3 +571,60 @@ class Solution {
     }
 }
 ```
+# Interview_1708_马戏团人塔
+## 题目
+有个马戏团正在设计叠罗汉的表演节目，一个人要站在另一人的肩膀上。出于实际和美观的考虑，在上面的人要比下面的人矮一点且轻一点。已知马戏团每个人的身高和体重，请编写代码计算叠罗汉最多能叠几个人。
+
+示例：
+```
+输入：height = [65,70,56,75,60,68] weight = [100,150,90,190,95,110]
+输出：6
+解释：从上往下数，叠罗汉最多能叠 6 层：(56,90), (60,95), (65,100), (68,110), (70,150), (75,190)
+```
+提示：
+```
+height.length == weight.length <= 10000
+```
+## 解法
+### 思路
+- 将数组先根据身高升序排序
+- 当身高相同时，再根据体重降序排序
+- 身高相同进行降序的目的是为了在二分查找时，避免选择到高度相等的情况
+- 二分查找的过程是：
+    - 新初始化一个数组dp用来存放满足条件的升序的体重值
+    - 遍历排序好的体重数组
+    - 一开始初始化的数组结束下标是0
+    - 当二分查找时体重值比dp数组中的所有元素值都大时，那么说明这个值符合要求，继续加到数组中，并将范围扩大。
+    - 而dp数组的范围就是最终可以叠罗汉的最大人数
+### 代码
+```java
+class Solution {
+    public int bestSeqAtIndex(int[] height, int[] weight) {
+        int len = height.length;
+        int[][] persons = new int[len][2];
+        for (int i = 0; i < len; i++) {
+            persons[i][0] = height[i];
+            persons[i][1] = weight[i];
+        }
+        Arrays.sort(persons, (x1, x2) -> x1[0] == x2[0] ? x2[1] - x1[1] : x1[0] - x2[0]);
+
+        int[] dp = new int[len];
+        int res = 0;
+        for (int[] person : persons) {
+            int i = Arrays.binarySearch(dp, 0, res, person[1]);
+
+            if (i < 0) {
+                i = -(i + 1);
+            }
+
+            dp[i] = person[1];
+
+            if (i == res) {
+                res++;
+            }
+        }
+
+        return res;
+    }
+}
+```
