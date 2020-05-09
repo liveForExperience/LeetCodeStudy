@@ -249,3 +249,120 @@ class Solution {
     }
 }
 ```
+# Interview_1711_单词距离
+## 题目
+有个内含单词的超大文本文件，给定任意两个单词，找出在这个文件中这两个单词的最短距离(相隔单词数)。如果寻找过程在这个文件中会重复多次，而每次寻找的单词不同，你能对此优化吗?
+
+示例：
+```
+输入：words = ["I","am","a","student","from","a","university","in","a","city"], word1 = "a", word2 = "student"
+输出：1
+```
+提示：
+```
+words.length <= 100000
+```
+## 解法
+### 思路
+暴力：
+- 遍历数组
+- 哈希表记录单词与坐标集合
+- 循环遍历两个单词的坐标值，找到差值最小的结果返回
+### 代码
+```java
+class Solution {
+    public int findClosest(String[] words, String word1, String word2) {
+        Map<String, List<Integer>> map = new HashMap<>();
+        int len = words.length;
+        for (int i = 0; i < len; i++) {
+            String word = words[i];
+            List<Integer> list = map.getOrDefault(word, new ArrayList<>());
+            list.add(i);
+            map.put(word, list);
+        }
+        
+        List<Integer> list1 = map.get(word1), list2 = map.get(word2);
+        
+        if (list1 == null || list2 == null) {
+            return len;
+        }
+        
+        int ans = len;
+        for (Integer i1 : list1) {
+            for (Integer i2 : list2) {
+                ans = Math.min(Math.abs(i1 - i2), ans);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 不使用哈希表，将word1和word2的坐标放入对应的动态数组中
+- 使用双指针判断两个数组中元素之间的最小值
+### 代码
+```java
+class Solution {
+    public int findClosest(String[] words, String word1, String word2) {
+        List<Integer> list1 = new ArrayList<>(), list2 = new ArrayList<>();
+        int len = words.length;
+        for (int i = 0; i < len; i++) {
+            if (Objects.equals(words[i], word1)) {
+                list1.add(i);
+            }
+            
+            if (Objects.equals(words[i], word2)) {
+                list2.add(i);
+            }
+        }
+
+        if (list1.size() == 0 || list2.size() == 0) {
+            return len;
+        }
+
+        int ans = len, i1 = 0, i2 = 0;
+        while (i1 < list1.size() && i2 < list2.size()) {
+            int num1 = list1.get(i1), num2 = list2.get(i2);
+            ans = Math.min(ans, Math.abs(num1 - num2));
+
+            if (num1 < num2) {
+                i1++;
+            } else {
+                i2++;
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+将解法二中的两个步骤合并在一次遍历中完成。
+### 代码
+```java
+class Solution {
+    public int findClosest(String[] words, String word1, String word2) {
+        int len = words.length, i1 = -1, i2 = -1, ans = len;
+        for (int i = 0; i < len; i++) {
+            if (Objects.equals(words[i], word1)) {
+                i1 = i;
+                if (i2 >= 0) {
+                    ans = Math.min(ans, Math.abs(i2 - i1));
+                }
+            }
+
+            if (Objects.equals(words[i], word2)) {
+                i2 = i;
+                if (i1 >= 0) {
+                    ans = Math.min(ans, Math.abs(i2 - i1));
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
