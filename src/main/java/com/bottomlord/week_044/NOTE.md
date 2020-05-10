@@ -414,3 +414,63 @@ class Solution {
     }
 }
 ``` 
+# Interview_1713_恢复空格
+## 题目
+哦，不！你不小心把一个长篇文章中的空格、标点都删掉了，并且大写也弄成了小写。像句子"I reset the computer. It still didn’t boot!"已经变成了"iresetthecomputeritstilldidntboot"。在处理标点符号和大小写之前，你得先把它断成词语。当然了，你有一本厚厚的词典dictionary，不过，有些词没在词典里。假设文章用sentence表示，设计一个算法，把文章断开，要求未识别的字符最少，返回未识别的字符数。
+
+示例：
+```
+输入：
+dictionary = ["looked","just","like","her","brother"]
+sentence = "jesslookedjustliketimherbrother"
+输出： 7
+解释： 断句后为"jess looked just like tim her brother"，共7个未识别字符。
+```
+提示：
+```
+0 <= len(sentence) <= 1000
+dictionary中总字符数不超过 150000。
+你可以认为dictionary和sentence中只包含小写字母。
+```
+## 解法
+### 思路
+回溯+记忆化搜索
+- 使用缓存记录在sentence中，以当前字符坐标为起始的字符串中无法识别的字符长度
+- 递归过程中就是遍历dictionary中的字符串
+- 找到遍历到的字符在sentence当前递归到的区间中的起始坐标
+- 如果有找到，那么就从该坐标+字符串长度的位置继续递归，并将返回值和当前坐标-当前递归层的起始坐标的差进行求和
+- 用这个和与暂存min值比较，取最小值，最后返回这个最小值，并将最小值存在缓存中
+- 退出条件有两个：
+    - start超过sentence长度
+    - 缓存中已经记录过
+### 代码
+```java
+class Solution {
+    public int respace(String[] dictionary, String sentence) {
+        int[] cache = new int[sentence.length()];
+        Arrays.fill(cache, -1);
+        return backTrack(dictionary, 0, sentence, cache);
+    }
+    
+    private int backTrack(String[] dictionary, int start, String sentence, int[] cache) {
+        if (start >= sentence.length()) {
+            return 0;
+        }
+        
+        if (cache[start] != -1) {
+            return cache[start];
+        }
+        
+        int min = sentence.length() - start;
+        for (String word : dictionary) {
+            int index = sentence.indexOf(word, start);
+            
+            if (index != -1) {
+                min = Math.min(min, index - start + backTrack(dictionary, index + word.length(), sentence, cache));
+            }
+        }
+        
+        return cache[start] = min;
+    }
+}
+```
