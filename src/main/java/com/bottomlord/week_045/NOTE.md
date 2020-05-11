@@ -104,3 +104,75 @@ class Solution {
     }
 }
 ```
+# Interview_1715_最长单词
+## 题目
+给定一组单词words，编写一个程序，找出其中的最长单词，且该单词由这组单词中的其他单词组合而成。若有多个长度相同的结果，返回其中字典序最小的一项，若没有符合要求的单词则返回空字符串。
+
+示例：
+```
+输入： ["cat","banana","dog","nana","walk","walker","dogwalker"]
+输出： "dogwalker"
+解释： "dogwalker"可由"dog"和"walker"组成。
+```
+提示：
+```
+0 <= len(words) <= 100
+1 <= len(words[i]) <= 100
+```
+## 解法
+### 思路
+set+递归：
+- 对字符串进行排序：
+    - 长度降序
+    - 字符升序
+- 根据字符串数组生成set
+- 遍历排序后的字符串数组
+- 递归：
+    - 退出条件：当字符串长度为0，返回true。代表之前所有字符在字符串数组中都能找到对应的字符串
+    - 过程；
+        - 从1开始遍历字符串的字符坐标，判断0到i生成的字符串是否在set中存在，且不能是自己
+        - 如果存在，继续递归，并从i+1位置开始
+### 代码
+```java
+class Solution {
+    public String longestWord(String[] words) {
+        Arrays.sort(words, (x1, x2) -> {
+            if (x1.length() == x2.length()) {
+                return x1.compareTo(x2);
+            }
+
+            return x2.length() - x1.length();
+        });
+
+        Set<String> set = new HashSet<>(Arrays.asList(words));
+
+        for (String word : words) {
+            if (recurse(word, 0, set)) {
+                return word;
+            }
+        }
+        
+        return "";
+    }
+
+    private boolean recurse(String word, int start, Set<String> set) {
+        if (start >= word.length()) {
+            return true;
+        }
+
+        boolean flag = false;
+        for (int i = start; i < word.length(); i++) {
+            String tmp = word.substring(start, i + 1);
+            if (!Objects.equals(tmp, word) && set.contains(word.substring(start, i + 1))) {
+                flag = recurse(word, i + 1, set);
+            }
+
+            if (flag) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```

@@ -26,16 +26,17 @@ public class Interview_1714_3 {
     private int partition(int[] arr, int head, int tail) {
         int low = arr[head];
         while (head < tail) {
-            while (head < tail && arr[tail] > low) {
+            while (head < tail && arr[tail] >= low) {
                 tail--;
             }
             arr[head] = arr[tail];
 
-            while (head < tail && arr[head] < low) {
+            while (head < tail && arr[head] <= low) {
                 head++;
             }
             arr[tail] = arr[head];
         }
+        arr[head] = low;
         return head;
     }
 }
