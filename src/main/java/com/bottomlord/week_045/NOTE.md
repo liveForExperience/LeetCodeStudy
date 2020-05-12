@@ -176,3 +176,161 @@ class Solution {
     }
 }
 ```
+# Interview_1717_多次搜索
+## 题目
+给定一个较长字符串big和一个包含较短字符串的数组smalls，设计一个方法，根据smalls中的每一个较短字符串，对big进行搜索。输出smalls中的字符串在big里出现的所有位置positions，其中positions[i]为smalls[i]出现的所有位置。
+
+示例：
+```
+输入：
+big = "mississippi"
+smalls = ["is","ppi","hi","sis","i","ssippi"]
+输出： [[1,4],[8],[],[3],[1,4,7,10],[5]]
+```
+提示：
+```
+0 <= len(big) <= 1000
+0 <= len(smalls[i]) <= 1000
+smalls的总字符数不会超过 100000。
+你可以认为smalls中没有重复字符串。
+所有出现的字符均为英文小写字母。
+```
+## 解法
+### 思路
+使用indexOf暴力求解
+- 注意small为空字符串的特殊情况
+### 代码
+```java
+class Solution {
+    public int[][] multiSearch(String big, String[] smalls) {
+        int[][] ans = new int[smalls.length][];
+        for (int i = 0; i < smalls.length; i++) {
+            List<Integer> list = new ArrayList<>();
+            String small = smalls[i];
+            if (Objects.equals(small, "")) {
+                ans[i] = new int[0];
+                continue;
+            }
+            
+            int index = 0, pos = big.indexOf(small, index);
+            while (pos != -1) {
+                list.add(pos);
+                index = pos + 1;
+                pos = big.indexOf(small, index);
+            }
+            ans[i] = list.stream().mapToInt(x -> x).toArray();
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+字典树：
+- 字典树节点属性：
+    - children：子节点
+    - flag：代表当前节点是否有字符串在此终止
+    - index：代表该终止的字符串在smalls数组中的位置
+- 字典树属性：
+    - root：根节点
+    - ans：保存当前small出现在big中的坐标位置
+- insert方法：
+    - 用于将smalls中的所有字符串插入到字典树中
+- update方法：
+    - 带入一个字符串，遍历这个字符串，查看是否在字典树中有对应的单词可以匹配
+    - 如果有匹配就将该单词放入ans中
+    - 如果字符串没有遍历完就继续遍历
+- 主体逻辑：
+    - 初始化字典树
+    - 遍历smalls数组，将small插入到字典树中
+    - 从[0,len]开始不断移动big字符串起始的坐标，缩短这个big，并带入到字典树中进行update
+- 最终返回字典树中的ans
+### 代码
+```java
+class Solution {
+    public int[][] multiSearch(String big, String[] smalls) {
+        TrieTree tree = new TrieTree(smalls);
+        
+        for (int i = 0; i < smalls.length; i++) {
+            tree.insert(smalls[i], i);
+        }
+        
+        int len = big.length();
+        for (int i = 0; i < len; i++) {
+            tree.update(big.substring(i, len), i);
+        }
+        
+        int[][] ans = new int[smalls.length][];
+        for (int i = 0; i < smalls.length; i++) {
+            ans[i] = tree.ans[i].stream().mapToInt(x -> x).toArray();
+        }
+        return ans;
+    }
+}
+
+class TrieTree {
+    class TrieNode {
+        private TrieNode[] children;
+        private boolean flag;
+        private int index;
+
+        public TrieNode() {
+            children = new TrieNode[26];
+            flag = false;
+            index = -1;
+        }
+    }
+
+    List<Integer>[] ans;
+    TrieNode root;
+
+    public TrieTree(String[] smalls) {
+        root = new TrieNode();
+        int len = smalls.length;
+        ans = new List[len];
+        for (int i = 0; i < len; i++) {
+            ans[i] = new ArrayList<>();
+        }
+    }
+
+    public void insert(String word, int pos) {
+        int len = word.length();
+        char[] cs = word.toCharArray();
+
+        TrieNode pivot = root;
+        for (int i = 0; i < cs.length; i++) {
+            int index = cs[i] - 'a';
+
+            if (pivot.children[index] == null) {
+                pivot.children[index] = new TrieNode();
+            }
+
+            pivot = pivot.children[index];
+        }
+
+        pivot.flag = true;
+        pivot.index = pos;
+    }
+
+    public void update(String word, int start) {
+        int len = word.length();
+        char[] cs = word.toCharArray();
+
+        TrieNode pivot = root;
+        for (int i = 0; i < len; i++) {
+            int index = cs[i] - 'a';
+
+            TrieNode node = pivot.children[index];
+            if (node == null) {
+                return;
+            }
+
+            if (node.flag) {
+                ans[node.index].add(start);
+            }
+
+            pivot = node;
+        }
+    }
+}
+```
