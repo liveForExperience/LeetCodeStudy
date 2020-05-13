@@ -334,3 +334,142 @@ class TrieTree {
     }
 }
 ```
+# Interview_1718_最短超串
+## 题目
+假设你有两个数组，一个长一个短，短的元素均不相同。找到长数组中包含短数组所有的元素的最短子数组，其出现顺序无关紧要。
+
+返回最短子数组的左端点和右端点，如有多个满足条件的子数组，返回左端点最小的一个。若不存在，返回空数组。
+
+示例 1:
+```
+输入:
+big = [7,5,9,0,2,1,3,5,7,9,1,1,5,8,8,9,7]
+small = [1,5,9]
+输出: [7,10]
+```
+示例 2:
+```
+输入:
+big = [1,2,3]
+small = [4]
+输出: []
+```
+提示：
+```
+big.length <= 100000
+1 <= small.length <= 100000
+```
+## 解法
+### 思路
+哈希散列表
+- 遍历small，生成map。
+    - key为small数组元素
+    - value存key在big中所在的坐标，初始为-1
+- 初始small长度值count，作为需要找齐的元素的记录值
+- 遍历big字符串：
+    - 如果匹配到map中的key，判断是否已经找到过：
+        - 如果是-1，那就是没有找到，就将当前元素放入map中，同时count值--
+        - 如果已经找到，就直接将元素放入map中
+    - 判断count值是否大于0
+        - 如果是，说明所有元素都已经找到过，判断map中values的最小值，用当前坐标值减去这个最小值，再与暂存的最小值比较，如果是最小值，就更新返回的ans数组
+        - 如果不是，就继续循环
+### 代码
+```java
+class Solution {
+    public int[] shortestSeq(int[] big, int[] small) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i : small) {
+            map.put(i, -1);
+        }
+        
+        int count = small.length;
+        int[] ans = new int[]{0, big.length - 1};
+        
+        for (int i = 0; i < big.length; i++) {
+            int num = big[i];
+            if (map.containsKey(num)) {
+                if (map.get(num) == -1) {
+                    count--;
+                }
+                
+                map.put(num, i);
+            }
+            
+            if (count <= 0) {
+                int min = Collections.min(map.values());
+                if (i - min < ans[1] - ans[0]) {
+                    ans[0] = min;
+                    ans[1] = i;
+                }
+            }
+        }
+        
+        if (count > 0) {
+            return new int[0];
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+解法一中，每次都会对values进行排序，找最小值。可以对这部分进行优化
+- 使用一个指针记录临时子数组的起始坐标
+- 遍历small数组生成map，起始值为-1
+- 遍历big数组：
+    - 如果map中包含当前元素，对应value+1，且count+1
+    - 如果`count == small.length`，那么代表子数组已经找到
+    - 遍历递增start
+        - 如果map中包含start对应的元素，就将其value值-1。
+        - 如果start对应的元素在map中的值不是0，说明这个start还可以递增，还有可以被消耗的small元素
+        - 如果start对应的元素在map中的值是0，说明当前这个子数组是最短的了，可以进行比较判断
+    - 遍历start结束，count--，也就是当前从start开始到i结束的数组范围内已经找不到所有small元素
+- 最终返回结果数组，数组ans在初始化的时候在第一个元素放置-1，用来判断是否找到过子数组
+### 代码
+```java
+class Solution {
+	public int[] shortestSeq(int[] big, int[] small) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : small) {
+            map.put(num, 0);
+        }
+        int count = 0, start = 0, size = small.length, len = big.length;
+        int[] ans = new int[]{-1, len};
+
+        for (int i = 0; i < len; i++) {
+            int num = big[i];
+            if (map.containsKey(num)) {
+                if (map.get(num) == 0) {
+                    count++;
+                }
+
+                map.put(num, map.get(num) + 1);
+            }
+
+            if (count == size) {
+                while (start <= i) {
+                    int startNum = big[start];
+                    if (map.containsKey(startNum)) {
+                        map.put(startNum, map.get(startNum) - 1);
+
+                        if (map.get(startNum) == 0) {
+                            if (i - start < ans[1] - ans[0]) {
+                                ans[0] = start;
+                                ans[1] = i;
+                            }
+
+                            start++;
+                            break;
+                        }
+                    }
+                    start++;
+                }
+                count--;
+            }
+        }
+
+        return ans[0] == -1 ? new int[0] : ans;
+    }
+}
+```
