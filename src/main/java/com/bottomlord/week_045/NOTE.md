@@ -473,3 +473,130 @@ class Solution {
     }
 }
 ```
+# Interview_1719_消失的两个数字
+## 题目
+给定一个数组，包含从 1 到 N 所有的整数，但其中缺了两个数字。你能在 O(N) 时间内只用 O(1) 的空间找到它们吗？
+
+以任意顺序返回这两个数字均可。
+
+示例 1:
+```
+输入: [1]
+输出: [2,3]
+```
+示例 2:
+```
+输入: [2,3]
+输出: [1,4]
+```
+提示：
+```
+nums.length <= 30000
+```
+## 解法
+### 思路
+- 通过等差数列求和公式获得数组元素的sum值
+- 遍历数组获得当前数组元素的和total
+- 通过`sum - total`获得消失的两个数的和，并对其平分取下限，获得一个分解数mid
+- 通过这个mid将数组分成两部分，两个消失的元素必定分别在两个数组中
+- 再分别通过求和公式和遍历求和来获得这两个数，因为有可能会出现负数，还需要求绝对值
+### 代码
+```java
+class Solution {
+    public int[] missingTwo(int[] nums) {
+        int n = nums.length + 2, sum = (1 + n) * n / 2, total = 0;
+        for (int num : nums) {
+            total += num;
+        }
+        
+        int mid = (sum - total) / 2;
+        
+        int firstSum = (1 + mid) * mid / 2,
+            secondSum = (mid + 1 + n) * (n - mid) / 2,
+            firstTotal = 0, secondTotal = 0;
+        
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] <= mid) {
+                firstTotal += nums[i];
+            } else {
+                secondTotal += nums[i];
+            }
+        }
+        
+        return new int[]{Math.abs(firstSum - firstTotal), Math.abs(secondSum - secondTotal)};
+    }
+}
+```
+## 优化代码
+### 思路
+只要求得一个数，另一个数通过之前`sum - total`的值求差也就得到了。
+### 代码
+```java
+class Solution {
+    public int[] missingTwo(int[] nums) {
+        int n = nums.length + 2, sum = (1 + n) * n / 2, total = 0;
+        for (int num : nums) {
+            total += num;
+        }
+
+        int twoSum = sum - total,
+            mid = twoSum / 2;
+
+        int firstSum = (1 + mid) * mid / 2,
+                firstTotal = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] <= mid) {
+                firstTotal += nums[i];
+            }
+        }
+        
+        int firstNum = Math.abs(firstSum - firstTotal);
+        
+        return new int[]{firstNum, twoSum - firstNum};
+    }
+}
+```
+## 解法三
+### 思路
+有两个数只出现一次，其他数出现2次的题的异或解法
+- 找到两个值的异或值
+- 找到两个值不同的一位
+- 根据这一位将数字分成两部分进行异或
+- 最终返回结果
+### 代码
+```java
+class Solution {
+    public int[] missingTwo(int[] nums) {
+        int n = nums.length + 2; int xor = 0;
+        for (int i = 1; i <= n; i++) {
+            xor ^= i;
+        }
+
+        for (int num : nums) {
+            xor ^= num;
+        }
+
+        int diff = xor & (-xor);
+
+        int[] ans = new int[2];
+        for (int i = 1; i <= n; i++) {
+            if ((diff & i) == 0) {
+                ans[0] ^= i;
+            } else {
+                ans[1] ^= i;
+            }
+        }
+
+        for (int num : nums) {
+            if ((diff & num) == 0) {
+                ans[0] ^= num;
+            } else {
+                ans[1] ^= num;
+            }
+        }
+
+        return ans;
+    }
+}
+```
