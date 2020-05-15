@@ -600,3 +600,65 @@ class Solution {
     }
 }
 ```
+# LeetCode_560_和为k的子数组
+## 题目
+给定一个整数数组和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
+
+示例 1 :
+```
+输入:nums = [1,1,1], k = 2
+输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。
+```
+说明 :
+```
+数组的长度为 [1, 20,000]。
+数组中元素的范围是 [-1000, 1000] ，且整数 k 的范围是 [-1e7, 1e7]。
+```
+## 解法
+### 思路
+枚举：
+- 嵌套循环
+### 代码
+```java
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        int ans = 0;
+        
+        for (int i = 0; i < nums.length; i++) {
+            int sum = 0;
+            for (int j = i; j < nums.length; j++) {
+                sum += nums[j];
+                if (sum == k) {
+                    ans += 1;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+前缀和+hashmap
+- 定义map，key为以i为结尾的前缀和，value为出现次数，初始化一个(0，1)
+- 遍历数组，计算i为结尾的前缀和，放入map中
+- 判断当前前缀和-k的值是否存在，如果存在就说明有子数组，个数就是该key对应的value，做一下累加就好了
+### 代码
+```java
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        
+        int sum = 0, ans = 0;
+        for (int num : nums) {
+            sum += num;
+            ans += map.getOrDefault(sum - k, 0);
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+        
+        return ans;
+    }
+}
+```
