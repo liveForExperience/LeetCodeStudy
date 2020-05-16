@@ -662,3 +662,98 @@ class Solution {
     }
 }
 ```
+# LeetCode_25_K个一组翻转链表
+## 题目
+给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
+
+k 是一个正整数，它的值小于或等于链表的长度。
+
+如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+
+示例：
+```
+给你这个链表：1->2->3->4->5
+
+当 k = 2 时，应当返回: 2->1->4->3->5
+
+当 k = 3 时，应当返回: 3->2->1->4->5
+```
+说明：
+```
+你的算法只能使用常数的额外空间。
+你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
+```
+## 解法
+### 思路
+暴力：
+- 遍历一遍链表，根据k记录每段的起始和结束节点，放入不同的list中
+- 翻转链表
+    - 如果链表长度不能被k整除，最后一段不翻转
+- 如果能被k整除，最后一个结尾节点的next指向null
+- 遍历存放结尾节点的list，将头尾相连
+- 最终返回头节点list中的第一个节点
+### 代码
+```java
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+        
+        if (k == 1) {
+            return head;
+        }
+        
+        LinkedList<ListNode> heads = new LinkedList<>(),
+                             tails = new LinkedList<>();
+
+        ListNode node = head, pre = null;
+        int count = 0;
+        while(node != null) {
+            count++;
+            if (count % k == 1) {
+                tails.add(node);
+            }
+
+            if (count % k == 0) {
+                heads.add(node);
+            }
+
+            node = node.next;
+        }
+
+        if (heads.size() != tails.size()) {
+            heads.add(tails.getLast());
+            tails.removeLast();
+        }
+
+        node = head;
+        while (node != null) {
+            if (heads.size() != tails.size()) {
+                if (node == heads.getLast()) {
+                    while (node != null) {
+                        pre = node;
+                        node = node.next;
+                    }
+                    break;
+                }
+            }
+
+            ListNode next = node.next;
+            node.next = pre;
+            pre = node;
+            node = next;
+        }
+
+        if (heads.size() == tails.size()) {
+            tails.getLast().next = null;
+        }
+
+        for (int i = 0; i < tails.size() && i + 1 < heads.size(); i++) {
+            tails.get(i).next = heads.get(i + 1);
+        }
+
+        return heads.getFirst();
+    }
+}
+```
