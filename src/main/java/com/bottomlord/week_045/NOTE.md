@@ -757,3 +757,78 @@ class Solution {
     }
 }
 ```
+# Interview_1720_连续中值
+## 题目
+随机产生数字并传递给一个方法。你能否完成这个方法，在每次产生新值时，寻找当前所有值的中间值（中位数）并保存。
+
+中位数是有序列表中间的数。如果列表长度是偶数，中位数则是中间两个数的平均值。
+
+例如，
+```
+[2,3,4] 的中位数是 3
+
+[2,3] 的中位数是 (2 + 3) / 2 = 2.5
+
+设计一个支持以下两种操作的数据结构：
+
+void addNum(int num) - 从数据流中添加一个整数到数据结构中。
+double findMedian() - 返回目前所有元素的中位数。
+```
+示例：
+```
+addNum(1)
+addNum(2)
+findMedian() -> 1.5
+addNum(3) 
+findMedian() -> 2
+```
+## 解法
+### 思路
+大顶堆+小顶堆
+- 初始化大小顶堆，大顶堆中放int最小值，小顶堆中放int最大值
+- add的时候比较num与大顶堆中堆顶元素的大小
+    - 小的话放入小顶堆
+    - 大的话放入大顶堆
+- add完以后还要使大小顶堆的大小差不超过2，且大顶堆在奇数个的时候比小顶堆多一个
+    - 当大顶堆个数比小顶堆大2个，就将大顶堆的堆顶元素压入小顶堆
+    - 当小顶堆个数比大顶堆多，就将小顶堆的堆顶元素放入大顶堆
+    - 因为每次都只放入一个元素，所以永远只有如上两种情况使需要调整的
+- 返回中位数的时候
+    - 如果大小顶堆一样多，就返回两个堆顶元素的和的平均值，如果都是1，也就是初始化的时候，int的最大最小值相加就是0
+    - 否则就返回大顶堆的堆顶元素
+### 代码
+```java
+class MedianFinder {
+    private PriorityQueue<Double> maxHeap;
+    private PriorityQueue<Double> minHeap;
+    public MedianFinder() {
+        this.minHeap = new PriorityQueue<>();
+        this.minHeap.offer((double)Integer.MAX_VALUE);
+        this.maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+        this.maxHeap.offer((double)Integer.MIN_VALUE);
+    }
+
+    public void addNum(int num) {
+        double min = maxHeap.peek();
+        if (num <= min) {
+            maxHeap.offer((double) num);
+        } else {
+            minHeap.offer((double) num);
+        }
+
+        if (maxHeap.size() >= minHeap.size() + 2) {
+            minHeap.offer(maxHeap.poll());
+        } else if (minHeap.size() > maxHeap.size()){
+            maxHeap.offer(minHeap.poll());
+        }
+    }
+
+    public double findMedian() {
+        if (maxHeap.size() == minHeap.size()) {
+            return (maxHeap.peek() + minHeap.peek()) / 2;
+        } else {
+            return maxHeap.peek();
+        }
+    }
+}
+```
