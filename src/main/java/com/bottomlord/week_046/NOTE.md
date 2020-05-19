@@ -63,3 +63,120 @@ class Solution {
     }
 }
 ```
+# Interview_1721_直方图的水量
+## 题目
+给定一个直方图(也称柱状图)，假设有人从上面源源不断地倒水，最后直方图能存多少水量?直方图的宽度为 1。
+
+上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的直方图，在这种情况下，可以接 6 个单位的水（蓝色部分表示水）。 感谢 Marcos 贡献此图。
+
+示例:
+```
+输入: [0,1,0,2,1,0,1,3,2,1,2,1]
+输出: 6
+```
+## 解法
+### 思路
+暴力：
+- 遍历直方图数组
+- 以当前元素为中心，向左右遍历，找到左右方向上的2个最大值max
+- 在2个最大值max中找到最小值min
+- 如果min比当前值cur大，则差值就是当前位置可以储存的数量
+- 将所有位置的值累加就是结果
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        int ans = 0;
+        for (int i = 0; i < height.length; i++) {
+            int leftMax = 0, rightMax = 0, curIndex = i;
+            while (--curIndex >= 0) {
+                leftMax = Math.max(leftMax, height[curIndex]);
+            }
+            
+            curIndex = i;
+            while (++curIndex < height.length) {
+                rightMax = Math.max(rightMax, height[curIndex]);
+            }
+            
+            int min = Math.min(leftMax, rightMax);
+            if (min > height[i]) {
+                ans += min - height[i];
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+双指针：
+- 初始化头尾两个指针
+- 初始化头尾的最大值变量，起始为头尾元素
+- 头尾指针相向移动
+- 比较头尾最大值的大小：
+    - 如果头最大值小于尾最大值，那么累加头最大值与头元素之间的差值
+    - 如果尾最大值小于头最大值，那么累加尾最大值与尾元素之间的差值
+    - 这么计算的原因是：当前元素是否能盛多少水，取决于当前元素的左右两边最大值中的最小值。头最大值如果小于尾最大值，那么头元素能盛多少水就能通过头最大值来确定，而此时尾最大值是否是当前头元素的真正右边的最大值是不用考虑的。反之亦然。
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        if (height.length < 3) {
+            return 0;
+        }
+        
+        int ans = 0, head = 0, tail = height.length - 1;
+        int headMax = height[head], tailMax = height[tail];
+        
+        while (head < tail) {
+            if (headMax < tailMax) {
+                ans += headMax - height[head++];
+                headMax = Math.max(headMax, height[head]);
+            } else {
+                ans += tailMax - height[tail--];
+                tailMax = Math.max(tailMax, height[tail]);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+- 初始化两个数组
+    - pre：以当前坐标结尾的数组中的最大值
+    - suf：以当前坐标开头的数组中的最大值
+- 遍历height填充pre和suf
+- 遍历height，求height当前元素与min(pre, suf)之间的差值，如果是负值就取0
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        int len = height.length;
+        if (len < 3) {
+            return 0;
+        }
+        
+        int[] pre = new int[len], suf = new int[len];
+        pre[0] = height[0];
+        suf[len - 1] = height[len - 1];
+        
+        for (int i = 1; i < len - 1; i++) {
+            pre[i] = Math.max(pre[i - 1], height[i]);
+        }
+        
+        for (int i = len - 2; i >= 0; i--) {
+            suf[i] = Math.max(suf[i + 1], height[i]);
+        }
+        
+        int ans = 0;
+        for (int i = 1; i < len - 1; i++) {
+            ans += Math.max(0, Math.min(pre[i - 1], suf[i + 1]) - height[i]);
+        }
+        
+        return ans;
+    }
+}
+```
