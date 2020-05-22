@@ -253,3 +253,103 @@ class Solution {
     }
 }
 ```
+# LeetCode_5_最长回文子串
+## 题目
+给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+
+示例 1：
+```
+输入: "babad"
+输出: "bab"
+注意: "aba" 也是一个有效答案。
+```
+示例 2：
+```
+输入: "cbbd"
+输出: "bb"
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j]`：s[i,j]是否为回文串
+- 状态转移方程：
+    - `dp[i][j] = dp[i + 1, j - 1] && s[i] == s[j]`
+- 初始化：
+    - `j == i：dp[i][j] = true`
+    - `j = i + 1：dp[i][j] = s[i] == s[j]`
+- 过程：两层循环
+    - 外层遍历子回文串长度l，从0开始
+    - 内容遍历子字符串起始位置i，并用l来确定结束位置j
+    - 使用状态转移方程推演状态
+    - 如果获得新的回文串，且长度大于暂存的回文串，就更新
+    - 循环结束，返回记录的数组
+### 代码
+```java
+class Solution {
+    public String longestPalindrome(String s) {
+        int len = s.length();
+        boolean[][] dp = new boolean[len][len];
+        String ans = "";
+        for (int l = 0; l < len; l++) {
+            for (int i = 0; i < len; i++) {
+                int j = i + l;
+                if (j >= len) {
+                    break;
+                }
+
+                if (l == 0) {
+                    dp[i][j] = true;
+                } else {
+                    boolean equals = s.charAt(i) == s.charAt(j);
+                    if (l == 1) {
+                        dp[i][j] = equals;
+                    } else {
+                        dp[i][j] = dp[i + 1][j - 1] && equals;
+                    }
+                }
+                
+                if (dp[i][j] && l + 1 > ans.length()) {
+                    ans = s.substring(i, j + 1);
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+中心扩散：
+- 以确定的回文字符串作为中心点，向两边扩散，获取回文子串
+    - 长度为1
+    - 长度为2，且两个字符相等
+### 代码
+```java
+class Solution {
+    public String longestPalindrome(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+        
+        int len = s.length(), start = 0, end = 0;
+        for (int i = 0; i < len; i++) {
+            int l = Math.max(expand(i, i, s), expand(i, i + 1, s));
+            if (l > end - start) {
+                start = i - (l - 1) / 2;
+                end = i + l / 2;
+            }
+        }
+
+        return s.substring(start, end + 1);
+    }
+
+    private int expand(int start, int end, String s) {
+        while (start >= 0 && end < s.length() && s.charAt(start) == s.charAt(end)) {
+            start--;
+            end++;
+        }
+
+        return end - start - 1;
+    }
+}
+```
