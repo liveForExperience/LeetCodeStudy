@@ -353,3 +353,101 @@ class Solution {
     }
 }
 ```
+# Interview_1722_单词转换
+## 题目
+给定字典中的两个词，长度相等。写一个方法，把一个词转换成另一个词， 但是一次只能改变一个字符。每一步得到的新词都必须能在字典中找到。
+
+编写一个程序，返回一个可能的转换序列。如有多个可能的转换序列，你可以返回任何一个。
+
+示例 1:
+```
+输入:
+beginWord = "hit",
+endWord = "cog",
+wordList = ["hot","dot","dog","lot","log","cog"]
+
+输出:
+["hit","hot","dot","lot","log","cog"]
+```
+示例 2:
+```
+输入:
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot","dot","dog","lot","log"]
+
+输出: []
+
+解释: endWord "cog" 不在字典中，所以不存在符合要求的转换序列。
+```
+## 解法
+### 思路
+回溯+记忆化搜索
+- 定义一个函数，在下钻前，在wordList中确定与当前字符串只差一个字符的字符串，将他们作为下钻的字符串
+- 使用一个path来记录下钻的路径字符串，回溯的时候去除最后一个字符串
+- 如果下钻的字符串和endWord一样，那就放入结果中并直接返回
+### 代码
+```java
+class Solution {
+    private boolean[] memo;
+    private List<String> wordList;
+    private List<String> result;
+    private String endWord;
+    private List<String> path;
+
+    public List<String> findLadders(String beginWord, String endWord, List<String> wordList) {
+        this.wordList=wordList;
+        this.result=new ArrayList();
+        this.wordList = wordList;
+        this.path = new ArrayList<>();
+        this.memo = new boolean[wordList.size()];
+        this.endWord=endWord;
+        backTrack(beginWord);
+        return result;
+    }
+
+    private void backTrack(String beginWord) {
+        this.path.add(beginWord);
+        List<String> list = findWords(beginWord);
+        for (String word : list) {
+            if (Objects.equals(word, endWord)) {
+                path.add(word);
+                result = new ArrayList<>(path);
+                return;
+            }
+
+            backTrack(word);
+
+            path.remove(path.size() - 1);
+        }
+    }
+
+    private List<String> findWords(String str) {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < wordList.size(); i++) {
+            String word = wordList.get(i);
+            int diff = 0;
+            if (memo[i] || word.length() != str.length()) {
+                continue;
+            }
+
+            for (int j = 0; j < word.length(); j++) {
+                if (diff > 1) {
+                    break;
+                }
+
+                if (word.charAt(j) != str.charAt(j)) {
+                    diff++;
+                }
+            }
+
+            if (diff == 1) {
+                list.add(word);
+                memo[i] = true;
+            }
+        }
+
+        return list;
+    }
+}
+```
