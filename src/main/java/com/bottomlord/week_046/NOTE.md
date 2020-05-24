@@ -451,3 +451,80 @@ class Solution {
     }
 }
 ```
+# LeetCode_4_寻找两个正序数组的中位数
+## 题目
+给定两个大小为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。
+
+请你找出这两个正序数组的中位数，并且要求算法的时间复杂度为 O(log(m + n))。
+
+你可以假设 nums1 和 nums2 不会同时为空。
+
+示例 1:
+```
+nums1 = [1, 3]
+nums2 = [2]
+
+则中位数是 2.0
+```
+示例 2:
+```
+nums1 = [1, 2]
+nums2 = [3, 4]
+
+则中位数是 (2 + 3)/2 = 2.5
+```
+## 解法
+### 思路
+二分查找：
+- 首先确定中位数k：
+    - 如果m+n的和是奇数，k = (m + n) / 2
+    - 如果m+n的和是偶数，k = ((m + n) / 2 + (m + n) / 2 + 1) / 2
+- 确定k了之后，就需要确定这个第k个数到底在哪个数组中
+    - 极端情况下，k这个数会在A或B数组中的第k个元素上，所以二分查找的别界就在A和B的第k个元素除
+    - 中间值可以求k / 2 - 1，计算两个数组在这个坐标上值得大小：
+        - 如果A的元素大或相等，那么说明B的坐标之前的元素都一定不会是，将B的坐标移动到当前坐标
+        - 如果B的元素大，则相反
+        - 如果k / 2 - 1的值为1，那么比较后小的哪那个值就是第k个元素
+### 代码
+```java
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int mn = nums1.length + nums2.length;
+        if (mn % 2 == 1) {
+            return getElementK(nums1, nums2, mn / 2 + 1);
+        } else {
+            return (getElementK(nums1, nums2, mn / 2) + getElementK(nums1, nums2, mn / 2 + 1)) / 2.0;
+        }
+    }
+
+    private double getElementK(int[] nums1, int[] nums2, int k) {
+        int m = nums1.length, n = nums2.length, mi = 0, ni = 0;
+
+        while (true) {
+            if (mi >= m) {
+                return nums2[ni + k - 1];
+            }
+
+            if (ni >= n) {
+                return nums1[mi + k - 1];
+            }
+
+            if (k == 1) {
+                return Math.min(nums1[mi], nums2[ni]);
+            }
+
+            int half = k / 2,
+                tmi = Math.min(mi + half, m) - 1,
+                tni = Math.min(ni + half, n) - 1;
+
+            if (nums1[tmi] >= nums2[tni]) {
+                k -= (tni - ni + 1);
+                ni = tni + 1;
+            } else {
+                k -= (tmi - mi + 1);
+                mi = tmi + 1;
+            }
+        }
+    }
+}
+```
