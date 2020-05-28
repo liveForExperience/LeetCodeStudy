@@ -258,3 +258,109 @@ class Solution {
     }
 }
 ```
+# LeetCode_974_和可被K整除的子数组
+## 题目
+给定一个整数数组 A，返回其中元素之和可被 K 整除的（连续、非空）子数组的数目。
+
+示例：
+```
+输入：A = [4,5,0,-2,-3,1], K = 5
+输出：7
+解释：
+有 7 个子数组满足其元素之和可被 K = 5 整除：
+[4, 5, 0, -2, -3, 1], [5], [5, 0], [5, 0, -2, -3], [0], [0, -2, -3], [-2, -3]
+```
+提示：
+```
+1 <= A.length <= 30000
+-10000 <= A[i] <= 10000
+2 <= K <= 10000
+```
+## 失败解法
+### 失败原因
+超时
+### 思路
+前缀和
+- 初始化一个数组arr
+- 计算原数组的前缀和，放入arr中，下标对应前缀子数组的结尾元素下标
+- 嵌套遍历arr，计算是否有前缀和差值可以被K整除，做计数累加
+### 代码
+```java
+class Solution {
+    public int subarraysDivByK(int[] A, int K) {
+        int sum = 0, len = A.length, ans = 0;
+        int[] arr = new int[len];
+        for (int i = 0; i < len; i++) {
+            arr[i] = (sum += A[i]);
+        }
+        
+        for (int i = 0; i < len; i++) {
+            int a = arr[i];
+            if (a % K == 0) {
+                ans++;
+            }
+            
+            for (int j = i + 1; j < len; j++) {
+                if ((arr[j] - a) % K == 0) {
+                    ans++;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+前缀和+散列表
+- 和失败解法一样要求前缀和
+- 但是只需要在一次循环中处理
+- 因为是否能整除，在之前前缀和相减的基础上，其实也可以理解成，是否有前缀和取模K后的值和当前取模K后的值一致，如果有，那么相减的差就一定能被K整除
+- 所以只要把取模后的值放入散列表中，并统计出现的个数，就能算出与当前前缀和相减后能获得整除的对数，将这个对数累加到结果中就可以了
+- 要注意取模的时候java对被除数为负的情况，仍取负数，而类似-1和4这两个数取模5后，一个是-1一个是4，这两个数在算法中是不会被统计的，但是-1 - 4 = -5，其实是可以的，所以要使用Math.floorMod或者(num % K + K) % k的方式来求
+### 代码
+```java
+class Solution {
+    public int subarraysDivByK(int[] A, int K) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int sum = 0, ans = 0;
+
+        for (int num : A) {
+            sum += num;
+            int modules = (sum % K + K) % K;
+            int same = map.getOrDefault(modules, 0);
+            ans += same;
+            map.put(modules, same + 1);
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 先循环A数组，累加sum值，并求当前元素作为数组最后一个元素的取模K的值modulus
+- 将modulus放入map中计数
+- 遍历modulus值，使用排列组合来计算计数值能组成的子数组组合，累加后返回
+### 代码
+```java
+class Solution {
+    public int subarraysDivByK(int[] A, int K) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int sum = 0;
+        for (int num : A) {
+            sum += num;
+            int modulus = (sum % K + K) % K;
+            map.put(modulus, map.getOrDefault(modulus, 0) + 1);
+        }
+        
+        int ans = 0;
+        for (int num : map.values()) {
+            ans += num * (num - 1) / 2;
+        }
+        return ans;
+    }
+}
+```
