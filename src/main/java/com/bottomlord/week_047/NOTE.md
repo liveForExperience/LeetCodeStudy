@@ -364,3 +364,70 @@ class Solution {
     }
 }
 ```
+# Interview_1724_最大子矩阵
+## 题目
+给定一个正整数和负整数组成的 N × M 矩阵，编写代码找出元素总和最大的子矩阵。
+
+返回一个数组 [r1, c1, r2, c2]，其中 r1, c1 分别代表子矩阵左上角的行号和列号，r2, c2 分别代表右下角的行号和列号。若有多个满足条件的子矩阵，返回任意一个均可。
+
+示例:
+```
+输入:
+[
+   [-1,0],
+   [0,-1]
+]
+输出: [0,1,0,1]
+解释: 输入中标粗的元素即为输出所表示的矩阵
+```
+## 解法
+### 思路
+动态规划+降维压缩
+- 动态规划求解一维数组的最大子数组
+- 将一列的所有值累加，使矩阵降维到一维
+- 三层循环：
+    - 第一层确定矩阵起始行
+    - 第二层确定当前遍历的行
+    - 第三层遍历当前列：
+        - 每一个新的起始行，都在每一层都累加当前列到一个数组中
+        - 每到一个新行，就使用动态规划计算当前列为尾元素的子数组的最大值
+        - 因为dp[i - 1]时如果是负数，一定导致nums[i]的值大于dp[i - 1] + nums[i]，所以在dp[i- 1]为负数时就刷新起始左上角坐标
+        - 如果累加的值大于暂存的最大值，就更新结果坐标
+### 代码
+```java
+class Solution {
+    public int[] getMaxMatrix(int[][] matrix) {
+        int rowLen = matrix.length, colLen = matrix[0].length,
+            max = Integer.MIN_VALUE, r = 0, c = 0;
+
+        int[] ans = new int[4];
+
+        for (int startRow = 0; startRow < rowLen; startRow++) {
+            int[] colSum = new int[colLen];
+            for (int row = startRow; row < rowLen; row++) {
+                int sum = 0;
+                for (int col = 0; col < colLen; col++) {
+                    colSum[col] += matrix[row][col];
+                    if (sum > 0) {
+                        sum += colSum[col];
+                    } else {
+                        sum = colSum[col];
+                        r = startRow;
+                        c = col;
+                    }
+
+                    if (sum > max) {
+                        max = sum;
+                        ans[0] = r;
+                        ans[1] = c;
+                        ans[2] = row;
+                        ans[3] = col;
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
