@@ -431,3 +431,132 @@ class Solution {
     }
 }
 ```
+# Interview_1725_单词矩阵
+## 题目
+给定一份单词的清单，设计一个算法，创建由字母组成的面积最大的矩形，其中每一行组成一个单词(自左向右)，每一列也组成一个单词(自上而下)。不要求这些单词在清单里连续出现，但要求所有行等长，所有列等高。
+
+如果有多个面积最大的矩形，输出任意一个均可。一个单词可以重复使用。
+
+示例 1:
+```
+输入: ["this", "real", "hard", "trh", "hea", "iar", "sld"]
+输出:
+[
+   "this",
+   "real",
+   "hard"
+]
+```
+示例 2:
+```
+输入: ["aa"]
+输出: ["aa","aa"]
+```
+说明：
+```
+words.length <= 1000
+words[i].length <= 100
+数据保证单词足够随机
+```
+## 解法
+### 思路
+- 初始化字典树
+- 将字符串按照长度分组
+- 每一组的所有字符串，都进行排列组合判断是否能形成有效的矩阵组合，过程为回溯判断
+### 代码
+```java
+class Solution {
+    private int maxArea = 0;
+    private List<String> ans = new ArrayList<>();
+    public String[] maxRectangle(String[] words) {
+        int maxLen = 0;
+        Trie root = new Trie();
+        for (String word : words) {
+            Trie node = root;
+            for (char c : word.toCharArray()) {
+                if (node.children[c - 'a'] == null) {
+                    node.children[c - 'a'] = new Trie();
+                }
+
+                node = node.children[c - 'a'];
+            }
+
+            node.isLeaf = true;
+        }
+
+        Map<Integer, Set<String>> map = new HashMap<>();
+        for (String word : words) {
+            Integer len = word.length();
+            Set<String> set = map.getOrDefault(len, new HashSet<>());
+            maxLen = Math.max(maxLen, len);
+            set.add(word);
+            map.put(len, set);
+        }
+
+        List<String> path = new ArrayList<>();
+        for (Integer len : map.keySet()) {
+            path.clear();
+            backTrack(root, map.get(len), path, len, maxLen);
+        }
+
+        return ans.toArray(new String[0]);
+    }
+
+    private void backTrack(Trie root, Set<String> words, List<String> path, int len, int maxLen) {
+        if (len * maxLen <= maxArea) {
+            return;
+        }
+
+        if (path.size() > maxLen) {
+            return;
+        }
+
+        for (String word : words) {
+            path.add(word);
+
+            boolean[] res = isValid(root, path);
+            if (res[0]) {
+                int area = path.size() * path.get(0).length();
+                if (area > maxArea && res[1]) {
+                    maxArea = area;
+                    ans = new ArrayList<>(path);
+                }
+
+                backTrack(root, words, path, len, maxLen);
+            }
+
+            path.remove(path.size() - 1);
+        }
+    }
+
+    private boolean[] isValid(Trie root, List<String> path) {
+        boolean allLeaf = true;
+        int row = path.size(), col = path.get(0).length();
+        for (int i = 0; i < col; i++) {
+            Trie node = root;
+            for (int j = 0; j < row; j++) {
+                int index = path.get(j).charAt(i) - 'a';
+
+                if (node.children[index] == null) {
+                    return new boolean[]{false, false};
+                }
+                node = node.children[index];
+            }
+
+            if (!node.isLeaf) {
+                allLeaf = false;
+            }
+        }
+
+        return new boolean[]{true, allLeaf};
+    }
+
+    class Trie {
+        private Trie[] children;
+        private boolean isLeaf;
+        public Trie() {
+            children = new Trie[26];
+        }
+    }
+}
+```
