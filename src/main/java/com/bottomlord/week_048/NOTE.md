@@ -129,3 +129,87 @@ class Solution {
     }
 }
 ```
+# LeetCode_16_最接近的三数之和
+## 题目
+给定一个包括 n 个整数的数组 nums 和 一个目标值 target。找出 nums 中的三个整数，使得它们的和与 target 最接近。返回这三个数的和。假定每组输入只存在唯一答案。
+
+例如，给定数组 nums = [-1，2，1，-4], 和 target = 1.
+
+与 target 最接近的三个数的和为 2. (-1 + 2 + 1 = 2).
+## 解法
+### 思路
+快速排序+双指针：
+- 快速排序数组
+- 定义变量ans，初始化为nums[0] + nums[1] + nums[2] - target的绝对值
+- 遍历数组：
+    - 定义第一个数为nums[i]
+    - 定义头尾指针：
+        - head = nums[i + 1]
+        - tail = nums[nums.length - 1]
+    - 第二第三个数对应头尾指针指向的元素
+    - 计算sum，如果sum值与target的差的绝对值小于ans，那么就更新ans
+    - 如果sum < target，说明总和需要增加，head右移
+    - 如果sum > target，说明总和需要减小，tail左移
+    - 如果sum = target，直接返回结果
+### 代码
+```java
+class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        quickSort(nums);
+        int ans = nums[0] + nums[1] + nums[2];
+        for (int i = 0; i < nums.length; i++) {
+            int head = i + 1, tail = nums.length - 1;
+            while (head < tail) {
+                int sum = nums[i] + nums[head] + nums[tail];
+                if (Math.abs(target - sum) < Math.abs(target - ans)) {
+                    ans = sum;
+                }
+
+                if (sum < target) {
+                    head++;
+                } else if (sum > target) {
+                    tail--;
+                } else {
+                    return sum;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private void quickSort(int[] arr) {
+        sort(0, arr.length - 1, arr);
+    }
+
+    private void sort(int head, int tail, int[] arr) {
+        if (head >= tail) {
+            return;
+        }
+
+        int pivot = partition(head, tail, arr);
+        sort(head, pivot - 1, arr);
+        sort(pivot + 1, tail, arr);
+    }
+
+    private int partition(int head, int tail, int[] arr) {
+        int num = arr[head];
+        while (head < tail) {
+            while (head < tail && arr[tail] >= num) {
+                tail--;
+            }
+
+            arr[head] = arr[tail];
+
+            while (head < tail && arr[head] <= num) {
+                head++;
+            }
+
+            arr[tail] = arr[head];
+        }
+
+        arr[head] = num;
+        return head;
+    }
+}
+```
