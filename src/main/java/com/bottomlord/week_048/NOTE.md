@@ -279,3 +279,119 @@ class Solution {
     }
 }
 ```
+# LeetCode_18_四数之和
+## 题目
+给定一个包含 n 个整数的数组 nums 和一个目标值 target，判断 nums 中是否存在四个元素 a，b，c 和 d ，使得 a + b + c + d 的值与 target 相等？找出所有满足条件且不重复的四元组。
+
+注意：
+```
+答案中不可以包含重复的四元组。
+```
+示例：
+```
+给定数组 nums = [1, 0, -1, 0, -2, 2]，和 target = 0。
+
+满足要求的四元组集合为：
+[
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+```
+## 解法
+### 思路
+双指针：
+- 快速排序
+- 定义四个指针，坐标分别对应：
+    - a：0
+    - b：1
+    - c：2
+    - d：len - 1
+- c和d相向移动，求四个元素的和sum与target的关系
+    - 如果sum > target：c向右移动
+    - 如果sum < target：d向左移动
+    - 如果sum = target：
+        - 记录
+        - 将c和d相同的元素过滤掉，确保下个组合是完全不同的
+- 如果c和d相遇，右移b，开始新的循环，为了保证不重复，还要确保新的b值变化了，如果没有变化，继续移动
+- 如果b无法再移动，移动a，开始新的循环，且移动时和b一样要保证有新的值
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        int len = nums.length;
+        quickSort(nums);
+        List<List<Integer>> ans = new ArrayList<>();
+        for (int a = 0; a < len; a++) {
+            if (a > 0 && nums[a] == nums[a - 1]) {
+                continue;
+            }
+            
+            for (int b = a + 1; b < len; b++) {
+                if (b > a + 1 && nums[b - 1] == nums[b]) {
+                    continue;
+                }
+                
+                int c = b + 1, d = len - 1;
+                while (c < d) {
+                    int sum = nums[a] + nums[b] + nums[c] + nums[d];
+                    if (sum < target) {
+                        c++;
+                    } else if (sum > target) {
+                        d--;
+                    } else {
+                        ans.add(Arrays.asList(nums[a], nums[b], nums[c], nums[d]));
+                        while (c < d && nums[c] == nums[c + 1]) {
+                            c++;
+                        }
+
+                        while (c < d && nums[d] == nums[d - 1]) {
+                            d--;
+                        }
+
+                        c++;
+                        d--;
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private void quickSort(int[] arr) {
+        sort(0, arr.length - 1, arr);
+    }
+
+    private void sort(int head, int tail, int[] arr) {
+        if (head >= tail) {
+            return;
+        }
+
+        int pivot = partition(head, tail, arr);
+
+        sort(head, pivot, arr);
+        sort(pivot + 1, tail, arr);
+    }
+
+    private int partition(int head, int tail, int[] arr) {
+        int num = arr[head];
+
+        while (head < tail) {
+            while (head < tail && num <= arr[tail]) {
+                tail--;
+            }
+            arr[head] = arr[tail];
+
+            while (head < tail && num >= arr[head]) {
+                head++;
+            }
+
+            arr[tail] = arr[head];
+        }
+
+        arr[head] = num;
+        return head;
+    }
+}
+```
