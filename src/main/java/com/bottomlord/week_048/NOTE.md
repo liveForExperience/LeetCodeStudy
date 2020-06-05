@@ -395,3 +395,152 @@ class Solution {
     }
 }
 ```
+# LeetCode_19_删除链表的倒数第N个节点
+## 题目
+给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。
+
+示例：
+```
+给定一个链表: 1->2->3->4->5, 和 n = 2.
+
+当删除了倒数第二个节点后，链表变为 1->2->3->5.
+```
+说明：
+```
+给定的 n 保证是有效的。
+```
+进阶：
+```
+你能尝试使用一趟扫描实现吗？
+```
+## 解法
+### 思路
+单指针遍历两次：
+- 遍历一次链表求得长度
+- 根据n找到应该删除的节点位置，做删除操作
+- 定义node指针用来遍历链表
+- 定义pre指针用来确定前节点，并用来做删除动作，初始化为null
+- pre指针在第二次找删除节点的时候，做更新，如果pre为null，说明删除的是头节点，需要变更head指针指向head.next
+### 代码
+```java
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        int len = 0;
+        ListNode node = head, pre = null;
+        while (node != null) {
+            len++;
+            node = node.next;
+        }
+        
+        int index = len - n;
+        node = head;
+        while (index-- > 0) {
+            pre = node;
+            node = node.next;
+        }
+        
+        if (pre != null) {
+            pre.next = node.next;
+        } else {
+            head = head.next;
+        }
+        
+        return head;
+    }
+}
+```
+## 优化解法
+### 思路
+遍历第二次的时候直接遍历到要删除节点的前一个位置，这样就省去了pre指针。再通过判断index是否为0来判断是否需要变动head指针
+### 代码
+```java
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        if (head == null) {
+            return null;
+        }
+        
+        ListNode node = head;
+        int len = 0;
+        while (node != null) {
+            len++;
+            node = node.next;
+        }
+        
+        int index = len - n;
+        if (index == 0) {
+            return head.next;
+        }
+        
+        node = head;
+        while (--index > 0) {
+            node = node.next;
+        }
+        
+        node.next = node.next.next;
+        
+        return head;
+    }
+}
+```
+## 优化解法
+### 思路
+使用哨兵
+### 代码
+```java
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        if (head == null) {
+            return null;
+        }
+        
+        ListNode dummy = new ListNode(0), node = head;
+        dummy.next = head;
+        int len = 0;
+        while (node != null) {
+            node = node.next;
+            len++;
+        }
+
+        len -= n;
+        node = dummy;
+        while (len-- > 0) {
+            node = node.next;
+        }
+        
+        node.next = node.next.next;
+        
+        return dummy.next;
+    }
+}
+```
+## 解法二
+### 思路
+双指针遍历一次：
+- 定义两个指针：
+    - a指针先走n步
+    - b指针等a走完n步后，同a指针一同移动，知道a指针遍历结束
+    - 此时b指针所在的位置就是需要删除的节点前一个的位置
+### 代码
+```java
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode a = dummy, b = dummy;
+
+        for (int i = 0; i < n + 1; i++) {
+            a = a.next;
+        }
+
+        while (a != null) {
+            a = a.next;
+            b = b.next;
+        }
+
+        b.next = b.next.next;
+
+        return dummy.next;
+    }
+}
+```
