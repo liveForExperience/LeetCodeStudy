@@ -544,3 +544,57 @@ class Solution {
     }
 }
 ```
+# LeetCode_128_最长连续序列
+## 题目
+
+## 解法
+给定一个未排序的整数数组，找出最长连续序列的长度。
+
+要求算法的时间复杂度为 O(n)。
+
+示例:
+```
+输入: [100, 4, 200, 1, 3, 2]
+输出: 4
+解释: 最长连续序列是 [1, 2, 3, 4]。它的长度为 4。
+```
+### 思路
+- 初始化2个set：
+    - set：用来存遍历nums时记录的元素值
+    - memo：用来存遍历set时，检查过的元素
+- 遍历nums，用set记录num
+- 遍历set，从当前元素开始向前后开始查找，如果set中有相邻元素就记录累加，并将该值记录在memo中，直到set中不再有邻接元素为止，和暂存的max比较并更新，进入下一个循环    
+- 返回max
+### 代码
+```java
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> set = Arrays.stream(nums).boxed().collect(Collectors.toSet()),
+                     memo = new HashSet<>();
+        int max = 0;
+        for (int num : set) {
+            if (memo.contains(num)) {
+                continue;
+            }
+            
+            memo.add(num);
+            int len = 1;
+            int add = num + 1;
+            while (set.contains(add)) {
+                memo.add(add++);
+                len++;
+            }
+            
+            int minus = num - 1;
+            while (set.contains(minus)) {
+                memo.add(minus--);
+                len++;
+            }
+            
+            max = Math.max(max, len);
+        }
+        
+        return max;
+    }
+}
+```
