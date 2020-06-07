@@ -598,3 +598,141 @@ class Solution {
     }
 }
 ```
+# LeetCode_126_单词接龙II
+## 题目
+给定两个单词（beginWord 和 endWord）和一个字典 wordList，找出所有从 beginWord 到 endWord 的最短转换序列。转换需遵循如下规则：
+```
+每次转换只能改变一个字母。
+转换过程中的中间单词必须是字典中的单词。
+```
+说明:
+```
+如果不存在这样的转换序列，返回一个空列表。
+所有单词具有相同的长度。
+所有单词只由小写字母组成。
+字典中不存在重复的单词。
+你可以假设 beginWord 和 endWord 是非空的，且二者不相同。
+```
+示例 1:
+```
+输入:
+beginWord = "hit",
+endWord = "cog",
+wordList = ["hot","dot","dog","lot","log","cog"]
+
+输出:
+[
+  ["hit","hot","dot","dog","cog"],
+  ["hit","hot","lot","log","cog"]
+]
+```
+示例 2:
+```
+输入:
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot","dot","dog","lot","log"]
+```
+输出: []
+```
+解释: endWord "cog" 不在字典中，所以不存在符合要求的转换序列。
+```
+## 解法
+### 思路
+bfs：
+- 根据wordList生成word和id形成的映射，id设置成自增
+- 再用id和word对应，生成一个list字典，字典为数组，下标为id，值为word
+- 遍历wordList，并根据word和id的映射，生成一个有向图，使用id代替word
+- 用一个数组cost记录从beginWord到当前word的开销
+- 使用queue来驱动进行bfs
+- 元素为遍历图的路径顶点
+- 将路径的最后一个节点与endWord比较
+    - 如果匹配，就放入结果集合中
+    - 如果不匹配，记录搜索，且判断当前的开销 + 1是否比图中记录的下一个节点的开销小，如果是的话，更新这个下一节点的开销以及路径，放入队列中继续遍历
+### 代码
+```java
+class Solution {
+    private Map<String, Integer> map = new HashMap<>();
+    private List<String> list = new ArrayList<>();
+    private List<Integer>[] edges;
+
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        int index = 0;
+        for (String word : wordList) {
+            map.put(word, index++);
+            list.add(word);
+        }
+
+        if (!map.containsKey(endWord)) {
+            return Collections.emptyList();
+        }
+
+        if (!map.containsKey(beginWord)) {
+            map.put(beginWord, index);
+            list.add(beginWord);
+        }
+
+        edges = new ArrayList[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            edges[i] = new ArrayList<>();
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = i + 1; j < list.size(); j++) {
+                if (hasOneDiff(list.get(i), list.get(j))) {
+                    edges[i].add(j);
+                    edges[j].add(i);
+                }
+            }
+        }
+
+        int[] cost = new int[list.size()];
+        Arrays.fill(cost, 1 << 20);
+
+        Queue<List<Integer>> queue = new ArrayDeque<>();
+        cost[map.get(beginWord)] = 0;
+        int dest = map.get(endWord);
+        List<Integer> beginList = new ArrayList<>();
+        beginList.add(map.get(beginWord));
+        queue.add(beginList);
+        List<List<String>> ans = new ArrayList<>();
+
+        while (!queue.isEmpty()) {
+            List<Integer> now = queue.poll();
+            Integer curr = now.get(now.size() - 1);
+
+            if (curr == dest) {
+                List<String> tmp = new ArrayList<>();
+                for (int i : now) {
+                    tmp.add(this.list.get(i));
+                }
+                ans.add(tmp);
+            } else {
+                List<Integer> toList = edges[curr];
+
+                for (int to : toList) {
+                    if (cost[curr] + 1 <= cost[to]) {
+                        cost[to] = cost[curr] + 1;
+                        List<Integer> tmp = new ArrayList<>(now);
+                        tmp.add(to);
+                        queue.add(tmp);
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean hasOneDiff(String one, String two) {
+        int diff = 0;
+        for (int i = 0; i < one.length() && diff < 2; i++) {
+            if (one.charAt(i) != two.charAt(i)) {
+                diff++;
+            }
+        }
+
+        return diff == 1;
+    }
+}
+```
