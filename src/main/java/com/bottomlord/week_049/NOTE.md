@@ -98,3 +98,108 @@ class Solution {
     } 
 }
 ```
+# LeetCode_29_两数相除
+## 题目
+给定两个整数，被除数 dividend 和除数 divisor。将两数相除，要求不使用乘法、除法和 mod 运算符。
+
+返回被除数 dividend 除以除数 divisor 得到的商。
+
+整数除法的结果应当截去（truncate）其小数部分，例如：truncate(8.345) = 8 以及 truncate(-2.7335) = -2
+
+示例 1:
+```
+输入: dividend = 10, divisor = 3
+输出: 3
+解释: 10/3 = truncate(3.33333..) = truncate(3) = 3
+```
+示例 2:
+```
+输入: dividend = 7, divisor = -3
+输出: -2
+解释: 7/-3 = truncate(-2.33333..) = -2
+```
+提示：
+```
+被除数和除数均为 32 位有符号整数。
+除数不为 0。
+假设我们的环境只能存储 32 位有符号整数，其数值范围是 [−231,  231 − 1]。本题中，如果除法结果溢出，则返回 231 − 1。
+```
+## 失败解法
+### 原因
+超时
+### 思路
+- 特例：
+    - 被除数为0，结果为0
+    - 被除数为int最小值，除数为-1，结果为int最大值
+- 循环累减被除数，累加结果值
+- 返回结果
+### 代码
+```java
+class Solution {
+    public int divide(int dividend, int divisor) {
+        if (dividend == 0) {
+            return 0;
+        }
+
+        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+            return Integer.MAX_VALUE;
+        }
+
+        boolean positive = false;
+        if ((dividend > 0 && divisor > 0) ||
+            (dividend < 0 && divisor < 0)) {
+            positive = true;
+        }
+        
+        int result = 0;
+        
+        dividend = -Math.abs(dividend);
+        divisor = -Math.abs(divisor);
+        
+        while (dividend <= divisor) {
+            dividend -= divisor;
+            result++;
+        }
+        
+        return positive ? result : -result;
+    }
+}
+```
+## 解法
+### 思路
+在失败解法的基础上，最大化每次减去的值，从而降低时间复杂度
+- 每次都减去divisor的2的整数次幂
+### 代码
+```java
+class Solution {
+    public int divide(int dividend, int divisor) {
+        if (dividend == 0) {
+            return 0;
+        }
+
+        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+            return Integer.MAX_VALUE;
+        }
+
+        int result = 0;
+        boolean positive = dividend > 0 && divisor > 0 || dividend < 0 && divisor < 0;
+
+        dividend = -Math.abs(dividend);
+        divisor = -Math.abs(divisor);
+
+        while (dividend <= divisor) {
+            int num = divisor;
+            int count = 1;
+            while (dividend - num <= num) {
+                num <<= 1;
+                count <<= 1;
+            }
+
+            dividend -= num;
+            result += count;
+        }
+        
+        return positive ? result : -result;
+    }
+}
+```
