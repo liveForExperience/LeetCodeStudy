@@ -3,9 +3,9 @@ package com.bottomlord;
 public class DSU {
     public int[] parent;
 
-    public DSU(int N) {
-        parent = new int[N];
-        for (int i = 0; i < N; ++i) {
+    public DSU(int n) {
+        parent = new int[n];
+        for (int i = 0; i < n; ++i) {
             parent[i] = i;
         }
     }
