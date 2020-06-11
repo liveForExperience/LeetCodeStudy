@@ -349,3 +349,57 @@ class Solution {
     }
 }
 ```
+# LeetCode_31_下一个排列
+## 题目
+实现获取下一个排列的函数，算法需要将给定数字序列重新排列成字典序中下一个更大的排列。
+
+如果不存在下一个更大的排列，则将数字重新排列成最小的排列（即升序排列）。
+
+必须原地修改，只允许使用额外常数空间。
+```
+以下是一些例子，输入位于左侧列，其相应输出位于右侧列。
+1,2,3 → 1,3,2
+3,2,1 → 1,2,3
+1,1,5 → 1,5,1
+```
+## 解法
+### 思路
+- 从数组尾部向前遍历，找到第一组长度为2，相邻的升序子序列nums[i]和nums[i - 1]
+- 将子序列nums[i - 1]与它右边数中，最小的比它大的数进行交换，再将nums[i]及到数组结尾的所有数转换成升序
+### 代码
+```java
+class Solution {
+    public void nextPermutation(int[] nums) {
+        int i = nums.length - 1;
+        while (i >= 1 && nums[i] <= nums[i - 1]) {
+            i--;
+        }
+        
+        if (i >= 1) {
+            int j = nums.length - 1;
+            while (j >= 0 && nums[j] <= nums[i - 1]) {
+                j--;
+            }
+            
+            swap(i - 1, j, nums);
+        }
+        
+        reserve(i, nums);
+    }
+    
+    private void swap(int i, int j, int[] nums) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+    
+    private void reserve(int i, int[] nums) {
+        int j = nums.length - 1;
+        while (i < j) {
+            swap(i, j, nums);
+            i++;
+            j--;
+        }
+    }
+}
+```
