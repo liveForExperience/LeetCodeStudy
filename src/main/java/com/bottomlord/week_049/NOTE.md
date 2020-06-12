@@ -403,3 +403,100 @@ class Solution {
     }
 }
 ```
+# LeetCode_32_最长有效括号
+## 题目
+给定一个只包含 '(' 和 ')' 的字符串，找出最长的包含有效括号的子串的长度。
+
+示例 1:
+```
+输入: "(()"
+输出: 2
+解释: 最长有效括号子串为 "()"
+```
+示例 2:
+```
+输入: ")()())"
+输出: 4
+解释: 最长有效括号子串为 "()()"
+```
+## 失败解法
+### 原因
+超时，时间复杂度O(N^2)
+### 思路
+栈
+- 两层循环，确定字符串子串的范围
+    - 外层确定子串的起始位置
+    - 内层确定长度为偶数，也就是步长为2
+- 内层使用栈：
+    - 当字符为`(`时，压入栈
+    - 当字符为`)`时，判断栈顶是否为`(`，如果时，弹出栈
+    - 其他情况判断当前字符串为非法的字符串子串
+- 内层遍历完一次以后，如果是合法的，比较一次字符串长度
+### 代码
+```java
+class Solution {
+    public int longestValidParentheses(String s) {
+        int ans = 0;
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = i + 2; j <= s.length(); j+=2) {
+                if (isValid(s.substring(i, j))) {
+                    ans = Math.max(ans, j - i);
+                }
+            }
+        }
+        
+        return ans;
+    }
+    
+    private boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (char c : s.toCharArray()) {
+            if (c == '(') {
+                stack.push(c);
+            } else if (!stack.isEmpty() && stack.peek() == '(') {
+                stack.pop();
+            } else {
+                return false;
+            }
+        }
+        
+        return stack.isEmpty();
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i]`：dp中的第i个下标对应字符串第i个字符，dp数组代表以当前字符为结尾的字符串的最大合规子串
+- 初始化：所有元素为0
+- 状态转移方程：
+    - `s[i]`对应元素为`(`，一定不是合规字符串，不考虑
+    - `s[i]`对应元素为`)`：
+        - 如果`s[i - 1]`为`(`，那么这两个字符串可以组成一个合规字符串，长度为2，同时再考虑`dp[i - 2]`的值，将这组之前的合规字符串长度考虑进去就可以了，`dp[i] = i >= 2 ? dp[i - 2] : 0 + 2`
+        - 如果`s[i - 1]`为`)`，那么如果是合规的字符串，可以划分成几部分：
+            - `s[i - 1]`组成的合规字符串，长度就是`dp[i - 1]`
+            - `s[i]`和`s[i - dp[i - 1] - 1]`两个字符组成的合规字符串，如果组成了就是2
+            - `s[i - dp[i - 1] - 2]`为结尾的合规子串长度，`dp[i - dp[i - 1] - 2]`
+### 代码
+```java
+class Solution {
+    public int longestValidParentheses(String s) {
+        int len = s.length(), ans = 0;
+        int[] dp = new int[len];
+
+        for (int i = 1; i < len; i++) {
+            if (s.charAt(i) == ')') {
+                if (s.charAt(i - 1) == '(') {
+                    dp[i] = (i >= 2 ? dp[i - 2] : 0) + 2;
+                } else if (i - dp[i - 1] > 0 && s.charAt(i - dp[i - 1] - 1) == '(') {
+                    dp[i] = dp[i - 1] + (i - dp[i - 1] >= 2 ? dp[i - dp[i - 1] - 2] : 0) + 2;
+                }
+                
+                ans = Math.max(dp[i], ans);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
