@@ -500,3 +500,110 @@ class Solution {
     }
 }
 ```
+# LeetCode_37_解数独
+## 题目
+编写一个程序，通过已填充的空格来解决数独问题。
+
+一个数独的解法需遵循如下规则：
+```
+数字 1-9 在每一行只能出现一次。
+数字 1-9 在每一列只能出现一次。
+数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+空白格用 '.' 表示。
+```
+Note:
+```
+给定的数独序列只包含数字 1-9 和字符 '.' 。
+你可以假设给定的数独只有唯一解。
+给定数独永远是 9x9 形式的。
+```
+## 解法
+### 思路
+回溯，有状态类
+- 定义3个记忆集合：
+    - rowMemo：记录当前行使用的数字
+    - colMemo：记录当前列使用的数字
+    - boxMemo：记录当前小方块中使用的数字
+- 回溯过程：
+    - 从0行0列开始：
+    - 如果当前方块为`.`，开始循环9个数字，判断当前数字是否可以放置
+        - 如果可以，放置数字，继续递归
+        - 如果不可以，继续循环数字
+    - 递归返回后，如果solve变量为flase，说明当前选择无法最终获得结果，将记忆集合中的数字去除，进行下一个数字选择
+    - 如果当前方块为数字，且solve为false，直接开始递归
+### 代码
+```java
+class Solution {
+    private char[][] board;
+    private int[][] rowMemo, colMemo, boxMemo;
+    private boolean solve;
+
+    public void solveSudoku(char[][] board) {
+        this.board = board;
+        this.rowMemo = new int[9][10];
+        this.colMemo = new int[9][10];
+        this.boxMemo = new int[9][10];
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] != '.') {
+                    put(Integer.parseInt(String.valueOf(board[i][j])), i, j);
+                }
+            }
+        }
+
+        backTrack(0, 0);
+    }
+
+    private void backTrack(int row, int col) {
+        if (solve) {
+            return;
+        }
+        
+        if (board[row][col] == '.') {
+            for (int num = 1; num <= 9; num++) {
+                if (couldPut(num, row, col)) {
+                    put(num, row, col);
+                    putNext(row, col);
+
+                    if (!solve) {
+                        remove(num, row, col);
+                    }
+                }
+            }
+        } else {
+            putNext(row, col);
+        }
+    }
+
+    private boolean couldPut(int num, int row, int col) {
+        return rowMemo[row][num] + colMemo[col][num] + boxMemo[row / 3 * 3 + col / 3][num] == 0;
+    }
+
+    private void put(int num, int row, int col) {
+        rowMemo[row][num]++;
+        colMemo[col][num]++;
+        boxMemo[row / 3 * 3 + col / 3][num]++;
+        board[row][col] = (char) (num + '0');
+    }
+
+    private void remove(int num, int row, int col) {
+        rowMemo[row][num]--;
+        colMemo[col][num]--;
+        boxMemo[row / 3 * 3 + col / 3][num]--;
+        board[row][col] = '.';
+    }
+
+    private void putNext(int row, int col) {
+        if (row == 8 && col == 8) {
+            solve = true;
+        } else {
+            if (col == 8) {
+                backTrack(row + 1, 0);
+            } else {
+                backTrack(row, col + 1);
+            }
+        }
+    }
+}
+```
