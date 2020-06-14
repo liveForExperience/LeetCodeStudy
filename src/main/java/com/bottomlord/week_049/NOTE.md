@@ -607,3 +607,81 @@ class Solution {
     }
 }
 ```
+# LeetCode_1300_转变数组后最接近目标值的数组和
+## 题目
+给你一个整数数组 arr 和一个目标值 target ，请你返回一个整数 value ，使得将数组中所有大于 value 的值变成 value 后，数组的和最接近  target （最接近表示两者之差的绝对值最小）。
+
+如果有多种使得和最接近 target 的方案，请你返回这些整数中的最小值。
+
+请注意，答案不一定是 arr 中的数字。
+
+示例 1：
+```
+输入：arr = [4,9,3], target = 10
+输出：3
+解释：当选择 value 为 3 时，数组会变成 [3, 3, 3]，和为 9 ，这是最接近 target 的方案。
+```
+示例 2：
+```
+输入：arr = [2,3,5], target = 10
+输出：5
+```
+示例 3：
+```
+输入：arr = [60864,25176,27249,21296,20204], target = 56803
+输出：11361
+```
+提示：
+```
+1 <= arr.length <= 10^4
+1 <= arr[i], target <= 10^5
+```
+## 解法
+### 思路
+枚举：
+- 求数组和
+- 如果和小于等于target，返回数组最大值
+- 求数组平均值avg
+- 求以当前平均值为value的和sum
+- 在sum < target的情况下循环，目的是逼近最优解：
+    - 求avg + 1情况下的值
+    - 如果该值大于等于target，就和之前的sum进行比较，如果绝对值更小，就取该值，否则取另一个值
+    - 如果还是比target小，就继续逼近
+### 代码
+```java
+class Solution {
+    public int findBestValue(int[] arr, int target) {
+        int len = arr.length, sum = 0, max = Integer.MIN_VALUE;
+        for (int num : arr) {
+            sum += num;
+            max = Math.max(max, num);
+        }
+        
+        if (sum <= target) {
+            return max;
+        }
+        
+        int avg = target / len;
+        sum = sum(arr, avg);
+        
+        while (sum < target) {
+            int tmp = sum(arr, avg + 1);
+            if (tmp >= target) {
+                return target - sum <= tmp - target ? avg : avg + 1;
+            }
+            sum = tmp;
+            avg++;
+        }
+        
+        return 0;
+    }
+    
+    private int sum(int[] arr, int avg) {
+        int sum = 0;
+        for (int num : arr) {
+            sum += Math.min(num, avg);
+        }
+        return sum;
+    }
+}
+```
