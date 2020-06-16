@@ -161,3 +161,169 @@ class Solution {
     }
 }
 ```
+# LeetCode_44_通配符匹配
+## 题目
+给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 '?' 和 '*' 的通配符匹配。
+```
+'?' 可以匹配任何单个字符。
+'*' 可以匹配任意字符串（包括空字符串）。
+两个字符串完全匹配才算匹配成功。
+```
+说明:
+```
+s 可能为空，且只包含从 a-z 的小写字母。
+p 可能为空，且只包含从 a-z 的小写字母，以及字符 ? 和 *。
+```
+示例 1:
+```
+输入:
+s = "aa"
+p = "a"
+输出: false
+解释: "a" 无法匹配 "aa" 整个字符串。
+```
+示例 2:
+```
+输入:
+s = "aa"
+p = "*"
+输出: true
+解释: '*' 可以匹配任意字符串。
+```
+示例 3:
+```
+输入:
+s = "cb"
+p = "?a"
+输出: false
+解释: '?' 可以匹配 'c', 但第二个 'a' 无法匹配 'b'。
+```
+示例 4:
+```
+输入:
+s = "adceb"
+p = "*a*b"
+输出: true
+解释: 第一个 '*' 可以匹配空字符串, 第二个 '*' 可以匹配字符串 "dce".
+```
+示例 5:
+```
+输入:
+s = "acdcb"
+p = "a*c?b"
+输出: false
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j]`：结尾为第i个字符的匹配字符串p和结尾为第j个字符的字符串s之间的匹配结果
+- `base case`：
+    - p和s的长度都为0，返回true
+    - p的长度为0或s的长度为0，返回false
+    - p和s完全相同，返回true
+    - p为`*`，返回true
+- 状态转移方程：
+    - 如果p的当前字符是`*`：如果前一个字符为结尾的字符串的匹配结果是true，该字符之后的所有字符为结尾的字符串的匹配结果都为true
+    - 如果p的当前字符是`?`：那么当前结果依赖于`dp[i - 1][j - 1]`
+    - 如果p的当前字符是其他：那么当前结果依赖于`dp[i - 1][j - 1] && p[i - 1] == s[j - 1]（字符串下标从0开始，dp从1开始，所以dp[i]对应p[i - 1]）`
+### 代码
+```java
+class Solution {
+    public boolean isMatch(String s, String p) {
+        if (s == null || p == null) {
+            return false;
+        }
+
+        int sLen = s.length(), pLen = p.length();
+        if (s.equals(p)) {
+            return true;
+        }
+        
+        if ("*".equals(p)) {
+            return true;
+        }
+        
+        if (sLen == 0 || pLen == 0) {
+            return false;
+        }
+        
+        boolean[][] dp = new boolean[pLen + 1][sLen + 1];
+        dp[0][0] = true;
+
+        for (int i = 1; i < pLen + 1; i++) {
+            int j = 1;
+            if (p.charAt(i - 1) == '*') {
+                while (!dp[i - 1][j - 1] && j < sLen + 1) {
+                    j++;
+                }
+
+                dp[i][j - 1] = dp[i - 1][j - 1];
+
+                while (j < sLen + 1) {
+                    dp[i][j++] = true;
+                }
+            } else if (p.charAt(i - 1) == '?') {
+                for (; j < sLen + 1; j++) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+            } else {
+                for (; j < sLen + 1; j++) {
+                    dp[i][j] = dp[i - 1][j - 1] && p.charAt(i - 1) == s.charAt(j - 1);
+                }
+            }
+        }
+        
+        return dp[pLen][sLen];
+    }
+}
+```
+## 解法二
+### 思路
+双指针：
+- 初始化变量：
+    - 指针：si对应字符串，pi对应模式串
+    - 起始位置：sStart和pStart，起始位置用来确定，当匹配到`*`的时候，那么就记录这次匹配的位置，然后假设`*`匹配的是空字符串，然后继续移动pi来判断下一组是否匹配。如果是不匹配的话，就利用记录的pStart来重新判断，也就是用这个最近的`*`将不能匹配的字符覆盖掉
+    - 字符串的长度，sLen和pLen
+        - 使用sLen和si来确定匹配的退出条件，也就是指针遍历完s的长度
+        - 使用PLen和pi来确定是否匹配完成，也就是执行完了以后，pi是否遍历完了整个p的长度
+- 循环：
+    - 循环条件：si是否等于sLen，也就是si是否遍历完s字符串
+    - 过程：
+        - 防止越界，如下条件都要考虑`pi < pLen`
+        - 如果当前`s[si] == p[pi] || p[pi] == '?'`：那么就判断为两个字符匹配，两个指针+1，跳过
+        - 如果当前`p[pi] == ‘*’`：
+            - 那么先从`p[pi]`匹配的是空字符串开始考虑
+            - 记录当前si和pi作为sStart和pStart
+            - 同时pi+1
+        -  如果以上两种情况都不符合，那代表当前两个字符串不匹配，且模式串也不是特殊字符：
+            - 如果sStart不是-1，就代表之前有匹配过一次`*`，就从这个`*`匹配的位置开始，重新判断，`si = sStart + 1`
+            - 如果sStart是-1，也就是没有遇到过`*`，就判断无法匹配
+- 循环结束后，再判断`pi`是否遍历完了`p`，如果没有，但剩下的都是`*`，那匹配，否则就不匹配
+### 代码
+```java
+class Solution {
+    public boolean isMatch(String s, String p) {
+        int si = 0, pi = 0, sStart = -1, pStart = -1, sLen = s.length(), pLen = p.length();
+        while (si < sLen) {
+            if (pi < pLen && (s.charAt(si) == p.charAt(pi) || p.charAt(pi) == '?')) {
+                si++;
+                pi++;
+            } else if (pi < pLen && p.charAt(pi) == '*') {
+                sStart = si;
+                pStart = pi++;
+            } else if (sStart != -1) {
+                si = ++sStart;
+                pi = pStart + 1;
+            } else {
+                return false;
+            }
+        }
+
+        while (pi < pLen && p.charAt(pi) == '*') {
+            pi++;
+        }
+
+        return pi == pLen;
+    }
+}
+```
