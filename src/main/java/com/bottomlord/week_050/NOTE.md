@@ -327,3 +327,104 @@ class Solution {
     }
 }
 ```
+# LeetCode_45_跳跃游戏II
+## 题目
+给定一个非负整数数组，你最初位于数组的第一个位置。
+
+数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+你的目标是使用最少的跳跃次数到达数组的最后一个位置。
+
+示例:
+```
+输入: [2,3,1,1,4]
+输出: 2
+解释: 跳到最后一个位置的最小跳跃数是 2。
+     从下标为 0 跳到下标为 1 的位置，跳 1 步，然后跳 3 步到达数组的最后一个位置。
+```
+说明:
+```
+假设你总是可以到达数组的最后一个位置。
+```
+## 失败解法
+### 原因
+超时
+### 思路
+递归
+### 代码
+```java
+class Solution {
+    public int jump(int[] nums) {
+        return recurse(nums, 0, 0);
+    }
+
+    private int recurse(int[] nums, int index, int count) {
+        if (index == nums.length - 1) {
+            return count;
+        }
+        
+        if (index >= nums.length - 1) {
+            return Integer.MAX_VALUE;
+        }
+        
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i <= nums[index]; i++) {
+            min = Math.min(min, recurse(nums, index + i, count + 1));
+        }
+        
+        return min;
+    }
+}
+```
+## 解法
+### 思路
+贪心：
+- 从最后一个位置向前倒推
+- 每次找到最远的一个可以到达当前位置的坐标
+- 然后更新当前位置到那个最远位置
+- 重复如上的步骤，直到当前位置为坐标0为止
+### 代码
+```java
+class Solution {
+    public int jump(int[] nums) {
+        int count = 0, position = nums.length - 1;
+        while (position > 0) {
+            for (int i = 0; i < position; i++) {
+                if (i + nums[i] >= position) {
+                    position = i;
+                    count++;
+                    break;
+                }
+            }
+        }
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+贪心：
+- 初始化变量：
+    - 初始化一个最大值`max`用来统计当前能够跳跃的范围内，最大能到达的距离
+    - 初始化一个终点变量`end`，记录当前这次跳跃的终点坐标
+- 从第一个元素开始遍历数组
+    - 每次都将当前值`nums[i]`和当前坐标`i`的和与暂存的最大值比较，如果大于，就刷新这个值
+    - 当坐标`i`移动到`end`，刷新`end`为`max`，同时记一次数，这次计数可以理解为，记录从起跳位置到`max`对应位置这个区间的完成
+    - 遍历到倒数第二个元素为止，因为计数的时候，记录的是起跳为止到结束位置的区间的完成，而最后一次起跳一定是在最后一个坐标之前的某个位置，所以只要在坐标到达倒数第二个区间结束时，也就也就意味最后一个区间意味最后一个区间会在那个时候被计数
+### 代码
+```java
+class Solution {
+    public int jump(int[] nums) {
+        int max = 0, end = 0, count = 0;
+        for (int i = 0; i < nums.length - 1; i++) {
+            max = Math.max(max, nums[i] + i);
+            if (i == end) {
+                end = max;
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+```
