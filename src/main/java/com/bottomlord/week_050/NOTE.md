@@ -428,3 +428,161 @@ class Solution {
     }
 }
 ```
+# LeetCode_1028_从先序遍历还原二叉树
+## 题目
+我们从二叉树的根节点 root 开始进行深度优先搜索。
+
+在遍历中的每个节点处，我们输出 D 条短划线（其中 D 是该节点的深度），然后输出该节点的值。（如果节点的深度为 D，则其直接子节点的深度为 D + 1。根节点的深度为 0）。
+
+如果节点只有一个子节点，那么保证该子节点为左子节点。
+
+给出遍历输出 S，还原树并返回其根节点 root。
+
+示例 1：
+```
+输入："1-2--3--4-5--6--7"
+输出：[1,2,5,3,4,6,7]
+```
+示例 2：
+```
+输入："1-2--3---4-5--6---7"
+输出：[1,2,5,3,null,6,null,4,null,7]
+```
+示例 3：
+```
+输入："1-401--349---90--88"
+输出：[1,401,null,349,88,90]
+```
+提示：
+```
+原始树中的节点数介于 1 和 1000 之间。
+每个节点的值介于 1 和 10 ^ 9 之间。
+```
+## 解法
+### 思路
+dfs：
+- 通过层数确定当前层的横杠数量
+- 通过横杠数量，确定前序遍历的左右子树的分界线
+- 然后递归生成对应的左右子树
+###代码
+```java
+class Solution {
+    public TreeNode recoverFromPreorder(String S) {
+        if (S == null || S.length() == 0) {
+            return null;
+        }
+
+        return dfs(S, 1);
+    }
+
+    private TreeNode dfs(String s, int level) {
+        if (s == null || s.length() == 0) {
+            return null;
+        }
+
+        int firstNumEndIndex = findNumEndIndex(s);
+        String rootStr = s.substring(0, firstNumEndIndex);
+
+        TreeNode root = new TreeNode(Integer.parseInt(rootStr));
+
+        if (s.length() == firstNumEndIndex) {
+            return root;
+        }
+
+        int mid = findMid(s, level);
+        if (mid != -1) {
+            root.left = dfs(s.substring(firstNumEndIndex + level, mid - level + 1), level + 1);
+            root.right = dfs(s.substring(mid + 1), level + 1);
+        } else {
+            root.left = dfs(s.substring(firstNumEndIndex + level), level + 1);
+        }
+
+        return root;
+    }
+
+    private int findNumEndIndex(String s) {
+        int index = 0;
+        for (char c : s.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                break;
+            }
+            index++;
+        }
+        return index;
+    }
+
+    private int findMid(String s, int level) {
+        int mid = -1, count = 0, time = 0;
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) != '-') {
+                count = 0;
+            } else {
+                count++;
+            }
+
+            if (i < s.length() - 1 && count == level && s.charAt(i + 1) != '-') {
+                time++;
+
+                if (time == 2) {
+                    mid = i;
+                }
+            }
+        }
+
+        return mid;
+    }
+}
+```
+## 解法二
+### 思路
+dfs：
+- 使用一个对象属性index，来记录dfs时候的坐标变动
+- 递归：
+    - 退出条件：index越界
+    - 过程：
+        - 找到index之后的第一个数字
+        - 生成数字，及对应的节点
+        - 开始从左往右的递归
+### 代码
+```java
+class Solution {
+    private int index;
+    public TreeNode recoverFromPreorder(String S) {
+        if (S == null || S.length() == 0) {
+            return null;
+        }
+
+        return dfs(S, 0);
+    }
+
+    private TreeNode dfs(String s, int level) {
+        if (index >= s.length()) {
+            return null;
+        }
+
+        int i = index, count = 0;
+
+        while (i < s.length() && s.charAt(i) == '-') {
+            count++;
+            i++;
+        }
+
+        if (count != level) {
+            return null;
+        }
+
+        index = i;
+        int val = 0;
+        while (index < s.length() && Character.isDigit(s.charAt(index))) {
+            val = val * 10 + (s.charAt(index) - '0');
+            index++;
+        }
+        
+        TreeNode root = new TreeNode(val);
+        root.left = dfs(s, level + 1);
+        root.right = dfs(s, level + 1);
+        
+        return root;
+    }
+}
+```
