@@ -586,3 +586,120 @@ class Solution {
     }
 }
 ```
+# LeetCode_51_N皇后
+## 题目
+n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+给定一个整数 n，返回所有不同的 n 皇后问题的解决方案。
+
+每一种解法包含一个明确的 n 皇后问题的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+
+示例:
+```
+输入: 4
+输出: [
+ [".Q..",  // 解法 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // 解法 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+解释: 4 皇后问题存在两个不同的解法。
+```
+提示：
+```
+皇后，是国际象棋中的棋子，意味着国王的妻子。皇后只做一件事，那就是“吃子”。当她遇见可以吃的棋子时，就迅速冲上去吃掉棋子。当然，她横、竖、斜都可走一到七步，可进可退。（引用自 百度百科 - 皇后 ）
+```
+## 解法
+### 思路
+dfs+backtrack：
+- 定义问题空间为一个`n*n`的矩阵棋盘
+- 使用4个数组来存储当前点的四条相交线上是否存在皇后的状态
+    - row和col很容易理解
+    - `撇`和`捺`的存储，可以通过如下方式存储：
+        - `撇`上的所有点的横和纵坐标，相加的值都一样
+        - `捺`上的所有点的横和纵坐标，相减的值都一样
+- dfs搜索整个空间，并通过4个数组来判断是否能防止皇后
+    - 如果可以，就继续搜索
+    - 如果不可以就回溯
+- dfs：
+    - 退出条件：如果搜索完n行，则使用记录的皇后坐标，生成一个结果
+    - 过程：按行放置皇后，尝试n列种可能
+### 代码
+```java
+class Solution {
+    int[] row, col, pie, na, queen;
+    List<List<String>> ans;
+    int num;
+    public List<List<String>> solveNQueens(int n) {
+        ans = new ArrayList<>();
+        if (n <= 0) {
+            return ans;
+        }
+
+        num = n;
+        row = new int[n];
+        col = new int[n];
+        pie = new int[2 * n - 1];
+        na = new int[4 * n - 1];
+        queen = new int[n];
+
+        backtrack(0);
+        return ans;
+    }
+
+    private void backtrack(int r) {
+        for (int c = 0; c < num; c++) {
+            if (isValid(r, c)) {
+                put(r, c);
+                if (r + 1 == num) {
+                    generate();
+                } else {
+                    backtrack(r + 1);
+                }
+                remove(r, c);
+            }
+        }
+    }
+
+    private boolean isValid(int r, int c) {
+        return row[r] + col[c] + pie[r + c] + na[r - c + 2 * num] == 0;
+    }
+
+    private void put(int r, int c) {
+        queen[r] = c;
+        row[r] = 1;
+        col[c] = 1;
+        pie[r + c] = 1;
+        na[r - c + 2 * num] = 1;
+    }
+
+    private void remove(int r, int c) {
+        queen[r] = 0;
+        row[r] = 0;
+        col[c] = 0;
+        pie[r + c] = 0;
+        na[r - c + 2 * num] = 0;
+    }
+
+    private void generate() {
+        List<String> sol = new ArrayList<>();
+        for (int i = 0; i < num; i++) {
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < queen[i]; j++) {
+                sb.append(".");
+            }
+            sb.append("Q");
+            for (int j = queen[i] + 1; j < num; j++) {
+                sb.append(".");
+            }
+            sol.add(sb.toString());
+        }
+        ans.add(sol);
+    }
+}
+```
