@@ -27,8 +27,115 @@ n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，�
 ```
 ## 解法
 ### 思路
-
+dfs+backtarck
 ### 代码
 ```java
+class Solution {
+    private int ans = 0, num;
+    private int[] row, col, pie, na;
 
+    public int totalNQueens(int n) {
+        num = n;
+        row = new int[n];
+        col = new int[n];
+        pie = new int[2 * n - 1];
+        na = new int[4 * n - 1];
+        backtrack(0);
+        return ans;
+    }
+
+    private void backtrack(int r) {
+        for (int c = 0; c < num; c++) {
+            if (canPut(r, c)) {
+                put(r, c);
+                if (r == num - 1) {
+                    ans++;
+                } else {
+                    backtrack(r + 1);
+                }
+                remove(r, c);
+            }
+        }
+    }
+
+    private boolean canPut(int r, int c) {
+        return row[r] + col[c] + pie[r + c] + na[r - c + 2 * num] == 0;
+    }
+    
+    private void put(int r, int c) {
+        row[r] = 1;
+        col[c] = 1;
+        pie[r + c] = 1;
+        na[r - c + 2 * num] = 1;
+    }
+    
+    private void remove(int r, int c) {
+        row[r] = 0;
+        col[c] = 0;
+        pie[r + c] = 0;
+        na[r - c + 2 * num] = 0;
+    }
+}
+```
+# LeetCode_57_插入区间
+## 题目
+给出一个无重叠的 ，按照区间起始端点排序的区间列表。
+
+在列表中插入一个新的区间，你需要确保列表中的区间仍然有序且不重叠（如果有必要的话，可以合并区间）。
+
+示例 1:
+```
+输入: intervals = [[1,3],[6,9]], newInterval = [2,5]
+输出: [[1,5],[6,9]]
+```
+示例 2:
+```
+输入: intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+输出: [[1,2],[3,10],[12,16]]
+解释: 这是因为新的区间 [4,8] 与 [3,5],[6,7],[8,10] 重叠。
+```
+## 解法
+### 思路
+贪心：
+- 初始化作为结果返回的二维数组`ans`
+- 遍历二维数组，将遍历到的数组起始值小于新数组起始值的数组直接放入`ans`
+- 将新数组放入`ans`：
+    - 如果新数组的起始值大于`ans`最后一个数组的结尾值，或者`ans`没有数组，直接插入新数组。
+    - 如果新数组与最后一个数组的结尾值有重合，就更新这个数组，取两个数组结尾值的最大值，做到融合
+- 遍历剩下的数组，如果还是与`ans`的最后一个数组相交：
+    - 遍历到的数组的起始值小于等于最后数组的结尾值，就继续融合
+    - 否则直接放入`ans`中
+### 代码
+```java
+class Solution {
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        LinkedList<int[]> list = new LinkedList<>();
+        int newStart = newInterval[0], newEnd = newInterval[1];
+        int index = 0, len = intervals.length;
+
+        while (index < len && newStart > intervals[index][0]) {
+            list.add(intervals[index++]);
+        }
+        
+        if (list.isEmpty() || list.getLast()[1] < newStart) {
+            list.add(newInterval);
+        } else {
+            int[] interval = list.removeLast();
+            interval[1] = Math.max(interval[1], newEnd);
+            list.add(interval);
+        }
+        
+        while (index < len) {
+            if (list.getLast()[1] < intervals[index][0]) {
+                list.add(intervals[index++]);
+            } else {
+                int[] interval = list.removeLast();
+                interval[1] = Math.max(interval[1], intervals[index++][1]);
+                list.add(interval);
+            }
+        }
+        
+        return list.toArray(new int[0][0]);
+    }
+}
 ```
