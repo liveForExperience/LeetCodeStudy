@@ -303,12 +303,163 @@ class Solution {
             memo[r][c] = count;
         }
         
-        
         return count;
     }
     
     private boolean isValid(int[][] board, int r, int c, int row, int col) {
         return r < row && c < col && board[r][c] != 1;
+    }
+}
+```
+# LeetCode_68_文本左右对齐
+## 题目
+给定一个单词数组和一个长度 maxWidth，重新排版单词，使其成为每行恰好有 maxWidth 个字符，且左右两端对齐的文本。
+
+你应该使用“贪心算法”来放置给定的单词；也就是说，尽可能多地往每行中放置单词。必要时可用空格 ' ' 填充，使得每行恰好有 maxWidth 个字符。
+
+要求尽可能均匀分配单词间的空格数量。如果某一行单词间的空格不能均匀分配，则左侧放置的空格数要多于右侧的空格数。
+
+文本的最后一行应为左对齐，且单词之间不插入额外的空格。
+
+说明:
+```
+单词是指由非空格字符组成的字符序列。
+每个单词的长度大于 0，小于等于 maxWidth。
+输入单词数组 words 至少包含一个单词。
+```
+示例:
+```
+输入:
+words = ["This", "is", "an", "example", "of", "text", "justification."]
+maxWidth = 16
+输出:
+[
+   "This    is    an",
+   "example  of text",
+   "justification.  "
+]
+```
+示例 2:
+```
+输入:
+words = ["What","must","be","acknowledgment","shall","be"]
+maxWidth = 16
+输出:
+[
+  "What   must   be",
+  "acknowledgment  ",
+  "shall be        "
+]
+解释: 注意最后一行的格式应为 "shall be    " 而不是 "shall     be",
+     因为最后一行应为左对齐，而不是左右两端对齐。       
+     第二行同样为左对齐，这是因为这行只包含一个单词。
+```
+示例 3:
+```
+输入:
+words = ["Science","is","what","we","understand","well","enough","to","explain",
+         "to","a","computer.","Art","is","everything","else","we","do"]
+maxWidth = 20
+输出:
+[
+  "Science  is  what we",
+  "understand      well",
+  "enough to explain to",
+  "a  computer.  Art is",
+  "everything  else  we",
+  "do                  "
+]
+```
+## 解法
+### 思路
+硬做:
+- 通过遍历单词长度，获得当前行能够放入的单词个数`wordsNum`和单词长度`wordsLen`
+- 通过单词个数`wordNum`，获得单词间隙个数`gaps`，进而获得单词占用当前行的总长度`totalLen`
+- 通过`maxWidth - totalLen`获得额外空格的长度`extraLen`
+- 通过`gaps`能够获得两个值：
+    - 每个单词后面的额外空格长度`avgExtraLen`
+    - 不平衡时，左侧多少个单词会都出一个空格的单词个数`extraNum`
+- 特殊处理如下两种情况：
+    - 如果一行只有1个单词，单词左对齐，右侧填满
+    - 如果时最后一行，单词左对齐，间隙只为1个空格
+### 代码
+```java
+class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        int wordNum = words.length, maxRowLen = maxWidth + 1;
+        List<String> ans = new ArrayList<>();
+
+        int rowLen = maxRowLen;
+        List<String> wordList = new ArrayList<>();
+        for (int i = 0; i < wordNum; i++) {
+            String word = words[i];
+            if (rowLen - word.length() - 1 >= 0) {
+                wordList.add(word);
+                if (i == wordNum - 1) {
+                    ans.add(fillSpecialRow(wordList, maxWidth));
+                    break;
+                }
+                rowLen -= (word.length() + 1);
+            } else {
+                if (wordList.size() == 1) {
+                    ans.add(fillSpecialRow(wordList, maxWidth));
+                } else {
+                    ans.add(fillRow(wordList, rowLen, maxWidth));
+                }
+                wordList.clear();
+                rowLen = maxRowLen;
+                i--;
+            }
+        }
+
+        return ans;
+    }
+
+    private String fillRow(List<String> wordList, int leftLen, int maxWidth) {
+        StringBuilder sb = new StringBuilder();
+        
+        int wordsNum = wordList.size();
+        int gaps = wordsNum - 1;
+        int avgExtraLen = leftLen / gaps;
+        int extraNum = leftLen % gaps;
+        
+        for (int i = 0; i < wordList.size(); i++) {
+            sb.append(wordList.get(i));
+            if (i < wordsNum - 1) {
+                sb.append(' ');
+                for (int j = 0; j < avgExtraLen; j++) {
+                    sb.append(' ');
+                }
+            }
+            if (extraNum > 0) {
+                sb.append(' ');
+                extraNum--;
+            }
+        }
+        
+        return sb.toString();
+    }
+
+    private String fillSpecialRow(List<String> words, int maxWidth) {
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            sb.append(word);
+            maxWidth -= word.length();
+            if (maxWidth == 0) {
+                break;
+            }
+            
+            maxWidth--;
+            if (maxWidth >= 0) {
+                sb.append(' ');
+            }
+        }
+
+        while(maxWidth-- > 0) {
+            sb.append(' ');
+        }
+
+        return sb.toString();
     }
 }
 ```
