@@ -463,3 +463,116 @@ class Solution {
     }
 }
 ```
+# LeetCode_139_单词拆分
+## 题目
+给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
+
+说明：
+```
+拆分时可以重复使用字典中的单词。
+你可以假设字典中没有重复的单词。
+```
+示例 1：
+```
+输入: s = "leetcode", wordDict = ["leet", "code"]
+输出: true
+解释: 返回 true 因为 "leetcode" 可以被拆分成 "leet code"。
+```
+示例 2：
+```
+输入: s = "applepenapple", wordDict = ["apple", "pen"]
+输出: true
+解释: 返回 true 因为 "applepenapple" 可以被拆分成 "apple pen apple"。
+     注意你可以重复使用字典中的单词。
+```
+示例 3：
+```
+输入: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+输出: false
+```
+## 失败解法
+### 原因
+超时
+### 思路
+backtrack
+### 代码
+```java
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        if ("".equals(s)) {
+            return true;
+        }
+
+        boolean flag = false;
+        for (String word : wordDict) {
+            if (s.startsWith(word)) {
+                flag |= wordBreak(s.substring(word.length()), wordDict);
+            }
+            
+            if (flag) {
+                return true;
+            }
+        }
+
+        return flag;
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- dp[i]：坐标是`[0, i - 1]`，长度是i的子字符串是否能被单词完整覆盖
+- base case：`dp[0] = true`，代表字符串长度为0时，为true
+- 状态转移方程：`dp[i] = dp[j] && wordList.contains(str[j, i - 1])`
+- 返回结果：`dp[len]`
+- 两层循环:
+    - 外层确定dp代表的字符串的长度
+    - 内层寻找能够从wordList找到的，结尾是s的i - 1坐标字符串的起始坐标
+    - 如果内层找到的坐标dp值也是true，说明当前字符串是可以完全由wordList中的字符串覆盖的
+### 代码
+```java
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Set<String> set = new HashSet<>(wordDict);
+        int len = s.length();
+        boolean[] dp = new boolean[len + 1];
+        dp[0] = true;
+
+        for (int i = 1; i <= len; i++) {
+            for (int j = 0; j < i; j++) {
+                if (dp[j] && set.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+
+        return dp[len];
+    }
+}
+```
+## 优化代码
+### 思路
+内层循环从结尾开始倒着查
+### 代码
+```java
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Set<String> set = new HashSet<>(wordDict);
+        int len = s.length();
+        boolean[] dp = new boolean[len + 1];
+        dp[0] = true;
+
+        for (int i = 1; i <= len; i++) {
+            for (int j = i - 1; j >= 0; j--) {
+                if (dp[j] && set.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+
+        return dp[len];
+    }
+}
+```
