@@ -655,3 +655,79 @@ class Solution {
     }
 }
 ```
+# LeetCode_74_搜索二维矩阵
+## 题目
+编写一个高效的算法来判断 m x n 矩阵中，是否存在一个目标值。该矩阵具有如下特性：
+```
+每行中的整数从左到右按升序排列。
+每行的第一个整数大于前一行的最后一个整数。
+```
+示例 1:
+```
+输入:
+matrix = [
+  [1,   3,  5,  7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 50]
+]
+target = 3
+输出: true
+```
+示例 2:
+```
+输入:
+matrix = [
+  [1,   3,  5,  7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 50]
+]
+target = 13
+输出: false
+```
+## 解法
+### 思路
+- 从[0,0]开始嵌套遍历
+- 每一层开始前，除最后一层外，先和下一层进行判断
+    - 如果和target相等，返回true
+    - 如果小于target，说明当前层没有要的元素，直接跳到下一层
+    - 如果大于target，那么说明当前层有可能有target
+- 如果开始遍历当前层的元素
+    - 找到返回true
+    - 遍历完没有找到，返回false
+- 如果所有层都没有找到，返回false
+### 代码
+```java
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix.length == 0 || matrix[0].length == 0) {
+            return false;
+        }
+        
+        int row = matrix.length, col = matrix[0].length;
+        
+        for (int i = 0; i < row; i++) {
+            if (i != row - 1) {
+                int nextRowStart = matrix[i + 1][0];
+                
+                if (nextRowStart == target) {
+                    return true;
+                }
+                
+                if (nextRowStart < target) {
+                    continue;
+                }
+            }
+            
+            for (int j = 0; j < col; j++) {
+                if (matrix[i][j] == target) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        return false;
+    }
+}
+```
