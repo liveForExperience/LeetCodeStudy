@@ -882,3 +882,84 @@ class Solution {
     }
 }
 ```
+# LeetCode_209_长度最小的子数组
+## 题目
+给定一个含有 n 个正整数的数组和一个正整数 s ，找出该数组中满足其和 ≥ s 的长度最小的连续子数组，并返回其长度。如果不存在符合条件的连续子数组，返回 0。
+
+示例: 
+```
+输入: s = 7, nums = [2,3,1,2,4,3]
+输出: 2
+解释: 子数组 [4,3] 是该条件下的长度最小的连续子数组。
+```
+## 解法
+### 思路
+前缀和+二分查找
+- 能用二分是因为数组中元素为正数，累加后必定升序
+- 遍历数组，计算前缀和
+- 遍历数组，在前缀和数组中使用二分查找找到大于等于`s + nums[i]`的元素，比较获取最小值
+### 代码
+```java
+class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+        
+        int[] arr = new int[len + 1];
+        for (int i = 1; i <= len; i++) {
+            arr[i] = arr[i - 1] + nums[i - 1]; 
+         }
+        
+        int ans = Integer.MAX_VALUE;
+        for (int i = 1; i <= len; i++) {
+            int target = s + arr[i - 1];
+            int index = Arrays.binarySearch(arr, target);
+            
+            if (index < 0) {
+                index = -index - 1;
+            }
+            
+            if (index <= len) {
+                ans = Math.min(ans, index - i + 1);
+            }
+        }
+        
+        return ans == Integer.MAX_VALUE ? 0 : ans;
+    }
+}
+```
+## 解法二
+### 思路
+双指针：
+- 两个指针：
+    - start：作为临时最小数组的起始坐标，初始化为0
+    - end：作为临时最小数组的结尾位置，初始化为0
+- 初始化变量：
+    - ans：暂存算法过程中的临时答案，初始化为int最大值
+    - sum：记录遍历时的累加值，用来和s值比较
+- 过程：
+    - 遍历数组，累加sum
+    - 如果`sum >= s`，说明当前`start`起始的最小数组找到了，更新`ans`：
+        - `start`右移
+        - `sum -= nums[start]`
+        - 循环直到`sum < s`
+### 代码
+```java
+class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        int ans = Integer.MAX_VALUE, sum = 0, start = 0, end = 0;
+        for (; end < nums.length; end++) {
+            sum += nums[end];
+
+            while (sum >= s) {
+                ans = Math.min(ans, end - start + 1);
+                sum -= nums[start];
+                start++;
+            }
+        }
+        return ans == Integer.MAX_VALUE ? 0 : ans;
+    }
+}
+```
