@@ -81,3 +81,54 @@ class Solution {
     }
 }
 ```
+## 解法三
+### 思路
+手写堆实现
+### 代码
+```java
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        int[] arr = new int[nums.length + 1];
+        System.arraycopy(nums, 0, arr, 1, nums.length);
+        build(arr);
+
+        int heapSize = arr.length;
+        for (int i = arr.length - 1; i >= arr.length - k + 1; i--) {
+            swap(arr, 1, i);
+            heapSize--;
+            heapfiy(arr, 1, heapSize);
+        }
+
+        return arr[1];
+    }
+
+    private void build(int[] arr) {
+        for (int i = arr.length / 2; i > 0; i--) {
+            heapfiy(arr, i, arr.length);
+        }
+    }
+
+    private void heapfiy(int[] arr, int index, int len) {
+        int largest = index, left = index * 2, right = index * 2 + 1;
+
+        if (left < len && arr[largest] < arr[left]) {
+            largest = left;
+        }
+
+        if (right < len && arr[largest] < arr[right]) {
+            largest = right;
+        }
+
+        if (largest != index) {
+            swap(arr, index, largest);
+            heapfiy(arr, largest, len);
+        }
+    }
+
+    private void swap(int[] arr, int a, int b) {
+        int tmp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = tmp;
+    }
+}
+```
