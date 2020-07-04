@@ -12,7 +12,7 @@ public class LeetCode_81_3 {
             return 0;
         }
 
-        int row = matrix.length, col = matrix[0].length, ans = 0;
+        int col = matrix[0].length, ans = 0;
         int[] hDp = new int[col],
               lDp = new int[col],
               rDp = new int[col];
