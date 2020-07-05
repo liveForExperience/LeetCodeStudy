@@ -550,3 +550,54 @@ class Solution {
     }
 }
 ```
+# LeetCode_97_交错字符串
+## 题目
+给定三个字符串 s1, s2, s3, 验证 s3 是否是由 s1 和 s2 交错组成的。
+
+示例 1:
+```
+输入: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
+输出: true
+```
+示例 2:
+```
+输入: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbbaccc"
+输出: false
+```
+## 解法
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        int len1 = s1.length(), len2 = s2.length(), len3 = s3.length();
+        if (len1 + len2 != len3) {
+            return false;
+        }
+        
+        return backTrack(0, s1.toCharArray(), 0, s2.toCharArray(), 0, s3.toCharArray());
+    }
+
+    private boolean backTrack(int i1, char[] cs1, int i2, char[] cs2, int i3, char[] cs3) {
+        if (i3 == cs3.length) {
+            return true;
+        }
+        
+        boolean flag = false;
+        if (i1 != cs1.length && cs1[i1] == cs3[i3]) {
+            flag = backTrack(i1 + 1, cs1, i2, cs2, i3 + 1, cs3);
+        }
+        
+        if (flag) {
+            return true;
+        }
+        
+        if (i2 != cs2.length && cs2[i2] == cs3[i3]) {
+            return backTrack(i1, cs1, i2 + 1, cs2, i3 + 1, cs3);
+        }
+        
+        return false;
+    }
+}
+```
