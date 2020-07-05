@@ -432,3 +432,121 @@ class Solution {
     }
 }
 ```
+# LeetCode_91_解码方法
+## 题目
+一条包含字母 A-Z 的消息通过以下方式进行了编码：
+```
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+给定一个只包含数字的非空字符串，请计算解码方法的总数。
+```
+示例 1:
+```
+输入: "12"
+输出: 2
+解释: 它可以解码为 "AB"（1 2）或者 "L"（12）。
+```
+示例 2:
+```
+输入: "226"
+输出: 3
+解释: 它可以解码为 "BZ" (2 26), "VF" (22 6), 或者 "BBF" (2 2 6) 。
+```
+## 失败解法
+失败解法
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    public int numDecodings(String s) {
+        Set<String> set = new HashSet<>();
+        backTrack(s, new StringBuilder(), set);
+        return set.size();
+    }
+
+    private void backTrack(String s, StringBuilder sb, Set<String> ans) {
+        if (s.length() == 0) {
+            ans.add(sb.toString());
+            return;
+        }
+
+        sb.append((char)(s.charAt(0) + 'A' - 1));
+        backTrack(s.substring(1), sb, ans);
+        sb.deleteCharAt(sb.length() - 1);
+
+        if (s.length() == 1) {
+            return;
+        }
+        
+        int num = (Integer.parseInt(s.substring(0, 2)));
+        if (num < 1 || num > 26) {
+            return;
+        }
+        
+        sb.append((char)(num + 'A' - 1));
+        backTrack(s.substring(2), sb, ans);
+        sb.deleteCharAt(sb.length() - 1);
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i]`：从`s[0, i]`字符串有多少种解码方式
+- 初始化：`dp[0] = 1`
+- 状态转移方程：
+    - 如果可以和前`s[i]`和`s[i - 1]`可以组成[1,26]之间的数字，那么`dp[i] = dp[i - 1] + dp[i - 2]`。
+    - 如果不可以，`dp[i] = dp[i - 1]`
+- 返回结果：`dp[len - 1]`
+### 代码
+```java
+class Solution {
+    public int numDecodings(String s) {
+        if (s == null) {
+            return 0;
+        }
+
+        int len = s.length();
+        if (len == 0) {
+            return 0;
+        }
+        
+        char[] cs = s.toCharArray();
+        if (!isValid(cs[0] - '0')) {
+            return 0;
+        }
+        
+        if (len == 1) {
+            int num = cs[0] - '0';
+            return isValid(num) ? 1 : 0;
+        }
+        
+        int[] dp = new int[len + 1];
+        dp[1] = 1;
+        dp[2] = (isValid(cs[1] - '0') ? dp[1] : 0) + (isValid(twoCharNum(cs[0], cs[1])) ? 1 : 0);
+        
+        for (int i = 3; i <= len; i++) {
+            if (isValid(cs[i - 1] - '0')) {
+                dp[i] = dp[i - 1];
+            }
+            
+            if (isValid(cs[i - 2] - '0') && isValid(twoCharNum(cs[i - 2], cs[i - 1]))) {
+                dp[i] += dp[i - 2];
+            }
+        }
+        
+        return dp[len];
+    }
+    
+    private boolean isValid(int num) {
+        return num > 0 && num <= 26;
+    }
+
+    private int twoCharNum(char a, char b) {
+        return 10 * (a - '0') + (b - '0');
+    }
+}
+```
