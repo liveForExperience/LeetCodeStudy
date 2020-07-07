@@ -182,3 +182,119 @@ class Solution {
     }
 }
 ```
+# LeetCode_115_不同的子序列
+## 题目
+给定一个字符串 S 和一个字符串 T，计算在 S 的子序列中 T 出现的个数。
+
+一个字符串的一个子序列是指，通过删除一些（也可以不删除）字符且不干扰剩余字符相对位置所组成的新字符串。（例如，"ACE" 是 "ABCDE" 的一个子序列，而 "AEC" 不是）
+
+题目数据保证答案符合 32 位带符号整数范围。
+
+示例 1：
+```
+输入：S = "rabbbit", T = "rabbit"
+输出：3
+解释：
+
+如下图所示, 有 3 种可以从 S 中得到 "rabbit" 的方案。
+(上箭头符号 ^ 表示选取的字母)
+
+rabbbit
+^^^^ ^^
+rabbbit
+^^ ^^^^
+rabbbit
+^^^ ^^^
+```
+示例 2：
+```
+输入：S = "babgbag", T = "bag"
+输出：5
+
+解释：
+
+如下图所示, 有 5 种可以从 S 中得到 "bag" 的方案。 
+(上箭头符号 ^ 表示选取的字母)
+
+babgbag
+^^ ^
+babgbag
+^^    ^
+babgbag
+^    ^^
+babgbag
+  ^  ^^
+babgbag
+    ^^^
+```
+## 失败解法
+###
+超时
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    public int numDistinct(String s, String t) {
+        return backTrack(s, 0, t, 0);
+    }
+
+    private int backTrack(String s, int si, String t, int ti) {
+        if (si == s.length() && ti != t.length()) {
+            return 0;
+        }
+
+        if (ti == t.length()) {
+            return 1;
+        }
+
+        int count = 0;
+        for (int i = si; i < s.length(); i++) {
+            if (s.charAt(i) == t.charAt(ti)) {
+                count += backTrack(s, i + 1, t, ti + 1);
+            }
+        }
+
+        return count;
+    }
+}
+```
+## 解法
+### 题目
+回溯+记忆化搜索
+### 代码
+```java
+class Solution {
+    public int numDistinct(String s, String t) {
+        int[][] memo = new int[s.length()][t.length()];
+        for (int[] arr : memo) {
+            Arrays.fill(arr, -1);
+        }
+        return backTrack(s, 0, t, 0, memo);
+    }
+
+    private int backTrack(String s, int si, String t, int ti, int[][] memo) {
+        if (si == s.length() && ti != t.length()) {
+            return 0;
+        }
+
+        if (ti == t.length()) {
+            return 1;
+        }
+
+        if (memo[si][ti] != -1) {
+            return memo[si][ti];
+        }
+
+        int count = 0;
+        for (int i = si; i < s.length(); i++) {
+            if (s.charAt(i) == t.charAt(ti)) {
+                count += backTrack(s, i + 1, t, ti + 1, memo);
+            }
+        }
+
+        memo[si][ti] = count;
+        return count;
+    }
+}
+```
