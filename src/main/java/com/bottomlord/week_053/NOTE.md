@@ -298,3 +298,40 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+动态规划：
+- `dp[i][j]`：T的前i个字符组成的字符串，在S的前j个字符组成的字符串中，能够得到的最大个数
+- 初始化：当i为0，也就是T为空字符串时，所有S的长度对应的dp值都是1
+- 状态转移方程：
+    - `T[i] != S[j]`：当前字符不相等，说明S[j]没有被用到，所以当前dp值与`dp[i][j - 1]`是一致的
+    - `T[i] == S[j]`：当前字符相等，所以分成两种状态：
+        - `S[j]`被用到了，那么它的值和后面情况相等：`S[j]`不存在且`T[i]`也不需要匹配，这种情况获得的所有可能，在T用到`T[i]`后，`T[i]`代表的值就都会只和`S[j]`匹配了
+        - `S[j]`没有被用到，那么它的情况和`T[i] != S[j]`的情况相同
+    - 所以状态转移方程就是如下两个方程：
+        - `T[i] != S[j]`：`dp[i][j] = dp[i][j - 1]` 
+        - `T[i] == S[j]`：`dp[i][j] = dp[i][j - 1] + dp[i - 1][j - 1]` 
+### 代码
+```java
+class Solution {
+    public int numDistinct(String s, String t) {
+        int sl = s.length(), tl = t.length();
+        int[][] dp = new int[tl + 1][sl + 1];
+        for (int i = 0; i <= sl; i++) {
+            dp[0][i] = 1;
+        }
+        
+        for (int i = 1; i <= tl; i++) {
+            for (int j = 1; j <= sl; j++) {
+                if (t.charAt(i - 1) == s.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + dp[i][j - 1];
+                } else {
+                    dp[i][j] = dp[i][j - 1];
+                }
+            }
+        }
+        
+        return dp[tl][sl];
+    }
+}
+```
