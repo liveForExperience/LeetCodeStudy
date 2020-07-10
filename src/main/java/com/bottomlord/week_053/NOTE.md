@@ -477,3 +477,92 @@ class Solution {
     }
 }
 ```
+# LeetCode_286_墙与门
+## 题目
+你被给定一个 m × n 的二维网格，网格中有以下三种可能的初始化值：
+```
+-1 表示墙或是障碍物
+0 表示一扇门
+INF 无限表示一个空的房间。然后，我们用 231 - 1 = 2147483647 代表 INF。你可以认为通往门的距离总是小于 2147483647 的。
+你要给每个空房间位上填上该房间到 最近 门的距离，如果无法到达门，则填 INF 即可。
+```
+示例：
+
+给定二维网格：
+```
+INF  -1  0  INF
+INF INF INF  -1
+INF  -1 INF  -1
+  0  -1 INF INF
+```
+运行完你的函数后，该网格应该变成：
+```
+  3  -1   0   1
+  2   2   1  -1
+  1  -1   2  -1
+  0  -1   3   4
+```
+## 解法
+### 思路
+bfs+记忆化搜索
+### 代码
+```java
+class Solution {
+    private int[][] directions = new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}};
+    public void wallsAndGates(int[][] rooms) {
+        int row = rooms.length;
+        if (row == 0) {
+            return;
+        }
+
+        int col = rooms[0].length;
+        if (col == 0) {
+            return;
+        }
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (rooms[i][j] == -1) {
+                    continue;
+                }
+
+                rooms[i][j] = bfs(rooms, row, col, i, j);
+            }
+        }
+    }
+
+    private int bfs(int[][] rooms, int row, int col, int r, int c) {
+        Queue<Pair<Integer, Integer>> queue = new ArrayDeque<>();
+        boolean[][] memo = new boolean[row][col];
+        queue.offer(new Pair<>(r, c));
+        int count = 1;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            while (size-- > 0) {
+                Pair<Integer, Integer> pair = queue.poll();
+                if (pair == null) {
+                    continue;
+                }
+
+                int x = pair.getKey(), y = pair.getValue();
+
+                if (x < 0 || x >= row || y < 0 || y >= col || rooms[x][y] == -1 || memo[x][y]) {
+                    continue;
+                }
+
+                memo[x][y] = true;
+
+                if (rooms[x][y] == 0) {
+                    return count;
+                }
+
+                for (int[] diection : directions) {
+                    queue.offer(new Pair<>(x + diection[0], y + diection[1]));
+                }
+            }
+            count++;
+        }
+        return Integer.MAX_VALUE;
+    }
+}
+```
