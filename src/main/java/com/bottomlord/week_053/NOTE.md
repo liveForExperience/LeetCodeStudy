@@ -566,3 +566,128 @@ class Solution {
     }
 }
 ```
+# LeetCode_315_计算右侧小于当前元素的个数
+## 题目
+给定一个整数数组 nums，按要求返回一个新数组 counts。数组 counts 有该性质： counts[i] 的值是  nums[i] 右侧小于 nums[i] 的元素的数量。
+
+示例:
+```
+输入: [5,2,6,1]
+输出: [2,1,1,0] 
+解释:
+5 的右侧有 2 个更小的元素 (2 和 1).
+2 的右侧仅有 1 个更小的元素 (1).
+6 的右侧有 1 个更小的元素 (1).
+1 的右侧有 0 个更小的元素.
+```
+## 失败解法
+## 原因
+超时，时间复杂度太高
+### 思路
+2层迭代
+### 代码
+```java
+class Solution {
+    public List<Integer> countSmaller(int[] nums) {
+        List<Integer> counts = new ArrayList<>(nums.length);
+        for (int i = 0; i < nums.length; i++) {
+            int count = 0;
+            for (int j = i + 1; j < nums.length; j++) {
+                if (nums[j] < nums[i]) {
+                    count++;
+                }
+            }
+            counts.add(count);
+        }
+        return counts;
+    }
+}
+```
+## 解法
+### 思路
+归并排序+索引数组
+- 使用归并排序的思路，将数组拆分成前后两部分
+- 归并递归返回的时候，前后两部分都是升序的已经排列好的数组
+- 在处理前后两部分，进行的排序的同时，将计算个数的工作做掉
+    - 用两个指针分别从前后2部分的起始坐标开始遍历
+    - 从小到大的依次将元素出列
+    - 假设遍历前半部分的指针为i，后半部分的指针为j
+    - 如果i越界，那么说明前半部分已经没有比后半部分大的元素了，直接移动j
+    - 如果j越界，那么说明所有后半部分的元素都比剩下没有遍历到的前半部分小，计算后半部分的长度累加到前半部分元素的位置
+    - 如果i和j都没有越界：
+        - 如果遍历到的是前半部分的元素，就计算j与后半部分起始位置的距离，并移动i
+        - 如果遍历到的是后半部分的元素，就直接移动j
+- 在归并排序的过程中：
+    - 使用数组indexes来记录排序的元素的下表
+    - 使用数组counts来记录下表对应下标元素在题目中需要记录的答案，也就是该元素后面有多少个比它小的个数
+### 代码
+```java
+class Solution {
+    private int[] indexes;
+    private int[] counts;
+
+    public List<Integer> countSmaller(int[] nums) {
+        List<Integer> ans = new ArrayList<>();
+        
+        int len = nums.length;
+        if (len == 0) {
+            return ans;
+        }
+        
+        indexes = new int[len];
+        counts = new int[len];
+       
+        for (int i = 0; i < len; i++) {
+            indexes[i] = i;
+        }
+
+        mergeSort(nums, 0, len - 1);
+        
+        for (int num : counts) {
+            ans.add(num);
+        }
+        
+        return ans;
+    }
+
+    private void mergeSort(int[] nums, int head, int tail) {
+        if (head == tail) {
+            return;
+        }
+
+        int mid = head + (tail - head) / 2;
+        mergeSort(nums, head, mid);
+        mergeSort(nums, mid + 1, tail);
+
+        if (nums[indexes[mid]] > nums[indexes[mid + 1]]) {
+            doMergeSort(nums, head, mid, tail);
+        }
+    }
+
+    private void doMergeSort(int[] nums, int head, int mid, int tail) {
+        int[] tmp = new int[nums.length];
+        for (int i = head; i <= tail; i++) {
+            tmp[i] = indexes[i];
+        }
+
+        int i = head, j = mid + 1;
+        for (int k = head; k <= tail; k++) {
+            if (i > mid) {
+                indexes[k] = tmp[j];
+                j++;
+            } else if (j > tail) {
+                indexes[k] = tmp[i];
+                i++;
+                counts[indexes[k]] += (tail - mid);
+            } else if (nums[tmp[i]] <= nums[tmp[j]]) {
+                indexes[k] = tmp[i];
+                i++;
+                counts[indexes[k]] += ( j - mid - 1);
+            } else {
+                indexes[k] = tmp[j];
+                j++;
+            }
+        }
+    }
+}
+```
