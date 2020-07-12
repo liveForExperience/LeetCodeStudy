@@ -477,6 +477,165 @@ class Solution {
     }
 }
 ```
+# LeetCode_127_单词接龙
+## 题目
+给定两个单词（beginWord 和 endWord）和一个字典，找到从 beginWord 到 endWord 的最短转换序列的长度。转换需遵循如下规则：
+```
+每次转换只能改变一个字母。
+转换过程中的中间单词必须是字典中的单词。
+```
+说明:
+```
+如果不存在这样的转换序列，返回 0。
+所有单词具有相同的长度。
+所有单词只由小写字母组成。
+字典中不存在重复的单词。
+你可以假设 beginWord 和 endWord 是非空的，且二者不相同。
+```
+示例 1:
+```
+输入:
+beginWord = "hit",
+endWord = "cog",
+wordList = ["hot","dot","dog","lot","log","cog"]
+
+输出: 5
+
+解释: 一个最短转换序列是 "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+     返回它的长度 5。
+```
+示例 2:
+```
+输入:
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot","dot","dog","lot","log"]
+
+输出: 0
+
+解释: endWord "cog" 不在字典中，所以无法进行转换。
+```
+## 失败解法
+### 原因
+超时，时间复杂度高
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    private int ans = Integer.MAX_VALUE;
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        if (!wordList.contains(endWord)) {
+            return 0;
+        }
+        
+        Set<String> set = new HashSet<>();
+        set.add(beginWord);
+        backTrack(beginWord, endWord, set, wordList, 1);
+        return ans == Integer.MAX_VALUE ? 0 : ans;
+    }
+
+    private void backTrack(String curWord, String endWord, Set<String> memo, List<String> wordList, int count) {
+        if (count > ans) {
+            return;
+        }
+
+        if (Objects.equals(curWord, endWord)) {
+            ans = Math.min(ans, count);
+            return;
+        }
+        
+        for (String word : wordList) {
+            if (isNext(curWord, word) && !memo.contains(word)) {
+                memo.add(word);
+                backTrack(word, endWord, memo, wordList, count + 1);
+                memo.remove(word);
+            }
+        }
+    }
+
+    private boolean isNext(String curWord, String nextWord) {
+        if (curWord.length() != nextWord.length()) {
+            return false;
+        }
+
+        int count = 0;
+        for (int i = 0; i < curWord.length(); i++) {
+            if (curWord.charAt(i) != nextWord.charAt(i)) {
+                count++;
+            }
+
+            if (count > 1) {
+                return false;
+            }
+        }
+
+        return count == 1;
+    }
+}
+```
+## 解法
+### 思路
+bfs+预处理
+- 对字符串做占位符处理：
+    - 将字符串的每一位用`*`来占位，作为一个标识放在map的key中，map的value是list，list中存放也能生成这种标志的字符串
+    - 遍历字符串，处理字符串的每一位后填充map
+- 使用bfs来处理变换的步数：
+    - 将beginWord放入队列中开始bfs
+    - 通过beginWord生成所有可能的占位符标识
+    - 将占位符中找到的匹配的字符串放入下一层，并计数
+    - 如果匹配到endWord就返回计数值
+### 代码
+```java
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        int count = 1;
+        Map<String, List<String>> map = new HashMap<>();
+        for (String word : wordList) {
+            for (int i = 0; i < word.length(); i++) {
+                String label = word.substring(0, i) + "*" + word.substring(i + 1);
+                List<String> list = map.getOrDefault(label, new ArrayList<>());
+                list.add(word);
+                map.put(label, list);
+            }
+        }
+
+        Queue<String> queue = new ArrayDeque<>();
+        Set<String> memo = new HashSet<>();
+        queue.offer(beginWord);
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            while (size-- > 0) {
+                String word = queue.poll();
+                if (word == null) {
+                    continue;
+                }
+                
+                if (memo.contains(word)) {
+                    continue;
+                }
+                
+                memo.add(word);
+                
+                if (Objects.equals(endWord, word)) {
+                    return count;
+                }
+                
+                for (int i = 0; i < word.length(); i++) {
+                    String label = word.substring(0, i) + "*" + word.substring(i + 1);
+                    for (String match : map.getOrDefault(label, new ArrayList<>())) {
+                        queue.offer(match);
+                    }
+                }
+            }
+            
+            count++;
+        }
+        
+        return 0;
+    }
+}
+```
 # LeetCode_286_墙与门
 ## 题目
 你被给定一个 m × n 的二维网格，网格中有以下三种可能的初始化值：
