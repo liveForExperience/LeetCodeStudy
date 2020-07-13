@@ -90,3 +90,69 @@ class Solution {
     }
 }
 ```
+# LeetCode_132_分割回文串
+## 题目
+给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。
+
+返回符合要求的最少分割次数。
+
+示例:
+```
+输入: "aab"
+输出: 1
+解释: 进行一次分割就可将 s 分割成 ["aa","b"] 这样两个回文子串。
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i]`：`s[0,i]`区间内需要分割的最小次数
+- 状态转移方程：
+    - `dp[i]`的值可以通过`min(dp[j](0 <= j < i) + 1, dp[i])`的状态进行转移，其中`s[j + 1, i]`是一个回文串
+    - 所以每次状态转移就是在`[0,i)`范围中找到最小值
+- 边界初始值：
+    - `s[0,0]`，也就是第一个字符一定是回文串
+    - 因为要求最小值，所以`dp[i]`可以初始化为下标值，因为`s[0,i]`的最坏情况就是每一个字符自己才能组成回文串
+- 返回`dp[len - 1]`
+### 代码
+```java
+class Solution {
+    public int minCut(String s) {
+        int len = s.length();
+        if (len == 0) {
+            return 0;
+        }
+        
+        int[] dp = new int[len];
+        for (int i = 0; i < len; i++) {
+            dp[i] = i;
+        }
+        
+        for (int i = 1; i < len; i++) {
+            if (isValid(s, 0, i)) {
+                dp[i] = 0;
+                continue;
+            }
+            
+            for (int j = 0; j < i; j++) {
+                if (isValid(s, j + 1, i)) {
+                    dp[i] = Math.min(dp[i], dp[j] + 1);
+                }
+            }
+        }
+        
+        return dp[len - 1];
+    }
+    
+    private boolean isValid(String s, int start, int end) {
+        while (start < end) {
+            if (s.charAt(start) != s.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        
+        return true;
+    }
+}
+```
