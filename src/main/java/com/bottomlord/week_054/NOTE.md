@@ -156,3 +156,48 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 在解法一的基础上，将每次都遍历字符串判断是否为回文串的步骤，替换为生成一个二维数组，记录是否为回文串。
+- 二维数组也是一个dp方程，`dp[i][j]`代表`s[i,j]`是否为回文串
+- 过程是遍历二维数组，然后使用两个指针分别代表字符串的头尾字符，如果头尾字符相同，且它们要么分别往里缩进一个字符的dp也是true，要么长度不超过2，那么这个字符串就是回文串
+- 然后再通过解法一的dp状态转移方程，获得最后的结果
+### 代码
+```java
+class Solution {
+    public int minCut(String s) {
+        int len = s.length();
+        if (len < 2) {
+            return 0;
+        }
+
+        boolean[][] isValid = new boolean[len][len];
+        for (int right = 0; right < len; right++) {
+            for (int left = 0; left <= right; left++) {
+                if (s.charAt(right) == s.charAt(left) && (right - left <= 2 || isValid[left + 1][right - 1])) {
+                    isValid[left][right] = true;
+                }
+            }
+        }
+
+        int[] dp = new int[len];
+        for (int i = 0; i < len; i++) {
+            dp[i] = i;
+        }
+
+        for (int i = 1; i < len; i++) {
+            if (isValid[0][i]) {
+                dp[i] = 0;
+            }
+            
+            for (int j = 0; j < i; j++) {
+                if (isValid[j + 1][i]) {
+                    dp[i] = Math.min(dp[i], dp[j] + 1);
+                }
+            }
+        }
+
+        return dp[len - 1];
+    }
+}
+```
