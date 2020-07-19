@@ -490,3 +490,112 @@ class Solution {
     }
 }
 ```
+# LeetCode_140_单词拆分II
+## 题目
+给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，在字符串中增加空格来构建一个句子，使得句子中所有的单词都在词典中。返回所有这些可能的句子。
+
+说明：
+```
+分隔时可以重复使用字典中的单词。
+你可以假设字典中没有重复的单词。
+```
+示例 1：
+```
+输入:
+s = "catsanddog"
+wordDict = ["cat", "cats", "and", "sand", "dog"]
+输出:
+[
+  "cats and dog",
+  "cat sand dog"
+]
+```
+示例 2：
+```
+输入:
+s = "pineapplepenapple"
+wordDict = ["apple", "pen", "applepen", "pine", "pineapple"]
+输出:
+[
+  "pine apple pen apple",
+  "pineapple pen apple",
+  "pine applepen apple"
+]
+解释: 注意你可以重复使用字典中的单词。
+```
+示例 3：
+```
+输入:
+s = "catsandog"
+wordDict = ["cats", "dog", "sand", "and", "cat"]
+输出:
+[]
+```
+## 失败解法
+### 原因
+超时，搜索时间复杂度可能是O(N^N)
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        Set<String> words = new HashSet<>(wordDict);
+        List<String> ans = new ArrayList<>();
+        backTrack(s, 0, words, new StringBuilder(), ans);
+        return ans;
+    }
+
+    private void backTrack(String s, int index, Set<String> words, StringBuilder path, List<String> ans) {
+        if (index == s.length()) {
+            ans.add(path.toString().trim());
+            return;
+        }
+
+        for (int i = index + 1; i <= s.length(); i++) {
+            String word = s.substring(index, i);
+            if (words.contains(word)) {
+                int len = path.length();
+                path.append(" ").append(word);
+                backTrack(s, i, words, path, ans);
+                path.delete(len, path.length());
+            }
+        }
+    }
+}
+```
+## 解法
+### 思路
+回溯+记忆化搜索
+### 代码
+```java
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        return backTrack(s, new HashSet<>(wordDict), 0, new HashMap<>());
+    }
+
+    private List<String> backTrack(String s, Set<String> words, int index, Map<Integer, List<String>> memo) {
+        if (memo.containsKey(index)) {
+            return memo.get(index);
+        }
+
+        List<String> ans = new ArrayList<>();
+        if (index == s.length()) {
+            ans.add("");
+        }
+        
+        for (int i = index + 1; i <= s.length(); i++) {
+            String word = s.substring(index, i);
+            if (words.contains(word)) {
+                List<String> list = backTrack(s, words, i, memo);
+                for (String str : list) {
+                    ans.add(s.substring(index, i) + (Objects.equals(str, "") ? "" : " ") + str);
+                }
+            }
+        }
+
+        memo.put(index, ans);
+        return ans;
+    }
+}
+```
