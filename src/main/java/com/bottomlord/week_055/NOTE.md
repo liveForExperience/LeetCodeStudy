@@ -106,3 +106,89 @@ class Solution {
     }
 }
 ```
+# LeetCode_145_二叉树的后序遍历
+## 题目
+给定一个二叉树，返回它的 后序 遍历。
+
+示例:
+```
+输入: [1,null,2,3]  
+   1
+    \
+     2
+    /
+   3 
+
+输出: [3,2,1]
+```
+```
+进阶: 递归算法很简单，你可以通过迭代算法完成吗？
+```
+## 解法
+### 思路
+dfs后序遍历
+### 代码
+```java
+class Solution {
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list);
+        return list;
+    }
+    
+    private void dfs(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, list);
+        dfs(node.right, list);
+        list.add(node.val);
+    }
+}
+```
+## 解法二
+### 思路
+使用栈进行迭代：
+- 使用2个栈
+- 一个栈`stack`用来驱动搜索
+- 一个栈`temp`用来记录搜索过的节点
+- 每一次循环从`stack`取出的节点就压入`temp`，因为栈是先进后出，所以正好匹配了后序的顺序
+- `stack`迭代结束后，循环弹出`temp`就能获得后序打印的结果
+### 代码
+```java
+class Solution {
+    public List<Integer> postorderTraversal(TreeNode root) {
+        if (root == null) {
+            return Collections.emptyList();
+        }
+        
+        Stack<TreeNode> stack = new Stack<>(), temp = new Stack<>();
+        List<Integer> ans = new ArrayList<>();
+        
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            if (node == null) {
+                continue;
+            }
+            
+            if (node.left != null) {
+                stack.push(node.left);    
+            }
+            
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            
+            temp.push(node);
+        }
+        
+        while (!temp.isEmpty()) {
+            ans.add(temp.pop().val);
+        }
+        
+        return ans;
+    }
+}
+```
