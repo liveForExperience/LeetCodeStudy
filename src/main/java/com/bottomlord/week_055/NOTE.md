@@ -192,3 +192,109 @@ class Solution {
     }
 }
 ```
+# LeetCode_149_直线上最多的点数
+## 题目
+给定一个二维平面，平面上有 n 个点，求最多有多少个点在同一条直线上。
+
+示例 1:
+```
+输入: [[1,1],[2,2],[3,3]]
+输出: 3
+解释:
+^
+|
+|        o
+|     o
+|  o  
++------------->
+0  1  2  3  4
+```
+示例 2:
+```
+输入: [[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]
+输出: 4
+解释:
+^
+|
+|  o
+|     o        o
+|        o
+|  o        o
++------------------->
+0  1  2  3  4  5  6
+```
+## 解法
+### 思路
+暴力解法：
+- 特殊情况：如果点的个数n小于等于2，那么在同一直线上的点的个数就是n
+- 判断条件：判断是否在同一直线上，就需要有3个点，2个点`(x1, y1)`，`(x2, y2)`确定直线，再枚举点`(x, y)`，判断是否在那条直线上。故循环需要有3层
+- 3层循环：
+    - 外面2层确定组成直线的2个点
+    - 最里面一层遍历所有其他的点，判断是否与外面两个点在同一条直线上
+    - 判断公式：`(y2 - y1) / (x2 - x1) = (y - y2) / (x - x2)`
+    - 公式是除法，使用double可能导致精度丢失，所以转换为：`(y2 - y1) * (x - x2) = (y - y2) * (x2 - x1)`
+    - 但相乘有可能导致溢出，所以使用gcd求最大公约数，对乘数做一下约分
+- 注意：
+    - 确定直线的两个点如果完全相等，需要跳过
+    - 最内层的点在遍历时如果与最外层的2个点重复，需要跳过
+### 代码
+```java
+class Solution {
+    public int maxPoints(int[][] points) {
+        int len = points.length;
+        if (len < 3) {
+            return len;
+        }
+
+        int index = 0;
+        for (; index < len - 1; index++) {
+            if (points[index][0] != points[index + 1][0] || points[index][1] != points[index + 1][1]) {
+                break;
+            }
+        }
+
+        if (index == len - 1) {
+            return len;
+        }
+
+        int max = 0;
+
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                int x1 = points[i][0], y1 = points[i][1],
+                    x2 = points[j][0], y2 = points[j][1];
+
+                if (x1 == x2 && y1 == y2) {
+                    continue;
+                }
+
+                int count = 2;
+
+                for (int k = 0; k < len; k++) {
+                    if (k != i && k != j && isLine(points[k][0], points[k][1], x1, y1, x2, y2)) {
+                        count++;
+                    }
+                }
+
+                max = Math.max(max, count);
+            }
+        }
+
+        return max;
+    }
+
+    private boolean isLine(int x, int y, int x1, int y1, int x2, int y2) {
+        int gcd1 = gcd(y2 - y1,  x2 - x1);
+        if (x == x2 && y == y2) {
+            return true;
+        }
+        int gcd2 = gcd(y - y2, x - x2);
+
+        return (y2 - y1) / gcd1 == (y - y2) / gcd2 && (x2 - x1) / gcd1 == (x - x2) / gcd2;
+    }
+
+    private int gcd(int x, int y) {
+        return y == 0 ? x : gcd(y, x % y);
+    }
+}
+```
