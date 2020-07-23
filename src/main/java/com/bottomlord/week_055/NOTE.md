@@ -298,3 +298,68 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+map存储斜率和常量并计数
+- 与同一个点的斜率相同的点，它们在同一条直线上
+- 双层循环：
+    - 外层确定计算斜率的点，并初始化一个map用来计数
+    - 内层计算除该点外所有点的斜率，并计数
+    - 计算斜率时为了避免浮点数精度丢失，使用约分并记录分数形式，用字符串`x:y`表示
+    - 内层枚举点时直接从外层确定的点之后开始枚举，因为之前的点已经在前面的循环中被计算和枚举过了，如果有和之前的点形成一条直线的，都已经在之前计算过了
+### 代码
+```java
+class Solution {
+    public int maxPoints(int[][] points) {
+        int len = points.length;
+
+        if (len < 3) {
+            return len;
+        }
+
+        int index = 0;
+        for (; index < len - 1; index++) {
+            if (points[index][0] != points[index + 1][0] || points[index][1] != points[index + 1][1]) {
+                break;
+            }
+        }
+
+        if (index == len - 1) {
+            return len;
+        }
+
+        int ans = 0;
+
+        for (int i = 0; i < len; i++) {
+            int dup = 0, max = 0;
+            Map<String, Integer> map = new HashMap<>();
+            for (int j = i + 1; j < len; j++) {
+                int x = points[i][0] - points[j][0],
+                    y = points[i][1] - points[j][1];
+
+                if (x == 0 && y == 0) {
+                    dup++;
+                    continue;
+                }
+
+                int gcd = gcd(x, y);
+                x = x / gcd;
+                y = y / gcd;
+
+                String key = x + ":" + y;
+                map.put(key, map.getOrDefault(key, 0) + 1);
+
+                max = Math.max(max, map.get(key));
+            }
+
+             ans = Math.max(ans, max + dup + 1);
+        }
+
+        return ans;
+    }
+
+    private int gcd(int x, int y) {
+        return y == 0 ? x : gcd(y, x % y);
+    }
+}
+```
