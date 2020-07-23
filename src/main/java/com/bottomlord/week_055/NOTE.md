@@ -363,3 +363,88 @@ class Solution {
     }
 }
 ```
+# LeetCode_156_上下翻转二叉树
+## 题目
+给定一个二叉树，其中所有的右节点要么是具有兄弟节点（拥有相同父节点的左节点）的叶节点，要么为空，将此二叉树上下翻转并将它变成一棵树， 原来的右节点将转换成左叶节点。返回新的根。
+
+例子:
+```
+输入: [1,2,3,4,5]
+    1
+   / \
+  2   3
+ / \
+4   5
+
+输出: 返回二叉树的根 [4,5,2,#,#,3,1]
+
+   4
+  / \
+ 5   2
+    / \
+   3   1  
+```
+说明:
+```
+对 [4,5,2,#,#,3,1] 感到困惑? 下面详细介绍请查看 二叉树是如何被序列化的。
+
+二叉树的序列化遵循层次遍历规则，当没有节点存在时，'#' 表示路径终止符。
+```
+这里有一个例子:
+```
+   1
+  / \
+ 2   3
+    /
+   4
+    \
+     5
+上面的二叉树则被序列化为 [1,2,3,#,#,4,#,#,5].
+```
+## 解法
+### 思路
+dfs：
+- 转换规则：
+    - 左子树为根
+    - 根节点为右
+    - 右子树为左
+- 递归：
+    - 递归参数：
+        - 根节点
+        - 当前层节点
+    - 退出条件：左子树为空
+    - 过程：
+        - 根节点为当前节点的右节点
+        - 根节点的右节点为当前节点的左节点
+        - 当前节点返回作为根节点
+### 代码
+```java
+class Solution {
+    public TreeNode upsideDownBinaryTree(TreeNode root) {
+        if (root == null || root.left == null) {
+            return root;
+        }
+
+        TreeNode ans = dfs(root.left, root);
+
+        root.left = null;
+        root.right = null;
+
+        return ans;
+    }
+
+    private TreeNode dfs(TreeNode node, TreeNode root) {
+        TreeNode cur;
+        if (node.left == null) {
+            cur = node;
+        } else {
+            cur = dfs(node.left, node);
+        }
+
+        node.left = root.right;
+        node.right = root;
+
+        return cur;
+    }
+}
+```
