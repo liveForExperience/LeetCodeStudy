@@ -719,6 +719,52 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+二分查找：
+- 最小的最大值一定在数组中最大元素`max`和所有元素之和`sum`之间
+- 在`[max,sum]`区间内定义一个`mid`值，假设这个`mid`代表那个最小的最大值
+- 从数组头开始遍历累加元素，如果累加和大于`mid`值，代表当前累加值需要被拆分，于是重新从当前元素开始重新计算累加和，并增加分段数
+- 查看这次的count是否大于m：
+    - 如果大于m，则代表这个`mid`值过小
+    - 如果小于或等于m，则代表这个`mid`值过大
+### 代码
+```java
+class Solution {
+    public int splitArray(int[] nums, int m) {
+        int head = Integer.MIN_VALUE, tail = 0;
+
+        for (int num : nums) {
+            head = Math.max(head, num);
+            tail += num;
+        }
+
+        while (head < tail) {
+            int mid = (tail - head) / 2 + head, count = 1, total = 0;
+
+            for (int num : nums) {
+                total += num;
+                if (total > mid) {
+                    count++;
+                    total = num;
+                }
+
+                if (count > m) {
+                    break;
+                }
+            }
+
+            if (count > m) {
+                head = mid + 1;
+            } else {
+                tail = mid;
+            }
+        }
+
+        return head;
+    }
+}
+```
 # LeetCode_329_矩阵中的最长递增路径
 ## 题目
 给定一个整数矩阵，找出最长递增路径的长度。
