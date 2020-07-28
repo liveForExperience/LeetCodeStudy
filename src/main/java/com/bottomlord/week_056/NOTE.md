@@ -182,3 +182,103 @@ class Solution {
     }
 }
 ```
+# LeetCode_161_相隔为1的编辑距离
+## 题目
+给定两个字符串 s 和 t，判断他们的编辑距离是否为 1。
+
+注意：
+
+满足编辑距离等于 1 有三种可能的情形：
+```
+往 s 中插入一个字符得到 t
+从 s 中删除一个字符得到 t
+在 s 中替换一个字符得到 t
+```
+示例 1：
+```
+输入: s = "ab", t = "acb"
+输出: true
+解释: 可以将 'c' 插入字符串 s 来得到 t。
+```
+示例 2:
+```
+输入: s = "cab", t = "ad"
+输出: false
+解释: 无法通过 1 步操作使 s 变为 t。
+```
+示例 3:
+```
+输入: s = "1203", t = "1213"
+输出: true
+解释: 可以将字符串 s 中的 '0' 替换为 '1' 来得到 t。
+```
+## 解法
+### 思路
+遍历字符串：
+- 先确定特殊情况，如果两个字符串的长度差大于1，直接返回错误
+- 遍历字符串，比较两个字符串的字符
+    - 如果两个字符相等继续循环
+    - 如果两个字符串不相等，判断它们的长度是否相等：
+        - 如果相等，就截去当前字符，判断剩下的字符串是否全等
+        - 如果不相等，就截取第一个入参的字符串的当前字符，判断剩下的字符串是否全等
+- 如果遍历结束，没有中断，那么就判断两个字符串是不是相差1，因为这时候可能短的字符串和另一个字符串开头的完全相等，那么必须要差一个字符，否则就全等了
+### 代码
+```java
+class Solution {
+    public boolean isOneEditDistance(String s, String t) {
+        int sl = s.length(), tl = t.length();
+        if (tl > sl) {
+            return isOneEditDistance(t, s);
+        }
+        
+        if (sl - tl > 1) {
+            return false;
+        }
+        
+        for (int i = 0; i < tl; i++) {
+            if (s.charAt(i) != t.charAt(i)) {
+                if (sl == tl) {
+                    return Objects.equals(s.substring(i + 1), t.substring(i + 1));
+                } else {
+                    return Objects.equals(s.substring(i + 1), t.substring(i));
+                }
+            }
+        }
+        
+        return tl + 1 == sl;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：计算编辑距离
+### 代码
+```java
+class Solution {
+    public boolean isOneEditDistance(String s, String t) {
+        int sl = s.length(), tl = t.length();
+        if (Math.abs(sl - tl) > 1) {
+            return false;
+        }
+
+        int[][] dp = new int[sl + 1][tl + 1];
+        for (int i = 0; i <= sl; i++) {
+            dp[i][0] = i;
+        }
+        
+        for (int i = 0; i <= tl; i++) {
+            dp[0][i] = i;
+        }
+        
+        for (int i = 1; i <= sl; i++) {
+            for (int j = 1; j <= tl; j++) {
+                int sAdd = dp[i - 1][j] + 1, tAdd = dp[i][j - 1] + 1,
+                    edit = s.charAt(i - 1) == t.charAt(j - 1) ? dp[i - 1][j - 1] : dp[i - 1][j - 1] + 1;
+                dp[i][j] = Math.min(sAdd, Math.min(tAdd, edit));
+            }
+        }
+        
+        return dp[sl][tl] == 1;
+    }
+}
+```
