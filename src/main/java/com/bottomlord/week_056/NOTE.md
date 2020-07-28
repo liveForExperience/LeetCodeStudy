@@ -89,3 +89,96 @@ class Solution {
     }
 }
 ```
+# LeetCode_159_至多包含两个不同字符的最长子串
+## 题目
+给定一个字符串 s ，找出 至多 包含两个不同字符的最长子串 t ，并返回该子串的长度。
+
+示例 1:
+```
+输入: "eceba"
+输出: 3
+解释: t 是 "ece"，长度为3。
+```
+示例 2:
+```
+输入: "ccaabbb"
+输出: 5
+解释: t 是 "aabbb"，长度为5。
+```
+## 解法
+### 思路
+哈希表+双指针：
+- 使用hash表，key存储字符，value存储连续相同字符的最右下标
+- 使用两个指针：
+    - head：代表窗口的起始下标，第一个字符的最小坐标
+    - tail：代表窗口的结尾下标，第二个字符的做大坐标
+- 过程：
+    - 遍历字符串，将当前字符放入map中指定的位置
+        - 如果map元素总数大于2个，将元素放入map中，并更新value坐标值
+        - 如果map元素总数大于2个，不放入元素
+    - 如果当前map的元素个数是否大于2
+        - 获取value值最小的key，保存其值value，并删除
+        - 更新head指针为`value + 1`
+    - 每次循环都更新窗口长度`(right - left) + 1`
+        
+### 代码
+```java
+class Solution {
+    public int lengthOfLongestSubstringTwoDistinct(String s) {
+        int len = s.length(), head = 0, tail = 0, ans = 0;
+        Map<Character, Integer> map = new HashMap<>();
+
+        while (tail < len) {
+            if (map.size() < 3) {
+                map.put(s.charAt(tail), tail++);
+            }
+            
+            if (map.size() == 3) {
+                int index = map.remove(s.charAt(Collections.min(map.values())));
+                head = index + 1;
+            }
+            
+            ans = Math.max(ans, tail - head);
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用数组代替解法一中的map，仍然使用双指针
+- 遍历字符串，移动tail指针，并累加遍历到的字符的个数
+- 用一个变量count来记录遍历到的不同字符数
+- 如果遍历到的字符在数组中个数为0，那么就累加count
+- 如果count值等于3，那么就循环移动head指针，将head指针对应的字符数到数组中进行累减
+- 如果累减到0，那么就将count减1
+- 每次移动tail都更新一次ans值，更新的动作是在移动head之前
+- 也因为每次更新是在更新head之前，所以最后一次更新需要在循环结束以后，也就是tail越界，head可能被更新之后
+### 代码
+```java
+class Solution {
+    public int lengthOfLongestSubstringTwoDistinct(String s) {
+        int len = s.length(), head = 0, tail = 0, count = 0, ans = 0;
+        int[] bucket = new int[128];
+
+        while (tail < len) {
+            char c = s.charAt(tail);
+            if (bucket[c]++ == 0) {
+                count++;
+            }
+
+            ans = Math.max(ans, tail - head);
+            tail++;
+            
+            while (count > 2) {
+                if (--bucket[s.charAt(head++)] == 0) {
+                    count--;
+                }
+            }
+        }
+        
+        return Math.max(ans, tail - head);
+    }
+}
+```
