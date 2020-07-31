@@ -282,3 +282,268 @@ class Solution {
     }
 }
 ```
+# LCP_13_寻宝
+## 题目
+我们得到了一副藏宝图，藏宝图显示，在一个迷宫中存在着未被世人发现的宝藏。
+
+迷宫是一个二维矩阵，用一个字符串数组表示。它标识了唯一的入口（用 'S' 表示），和唯一的宝藏地点（用 'T' 表示）。但是，宝藏被一些隐蔽的机关保护了起来。在地图上有若干个机关点（用 'M' 表示），只有所有机关均被触发，才可以拿到宝藏。
+
+要保持机关的触发，需要把一个重石放在上面。迷宫中有若干个石堆（用 'O' 表示），每个石堆都有无限个足够触发机关的重石。但是由于石头太重，我们一次只能搬一个石头到指定地点。
+
+迷宫中同样有一些墙壁（用 '#' 表示），我们不能走入墙壁。剩余的都是可随意通行的点（用 '.' 表示）。石堆、机关、起点和终点（无论是否能拿到宝藏）也是可以通行的。
+
+我们每步可以选择向上/向下/向左/向右移动一格，并且不能移出迷宫。搬起石头和放下石头不算步数。那么，从起点开始，我们最少需要多少步才能最后拿到宝藏呢？如果无法拿到宝藏，返回 -1 。
+
+示例 1：
+```
+输入： ["S#O", "M..", "M.T"]
+
+输出：16
+
+解释：最优路线为： S->O, cost = 4, 去搬石头 O->第二行的M, cost = 3, M机关触发 第二行的M->O, cost = 3, 我们需要继续回去 O 搬石头。 O->第三行的M, cost = 4, 此时所有机关均触发 第三行的M->T, cost = 2，去T点拿宝藏。 总步数为16。 
+```
+示例 2：
+```
+输入： ["S#O", "M.#", "M.T"]
+
+输出：-1
+
+解释：我们无法搬到石头触发机关
+```
+示例 3：
+```
+输入： ["S#O", "M.T", "M.."]
+
+输出：17
+
+解释：注意终点也是可以通行的。
+```
+限制：
+```
+1 <= maze.length <= 100
+1 <= maze[i].length <= 100
+maze[i].length == maze[j].length
+S 和 T 有且只有一个
+0 <= M的数量 <= 16
+0 <= O的数量 <= 40，题目保证当迷宫中存在 M 时，一定存在至少一个 O 。
+```
+## 解法
+### 思路
+动态规划：
+- 整个寻宝过程可以划分为：
+    - S->O->M
+    - M1->O->M2
+    - ......
+    - Mn-1->O->Mn
+    - Mn->T
+- 其中确定开关的顺序和从哪个石头取会改变距离结果
+- 所以最终可以把路径拆分成3部分：
+    - 起点到开关
+    - 开关到开关
+    - 开关到终点
+- 对于这些点之间的最短距离，可以通过bfs来求得
+    - 先求字符串中的特殊位置的坐标
+    - 遍历所有起点和开关，求得从该点开始到其他点的最短距离(bfs)
+        - 起点到开关：
+            - 遍历石头位置
+            - 找到`起点->石头`+`开关->石头`的最小值
+            - 确定每个开关到起点的最短距离
+        - 开关到开关：
+            - 双层循环，确定两个开关`i`和`j`的位置
+            - 遍历石头的坐标，找到`开关i->石头`+`开关j->石头`的最小值
+            - 确定两个开关之间的最短距离
+        - 开关到终点：
+            - 遍历石头位置
+            - 找到`开关->石头`+`开关->终点`的最小值
+            - 确定每个开关到终点的最短距离
+ - 将如上求得的最短距离，存入一个二维数组`dict`中
+    - 所有开关的个数是mSize
+    - `dict[i][j]`：   
+        - `i`的范围`[0,mSize]`，代表所有开关
+        - `j`的范围是`[0,mSize+2]`，`j = mSize`代表起点，`j = mSize+1`代表终点，其他代表其他开关
+- 开始动态规划：
+    - `dp[mask][j]`：在第j个机关处，机关触发状态`mask`时的最小个数
+        - mask：作为掩码，第i位上的1代表第i个开关的状态，1为开，0为关
+        - j：作为在状态转移过程中要开的开关的坐标
+    - 状态转移方程：
+        - 三层循环
+            - 第一层：遍历所有mask的可能，也就是从0到mSize位全为1的状态
+            - 第二层：移动坐标i，遍历所有当前状态中，位上是1的数，找到状态转移的前一个状态，也就是从开着的第i位开关开始，进行到下一个开关的搜索动作
+            - 第三层：移动坐标j，遍历所有当前状态中，位上是0的数，找到当前步要转移的状态，也就是将要开启的开关的位置
+        - 方程：`dp[nextMask][j] = min(dp[nextMask][j], dp[mask][i] + dists[i][j])`
+    - 初始状态：
+        - 只有1位是1的所有mask可能，对应startDist的所有对应距离
+        - 其他都是-1，代表还没有搜索过
+    - 返回结果：
+        - 遍历所有mask值为所有位都是1的可能dp，找到这些可能与结尾阶段的距离之和最小的组合
+### 代码
+```java
+class Solution {
+    private final int[][] directions = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    private int row, col;
+    private String[] maze;
+
+    public int minimalSteps(String[] maze) {
+        this.row = maze.length;
+        this.col = maze[0].length();
+        this.maze = maze;
+
+        List<int[]> os = new ArrayList<>(),
+                    ms = new ArrayList<>();
+
+        int sx = -1, sy = -1, tx = -1, ty = -1;
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                char c = getChar(i, j);
+
+                if (c == 'M') {
+                    ms.add(new int[]{i, j});
+                } else if (c == 'O') {
+                    os.add(new int[]{i, j});
+                } else if (c == 'S') {
+                    sx = i;
+                    sy = j;
+                } else if (c == 'T') {
+                    tx = i;
+                    ty = j;
+                }
+            }
+        }
+
+        int oSize = os.size(), mSize = ms.size();
+
+        int[][] startDist = bfs(sx, sy);
+        
+        if (mSize == 0) {
+            return startDist[tx][ty];
+        }
+
+        int[][] dists = new int[mSize][mSize + 2];
+        for (int[] dist : dists) {
+            Arrays.fill(dist, -1);
+        }
+
+        int[][][] mDists = new int[mSize][][];
+        for (int i = 0; i < mSize; i++) {
+            int[][] mDist = bfs(ms.get(i)[0], ms.get(i)[1]);
+            mDists[i] = mDist;
+            dists[i][mSize + 1] = mDist[tx][ty];
+        }
+
+        for (int i = 0; i < mSize; i++) {
+            int startPhaseDist = -1;
+            for (int[] o : os) {
+                int ox = o[0], oy = o[1];
+                if (mDists[i][ox][oy] != -1 && startDist[ox][oy] != -1) {
+                    if (startPhaseDist == -1 || startPhaseDist > mDists[i][ox][oy] + startDist[ox][oy]) {
+                        startPhaseDist = mDists[i][ox][oy] + startDist[ox][oy];
+                    }
+                }
+            }
+            dists[i][mSize] = startPhaseDist;
+        }
+
+        for (int i = 0; i < mSize; i++) {
+            for (int j = i + 1; j < mSize; j++) {
+                int midPhaseDist = -1;
+                for (int k = 0; k < oSize; k++) {
+                    int ox = os.get(k)[0], oy = os.get(k)[1],
+                        ioDist = mDists[i][ox][oy], joDist = mDists[j][ox][oy];
+
+                    if (ioDist != -1 && joDist != -1) {
+                        if (midPhaseDist == -1 || midPhaseDist > ioDist + joDist) {
+                            midPhaseDist = ioDist + joDist;
+                        }
+                    }
+                }
+
+                dists[i][j] = midPhaseDist;
+                dists[j][i] = midPhaseDist;
+            }
+        }
+        
+        for (int i = 0; i < mSize; i++) {
+            if (dists[i][mSize + 1] == -1 || dists[i][mSize] == -1) {
+                return -1;
+            }
+        }
+
+        int[][] dp = new int[1 << mSize][mSize];
+        for (int[] arr : dp) {
+            Arrays.fill(arr, -1);
+        }
+
+        for (int i = 0; i < mSize; i++) {
+            dp[1 << i][i] = dists[i][mSize];
+        }
+
+        for (int mask = 1; mask < (1 << mSize); mask++) {
+            for (int i = 0; i < mSize; i++) {
+                if ((mask & (1 << i)) != 0) {
+                    for (int j = 0; j < mSize; j++) {
+                        if ((mask & (1 << j)) == 0) {
+                            int nextMask = mask | (1 << j);
+                            if (dp[nextMask][j] == -1 || dp[nextMask][j] > dp[mask][i] + dists[i][j]) {
+                                dp[nextMask][j] = dp[mask][i] + dists[i][j];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int ans = Integer.MAX_VALUE, finalMask = (1 << mSize) - 1;
+        for (int i = 0; i < mSize; i++) {
+            ans = Math.min(dp[finalMask][i] + dists[i][mSize + 1], ans);
+        }
+
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+
+    private int[][] bfs(int x, int y) {
+        int[][] ans = new int[row][col];
+
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.offer(new int[]{x, y});
+
+        for (int[] arr : ans) {
+            Arrays.fill(arr, -1);
+        }
+        
+        ans[x][y] = 0;
+
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+
+            while (count-- > 0) {
+                int[] arr = queue.poll();
+                if (arr == null) {
+                    continue;
+                }
+
+                int curX = arr[0], curY = arr[1];
+                for (int[] direction : directions) {
+                    int nextX = curX + direction[0],
+                        nextY = curY + direction[1];
+
+                    if (isValid(nextX, nextY) && getChar(nextX, nextY) != '#' && ans[nextX][nextY] == -1) {
+                        ans[nextX][nextY] = ans[curX][curY] + 1;
+                        queue.offer(new int[]{nextX, nextY});
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean isValid(int x, int y) {
+        return x >= 0 && x < row && y >= 0 && y < col;
+    }
+
+    private char getChar(int x, int y) {
+        return maze[x].charAt(y);
+    }
+}
+```
