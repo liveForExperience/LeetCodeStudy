@@ -599,3 +599,96 @@ class Solution {
     }
 }
 ```
+# LeetCode_632_最小区间
+## 题目
+你有 k 个升序排列的整数数组。找到一个最小区间，使得 k 个列表中的每个列表至少有一个数包含在其中。
+
+我们定义如果 b-a < d-c 或者在 b-a == d-c 时 a < c，则区间 [a,b] 比 [c,d] 小。
+
+示例 1:
+```
+输入:[[4,10,15,24,26], [0,9,12,20], [5,18,22,30]]
+输出: [20,24]
+解释: 
+列表 1：[4, 10, 15, 24, 26]，24 在区间 [20,24] 中。
+列表 2：[0, 9, 12, 20]，20 在区间 [20,24] 中。
+列表 3：[5, 18, 22, 30]，22 在区间 [20,24] 中。
+```
+注意:
+```
+给定的列表可能包含重复元素，所以在这里升序表示 >= 。
+1 <= k <= 3500
+-105 <= 元素的值 <= 105
+对于使用Java的用户，请注意传入类型已修改为List<List<Integer>>。重置代码模板后可以看到这项改动。
+```
+## 解法
+### 思路
+堆：
+- 题目要求的是求最小区间
+- 所以参数有：
+    - 区间的最左元素值`left`，初始为0，
+    - 区间的最右元素值`right`，初始为int最大值
+    - 暂存区间差值`minRange`，初始为`right - left`
+    - 当前遍历到的所有序列元素值中的最大值`max`，这个值一般会用来作为`right`，尤其是找到更小区间的时候
+    - 当前所有序列遍历到的下标，用一维数组`next`表示，数组每个下标对应`nums`的每个序列，值代表序列的遍历指针下标
+- 过程：
+    - 创建一个小顶堆，使用比较器，比较的是所有序列当前遍历到的值，放入的元素是序列在`nums`中的下标
+    - 从0开始遍历到`nums`的长度，放入`nums`中所有序列的下标，比较它们坐标为0元素的值
+    - 开始循环
+        - 将堆顶的最小序列下标取出`minIndex`，也就能够获取到当前能够组成的区间最左值
+        - 通过与`max`相减，获取当前区间差值，和`minRange`比较
+        - 如果小：
+            - 更新`minRange`
+            - 更新`left = minIndex`
+            - 更新`right = max`
+        - 将`next[minIndex]`做一下递增，然后判断递增后的值有没有超出这个序列的边界，如果超出了说明整个判断过程结束了，无法再继续更新区间
+        - 如果没有越界，就将`minIndex`重新放入小顶堆，排序
+        - 同时更新`max`，看下`minIndex`序列的坐标移动后，新生成的区间的最大值有没有改变
+- 循环结束，返回`[left, right]`
+### 代码
+```java
+class Solution {
+    public int[] smallestRange(List<List<Integer>> nums) {
+        int left = 0, right = Integer.MAX_VALUE;
+        int max = 0, minRange = right - left;
+        int size = nums.size();
+        int[] next = new int[size];
+
+        PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return nums.get(o1).get(next[o1]) - nums.get(o2).get(next[o2]);
+            }
+        });
+
+        for (int i = 0; i < size; i++) {
+            queue.offer(i);
+            max = Math.max(max, nums.get(i).get(next[i]));
+        }
+
+        while (true) {
+            Integer minIndex = queue.poll();
+            if (minIndex == null) {
+                continue;
+            }
+
+            int curRange = max - nums.get(minIndex).get(next[minIndex]);
+            if (curRange < minRange) {
+                minRange = curRange;
+                left = nums.get(minIndex).get(next[minIndex]);
+                right = max;
+            }
+
+            next[minIndex]++;
+            if (next[minIndex] == nums.get(minIndex).size()) {
+                break;
+            }
+
+            queue.offer(minIndex);
+            max = Math.max(max, nums.get(minIndex).get(next[minIndex]));
+        }
+        
+        return new int[]{left, right};
+    }
+}
+```
