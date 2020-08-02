@@ -692,3 +692,67 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用hash表记录所有元素值对应出现在什么序列中
+- key为元素值，value是一个list，存的是序列在`nums`中的下标
+- 然后使用双指针，一个指针`add`用来从最小值开始遍历，并记录遍历到的元素值在那些坐标中存在，存在就记一次数
+- 如果存在的序列个数达到了`nums`的总长度，说明当前`add`坐标遍历的元素包含了所有的序列，遍历开始左边到`add`遍历到的坐标为区间，判断是否要更新最小区间值
+- 然后开始在循环体内移动`del`指针，循环的退出条件是存在的序列个数不再是全部个数，也就是需要重新生成新的有效区间
+- 确定区间的循环退出条件是`add`指针超出序列中的最大值
+- `add`和`del`对应的是元素值
+### 代码
+```java
+class Solution {
+    public int[] smallestRange(List<List<Integer>> nums) {
+        int len = nums.size();
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            for (int num : nums.get(i)) {
+                List<Integer> list = map.getOrDefault(num, new ArrayList<>());
+                list.add(i);
+                map.put(num, list);
+                min = Math.min(min, num);
+                max = Math.max(max, num);
+            }
+        }
+
+        int left = min, right = min - 1,
+            leftRange = min, rightRange = max,
+            count = 0;
+        int[] bucket = new int[len];
+        while (right < max) {
+            right++;
+            if (map.containsKey(right)) {
+                for (int index : map.get(right)) {
+                    bucket[index]++;
+                    if (bucket[index] == 1) {
+                        count++;
+                    }
+                }
+
+                while (count == len) {
+                    if (right - left < rightRange - leftRange) {
+                        leftRange = left;
+                        rightRange = right;
+                    }
+
+                    if (map.containsKey(left)) {
+                       for (int index : map.get(left)) {
+                            bucket[index]--;
+                            if (bucket[index] == 0) {
+                                count--;
+                            }
+                        }
+                    }
+
+                    left++;
+                }
+            }
+        }
+
+        return new int[]{leftRange, rightRange};
+    }
+}
+```
