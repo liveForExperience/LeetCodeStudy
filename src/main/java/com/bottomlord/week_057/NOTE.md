@@ -117,3 +117,134 @@ class Solution {
     }
 }
 ```
+# LeetCode_164_最大间距
+## 题目
+给定一个无序的数组，找出数组在排序之后，相邻元素之间最大的差值。
+
+如果数组元素个数小于 2，则返回 0。
+
+示例1:
+```
+输入: [3,6,9,1]
+输出: 3
+解释: 排序后的数组是 [1,3,6,9], 其中相邻元素 (3,6) 和 (6,9) 之间都存在最大差值 3。
+```
+示例2:
+```
+输入: [10]
+输出: 0
+解释: 数组元素个数小于 2，因此返回 0。
+```
+说明:
+```
+你可以假设数组中所有元素都是非负整数，且数值在 32 位有符号整数范围内。
+请尝试在线性时间复杂度和空间复杂度的条件下解决此问题。
+```
+## 解法
+### 思路
+排序后遍历比较
+### 代码
+```java
+class Solution {
+    public int maximumGap(int[] nums) {
+        int len = nums.length;
+        if (len < 2) {
+            return 0;
+        }
+        
+        int ans = Integer.MIN_VALUE;
+        quickSort(nums, 0, len - 1);
+        for (int i = 0; i < len - 1; i++) {
+            ans = Math.max(nums[i + 1] - nums[i], ans);
+        }
+        return ans;
+    }
+
+    private void quickSort(int[] nums, int head, int tail) {
+        if (head >= tail) {
+            return;
+        }
+
+        int pivot = partition(nums, head, tail);
+
+        quickSort(nums, head, pivot - 1);
+        quickSort(nums, pivot + 1, tail);
+    }
+
+    private int partition(int[] nums, int head, int tail) {
+        int num = nums[head];
+        while (head < tail) {
+            while (head < tail && num <= nums[tail]) {
+                tail--;
+            }
+
+            nums[head] = nums[tail];
+
+            while (head < tail && num >= nums[head]) {
+                head++;
+            }
+
+            nums[tail] = nums[head];
+        }
+
+        nums[head] = num;
+        return head;
+    }
+}
+```
+## 解法二
+### 思路
+桶+鸽笼理论：
+- 鸽笼理论：m个各自，n个笼子，如果m>n，那么必然有一个容器装至少2只鸽子
+- 令`max`是序列中的最大值，`min`是序列中的最小值，`n`是序列元素的个数，那么间隔数就是`n - 1`个，而所有可能中最小的最大间隔就是`t = (max - min) / (n - 1)`
+- 如果用`t`作为桶的个数，那么最大区间一定是桶与桶之间的最小和最大值之差
+- 如何将元素放入指定的桶中：
+    - 首先通过`t = (max - min) / (n - 1)`获得桶可以存放元素的个数
+    - 再通过`s = (max - min) / t + 1`获得桶的个数
+    - 那么元素在桶中的坐标就是：`i = (num - min) / s`
+- 遍历序列元素，根据坐标放入桶中，并更新当前桶的最大和最小值
+- 遍历桶，比较桶与桶之间的间距，更新最大值
+- 注意计算桶个数的时候，如果所有元素相同，那么桶至少为1
+### 代码
+```java
+class Solution {
+    public int maximumGap(int[] nums) {
+        int n = nums.length;
+        if (n < 2) {
+            return 0;
+        }
+
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int num : nums) {
+            min = Math.min(min, num);
+            max = Math.max(max, num);
+        }
+
+        int t = Math.max(1, (max - min) / (n - 1)), s = (max - min) / t + 1;
+        int[][] buckets = new int[s][3];
+        for (int[] bucket : buckets) {
+            bucket[0] = max;
+            bucket[1] = min;
+            bucket[2] = -1;
+        }
+
+        for (int num : nums) {
+            int i = (num - min) / t;
+            buckets[i][0] = Math.min(buckets[i][0], num);
+            buckets[i][1] = Math.max(buckets[i][1], num);
+            buckets[i][2] = 1;
+        }
+        
+        int ans = 0, pre = min;
+        for (int[] bucket : buckets) {
+            if (bucket[2] == -1) {
+                continue;
+            }
+            
+            ans = Math.max(ans, bucket[0] - pre);
+            pre = bucket[1];
+        }
+        return ans;
+    }
+}
+```
