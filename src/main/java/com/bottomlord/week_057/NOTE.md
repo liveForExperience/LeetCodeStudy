@@ -406,3 +406,128 @@ class Solution {
     }
 }
 ```
+# LeetCode_336_回文对
+## 题目
+给定一组唯一的单词， 找出所有不同 的索引对(i, j)，使得列表中的两个单词， words[i] + words[j] ，可拼接成回文串。
+
+示例 1:
+```
+输入: ["abcd","dcba","lls","s","sssll"]
+输出: [[0,1],[1,0],[3,2],[2,4]] 
+解释: 可拼接成的回文串为 ["dcbaabcd","abcddcba","slls","llssssll"]
+```
+示例 2:
+```
+输入: ["bat","tab","cat"]
+输出: [[0,1],[1,0]] 
+解释: 可拼接成的回文串为 ["battab","tabbat"]
+```
+## 失败解法
+### 失败原因
+超时，时间复杂度O(n^3)
+### 思路
+暴力3层循环
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> palindromePairs(String[] words) {
+        List<List<Integer>> ans = new ArrayList<>();
+        Set<String> set = new HashSet<>();
+        for (int i = 0; i < words.length; i++) {
+            for (int j = 0; j < words.length; j++) {
+                if (i == j) {
+                    continue;
+                }
+                
+                String str = words[i] + words[j];
+                if (set.contains(str)) {
+                    List<Integer> list = new ArrayList<>();
+                    list.add(i);
+                    list.add(j);
+                    ans.add(list);
+                    continue;
+                }
+                
+                int head = 0, tail = str.length() - 1;
+                boolean flag = true;
+                while (head < tail) {
+                    if (str.charAt(head++) != str.charAt(tail--)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                
+                if (flag) {
+                    List<Integer> list = new ArrayList<>();
+                    list.add(i);
+                    list.add(j);
+                    ans.add(list);
+                    set.add(str);
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+哈希表：
+- 假设两个字符串`s1`和`s2`能够组成回文串，那么会产生三种情况：
+    - `len1 == len2`：那么`s1`翻转后应该和`s2`相等
+    - `len1 > len2`：那么`s1`可以拆分成`t1`和`t2`两部分，其中`t2`是回文串，`t1`翻转后和`s2`相等
+    - `len1 < len2`：那么`s2`可以拆分成`t1`和`t2`两部分，其中`t2`是回文串，`t1`翻转后和`s1`相等
+- 先遍历字符串，翻转每个字符串并放入hash表中，与坐标做映射关系
+- 再遍历字符串，将字符串切分成`t1`和`t2`两部分，然后分别判断：
+    - 一个是否是回文串
+    - 一个反转后在hash表中是否能查询到
+- 如果如上两种情况都满足，那么就记录坐标组合，并且这种判断要做两次，原来的`t1`当作`t2`，原来的`t2`当作`t1`
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> palindromePairs(String[] words) {
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            map.put(new StringBuilder(words[i]).reverse().toString(), i);
+        }
+
+        List<List<Integer>> ans = new ArrayList<>();
+        for (int i = 0; i < words.length; i++) {
+            int len = words[i].length();
+            if (len == 0) {
+                continue;
+            }
+
+            for (int j = 0; j <= len; j++) {
+                if (isPalindrome(words[i], j, len - 1)) {
+                    int index = map.getOrDefault(words[i].substring(0, j), -1);
+                    if (index != -1 && index != i) {
+                        ans.add(Arrays.asList(i, index));
+                    }
+                }
+
+                if (j != 0 && isPalindrome(words[i], 0, j - 1)) {
+                    int index = map.getOrDefault(words[i].substring(j, len), -1);
+                    if (index != -1 && index != i) {
+                        ans.add(Arrays.asList(index, i));
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean isPalindrome(String word, int left, int right) {
+        int len = right - left + 1;
+        for (int i = 0; i < len / 2; i++) {
+            if (word.charAt(left + i) != word.charAt(right - i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
