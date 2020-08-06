@@ -325,3 +325,84 @@ class Solution {
     }
 }
 ```
+# LeetCode_166_分数到小数
+## 题目
+给定两个整数，分别表示分数的分子 numerator 和分母 denominator，以字符串形式返回小数。
+
+如果小数部分为循环小数，则将循环的部分括在括号内。
+
+示例 1:
+```
+输入: numerator = 1, denominator = 2
+输出: "0.5"
+```
+示例2:
+```
+输入: numerator = 2, denominator = 1
+输出: "2"
+```
+示例3:
+```
+输入: numerator = 2, denominator = 3
+输出: "0.(6)"
+```
+## 解法
+### 思路
+hash表+硬做
+- 出现的变量：
+    - 被除数：numerator
+    - 除数：denominator
+    - 商：ans
+    - 余数：reminder
+- 被除数也可以是`reminder * 10`，上一次计算得到的余数再乘以10
+- 商就是`numerator / denominator`
+- 需要确定的事情：
+    - `numerator == 0`的情况，直接返回0
+    - 确定符号，`numerator < 0 ^ denominator < 0`的情况下，也就是判断结果并不相同的情况，就是负，否则为正
+- 过程：
+    - 先确定整数部分
+    - 再确定小数部分：
+        - 循环判断`reminder == 0`作为退出条件
+        - 根据`reminder`获得`numerator`
+        - 计算`numerator / denominator`作为商
+        - 计算`numerator % denominator`作为余数
+### 代码
+```java
+class Solution {
+    public String fractionToDecimal(int numerator, int denominator) {
+        if (numerator == 0) {
+            return "0";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Map<Long, Integer> map = new HashMap<>();
+        if (numerator < 0 ^ denominator < 0) {
+            sb.append("-");
+        }
+
+        long n = Math.abs(Long.parseLong(String.valueOf(numerator))),
+             d = Math.abs(Long.parseLong(String.valueOf(denominator)));
+
+        long reminder = n % d;
+        sb.append(n / d);
+        if (reminder == 0) {
+            return sb.toString();
+        }
+        sb.append(".");
+
+        while (reminder != 0) {
+            if (map.containsKey(reminder)) {
+                sb.insert(map.get(reminder), "(").append(")");
+                return sb.toString();
+            }
+
+            map.put(reminder, sb.length());
+            n = reminder * 10;
+            sb.append(n / d);
+            reminder = n % d;
+        }
+        
+        return sb.toString();
+    }
+}
+```
