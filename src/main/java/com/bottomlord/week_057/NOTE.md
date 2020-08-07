@@ -531,3 +531,126 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用字典树代替解法一中的hash表
+- 遍历字符串，倒序生成字典树，通过倒序快速确定是否为翻转字符串
+- 字典树
+    - 属性：
+        - 26个字母对应的字典树节点
+        - 当前节点是否为一个目标字符，如果是保存其下标值
+    - 方法：
+        - 插入：传入一个翻转后的字符串，遍历其所有字符，在字典树中生成对应的节点，并在最后的字符处标记这个被翻转字符的下标
+        - 查询：传入一个未翻转的字符串，遍历其所有字符，如果找到就返回记录的坐标，否则就返回-1
+- 遍历`words`，翻转迭代到的字符串，并插入字典树中
+- 遍历`words`：
+    - 查看当前字符串的翻转字符串是否存在，如果存在，记录
+    - 拆分字符串，分别判断如解法一样的`t1`和`t2`两部分，并分别假设为回文串
+    - 然后到字典树中查找是否有对应的字符串，如果有就记录
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> palindromePairs(String[] words) {
+        Trie trie = new Trie();
+        for (int i = 0; i < words.length; i++) {
+            trie.insert(new StringBuilder(words[i]).reverse().toString(), i);
+        }
+
+        List<List<Integer>> ans = new ArrayList<>();
+
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            int len = words[i].length();
+
+            int target = trie.find(word);
+            if (target != -1 && target != i) {
+                ans.add(Arrays.asList(i, target));
+            }
+
+            if (isPalindrome(word)) {
+                int index = trie.find("");
+                if (index != -1 && index != i) {
+                    ans.add(Arrays.asList(i, index));
+                }
+            }
+
+            for (int j = 0; j < len; j++) {
+                String left = word.substring(0, j + 1),
+                        right = word.substring(j + 1);
+
+                if (isPalindrome(left)) {
+                    int index = trie.find(right);
+                    if (index != -1 && index != i) {
+                        ans.add(Arrays.asList(index, i));
+                    }
+                }
+
+                if (j != len - 1 && isPalindrome(right)) {
+                    int index = trie.find(left);
+                    if (index != -1 && index != i) {
+                        ans.add(Arrays.asList(i, index));
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+
+    private boolean isPalindrome(String word) {
+        int head = 0, tail = word.length() - 1;
+        while (head < tail) {
+            if (word.charAt(head) != word.charAt(tail)) {
+                return false;
+            }
+
+            head++;
+            tail--;
+        }
+
+        return true;
+    }
+
+    private class Trie {
+        private TrieNode root;
+
+        public Trie() {
+            this.root = new TrieNode();
+        }
+
+        public void insert(String word, int index) {
+            char[] cs = word.toCharArray();
+            TrieNode cur = root;
+
+            for (char c : cs) {
+                if (cur.next[c - 'a'] == null) {
+                    cur.next[c - 'a'] = new TrieNode();
+                }
+
+                cur = cur.next[c - 'a'];
+            }
+
+            cur.target = index;
+        }
+
+        public int find(String word) {
+            char[] cs = word.toCharArray();
+            TrieNode cur = root;
+            for (char c : cs) {
+                TrieNode next = cur.next[c - 'a'];
+                if (next == null) {
+                    return -1;
+                }
+
+                cur = next;
+            }
+
+            return cur.target;
+        }
+
+        private class TrieNode {
+            private TrieNode[] next = new TrieNode[26];
+            private int target = -1;
+        }
+    }
+}
+```
