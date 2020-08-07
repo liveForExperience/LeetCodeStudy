@@ -54,7 +54,7 @@ class Solution {
 ## 题目
 房间中有 n 枚灯泡，编号从 1 到 n，自左向右排成一排。最初，所有的灯都是关着的。
 
-在 k  时刻（ k 的取值范围是 0 到 n - 1），我们打开 light[k] 这个灯。
+在 k 时刻（ k 的取值范围是 0 到 n - 1），我们打开 light[k] 这个灯。
 
 灯的颜色要想 变成蓝色 就必须同时满足下面两个条件：
 ```
@@ -93,7 +93,7 @@ class Solution {
 ```
 提示：
 ```
-n == light.length
+n ==light.length
 1 <= n <= 5 * 10^4
 light 是 [1, 2, ..., n] 的一个排列。
 ```
@@ -180,7 +180,7 @@ id = 1 的员工将在 6 分钟内通知 id = 0 的员工。
 manager.length == n
 0 <= manager[i] < n
 manager[headID] == -1
-informTime.length == n
+informTime.length== n
 0 <= informTime[i] <= 1000
 如果员工 i 没有下属，informTime[i] == 0 。
 题目 保证 所有员工都可以收到通知。
@@ -254,8 +254,8 @@ class Solution {
 edges.length == n-1
 edges[i].length == 2
 1 <= edges[i][0], edges[i][1] <= n
-1 <= t <= 50
-1 <= target <= n
+1 <= t<= 50
+1 <= target<= n
 与准确值误差在 10^-5 之内的结果将被判定为正确。
 ```
 ## 解法

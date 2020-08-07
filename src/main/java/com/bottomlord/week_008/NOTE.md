@@ -1,8 +1,8 @@
 # LeetCode_28_实现strStr()
 ## 题目
-实现 strStr() 函数。
+实现strStr()函数。
 
-给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+给定一个haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回 -1。
 
 示例 1:
 ```
@@ -16,9 +16,9 @@
 ```
 说明:
 ```
-当 needle 是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+当needle是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
 
-对于本题而言，当 needle 是空字符串时我们应当返回 0 。这与C语言的 strstr() 以及 Java的 indexOf() 定义相符。
+对于本题而言，当needle是空字符串时我们应当返回 0 。这与C语言的strstr()以及 Java的indexOf()定义相符。
 ```
 ## 解法
 ### 思路
@@ -98,9 +98,9 @@ class Solution {
 ```
 # LeetCode_290_单词规律
 ## 题目
-给定一种规律 pattern 和一个字符串 str ，判断 str 是否遵循相同的规律。
+给定一种规律 pattern和一个字符串str，判断 str 是否遵循相同的规律。
 
-这里的 遵循 指完全匹配，例如， pattern 里的每个字母和字符串 str 中的每个非空单词之间存在着双向连接的对应规律。
+这里的遵循指完全匹配，例如，pattern里的每个字母和字符串str中的每个非空单词之间存在着双向连接的对应规律。
 
 示例1:
 ```
@@ -117,14 +117,14 @@ class Solution {
 输入: pattern = "aaaa", str = "dog cat cat dog"
 输出: false
 ```
-示例 4:
+示例4:
 ```
 输入: pattern = "abba", str = "dog dog dog dog"
 输出: false
 ```
 ```
 说明:
-你可以假设 pattern 只包含小写字母， str 包含了由单个空格分隔的小写字母。   
+你可以假设pattern只包含小写字母，str包含了由单个空格分隔的小写字母。   
 ```
 ## 解法
 ### 思路

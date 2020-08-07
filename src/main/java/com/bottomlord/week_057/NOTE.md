@@ -1,6 +1,6 @@
 # LeetCode_163_缺失的区间
 ## 题目
-给定一个排序的整数数组 nums ，其中元素的范围在 闭区间 [lower, upper] 当中，返回不包含在数组中的缺失区间。
+给定一个排序的整数数组 nums，其中元素的范围在闭区间[lower, upper]当中，返回不包含在数组中的缺失区间。
 
 示例：
 ```
@@ -327,7 +327,7 @@ class Solution {
 ```
 # LeetCode_166_分数到小数
 ## 题目
-给定两个整数，分别表示分数的分子 numerator 和分母 denominator，以字符串形式返回小数。
+给定两个整数，分别表示分数的分子numerator 和分母 denominator，以字符串形式返回小数。
 
 如果小数部分为循环小数，则将循环的部分括在括号内。
 
@@ -408,7 +408,7 @@ class Solution {
 ```
 # LeetCode_336_回文对
 ## 题目
-给定一组唯一的单词， 找出所有不同 的索引对(i, j)，使得列表中的两个单词， words[i] + words[j] ，可拼接成回文串。
+给定一组唯一的单词， 找出所有不同的索引对(i, j)，使得列表中的两个单词，words[i] + words[j]，可拼接成回文串。
 
 示例 1:
 ```
@@ -651,6 +651,69 @@ class Solution {
             private TrieNode[] next = new TrieNode[26];
             private int target = -1;
         }
+    }
+}
+```
+# LeetCode_170_两数之和III数据结构设计
+## 题目
+设计并实现一个TwoSum 的类，使该类需要支持 add和find的操作。
+```
+add操作 - 对内部数据结构增加一个数。
+find 操作 - 寻找内部数据结构中是否存在一对整数，使得两数之和与给定的数相等。
+```
+示例1:
+```
+add(1); add(3); add(5);
+find(4) -> true
+find(7) -> false
+```
+示例2:
+```
+add(3); add(1); add(2);
+find(3) -> true
+find(6) -> false
+```
+## 解法
+### 思路
+- 两个变量：
+    - `list`：用来存数字
+    - `order`：用来标记当前list是否有序
+- add：add的时候往`list`中放数据，并标记`ordered`为false
+- find：find的时候检查`ordered`是否有序，如果不是，先排序，然后双指针查找
+### 代码
+```java
+class TwoSum {
+    private List<Integer> list;
+    private boolean ordered;
+    
+    public TwoSum() {
+        this.list  = new ArrayList<>();
+    }
+
+    public void add(int number) {
+        this.list.add(number);
+        this.ordered = false;
+    }
+
+    public boolean find(int value) {
+        if (!ordered) {
+            Collections.sort(this.list);
+            ordered = true;
+        }
+        int head = 0, tail = this.list.size() - 1;
+        while (head < tail) {
+            int sum = list.get(head) + list.get(tail);
+
+            if (sum == value) {
+                return true;
+            } else if (sum < value) {
+                head++;
+            } else {
+                tail--;
+            }
+        }
+
+        return false;
     }
 }
 ```
