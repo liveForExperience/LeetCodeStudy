@@ -756,3 +756,56 @@ class TwoSum {
         }
     }
 ```
+# LeetCode_179_最大数
+## 题目
+给定一组非负整数，重新排列它们的顺序使之组成一个最大的整数。
+
+示例 1:
+```
+输入: [10,2]
+输出: 210
+```
+示例2:
+```
+输入: [3,30,34,5,9]
+输出: 9534330
+说明: 输出结果可能非常大，所以你需要返回一个字符串而不是整数。
+```
+## 解法
+### 思路
+自定义比较器排序：
+- 比较o1和o2的大小，需要将2者按照不同顺序链接起来，然后比较获得的结果的大小
+- 通过上述比较方式，就可以将组合后获得结果更大的数放在前面，例如`30`和`3`在比较的时候，就是3在前面，因为`330 > 303`
+- 过程：
+    - 遍历字符串，放入list
+    - 根据自定义比较器排序list
+    - 遍历list，拼接字符串
+### 代码
+```java
+class Solution {
+   public String largestNumber(int[] nums) {
+        List<String> list = new ArrayList<>();
+        for (int num : nums) {
+            list.add(String.valueOf(num));
+        }
+
+        list.sort((o1, o2) -> {
+            String a = o1 + o2,
+                   b = o2 + o1;
+
+            return b.compareTo(a);
+        });
+
+        if (Objects.equals("0", list.get(0))) {
+            return "0";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (String str : list) {
+            sb.append(str);
+        }
+
+        return sb.toString();
+    }
+}
+```
