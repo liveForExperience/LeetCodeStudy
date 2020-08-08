@@ -717,3 +717,42 @@ class TwoSum {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用map记录add的值和出现的个数
+- 查找时，遍历map的key值
+- 用value和key值相减，获得要查找的值
+- 在map中查找：
+    - 如果和key值相同，就看key值的个数是否大于1
+    - 如果不一样，就看是否存在这个差值
+- 如果都没找到，就返回false
+### 代码
+```java
+class TwoSum {
+        private Map<Integer, Integer> map;
+        public TwoSum() {
+            this.map = new HashMap<>();
+        }
+
+        public void add(int number) {
+            this.map.put(number, map.getOrDefault(number, 0) + 1);
+        }
+
+        public boolean find(int value) {
+            for (Integer num : map.keySet()) {
+                int left = value - num;
+                if (left != num) {
+                    if (this.map.containsKey(left)) {
+                        return true;
+                    }
+                } else {
+                    if (map.getOrDefault(left, 0) > 1) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+```
