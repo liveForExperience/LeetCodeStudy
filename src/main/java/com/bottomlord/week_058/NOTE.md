@@ -68,3 +68,47 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 头尾翻转字符数组s
+- 遍历s，记录起始坐标head，并初始化为0
+- 当遇到空格时，触发翻转，tail为空格坐标-1
+- 翻转结束后，更新head
+- 遍历结束后，再判断head是否小于len，如果是就再做最后一次翻转，tail为字符数组长度-1
+### 代码
+```java
+class Solution {
+    public void reverseWords(char[] s) {
+        int len = s.length;
+
+        if (len < 2) {
+            return;
+        }
+
+        int head = 0;
+        reserve(s, head, len - 1);
+
+        for (int i = 0; i < len; i++) {
+            if (s[i] == ' ') {
+                reserve(s, head, i - 1);
+                head = i + 1;
+            }
+        }
+
+        if (head < len) {
+            reserve(s, head, len - 1);
+        }
+    }
+
+    private void reserve(char[] s, int head, int tail) {
+        while (head < tail) {
+            char c = s[head];
+            s[head] = s[tail];
+            s[tail] = c;
+
+            head++;
+            tail--;
+        }
+    }
+}
+```
