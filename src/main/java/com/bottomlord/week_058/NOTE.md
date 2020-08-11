@@ -112,3 +112,87 @@ class Solution {
     }
 }
 ```
+# LeetCode_187_重复的DNA序列
+## 题目
+所有 DNA 都由一系列缩写为 A，C，G 和 T 的核苷酸组成，例如：“ACGAATTCCG”。在研究 DNA 时，识别 DNA 中的重复序列有时会对研究非常有帮助。
+
+编写一个函数来查找目标子串，目标子串的长度为 10，且在 DNA 字符串 s 中出现次数超过一次。
+
+示例：
+```
+输入：s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+输出：["AAAAACCCCC", "CCCCCAAAAA"]
+```
+## 解法
+### 思路
+hash表：
+- 遍历字符串，截取长度为10的子串，计算hash值，放入map中
+- 如果新遍历到的子串在map中存在，就记录当前子串
+- 并记录出现次数，如果出现次数超过2次，就不做记录
+### 代码
+```java
+class Solution {
+    public List<String> findRepeatedDnaSequences(String s) {
+        Map<String, Integer> map = new HashMap<>();
+        List<String> ans = new ArrayList<>();
+        for (int i = 0; i <= s.length() - 10; i++) {
+            String word = s.substring(i, i + 10);
+            map.put(word, map.getOrDefault(word, 0) + 1);
+            if (map.get(word) == 2) {
+                ans.add(word);     
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+Rabin-Karp算法：
+- 基因序列可以看作是4进制的数
+- 通过滑动窗口计算10位4进制数对应的10进制的值，就能快速确定字符串的编码，从而从set中找到是否有重复
+- 首先要将`A`,`C`,`G`,`T`组成的字符串转换成4进制的数
+- 然后遍历字符串，计算10位字符串对应的编码值，也就是4进制转10进制的值
+- 计算中可以通过减去最高位，加上最低位的方式快速的求得新的编码
+- 查看set中是否存在该编码，如果存在就存储，如果不存在就放入set中
+### 代码
+```java
+class Solution {
+    public List<String> findRepeatedDnaSequences(String s) {
+        int n = 10, len = s.length();
+        if (len < n) {
+            return new ArrayList<>();
+        }
+
+        Set<Integer> memo = new HashSet<>();
+        Set<String> set = new HashSet<>();
+        Map<Character, Integer> map = new HashMap<>();
+        map.put('A', 0);
+        map.put('C', 1);
+        map.put('G', 2);
+        map.put('T', 3);
+        int[] arr = new int[len];
+        for (int i = 0; i < len; i++) {
+            arr[i] = map.get(s.charAt(i));
+        }
+
+        int num = 0, headNum = (int) Math.pow(4, 10);
+        for (int i = 0; i < len - n + 1; i++) {
+            if (i != 0) {
+                num = num * 4 - headNum * arr[i - 1] + arr[i + n - 1];
+            } else {
+                for (int j = 0; j < n; j++) {
+                    num = num * 4 + arr[j];
+                }
+            }
+
+            if (memo.contains(num)) {
+                set.add(s.substring(i, i + n));
+            }
+            memo.add(num);
+        }
+        
+        return new ArrayList<>(set);
+    }
+}
+```
