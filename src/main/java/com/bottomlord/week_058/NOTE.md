@@ -196,3 +196,96 @@ class Solution {
     }
 }
 ```
+# LeetCode_1044_最长重复子串
+## 题目
+给出一个字符串S，考虑其所有重复子串（S 的连续子串，出现两次或多次，可能会有重叠）。
+
+返回任何具有最长可能长度的重复子串。（如果 S不含重复子串，那么答案为""。）
+
+示例 1：
+```
+输入："banana"
+输出："ana"
+```
+示例 2：
+```
+输入："abcd"
+输出：""
+```
+提示：
+```
+2 <= S.length <= 10^5
+S 由小写英文字母组成。
+```
+## 解法
+### 思路
+二分查找+Rabin-Karp算法：
+- 如果有最长重复子串L，那么一定也有`L0 < L`重复子串，那么就可以使用二分法，logn的复杂度来查找最长子串的长度
+    - 如果当前一半长度找不到，那说明子串长度比一半更小
+    - 如果当前一半长度找到了，那就尝试去更长找更长的可能
+- 在尝试长度时，就使用Rabin-Karp算法：
+    - 将每一个字符转换为26进制数进行计算，获得编码值
+    - 然后遍历所有当前长度的可能
+        - 第一组直接做26进制转换
+        - 从第二组开始，在前一组的基础上，减去最高位的值，加上最低位的值
+    - 将如上获得的编码放入set集合中，判断是否有重复
+        - 如果有，直接返回当前遍历到的起始坐标
+        - 如果没有，继续循环，直到迭代结束，返回-1
+- 暂存Rabin-Karp算法求得的start值
+- 二分查找结束后，根据start值和重复子串长度获得字符串
+### 代码
+```java
+class Solution {
+    public String longestDupSubstring(String S) {
+        int n = S.length();
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = S.charAt(i) - 'a';
+        }
+
+        int left = 1, right = n, a = 26, len = 0;
+        long modulus = (long) Math.pow(2, 32);
+        while (left != right) {
+            len = left + (right - left) / 2;
+
+            if (rabinKarp(len, a, modulus, nums) != -1) {
+                left = len + 1;
+            } else {
+                right = len;
+            }
+        }
+
+        int start = rabinKarp(left - 1, a, modulus, nums);
+        return start == -1 ? "" : S.substring(start, start + left - 1);
+    }
+
+    private int rabinKarp(int l, int a, long modulus, int[] nums) {
+        int n = nums.length;
+        long h = 0;
+        for (int i = 0; i < l; i++) {
+            h = (h * a + nums[i]) % modulus;
+        }
+
+        long aL = 1;
+        for (int i = 0; i < l; i++) {
+            aL = (aL * a) % modulus;
+        }
+
+        Set<Long> memo = new HashSet<>();
+        memo.add(h);
+
+        for (int i = 1; i < n - l + 1; i++) {
+            h = (h * a - nums[i - 1] * aL % modulus + modulus) % modulus;
+            h = (h + nums[i + l - 1]) % modulus;
+
+            if (memo.contains(h)) {
+                return i;
+            }
+
+            memo.add(h);
+        }
+
+        return -1;
+    }
+}
+```
