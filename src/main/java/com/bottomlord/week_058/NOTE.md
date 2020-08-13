@@ -392,3 +392,100 @@ class Solution {
     }
 }
 ```
+# LeetCode_211_添加与搜索单词
+## 题目
+设计一个支持以下两种操作的数据结构：
+```
+void addWord(word)
+bool search(word)
+search(word)可以搜索文字或正则表达式字符串，字符串只包含字母 . 或 a-z 。 . 可以表示任何一个字母。
+```
+示例:
+```
+addWord("bad")
+addWord("dad")
+addWord("mad")
+search("pad") -> false
+search("bad") -> true
+search(".ad") -> true
+search("b..") -> true
+```
+说明:
+```
+你可以假设所有单词都是由小写字母 a-z 组成的。
+```
+## 解法
+### 思路
+字典树+回溯：
+- 初始化字典树
+    - 字典树节点数组`next`，长度为26
+    - 当前节点是否为某个单词最后一个字符的标志`flag`
+- `addWord`的时候将单词放入字典树中
+- `search`的时候回溯搜索字典树，找到一个单词就返回true，否则false
+### 代码
+```java
+class WordDictionary {
+    private TrieNode root;
+    public WordDictionary() {
+        this.root = new TrieNode();
+    }
+
+    public void addWord(String word) {
+        if (word == null) {
+            return;
+        }
+
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            int index = c - 'a';
+            if (node.children[index] == null) {
+                node.children[index] = new TrieNode();
+            }
+
+            node = node.children[index];
+        }
+
+        node.flag = true;
+    }
+
+    public boolean search(String word) {
+        if (word == null) {
+            return false;
+        }
+
+        return doSearch(word, root);
+    }
+
+    private boolean doSearch(String word, TrieNode node) {
+        if (node == null) {
+            return false;
+        }
+
+        if (Objects.equals("", word)) {
+            return node.flag;
+        }
+
+        if (word.charAt(0) == '.') {
+            for (int i = 0; i < 26; i++) {
+                boolean flag = doSearch(word.substring(1), node.children[i]);
+
+                if (flag) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return doSearch(word.substring(1), node.children[word.charAt(0) - 'a']);
+    }
+
+    private class TrieNode {
+        TrieNode[] children;
+        boolean flag;
+
+        TrieNode() {
+            children = new TrieNode[26];
+        }
+    }
+}
+```
