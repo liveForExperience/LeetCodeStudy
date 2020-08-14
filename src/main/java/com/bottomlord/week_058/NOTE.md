@@ -489,3 +489,25 @@ class WordDictionary {
     }
 }
 ```
+## 解法二
+### 思路
+哈希表
+- 初始化哈希表map
+    - key：字符长度
+    - valve：set集合，存储add的word
+- add：
+    - 计算word的长度
+    - 将字符放入map中
+- search：
+    - 计算word的长度，查看map中是否存在，不存在就返回false
+    - 查看长度对应的set中，是否存在word，如果存在就直接返回true
+    - 如果不存在就开始在set中遍历，进行一一比对
+    - 一一比对的时候：
+        - 如果word的当前字符是"."，就跳过
+        - 如果word的当前字符和set遍历到的字符串中的当前字符不相同就返回false
+        - 如果遍历完set中的一个字符串，没有返回false，那就返回true
+    - 如果如上都没有直接返回，就返回false
+### 代码
+```java
+
+```
