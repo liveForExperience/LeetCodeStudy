@@ -509,5 +509,134 @@ class WordDictionary {
     - 如果如上都没有直接返回，就返回false
 ### 代码
 ```java
+class WordDictionary {
+    private Map<Integer, Set<String>> map;
+    public WordDictionary() {
+        this.map = new HashMap<>();
+    }
 
+    public void addWord(String word) {
+        if (word == null) {
+            return;
+        }
+
+        int len = word.length();
+        if (map.containsKey(len)) {
+            map.get(len).add(word);
+        } else {
+            Set<String> set = new HashSet<>();
+            set.add(word);
+            map.put(len, set);
+        }
+    }
+
+    public boolean search(String word) {
+        if (word == null) {
+            return false;
+        }
+
+        int len = word.length();
+        if (!map.containsKey(len)) {
+            return false;
+        }
+
+        Set<String> set = map.get(len);
+        if (set.contains(word)) {
+            return true;
+        }
+
+        for (String str : set) {
+            boolean flag = true;
+            for (int i = 0; i < word.length(); i++) {
+                if (word.charAt(i) == '.') {
+                    continue;
+                }
+
+                if (str.charAt(i) != word.charAt(i)) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```
+# LeetCode_546_移除盒子
+## 题目
+给出一些不同颜色的盒子，盒子的颜色由数字表示，即不同的数字表示不同的颜色。
+
+你将经过若干轮操作去去掉盒子，直到所有的盒子都去掉为止。每一轮你可以移除具有相同颜色的连续 k 个盒子（k >= 1），这样一轮之后你将得到 k*k 个积分。
+
+当你将所有盒子都去掉之后，求你能获得的最大积分和。
+
+示例：
+```
+输入：boxes = [1,3,2,2,2,3,4,3,1]
+输出：23
+解释：
+[1, 3, 2, 2, 2, 3, 4, 3, 1] 
+----> [1, 3, 3, 4, 3, 1] (3*3=9 分) 
+----> [1, 3, 3, 3, 1] (1*1=1 分) 
+----> [1, 1] (3*3=9 分) 
+----> [] (2*2=4 分)
+```
+提示：
+```
+1 <= boxes.length <= 100
+1 <= boxes[i] <= 100
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j][k]`：坐标区间为i到j的数字序列，j的右侧有k个和坐标j对应元素相等的元素，在这种情况下获得的最大积分
+- 积分的可能性取决于先消除哪些相同的元素，而消除的情况可以基本分成如下2种：
+    - 直接把j右边的相同的元素消除掉，i到j-1的序列继续做计算
+    - 将i到j-1拆分成2部分，使用r区分，r元素与j元素要相等，这样就相当于是的r元素或者说j元素能够同时消除更多个
+        - 左边部分为i到r，
+        - 右边部分为r + 1到j
+        - j右边的与r相同的元素做消除
+- 状态转移方程：`dp[i][j][k] = Math.max(dp[i][j][k], dp[i][r][k + 1] + dp[r + 1][j - 1][0])`
+    - `dp[i][j][k] = dp[i][j - 1][0] + (k + 1) ^ 2`，k的个数取决于序列有边界到j元素之间是否连续相等，如果有，k就累加1，同时右边界缩短
+    - `dp[i][r][k + 1] + dp[r + 1][j - 1][0]`代表了被r拆分成的两部分，其中能够r必须与j元素相等，这样代表有增加combo这个j元素的可能
+- 最终返回`dp[0][len - 1][0]`
+- 过程中使用递归和记忆化搜索，将诸如用r拆分序列的情况通过递归来计算出来
+### 代码
+```java
+class Solution {
+    public int removeBoxes(int[] boxes) {
+        int len = boxes.length;
+        return recurse(boxes, new int[len][len][len], 0, len - 1, 0);
+    }
+
+    private int recurse(int[] boxes, int[][][] dp, int l, int r, int k) {
+        if (l > r) {
+            return 0;
+        }
+
+        if (dp[l][r][k] != 0) {
+            return dp[l][r][k];
+        }
+
+        while (l < r && boxes[r] == boxes[r - 1]) {
+            r--;
+            k++;
+        }
+
+        dp[l][r][k] = recurse(boxes, dp, l, r - 1, 0) + (k + 1) * (k + 1);
+
+        for (int i = l; i < r; i++) {
+            if (boxes[i] == boxes[r]) {
+                dp[l][r][k] = Math.max(dp[l][r][k], recurse(boxes, dp, l, i, k + 1) + recurse(boxes, dp, i + 1, r - 1, 0));
+            }
+        }
+
+        return dp[l][r][k];
+    }
+}
 ```
