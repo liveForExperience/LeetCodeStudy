@@ -65,3 +65,34 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+通过状态转移方程发现，状态转移都是依赖前两个dp元素，所以可以通过临时变量来代替整个dp数组
+### 代码
+```java
+class Solution {
+    public int rob(int[] nums) {
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+        if (len == 1) {
+            return nums[0];
+        }
+
+        return Math.max(doRob(Arrays.copyOfRange(nums, 0, len - 1)),
+                        doRob(Arrays.copyOfRange(nums, 1, len)));
+    }
+
+    private int doRob(int[] nums) {
+        int pre = 0, cur = 0, tmp;
+        for (int num : nums) {
+            tmp = cur;
+            cur = Math.max(pre + num, cur);
+            pre = tmp;
+        }
+
+        return cur;
+    }
+}
+```
