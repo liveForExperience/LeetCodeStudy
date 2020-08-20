@@ -482,25 +482,25 @@ MyCircularQueue circularQueue = new MycircularQueue(3); // 设置长度为 3
 
 circularQueue.enQueue(1); // 返回 true
 
-circularQueue.enQueue(2);  // 返回 true
+circularQueue.enQueue(2);  // 返回 true
 
-circularQueue.enQueue(3);  // 返回 true
+circularQueue.enQueue(3);  // 返回 true
 
-circularQueue.enQueue(4);  // 返回 false，队列已满
+circularQueue.enQueue(4);  // 返回 false，队列已满
 
-circularQueue.Rear();  // 返回 3
+circularQueue.Rear();  // 返回 3
 
-circularQueue.isFull();  // 返回 true
+circularQueue.isFull();  // 返回 true
 
-circularQueue.deQueue();  // 返回 true
+circularQueue.deQueue();  // 返回 true
 
-circularQueue.enQueue(4);  // 返回 true
+circularQueue.enQueue(4);  // 返回 true
 
-circularQueue.Rear();  // 返回 4
+circularQueue.Rear();  // 返回 4
 ```
 提示：
 ```
-所有的值都在 0 至 1000 的范围内；
+所有的值都在 0 至 1000 的范围内；
 操作数将在 1 至 1000 的范围内；
 请不要使用内置的队列库。
 ```
@@ -590,7 +590,7 @@ insertLast()：将一个元素添加到双端队列尾部。如果操作成功�
 deleteFront()：从双端队列头部删除一个元素。 如果操作成功返回 true。
 deleteLast()：从双端队列尾部删除一个元素。如果操作成功返回 true。
 getFront()：从双端队列头部获得一个元素。如果双端队列为空，返回 -1。
-getRear()：获得双端队列的最后一个元素。 如果双端队列为空，返回 -1。
+getRear()：获得双端队列的最后一个元素。 如果双端队列为空，返回 -1。
 isEmpty()：检查双端队列是否为空。
 isFull()：检查双端队列是否满了。
 ```
@@ -699,14 +699,14 @@ class MyCircularDeque {
 ## 题目
 在计算机界中，我们总是追求用有限的资源获取最大的收益。
 
-现在，假设你分别支配着 m 个 0 和 n 个 1。另外，还有一个仅包含 0 和 1 字符串的数组。
+现在，假设你分别支配着 m 个 0 和 n 个 1。另外，还有一个仅包含 0 和 1 字符串的数组。
 
-你的任务是使用给定的 m 个 0 和 n 个 1 ，找到能拼出存在于数组中的字符串的最大数量。每个 0 和 1 至多被使用一次。
+你的任务是使用给定的 m 个 0 和 n 个 1 ，找到能拼出存在于数组中的字符串的最大数量。每个 0 和 1 至多被使用一次。
 
 注意:
 ```
-给定 0 和 1 的数量都不会超过 100。
-给定字符串数组的长度不会超过 600。
+给定 0 和 1 的数量都不会超过 100。
+给定字符串数组的长度不会超过 600。
 ```
 示例 1:
 ```

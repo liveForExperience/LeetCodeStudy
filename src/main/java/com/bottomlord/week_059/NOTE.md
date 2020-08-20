@@ -122,5 +122,150 @@ class Solution {
 - 找到后，就直接将rev从0到i区间的字符串拼接到s前面，获得最后的解
 ### 代码
 ```java
+public class Solution {
+    public String shortestPalindrome(String s) {
+        int len = s.length();
+        String rev = reserve(s);
 
+        for (int i = 0; i < len; i++) {
+            if (Objects.equals(s.substring(0, len - i), rev.substring(i))) {
+                return rev.substring(0, i) + s;
+            }
+        }
+
+        return "";
+    }
+
+    private String reserve(String s) {
+        int head = 0, tail = s.length() - 1;
+        char[] cs = s.toCharArray();
+        while (head < tail) {
+            char c = cs[head];
+            cs[head] = cs[tail];
+            cs[tail] = c;
+
+            head++;
+            tail--;
+        }
+
+        return new String(cs);
+    }
+}
+```
+# LeetCode_218_天际线问题
+## 题目
+城市的天际线是从远处观看该城市中所有建筑物形成的轮廓的外部轮廓。现在，假设您获得了城市风光照片（图A）上显示的所有建筑物的位置和高度，请编写一个程序以输出由这些建筑物形成的天际线（图B）。
+
+每个建筑物的几何信息用三元组 [Li，Ri，Hi] 表示，其中 Li 和 Ri 分别是第 i 座建筑物左右边缘的 x 坐标，Hi 是其高度。可以保证 0 ≤ Li, Ri ≤ INT_MAX, 0 < Hi ≤ INT_MAX 和 Ri - Li > 0。您可以假设所有建筑物都是在绝对平坦且高度为 0 的表面上的完美矩形。
+
+例如，图A中所有建筑物的尺寸记录为：[ [2 9 10], [3 7 15], [5 12 12], [15 20 10], [19 24 8] ] 。
+
+输出是以 [ [x1,y1], [x2, y2], [x3, y3], ... ] 格式的“关键点”（图B中的红点）的列表，它们唯一地定义了天际线。关键点是水平线段的左端点。请注意，最右侧建筑物的最后一个关键点仅用于标记天际线的终点，并始终为零高度。此外，任何两个相邻建筑物之间的地面都应被视为天际线轮廓的一部分。
+
+例如，图B中的天际线应该表示为：[ [2 10], [3 15], [7 12], [12 0], [15 10], [20 8], [24, 0] ]。
+
+说明:
+```
+任何输入列表中的建筑物数量保证在 [0, 10000] 范围内。
+输入列表已经按左 x 坐标 Li  进行升序排列。
+输出列表必须按 x 位排序。
+输出天际线中不得有连续的相同高度的水平线。例如 [...[2 3], [4 5], [7 5], [11 5], [12 7]...] 是不正确的答案；三条高度为 5 的线应该在最终输出中合并为一个：[...[2 3], [4 5], [12 7], ...]
+```
+## 解法
+### 思路
+分治：
+- 思想：
+    - 定义基本问题
+    - 将问题分解成子问题并递归求解
+    - 合并子问题为基本问题
+- 分治过程：
+    - 退出条件：
+        - `buildings`长度为0时，返回空list
+        - `buildings`长度为1时，返回单一元素的天际线
+    - 递归分治，将天际线分成`left`和`right`两部分(即前`n/2`和后`n/2`)求解并返回
+    - 合并两部分：
+        - 定义变量：
+            - `lLen``rLen`：左右天际线的长度
+            - `li``ri`：遍历左右天际线的游标，初始为0
+            - `lh``rh`：左右天际线当前遍历到的高度
+        - 过程:
+            - 如果`li < lLen && ri < rLen`，说明两个天际线有重叠的可能，极端情况是两个天际线完全分开，那么在接下来的处理过程中，左边的天际线会被先处理完
+            - 移动天际线对应的游标，比较游标对应的天际线x值大小：
+                - `lx < rx`：处理左边的天际线
+                - `lx > rx`：处理右边的天际线
+                - `lx == rx`：此时就是天际线重叠的情况，同时处理两个天际线
+            - 处理天际线的过程:
+                - 计算当前要处理的天际线的y轴高度，与另一个天际线暂存的高度作比较，取最大值作为当前这个x轴对应的y轴
+                - 然后根据处理的天际线，向右移动1位对应的游标
+                - 同时记录这个x和y轴的值，作为当前可能要记录的点
+            - 需要记录的情况：
+                - 是第一个点
+                - 和上一个点的y值不同，如果相同，就代表它们在同一条平行于x轴的直线上，这样的一个线段，只需要取最左边的值，所以之后的值就不需要
+            - 在如上`li < lLen && ri < rLen`的循环跳出后，处理剩下没有被处理的天际线，就比如极端情况，两个天际线没有交集，那么循环中就会处理左边的天际线，然后跳出循环后，就会处理剩下的右边的天际线
+            - 最后返回结果集合
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> getSkyline(int[][] buildings) {
+        int len = buildings.length;
+        if (len == 0) {
+            return new ArrayList<>();
+        }
+
+        if (len == 1) {
+            List<List<Integer>> ans = new ArrayList<>();
+            ans.add(Arrays.asList(buildings[0][0], buildings[0][2]));
+            ans.add(Arrays.asList(buildings[0][1], 0));
+            return ans;
+        }
+
+        List<List<Integer>> leftBuildings = getSkyline(Arrays.copyOfRange(buildings, 0, len / 2));
+        List<List<Integer>> rightBuildings = getSkyline(Arrays.copyOfRange(buildings, len / 2, len));
+
+        return merge(leftBuildings, rightBuildings);
+    }
+
+    private List<List<Integer>> merge(List<List<Integer>> leftBuildings, List<List<Integer>> rightBuildings) {
+        int lLen = leftBuildings.size(), rLen = rightBuildings.size();
+        int li = 0, ri = 0;
+        List<List<Integer>> output = new ArrayList<>();
+        int lh = 0, rh = 0;
+        while (li < lLen && ri < rLen) {
+            int lx = leftBuildings.get(li).get(0), rx = rightBuildings.get(ri).get(0);
+            
+            List<Integer> cp;
+            if (lx < rx) {
+                lh = leftBuildings.get(li).get(1);
+                cp = Arrays.asList(lx, Math.max(lh, rh));
+                li++;
+            } else if (lx > rx) {
+                rh = rightBuildings.get(ri).get(1);
+                cp = Arrays.asList(rx, Math.max(lh, rh));
+                ri++;
+            } else {
+                lh = leftBuildings.get(li).get(1);
+                rh = rightBuildings.get(ri).get(1);
+                cp = Arrays.asList(lx, Math.max(lh, rh));
+                li++;
+                ri++;
+            }
+
+            if (output.size() == 0 || !Objects.equals(output.get(output.size() - 1).get(1), cp.get(1))) {
+                output.add(cp);
+            }
+        }
+
+        while (li < lLen) {
+            output.add(leftBuildings.get(li));
+            li++;
+        }
+        
+        while (ri < rLen) {
+            output.add(rightBuildings.get(ri));
+            ri++;
+        }
+
+        return output;
+    }
+}
 ```
