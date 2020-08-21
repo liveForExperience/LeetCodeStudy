@@ -314,3 +314,43 @@ class Solution {
     }
 }
 ```
+# LeetCode_223_矩形面积
+## 题目
+在二维平面上计算出两个由直线构成的矩形重叠后形成的总面积。
+
+每个矩形由其左下顶点和右上顶点坐标表示，如图所示。
+
+Rectangle Area
+
+示例:
+```
+输入: -3, 0, 3, 4, 0, -1, 9, 2
+输出: 45
+说明: 假设矩形面积不会超出 int 的范围。
+```
+## 解法
+### 思路
+- 定义两个矩形X和Y
+- 确定ABCD对应的是最左边的矩形
+- 计算两个矩形的总面积
+- 判断是否不相交，如果是就直接返回总面积
+- 计算相交的上下左右的线段
+- 将总面积减去相交面积，并返回
+### 代码
+```java
+class Solution {
+    public int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+        if (A > E) {
+            return computeArea(E, F, G, H, A, B, C, D);
+        }
+
+        int total = Math.abs(A - C) * Math.abs(B - D) + Math.abs(E - G) * Math.abs(F - H);
+        if (B >= H || D <= F || C <= E) {
+            return total;
+        }
+
+        int up = Math.min(D, H), down = Math.max(B, F), right = Math.min(C, G);
+        return total - Math.abs(up - down) * Math.abs(E - right);
+    }
+}
+```
