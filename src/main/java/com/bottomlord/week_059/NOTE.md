@@ -396,5 +396,160 @@ class Solution {
 回溯
 ### 代码
 ```java
+public class Solution {
+    private static final int TARGET = 24;
+    private static final double EPSILON = 1e-6;
+    private static final int ADD = 0, MULTI = 1, SUBTRACT = 2, DIVIDE = 3;
+    public boolean judgePoint24(int[] nums) {
+        return doJudge(Arrays.stream(nums).mapToDouble(x -> x).boxed().collect(Collectors.toList()));
+    }
 
+    private boolean doJudge(List<Double> list) {
+        if (list.size() == 1) {
+            return Math.abs(list.get(0) - TARGET) < EPSILON;
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < list.size(); j++) {
+                if (i == j) {
+                    continue;
+                }
+
+                List<Double> tmp = new LinkedList<>();
+                for (int k = 0; k < list.size(); k++) {
+                    if (k != i && k != j) {
+                        tmp.add(list.get(k));
+                    }
+                }
+
+                for (int k = 0; k < 4; k++) {
+                    if (k < 2 && i > j) {
+                        continue;
+                    }
+
+                    if (k == ADD) {
+                        tmp.add(list.get(i) + list.get(j));
+                    } else if (k == MULTI) {
+                        tmp.add(list.get(i) * list.get(j));
+                    } else if (k == SUBTRACT) {
+                        tmp.add(list.get(i) - list.get(j));
+                    } else {
+                        if (list.get(j) < EPSILON) {
+                            continue;
+                        }
+
+                        tmp.add(list.get(i) / list.get(j));
+                    }
+
+                    if (doJudge(tmp)) {
+                        return true;
+                    }
+
+                    tmp.remove(tmp.size() - 1);
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+# LeetCode_224_基本计算器
+## 题目
+实现一个基本的计算器来计算一个简单的字符串表达式的值。
+
+字符串表达式可以包含左括号 ( ，右括号 )，加号 + ，减号 -，非负整数和空格  。
+
+示例 1:
+```
+输入: "1 + 1"
+输出: 2
+```
+示例 2:
+```
+输入: " 2-1 + 2 "
+输出: 3
+```
+示例 3:
+```
+输入: "(1+(4+5+2)-3)+(6+8)"
+输出: 23
+```
+## 解法
+### 思路
+逆序遍历字符串，栈求解
+- 暂存变量：
+    - 操作数`operand`，用来辅助计算连续的数字，记录暂时的低位值
+    - 位数`n`，用来记录位数
+- 逆序遍历字符串
+    - 如果是空字符，跳过
+    - 如果是数字，通过位数`n`和当前数字，计算操作数`operand`，并累加`n`
+    - 如果不是数字：
+        - 清零`operand`和`n`
+        - 如果是`(`，说明一个完整的括号出现：
+            - 计算括号中的值
+            - 并弹出之前的最后一个`)`
+            - 将计算的结果压入栈中
+        - 如果不是`(`，就把字符压入栈中
+- 遍历结束后，看位数是否为0，如果不是，说明还有不包含括号的操作数和操作符需要处理，计算获得结果并返回
+### 代码
+```java
+class Solution {
+    public int calculate(String s) {
+        int operand = 0, n = 0;
+        Stack<Object> stack = new Stack<>();
+        for (int i = s.length() - 1; i >= 0; i--) {
+            char c = s.charAt(i);
+
+            if (c == ' ') {
+                continue;
+            }
+
+            if (Character.isDigit(c)) {
+                operand = (int) Math.pow(10, n) * (int)(c - '0') + operand;
+                n++;
+            } else {
+                if (n != 0) {
+                    stack.push(operand);
+                    n = 0;
+                    operand = 0;
+                }
+
+                if (c == '(') {
+                    int result = doCal(stack);
+                    stack.pop();
+                    stack.push(result);
+                } else {
+                    stack.push(c);
+                }
+            }
+        }
+
+        if (n != 0) {
+            stack.push(operand);
+        }
+
+        return doCal(stack);
+    }
+
+    private int doCal(Stack<Object> stack) {
+        int result = 0;
+
+        if (!stack.isEmpty()) {
+            result = (int)stack.pop();
+        }
+
+        while (!stack.isEmpty() && (char)stack.peek() != ')') {
+            char c = (char) stack.pop();
+
+            if (c == '+') {
+                result += (int) stack.pop();
+            } else if (c == '-') {
+                result -= (int) stack.pop();
+            }
+        }
+
+        return result;
+    }
+}
 ```
