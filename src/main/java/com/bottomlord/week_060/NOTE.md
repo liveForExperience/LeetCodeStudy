@@ -224,3 +224,45 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+双指针：
+- 初始化双指针：
+    - row：代表行数，初始化为0
+    - col：代表列数，初始化为行尾坐标
+- 过程：
+    - 循环退出条件：两个指针有一个越界
+    - 判断3种情况：
+        - 通过当前行列坐标找到target，返回true
+        - 比target小，row++增大
+        - 比target大，col--减小
+### 代码
+```java
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int row = matrix.length;
+        if (row == 0) {
+            return false;
+        }
+        
+        int col = matrix[0].length;
+        if (col == 0) {
+            return false;
+        }
+        
+        int r = 0, c = col - 1;
+        while (r < row && c >= 0) {
+            int num = matrix[r][c];
+            if (target == num) {
+                return true;
+            } else if (target > num) { 
+                r++;
+            } else {
+                c--;
+            }
+        }
+        
+        return false;
+    }
+}
+```
