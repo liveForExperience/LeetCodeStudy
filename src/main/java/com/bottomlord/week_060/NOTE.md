@@ -78,3 +78,85 @@ class Solution {
     }
 }
 ```
+# LeetCode_229_求众数
+## 题目
+给定一个大小为 n 的数组，找出其中所有出现超过 ⌊ n/3 ⌋ 次的元素。
+
+说明: 要求算法的时间复杂度为 O(n)，空间复杂度为 O(1)。
+
+示例 1:
+```
+输入: [3,2,3]
+输出: [3]
+```
+示例 2:
+```
+输入: [1,1,1,3,3,2,2,2]
+输出: [1,2]
+```
+## 解法
+### 思路
+摩尔投票法
+- 如果要在总数中选出n个人，就需要超过`1 / (n + 1)`票，因为题目中要找到所有票数超过`1 / 3`的元素，所以候选人个数就是2
+- 在摩尔投票法中，遍历数组，判断`(n + 1)`个元素是否全不相等
+    - 如果是，全部抵消
+    - 如果不是，计数相等的数字
+- 继续遍历比较，直到遍历到最后一个元素，此时判断哪些数字最后的值不为0，不为0不一定代表超过`(n + 1)`，但为0肯定代表不是
+- 然后根据不为零的数，再次遍历数组，做计数统计，获得最后准确的答案
+## 代码
+```java
+class Solution {
+    public List<Integer> majorityElement(int[] nums) {
+        int candidate1 = 0, count1 = 0,
+            candidate2 = 0, count2 = 0;
+
+        for (int num : nums) {
+            if (candidate1 == num) {
+                count1++;
+                continue;
+            }
+
+            if (candidate2 == num) {
+                count2++;
+                continue;
+            }
+
+            if (count1 == 0) {
+                candidate1 = num;
+                count1++;
+                continue;
+            }
+
+            if (count2 == 0) {
+                candidate2 = num;
+                count2++;
+                continue;
+            }
+
+            count1--;
+            count2--;
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        count1 = 0;
+        count2 = 0;
+        for (int num : nums) {
+            if (candidate1 == num) {
+                count1++;
+            } else if (candidate2 == num) {
+                count2++;
+            }
+        }
+
+        if (count1 > nums.length / 3) {
+            ans.add(candidate1);
+        }
+
+        if (count2 > nums.length / 3) {
+            ans.add(candidate2);
+        }
+
+        return ans;
+    }
+}
+```
