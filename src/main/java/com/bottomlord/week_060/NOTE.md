@@ -311,6 +311,39 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+最短距离应该都出现在两个临近元素之间，所以可以使用双指针，判断的过程中也根据元素大小来移动指针，哪个元素小，哪个元素对应的坐标就后移一位，使判断过程中保持元素尽量的靠近。
+### 代码
+```java
+class Solution {
+    public int shortestDistance(String[] words, String word1, String word2) {
+        List<Integer> l1 = new ArrayList<>(), l2 = new ArrayList<>();
+
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (Objects.equals(word, word1)) {
+                l1.add(i);
+            } else if (Objects.equals(word, word2)) {
+                l2.add(i);
+            }
+        }
+
+        int i1 = 0, i2 = 0, ans = Integer.MAX_VALUE;
+        while (i1 < l1.size() && i2 < l2.size()) {
+            ans = Math.min(ans, Math.abs(l1.get(i1) - l2.get(i2)));
+
+            if (l1.get(i1) > l2.get(i2)) {
+                i2++;
+            } else {
+                i1++;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
 # LeetCode_244_最短单词距离II
 ## 题目
 请设计一个类，使该类的构造函数能够接收一个单词列表。然后再实现一个方法，该方法能够分别接收两个单词 word1 和 word2，并返回列表中这两个单词之间的最短距离。您的方法将被以不同的参数调用 多次。
