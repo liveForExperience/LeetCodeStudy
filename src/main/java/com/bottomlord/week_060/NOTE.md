@@ -393,3 +393,38 @@ class WordDistance {
     }
 }
 ```
+## 解法二
+### 思路
+与243题的第二解类似，使用双指针，尽可能使比对元素靠近。
+### 代码
+```java
+class WordDistance {
+    private Map<String, List<Integer>> map;
+    public WordDistance(String[] words) {
+        this.map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            List<Integer> list = map.getOrDefault(words[i], new ArrayList<>());
+            list.add(i);
+            map.put(words[i], list);
+        }
+    }
+
+    public int shortest(String word1, String word2) {
+        List<Integer> l1 = map.get(word1),
+                      l2 = map.get(word2);
+
+        int i1 = 0, i2 = 0, ans = Integer.MAX_VALUE;
+        while (i1 < l1.size() && i2 < l2.size()) {
+            ans = Math.min(ans, Math.abs(l1.get(i1) - l2.get(i2)));
+
+            if (l1.get(i1) > l2.get(i2)) {
+                i2++;
+            } else {
+                i1++;
+            }
+        }
+
+        return ans;
+    }
+}
+```
