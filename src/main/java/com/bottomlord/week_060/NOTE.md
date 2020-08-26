@@ -266,3 +266,48 @@ class Solution {
     }
 }
 ```
+# LeetCode_243_最短的单词距离
+## 题目
+给定一个单词列表和两个单词 word1 和 word2，返回列表中这两个单词之间的最短距离。
+
+示例:
+```
+假设 words = ["practice", "makes", "perfect", "coding", "makes"]
+输入: word1 = “coding”, word2 = “practice”
+输出: 3
+输入: word1 = "makes", word2 = "coding"
+输出: 1
+```
+注意:
+```
+你可以假设 word1 不等于 word2, 并且 word1 和 word2 都在列表里。
+```
+## 解法
+### 思路
+- 遍历分别求单词出现的坐标，并分别记录
+- 嵌套遍历两组出现的坐标，求差值绝对值的最小值
+### 代码
+```java
+class Solution {
+    public int shortestDistance(String[] words, String word1, String word2) {
+        List<Integer> i1 = new ArrayList<>(), i2 = new ArrayList<>();
+        
+        for (int i = 0; i < words.length; i++) {
+            if (Objects.equals(word1, words[i])) {
+                i1.add(i);
+            } else if (Objects.equals(word2, words[i])) {
+                i2.add(i);
+            }
+        }
+        
+        int ans = words.length;
+        for (Integer a : i1) {
+            for (Integer b : i2) {
+                ans = Math.min(ans, Math.abs(a - b));
+            }
+        }
+        
+        return ans;
+    }
+}
+```
