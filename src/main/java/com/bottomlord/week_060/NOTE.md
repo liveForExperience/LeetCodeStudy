@@ -311,3 +311,52 @@ class Solution {
     }
 }
 ```
+# LeetCode_244_最短单词距离II
+## 题目
+请设计一个类，使该类的构造函数能够接收一个单词列表。然后再实现一个方法，该方法能够分别接收两个单词 word1 和 word2，并返回列表中这两个单词之间的最短距离。您的方法将被以不同的参数调用 多次。
+
+示例:
+```
+假设 words = ["practice", "makes", "perfect", "coding", "makes"]
+
+输入: word1 = “coding”, word2 = “practice”
+输出: 3
+输入: word1 = "makes", word2 = "coding"
+输出: 1
+```
+注意:
+```
+你可以假设 word1 不等于 word2, 并且 word1 和 word2 都在列表里。
+```
+## 解法
+### 思路
+- 初始化时，遍历列表，通过散列表存储对应单词出现的下标
+- 比对时取出下标集合，进行嵌套遍历的比较
+### 代码
+```java
+class WordDistance {
+    private Map<String, List<Integer>> map;
+    public WordDistance(String[] words) {
+        this.map = new HashMap<>();
+        for (int i = 0; i < words.length; i++) {
+            List<Integer> list = map.getOrDefault(words[i], new ArrayList<>());
+            list.add(i);
+            map.put(words[i], list);
+        }
+    }
+
+    public int shortest(String word1, String word2) {
+        List<Integer> list1 = map.get(word1),
+                      list2 = map.get(word2);
+
+        int ans = Integer.MAX_VALUE;
+        for (Integer i1 : list1) {
+            for (Integer i2 : list2) {
+                ans = Math.min(ans, Math.abs(i1 - i2));
+            }
+        }
+
+        return ans;
+    }
+}
+```
