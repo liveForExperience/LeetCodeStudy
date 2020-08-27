@@ -428,3 +428,121 @@ class WordDistance {
     }
 }
 ```
+# LeetCode_245_最短单词距离III
+## 题目
+给定一个单词列表和两个单词 word1 和 word2，返回列表中这两个单词之间的最短距离。
+
+word1 和 word2 是有可能相同的，并且它们将分别表示为列表中两个独立的单词。
+
+示例:
+```
+假设 words = ["practice", "makes", "perfect", "coding", "makes"].
+
+输入: word1 = “makes”, word2 = “coding”
+输出: 1
+输入: word1 = "makes", word2 = "makes"
+输出: 3
+```
+注意:
+```
+你可以假设 word1 和 word2 都在列表里。
+```
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# LeetCode_332_重新安排行程
+## 题目
+给定一个机票的字符串二维数组 [from, to]，子数组中的两个成员分别表示飞机出发和降落的机场地点，对该行程进行重新规划排序。所有这些机票都属于一个从 JFK（肯尼迪国际机场）出发的先生，所以该行程必须从 JFK 开始。
+
+说明:
+```
+如果存在多种有效的行程，你可以按字符自然排序返回最小的行程组合。例如，行程 ["JFK", "LGA"] 与 ["JFK", "LGB"] 相比就更小，排序更靠前
+所有的机场都用三个大写字母表示（机场代码）。
+假定所有机票至少存在一种合理的行程。
+```
+示例 1:
+```
+输入: [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]
+输出: ["JFK", "MUC", "LHR", "SFO", "SJC"]
+```
+示例 2:
+```
+输入: [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+输出: ["JFK","ATL","JFK","SFO","ATL","SFO"]
+解释: 另一种有效的行程是 ["JFK","SFO","ATL","JFK","ATL","SFO"]。但是它自然排序更大更靠后。
+```
+## 解法
+### 思路
+- 根据子数组第二个元素的ASCII码升序排序
+- 初始化map，记录图信息
+- 遍历数组，子数组的第一个元素为key，value为list，将第二个元素放入对应的list中
+- 回溯：
+    - 退出条件是map中所有value都为空，返回true
+    - 递归参数为：
+        - key：每次的起点，以这个起点到map中找到所有可能的终点
+        - map：整个图
+        - ans：作为结果的list
+    - 在递归的开始，将key放入list中，作为可能的路径中的一点
+    - 凭key到map中找到对应的终点list，如果没有就返回false
+    - 遍历key为指定起点的list，取出元素后，以它为key继续递归
+    - 如果返回的是true，就直接返回
+    - 否则就将元素放入list中，并将ans中的最后一个元素去除，并继续下一个list元素的遍历
+### 代码
+```java
+class Solution {
+    public List<String> findItinerary(List<List<String>> tickets) {
+        tickets.sort(Comparator.comparing(x -> x.get(1)));
+        Map<String, List<String>> map = new HashMap<>();
+        for (List<String> ticket : tickets) {
+            String key = ticket.get(0);
+            List<String> list = map.getOrDefault(key, new ArrayList<>());
+            list.add(ticket.get(1));
+            map.put(key, list);
+        }
+        
+        List<String> ans = new ArrayList<>();
+        boolean find = backTrack("JFK", map, ans);
+        return find ? ans : Collections.emptyList();
+    }
+    
+    private boolean backTrack(String key, Map<String, List<String>> map, List<String> ans) {
+        ans.add(key);
+        if (empty(map)) {
+            return true;
+        }
+        
+        List<String> value = map.get(key);
+        if (value == null) {
+            return false;
+        }
+        
+        List<String> list = new ArrayList<>(value);
+        for (int i = 0; i < list.size(); i++) {
+            String end = value.get(i);
+            value.remove(end);
+            boolean find = backTrack(end, map, ans);
+            if (find) {
+                return true;
+            }
+            ans.remove(ans.size() - 1);
+            value.add(i, end);
+        }
+        
+        return false;
+    }
+    
+    private boolean empty(Map<String, List<String>> map) {
+        for (List<String> list : map.values()) {
+            if (!list.isEmpty()) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
