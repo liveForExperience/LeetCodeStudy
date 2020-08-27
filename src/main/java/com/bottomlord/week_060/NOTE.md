@@ -449,10 +449,39 @@ word1 和 word2 是有可能相同的，并且它们将分别表示为列表中
 ```
 ## 解法
 ### 思路
-
+和243及244题的第一解一样:
+- 获取两组list
+- 然后嵌套遍历比较，但去除掉元素值相同的情况
 ### 代码
 ```java
-
+class Solution {
+    public int shortestWordDistance(String[] words, String word1, String word2) {
+        List<Integer> l1 = new ArrayList<>(), l2 = new ArrayList<>();
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (Objects.equals(word, word1)) {
+                l1.add(i);
+            }
+            
+            if (Objects.equals(word, word2)) {
+                l2.add(i);
+            }
+        }
+        
+        int ans = Integer.MAX_VALUE;
+        for (Integer i1 : l1) {
+            for (Integer i2 : l2) {
+                if (Objects.equals(i1, i2)) {
+                    continue;
+                }
+                
+                ans = Math.min(ans, Math.abs(i1 - i2));
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
 # LeetCode_332_重新安排行程
 ## 题目
