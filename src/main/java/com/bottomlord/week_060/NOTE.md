@@ -616,3 +616,73 @@ class Solution {
     }
 }
 ```
+# LeetCode_246_中心对称数
+## 题目
+中心对称数是指一个数字在旋转了 180 度之后看起来依旧相同的数字（或者上下颠倒地看）。
+
+请写一个函数来判断该数字是否是中心对称数，其输入将会以一个字符串的形式来表达数字。
+
+示例 1:
+```
+输入: num = "69"
+输出: true
+```
+示例 2:
+```
+输入: num = "88"
+输出: true
+```
+示例 3:
+```
+输入: num = "962"
+输出: false
+```
+示例 4：
+```
+输入：num = "1"
+输出：true
+```
+## 解法
+### 思路
+- map记录可以翻转的值以及翻转后得到值的映射关系
+- 头尾双指针相向遍历字符串
+- 判断如下三种情况返回false：
+    - map中没有的值
+    - 两个值相等，但有值为6或9
+    - 两个值不相等，且不是互为69
+### 代码
+```java
+class Solution {
+    public boolean isStrobogrammatic(String num) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 0);
+        map.put(1, 1);
+        map.put(6, 9);
+        map.put(8, 8);
+        map.put(9, 6);
+        
+        int head = 0, tail = num.length() - 1;
+        while (head <= tail) {
+            int a = num.charAt(head) - '0',
+                b = num.charAt(tail) - '0';
+            
+            if (!map.containsKey(a) || !map.containsKey(b)) {
+                return false;
+            }
+            
+            if (a == b && (a == 6 || a == 9)) {
+                return false;
+            }
+            
+            if (a != b && ((a != 6 && a != 9) || (a == 6 && b != 9) || (a == 9 && b != 6))) {
+                return false;
+            }
+            
+            head++;
+            tail--;
+        }
+        
+        return true;
+    }
+}
+```
