@@ -483,6 +483,47 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+和243及244题类似，当比较时发现坐标相同时，就移动第一个坐标，否则就和之前一样，移动那个小的
+### 代码
+```java
+class Solution {
+    public int shortestWordDistance(String[] words, String word1, String word2) {
+        List<Integer> l1 = new ArrayList<>(), l2 = new ArrayList<>();
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (Objects.equals(word, word1)) {
+                l1.add(i);
+            }
+
+            if (Objects.equals(word, word2)) {
+                l2.add(i);
+            }
+        }
+
+        int ans = Integer.MAX_VALUE;
+        int i1 = 0, i2 = 0;
+        while (i1 < l1.size() && i2 < l2.size()) {
+            Integer num1 = l1.get(i1), num2 = l2.get(i2);
+            if (Objects.equals(num1, num2)) {
+                i1++;
+                continue;
+            }
+            
+            ans = Math.min(ans, Math.abs(num1 - num2));
+            
+            if (num1 > num2) {
+                i2++;
+            } else {
+                i1++;
+            }
+        }
+
+        return ans;
+    }
+}
+```
 # LeetCode_332_重新安排行程
 ## 题目
 给定一个机票的字符串二维数组 [from, to]，子数组中的两个成员分别表示飞机出发和降落的机场地点，对该行程进行重新规划排序。所有这些机票都属于一个从 JFK（肯尼迪国际机场）出发的先生，所以该行程必须从 JFK 开始。
