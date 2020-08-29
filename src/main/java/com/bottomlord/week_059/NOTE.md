@@ -152,6 +152,43 @@ public class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+分治：
+- 定义两个指针
+- 相向遍历字符串`s`：
+    - 如果相等，则同时相向移动
+    - 如果不相等，则只移动尾部指针
+    - 头部指针最终指向的坐标，其实代表的是，在当前`s`中，从左侧头部开始的，连续的，且能够和右侧开始的，非连续字符组成的最长回文串距离
+    - 也就是说，头部指针停下的位置的右侧的字符串，就是必须在头部填充的需要被翻转的子字符串
+- 每一层的分治递归，就是通过如上循环，找到肯定需要增加的最小的字符串
+- 退出条件就是头部坐标结束的位置就是当前层字符串`s`结尾的位置，说明当前字符串就是回文串
+- 然后就返回3部分内容：
+    - 第1部分：当前层求得的必须在头部添加的，待翻转的字符串
+    - 第2部分：当前层求得的，可能可以称为回文串的字符串部分，这部分要继续递归求解
+    - 第3部分：当前层求得的必须在头部添加的，未翻转的字符串
+### 代码
+```java
+class Solution {
+    public String shortestPalindrome(String s) {
+        int len = s.length();
+        int head = 0;
+        for (int tail = len - 1; tail >= 0; tail--) {
+            if (Objects.equals(s.charAt(head), s.charAt(tail))) {
+                head++;
+            }
+        }
+        
+        if (head == len) {
+            return s;
+        }
+
+        StringBuilder sb = new StringBuilder(s.substring(head));
+        sb.reverse();
+        return sb.append(shortestPalindrome(s.substring(0, head))).append(s.substring(head)).toString();
+    }
+}
+```
 # LeetCode_218_天际线问题
 ## 题目
 城市的天际线是从远处观看该城市中所有建筑物形成的轮廓的外部轮廓。现在，假设您获得了城市风光照片（图A）上显示的所有建筑物的位置和高度，请编写一个程序以输出由这些建筑物形成的天际线（图B）。
