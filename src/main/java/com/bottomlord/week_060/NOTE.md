@@ -733,3 +733,75 @@ class Solution {
     }
 }
 ```
+# LeetCode_248_中心对称数III
+## 题目
+中心对称数是指一个数字在旋转了 180 度之后看起来依旧相同的数字（或者上下颠倒地看）。
+
+写一个函数来计算范围在 [low, high] 之间中心对称数的个数。
+
+示例:
+```
+输入: low = "50", high = "100"
+输出: 3 
+解释: 69，88 和 96 是三个在该范围内的中心对称数
+注意:
+由于范围可能很大，所以 low 和 high 都用字符串表示。
+```
+## 解法
+### 思路
+bfs：
+- 初始化1位的中心对称数，`""`,`0`,`1`,`8`，这些数字会作为bfs的起始元素
+- 建立所有符合翻转后对称可能的数字的翻转映射关系，这些映射关系会作为搜索的所有路径
+- bfs搜索所有可能的组合，并和low与high做比较，如果符合就入队继续搜索
+- 符合的数字就计数累加1
+### 代码
+```java
+class Solution {
+    public int strobogrammaticInRange(String low, String high) {
+        char[][] cs = new char[][]{{'0','0'},{'1','1'},{'6','9'},{'8','8'},{'9','6'}};
+        Queue<String> queue = new ArrayDeque<>();
+        queue.offer("");
+        queue.offer("0");
+        queue.offer("1");
+        queue.offer("8");
+
+        int ans = 0;
+        while (!queue.isEmpty()) {
+            String s = queue.poll();
+            if (s.length() >= low.length() && s.length() <= high.length()) {
+                if (!(s.length() > 1 && s.charAt(0) == '0')) {
+                    if (check(s, low, high)) {
+                        ans++;
+                    }
+                }
+            }
+
+            if (s.length() > high.length()) {
+                continue;
+            }
+
+            for (char[] c : cs) {
+                String next = c[0] + s + c[1];
+                if (next.length() <= high.length()) {
+                    queue.offer(next);
+                }
+            }
+        }
+        
+        return ans;
+    }
+
+    private boolean check(String num, String low, String high) {
+        return compare(num, low) && compare(high, num);
+    }
+
+    private boolean compare(String a, String b) {
+        if (a.length() != b.length()) {
+            return a.length() > b.length();
+        }
+
+        int r = a.compareTo(b);
+        return r > 0 || r == 0;
+    }
+}
+```
