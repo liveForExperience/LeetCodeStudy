@@ -70,3 +70,34 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+map：
+- 遍历字符串，将所有字符串都对齐成起始字符为`a`的状态
+- 将转移后相同的字符串放在一个key后的list中
+- 遍历结束后，返回所有的集合
+### 代码
+```java
+class Solution {
+    public List<List<String>> groupStrings(String[] strings) {
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strings) {
+            String shift = shift(str);
+            List<String> list = map.getOrDefault(shift, new ArrayList<>());
+            list.add(str);
+            map.put(shift, list);
+        }
+
+        return new ArrayList<>(map.values());
+    }
+
+    private String shift(String str) {
+        int bit = str.charAt(0) - 'a';
+        char[] cs = str.toCharArray();
+        for (int i = 0; i < str.length(); i++) {
+            cs[i] = cs[i] - (char)bit - 'a' >= 0 ? (char)(cs[i] - (char)bit) : (char)(cs[i] - (char)(bit - 26));
+        }
+        return new String(cs);
+    }
+}
+```
