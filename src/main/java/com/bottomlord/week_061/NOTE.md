@@ -101,3 +101,93 @@ class Solution {
     }
 }
 ```
+# LeetCode_250_统计共值子树
+## 题目
+给定一个二叉树，统计该二叉树数值相同的子树个数。
+
+同值子树是指该子树的所有节点都拥有相同的数值。
+
+示例：
+```
+输入: root = [5,1,5,5,5,null,5]
+
+              5
+             / \
+            1   5
+           / \   \
+          5   5   5
+
+输出: 4
+```
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    
+    public int countUnivalSubtrees(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        
+        dfs(root);
+        return count;
+    }
+    
+    private boolean dfs(TreeNode node) {
+        if (node.left == null && node.right == null) {
+            count++;
+            return true;
+        }
+        
+        boolean same = true;
+        if (node.left != null) {
+            same = dfs(node.left) && node.val == node.left.val;
+        }
+        
+        if (node.right != null) {
+            same = dfs(node.right) && same && node.val == node.right.val;
+        }
+        
+        if (!same) {
+            return false;
+        }
+        
+        count++;
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+dfs：
+- 退出条件：当前节点为null，返回true
+- 在递归处理的这一层，如果下层返回的都是true，那么就累加count值，说明当前节点的值与左右子节点的值相等
+- 如果下层有任一返回false或者当前节点与上层节点不等，就返回false
+- 注意判断下层左右节点是否与当前节点是否相等的条件语句，如果用或来组合在一起，那就必须时非短路的或，否则会导致递归搜索不完整
+### 代码
+```java
+class Solution {
+    private int count = 0; 
+    public int countUnivalSubtrees(TreeNode root) {
+        dfs(root, null);
+        return count;
+    }
+    
+    private boolean dfs(TreeNode node, Integer preVal) {
+        if (node == null) {
+            return true;
+        }
+        
+        if (!dfs(node.left, node.val) | !dfs(node.right, node.val)) {
+            return false;
+        }
+        
+        count++;
+        
+        return Objects.equals(node.val, preVal);
+    }
+}
+```
