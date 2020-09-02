@@ -191,3 +191,121 @@ class Solution {
     }
 }
 ```
+# LeetCode_251_展开二维向量
+## 题目
+请设计并实现一个能够展开二维向量的迭代器。该迭代器需要支持 next 和 hasNext 两种操作。、
+
+示例：
+```
+Vector2D iterator = new Vector2D([[1,2],[3],[4]]);
+
+iterator.next(); // 返回 1
+iterator.next(); // 返回 2
+iterator.next(); // 返回 3
+iterator.hasNext(); // 返回 true
+iterator.hasNext(); // 返回 true
+iterator.next(); // 返回 4
+iterator.hasNext(); // 返回 false
+```
+注意：
+```
+请记得 重置 在 Vector2D 中声明的类变量（静态变量），因为类变量会 在多个测试用例中保持不变，影响判题准确。请 查阅 这里。
+你可以假定 next() 的调用总是合法的，即当 next() 被调用时，二维向量总是存在至少一个后续元素。
+```
+进阶：
+```
+尝试在代码中仅使用 C++ 提供的迭代器 或 Java 提供的迭代器。
+```
+## 解法
+### 思路
+- 遍历数组放入list
+- 使用jdk中的迭代器api
+### 代码
+```java
+class Vector2D {
+    private List<Integer> list;
+    private ListIterator<Integer> iterator;
+    public Vector2D(int[][] v) {
+        this.list = new ArrayList<>();
+        for (int[] arr : v) {
+            for (int num : arr) {
+                this.list.add(num);
+            }
+        }
+        this.iterator = this.list.listIterator();
+    }
+
+    public int next() {
+        return iterator.next();
+    }
+
+    public boolean hasNext() {
+        return iterator.hasNext();
+    }
+}
+```
+## 解法二
+### 思路
+双指针：
+- 维护行列指针
+- `next()`：
+    - 使用`hasNext()`做判断，如果没有下一个，同时也是利用`hasNext()`对列坐标做矫正，抛出异常
+    - 返回当前行列对应的元素
+    - 移动列指针
+- `hasNext()`：
+    - 先做指针的矫正，也就是当列指针到达行尾的时候，需要换行
+    - 因为列已经做了维护，所以只要判断行是否越界就可以
+### 代码
+```java
+import java.util.NoSuchElementException;
+class Vector2D {
+    private int[][] v;
+    private int r, c;
+    public Vector2D(int[][] v) {
+        this.v = v;
+        this.r = 0;
+        this.c = 0;
+    }
+
+    public int next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        return v[r][c++];
+    }
+
+    public boolean hasNext() {
+        while (r < v.length && c == v[r].length) {
+            c = 0;
+            r++;
+        }
+
+        return r < v.length;
+    }
+}
+```
+## 解法三
+### 思路
+使用队列
+### 代码
+```java
+class Vector2D {
+    private Queue<Integer> queue;
+    public Vector2D(int[][] v) {
+        this.queue = new ArrayDeque<>();
+        for (int[] arr : v) {
+            for (int num : arr) {
+                this.queue.offer(num);
+            }
+        }
+    }
+
+    public int next() {
+        return this.queue.poll();
+    }
+
+    public boolean hasNext() {
+        return !this.queue.isEmpty();
+    }
+}
+```
