@@ -309,3 +309,83 @@ class Vector2D {
     }
 }
 ```
+# LeetCode_252_会议室
+## 题目
+给定一个会议时间安排的数组，每个会议时间都会包括开始和结束的时间 [[s1,e1],[s2,e2],...] (si < ei)，请你判断一个人是否能够参加这里面的全部会议。
+
+示例 1:
+```
+输入: [[0,30],[5,10],[15,20]]
+输出: false
+```
+示例 2:
+```
+输入: [[7,10],[2,4]]
+输出: true
+```
+## 解法
+### 思路
+排序
+- 针对二维数组中每个数组元素的第一个值作升序排序
+- 遍历二维数组，若前一个数组的第二个元素大于后一个数组的第一个元素，返回false
+### 代码
+```java
+class Solution {
+    public boolean canAttendMeetings(int[][] intervals) {
+        Arrays.sort(intervals, Comparator.comparingInt(x -> x[0]));
+        for (int i = 0; i < intervals.length - 1; i++) {
+            if (intervals[i][1] > intervals[i + 1][0]) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+使用快排排序
+### 代码
+```java
+class Solution {
+        public boolean canAttendMeetings(int[][] intervals) {
+        quickSort(intervals, 0, intervals.length - 1);
+        for (int i = 0; i < intervals.length - 1; i++) {
+            if (intervals[i][1] > intervals[i + 1][0]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void quickSort(int[][] intervals, int head, int tail) {
+        if (head >= tail) {
+            return;
+        }
+
+        int partition = partition(intervals, head, tail);
+
+        quickSort(intervals, head, partition - 1);
+        quickSort(intervals, partition + 1, tail);
+    }
+
+    private int partition(int[][] intervals, int head, int tail) {
+        int[] pivot = intervals[head];
+        while (head < tail) {
+            while (head < tail && intervals[tail][0] >= pivot[0]) {
+                tail--;
+            }
+            intervals[head] = intervals[tail];
+
+            while (head < tail && intervals[head][0] <= pivot[0]) {
+                head++;
+            }
+            intervals[tail] = intervals[head];
+        }
+
+        intervals[head] = pivot;
+        return head;
+    }
+}
+```
