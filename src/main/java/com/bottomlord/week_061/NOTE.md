@@ -389,3 +389,153 @@ class Solution {
     }
 }
 ```
+# LeetCode_253_会议室II
+## 题目
+给定一个会议时间安排的数组，每个会议时间都会包括开始和结束的时间 [[s1,e1],[s2,e2],...] (si < ei)，为避免会议冲突，同时要考虑充分利用会议室资源，请你计算至少需要多少间会议室，才能满足这些会议安排。
+
+示例 1:
+```
+输入: [[0, 30],[5, 10],[15, 20]]
+输出: 2
+```
+示例 2:
+```
+输入: [[7,10],[2,4]]
+输出: 1
+```
+## 解法
+### 思路
+- 根据数组元素的第一个值进行升序排序，如果第一个值相同就以第二个值升序
+- 生成与二维数组长度相同的布尔数组`memo`，作为记忆化搜索的记录表
+- 开始循环，退出条件是`memo`的所有元素都为true
+- 循环体内：
+    - 初始化一个起始区间，`{-1,-1}`作为每次判断的上一个区间
+    - 会议室格式自增1
+    - 从窗口的第一个元素开始判断
+        - 如果当前坐标的`memo`值为true，跳过
+        - 如果当前区间的起始值比上一个窗口的结束值小，跳过
+        - 如果如上两种情况都不是，说明当前这个会议室的当前区间可连续，翻转`memo[i]`
+        - 将当前窗口作为下一次循环的上个窗口
+- 最终返回会议室个数
+### 代码
+```java
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        int len = intervals.length;
+        if (len == 0) {
+            return 0;
+        }
+
+        Arrays.sort(intervals, (x1, x2) -> {
+            if (x1[0] == x2[0]) {
+                return Integer.compare(x1[1], x2[1]);
+            }
+            
+            return Integer.compare(x1[0], x2[0]);
+        });
+        
+        boolean[] memo = new boolean[len];
+        int ans = 0;
+        
+        while (!allDone(memo)) {
+            ans++;
+            int[] pre = {-1,-1};
+            for (int i = 0; i < len; i++) {
+                if (memo[i] || intervals[i][0] < pre[1]) {
+                    continue;
+                }
+                
+                memo[i] = true;
+                pre = intervals[i];
+            }
+        }
+        
+        return ans;
+    }
+
+    private boolean allDone(boolean[] memo) {
+        for (boolean m : memo) {
+            if (!m) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+- 如果站在会议室使用者的角度，当发现当前会议室被占用后，就会另找一个会议室
+- 基于这点，先将会议室窗口集合按照起始时间排序，放入优先级队列
+- 使用一个list用于暂存会议室最新的窗口
+- 然后遍历优先级队列，在发现如下情况时新增会议室
+    - list为空
+    - 没有窗口能对接当前队列中弹出的窗口
+- 队列为空后，返回list的长度
+### 代码
+```java
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        PriorityQueue<int[]> queue = new PriorityQueue<>(Comparator.comparing(x -> x[0]));
+        for (int[] interval : intervals) {
+            queue.offer(interval);
+        }
+        
+        List<int[]> list = new LinkedList<>();
+        while (!queue.isEmpty()) {
+            int[] cur = queue.poll();
+            
+            if (list.isEmpty()) {
+                list.add(cur);
+                continue;
+            }
+
+            boolean flag = false;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i)[1] <= cur[0]) {
+                    list.set(i, cur);
+                    flag = true;
+                    break;
+                }
+            }
+            
+            if (!flag) {
+                list.add(cur);
+            }
+        }
+        
+        return list.size();
+    }
+}
+```
+## 解法三
+### 思路
+小顶堆（优化解法二）：
+- 从使用者的角度，只会观察所有会议室的结束时间，因为要最小化会议室个数，那就从目前开启的会议室中开始找可以接上使用的，只有到没有的时候再新加会议室
+- 对窗口数组基于起始时间排序
+- 初始化一个小顶堆
+- 遍历窗口数组：
+- 如下情况下，直接压入结束时间，代表新开一个会议室
+    - 如果堆为空
+    - 如果堆顶元素大于当前起始时间
+- 如果堆顶元素比当前窗口的起始时间小或者等于，弹出堆顶元素，压入当前窗口的结束时间，代表使用该会议室
+- 遍历窗口元素结束后，返回堆的个数
+### 代码
+```java
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        Arrays.sort(intervals, Comparator.comparing(x -> x[0]));
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+
+        for (int[] interval : intervals) {
+            if (queue.isEmpty() || queue.peek() <= interval[0]) {
+                queue.poll();
+            }
+            queue.offer(interval[1]);
+        }
+        
+        return queue.size();
+    }
+}
+```
