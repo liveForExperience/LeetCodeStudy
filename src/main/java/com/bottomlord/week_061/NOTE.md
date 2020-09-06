@@ -622,3 +622,114 @@ class Solution {
     }
 }
 ```
+# LeetCode_255_验证前序遍历序列二叉搜索树
+## 题目
+给定一个整数数组，你需要验证它是否是一个二叉搜索树正确的先序遍历序列。
+
+你可以假定该序列中的数都是不相同的。
+
+参考以下这颗二叉搜索树：
+```
+     5
+    / \
+   2   6
+  / \
+ 1   3
+```
+示例 1：
+```
+输入: [5,2,6,1,3]
+输出: false
+```
+示例 2：
+```
+输入: [5,2,1,3,6]
+输出: true
+```
+## 解法
+### 思路
+分治：
+- 先序代表第一个元素是根节点，然后依次是左子树和右子树
+- 而二叉搜索数树的特点就是：
+    - 左子树的所有节点值都小于根节点
+    - 右子树的所有节点值都大于根节点
+- 递归分治的主要逻辑就是依照如上的逻辑，找到左右子树的临界点，然后判断是否两部分都符合这个二叉树的规则
+    - 如果符合，就继续分治递归，分别再判断左右子树
+    - 如果不符合，就直接返回false，所以这个递归方程返回的就是boolean 
+### 代码
+```java
+class Solution {
+    public boolean verifyPreorder(int[] preorder) {
+        return recurse(preorder, 0, preorder.length - 1);
+    }
+
+    private boolean recurse(int[] preorder, int start, int end) {
+        if (start >= end) {
+            return true;
+        }
+
+        int i = end;
+        while (i >= start && preorder[i] > preorder[start]) {
+            i--;
+        }
+
+        for (int j = start; j <= i; j++) {
+            if (preorder[j] > preorder[start]) {
+                return false;
+            }
+        }
+
+        return recurse(preorder, start + 1, i) && recurse(preorder, i + 1, end);
+    }
+}
+```
+## 解法二
+### 思路
+单调栈:
+- 先序遍历的顺序：
+    - 先将每棵树的根节点放入序列中，也就是二叉搜索树的中间值会先放入序列中
+    - 然后会遍历左子树，继续放左子树的根节点
+    - 直到放到叶子节点，此时再返回放上一侧根节点的右子树的根节点
+    - 所以这个过程从序列中看，就是先一直降序，然后大一点，可能继续降序，然后再大一点，但都比第一个元素小
+    - 然后突然开始都比根节点大，但还是一直降序，又大一点，又开始降序
+- 那么这个过程就可以使用单调栈来模拟：
+    - 遍历这个先序序列
+    - 初始化
+        - 一个最小值，比如int的最小值
+        - 一个模拟过程用的栈，初始将序列的根节点放入栈中
+    - 在遍历过程中，
+        - 如果栈不为空，而且元素都比栈顶元素小，那么说明当前在一个找当前根节点代表的二叉搜索树的最左侧叶子节点的过程中，这个过程会是一直降序的，那就把这些元素都放到栈里面，同时更新游标，继续遍历
+        - 移动游标的过程一直到出现一个比栈顶元素大的值为止，这个值就是模拟过程中左侧叶子节点被遍历到以后出现的第一个右子树节点，这个时候代表降序过程结束了，之前的栈顶元素就是当前二叉树的最小值，更新这个最小值，并把这个最小值弹出
+        - 如上弹出和更新最小值的过程会直到当前这个右子树根节点的左子树和它的根节点都被弹出才截至
+        - 然后又会开始一个新的，以这个右子树根节点为起点的新的降序过程
+        - 所以这个过程就是一个循环往复的过程，一切都会循环到整个序列结束
+        - 而在这个过程中，永远都不应该出现比暂存的最小值更小的值出现，因为暂存的最小值是在降序过程结束后，找到当前二叉树最小值之后，基于这个最小值做的更新，所以如果在之后的过程中还出现比这个更小的值，就说明这个先序遍历的顺序是有问题的
+### 代码
+```java
+class Solution {
+    public boolean verifyPreorder(int[] preorder) {
+        if (preorder == null || preorder.length <= 1) {
+            return true;
+        }
+        
+        Stack<Integer> stack = new Stack<>();
+        stack.push(preorder[0]);
+        int min = Integer.MIN_VALUE, i = 1;
+        
+        while (i < preorder.length) {
+            if (min > preorder[i]) {
+                return false;
+            }
+            
+            if (!stack.isEmpty() && preorder[i] > stack.peek()) {
+                min = stack.pop();
+            } else {
+                stack.push(preorder[i]);
+                i++;
+            }
+        }
+        
+        return true;
+    }
+}
+```
