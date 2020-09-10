@@ -217,3 +217,85 @@ class Solution {
     }
 }
 ```
+# LeetCode_261_以图判树
+## 题目
+给定从 0 到 n-1 标号的 n 个结点，和一个无向边列表（每条边以结点对来表示），请编写一个函数用来判断这些边是否能够形成一个合法有效的树结构。
+
+示例 1：
+```
+输入: n = 5, 边列表 edges = [[0,1], [0,2], [0,3], [1,4]]
+输出: true
+```
+示例 2:
+```
+输入: n = 5, 边列表 edges = [[0,1], [1,2], [2,3], [1,3], [1,4]]
+输出: false
+注意：你可以假定边列表 edges 中不会出现重复的边。由于所有的边是无向边，边 [0,1] 和边 [1,0] 是相同的，因此不会同时出现在边列表 edges 中。
+```
+## 解法
+### 思路
+- 成为树的条件：
+    - 连通分量为1
+    - 图是无环图
+- 用并查集合并所有边，如果边的两个点在同一个集合里，那说明有环，直接返回false
+- 如果没有环，就做合并，并在初始的时候设置一个变量count，用来计算合并的次数，如果每次都合并，且合并次数为n-1，那么说明连通分量为1
+### 代码
+```java
+class Solution {
+    public boolean validTree(int n, int[][] edges) {
+        DSU dsu = new DSU(n);
+        for (int[] edge : edges) {
+            if (!dsu.union(edge[0], edge[1])) {
+                return false;
+            }
+        }
+
+        return dsu.count() == 1;
+    }
+
+    class DSU {
+        private int[] parent;
+        private int[] rank;
+        private int count;
+
+        private DSU(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+            count = n;
+        }
+
+        private int find(int x) {
+            if (parent[x] != x) {
+                return find(parent[x]);
+            }
+            return parent[x];
+        }
+
+        private boolean union(int x, int y) {
+            int rootX = find(x), rootY = find(y);
+            if (rootX == rootY) {
+                return false;
+            }
+
+            if (rank[rootX] > rank[rootY]) {
+                parent[rootY] = rootX;
+            } else if (rank[rootY] > rank[rootX]) {
+                parent[rootX] = rootY;
+            } else {
+                parent[rootX] = rootY;
+                rank[rootY]++;
+            }
+            
+            count--;
+            return true;
+        }
+
+        private int count() {
+            return this.count;
+        }
+    }
+}
+```

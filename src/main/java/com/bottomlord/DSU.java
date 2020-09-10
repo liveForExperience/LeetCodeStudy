@@ -4,8 +4,8 @@ public class DSU {
     public int[] parent;
 
     public DSU(int n) {
-        parent = new int[n];
-        for (int i = 0; i < n; ++i) {
+        this.parent = new int[n];
+        for (int i = 0; i < n; i++) {
             parent[i] = i;
         }
     }
