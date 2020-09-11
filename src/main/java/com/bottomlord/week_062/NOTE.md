@@ -299,3 +299,146 @@ class Solution {
     }
 }
 ```
+# LeetCode_265_粉刷房子
+## 题目
+假如有一排房子，共 n 个，每个房子可以被粉刷成 k 种颜色中的一种，你需要粉刷所有的房子并且使其相邻的两个房子颜色不能相同。
+
+当然，因为市场上不同颜色油漆的价格不同，所以房子粉刷成不同颜色的花费成本也是不同的。每个房子粉刷成不同颜色的花费是以一个 n x k 的矩阵来表示的。
+
+例如，costs[0][0] 表示第 0 号房子粉刷成 0 号颜色的成本花费；costs[1][2] 表示第 1 号房子粉刷成 2 号颜色的成本花费，以此类推。请你计算出粉刷完所有房子最少的花费成本。
+
+注意：
+```
+所有花费均为正整数。
+```
+示例：
+```
+输入: [[1,5,3],[2,9,4]]
+输出: 5
+解释: 将 0 号房子粉刷成 0 号颜色，1 号房子粉刷成 2 号颜色。最少花费: 1 + 4 = 5; 
+     或者将 0 号房子粉刷成 2 号颜色，1 号房子粉刷成 0 号颜色。最少花费: 3 + 2 = 5. 
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j]`：第i号房子使用第j种颜色时，区间`[0,i]`的最小花费
+- base case：`dp[0][j] = costs[0][j]`
+- 状态转移方程：`dp[i][j] = costs[i][j] + min(dp[i - 1][j])`
+- 返回结果：`min(dp[i][j])`
+- 过程：
+    - 嵌套遍历，外层遍历i，内层遍历j
+    - 外层遍历时：
+        - `i == 0`：处理base case
+        - `i == len - 1`：额外比较结果值
+        - 其他情况处理中层循环
+    - 中层循环：遍历所有颜色j的可能
+    - 内层循环：遍历所有颜色，当与j相同时跳过，其他情况则处理状态转移方程
+        
+### 代码
+```java
+class Solution {
+    public int minCostII(int[][] costs) {
+        int n = costs.length;
+        if (n == 0) {
+            return 0;
+        }
+
+        int k = costs[0].length;
+        int[][] dp = new int[n][k];
+        System.arraycopy(costs[0], 0, dp[0], 0, k);
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < k; j++) {
+                int min = Integer.MAX_VALUE;
+                for (int m = 0; m < k; m++) {
+                    if (m == j) {
+                        continue;
+                    }
+                    
+                    min = Math.min(min, dp[i - 1][m]);
+                }
+                
+                dp[i][j] = costs[i][j] + min;
+            }
+        }
+
+        return Arrays.stream(dp[n - 1]).min().getAsInt();
+    }
+}
+```
+## 解法二
+### 思路
+- 要将时间复杂度降低，就需要考虑状态转移时候是否能将遍历两次的颜色状态降到遍历1次，又因为颜色是常数，所以时间复杂度就可以降到`O(KN)`
+- 解法一中，每一号房子都要遍历使用j颜色时，其他dp颜色的最小值
+- 但其实当前状态只取决于2种情况：
+    - 当前使用的颜色和上一号房子花费最小值使用的颜色不同，那么就直接用当前花费加上上一层的最小值即可
+    - 当前使用的颜色和上一号房子花费最小值使用的颜色相同，那么就应该使用第二小的值
+- 所以如上所述，只要记录每一层的最小和次小两个值，且同时记录对应的颜色坐标，就能直接获得目标状态
+### 代码
+```java
+class Solution {
+    public int minCostII(int[][] costs) {
+        int row = costs.length;
+        if (row == 0) {
+            return 0;
+        }
+
+        int col = costs[0].length;
+        if (col == 0) {
+            return 0;
+        }
+        
+        int one = Integer.MAX_VALUE, oneIndex = 0,
+            two = Integer.MAX_VALUE,
+            ans = Integer.MAX_VALUE;
+
+        int[][] dp = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                dp[i][j] = Integer.MAX_VALUE;
+            }
+        }
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if(i == 0) {
+                    dp[i][j] = costs[i][j];
+                    if(row == 1) {
+                        ans = Math.min(ans, dp[i][j]);
+                    }
+                    continue;
+                }
+                
+                if (j != oneIndex) {
+                    dp[i][j] = Math.min(dp[i][j], one + costs[i][j]);
+                } else {
+                    dp[i][j] = Math.min(dp[i][j], two + costs[i][j]);
+                }
+                
+                if (i == row - 1) {
+                    ans = Math.min(ans, dp[i][j]);
+                }
+            }
+            
+            one = Integer.MAX_VALUE; 
+            oneIndex = 0;
+            two = Integer.MAX_VALUE;
+            
+            for (int j = 0; j < col; j++) {
+                if (dp[i][j] < one) {
+                    one = dp[i][j];
+                    oneIndex = j;
+                }
+            }
+            
+            for (int j = 0; j < col; j++) {
+                if (j != oneIndex && dp[i][j] < two) {
+                    two = dp[i][j];
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
