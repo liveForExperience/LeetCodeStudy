@@ -442,3 +442,58 @@ class Solution {
     }
 }
 ```
+# LeetCode_266_回文排列
+## 题目
+给定一个字符串，判断该字符串中是否可以通过重新排列组合，形成一个回文字符串。
+
+示例 1：
+```
+输入: "code"
+输出: false
+```
+示例 2：
+```
+输入: "aab"
+输出: true
+```
+示例 3：
+```
+输入: "carerac"
+输出: true
+```
+## 解法
+### 思路
+- 使用数组记录字符出现的个数，如果只有一个或没有字符出现奇数次，这个就是回文串
+- 先遍历确定数组的长度，长度基于字符串字符的最大值 + 1
+- 然后遍历字符串，记录出现的次数
+- 最后遍历数组，找到奇数的个数
+- 返回奇数是否小于等于1
+### 代码
+```java
+class Solution {
+    public boolean canPermutePalindrome(String s) {
+        if (s == null || s.length() == 0) {
+            return true;
+        }
+
+        int len = 0;
+        for (char c : s.toCharArray()) {
+            len = Math.max(len, c);
+        }
+
+        int[] bucket = new int[len + 1];
+        for (char c : s.toCharArray()) {
+            bucket[c]++;
+        }
+
+        int odd = 0;
+        for (int num : bucket) {
+            if (num % 2 == 1) {
+                odd++;
+            }
+        }
+
+        return odd <= 1;
+    }
+}
+```
