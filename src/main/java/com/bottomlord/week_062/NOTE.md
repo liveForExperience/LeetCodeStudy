@@ -497,3 +497,91 @@ class Solution {
     }
 }
 ```
+# LeetCode_267_回文排列II
+## 题目
+给定一个字符串 s ，返回其通过重新排列组合后所有可能的回文字符串，并去除重复的组合。
+
+如不能形成任何回文排列时，则返回一个空列表。
+
+示例 1：
+```
+输入: "aabb"
+输出: ["abba", "baab"]
+```
+示例 2：
+```
+输入: "abc"
+输出: []
+```
+## 解法
+### 思路
+- 使用桶计数判断是否时回文串，奇数次的字符最多1个
+- 将字符换拆分成3部分，前后对应的回文串和中间可能的奇数字符，只需保留前面1部分的回文串
+- 回溯遍历所有的回文串可能，并记录
+### 代码
+```java
+class Solution {
+    public List<String> generatePalindromes(String s) {
+        if (s == null || s.length() == 0) {
+            return new ArrayList<>();
+        }
+
+        int[] bucket = new int[128];
+        if (!canPermutePalindromes(s, bucket)) {
+            return new ArrayList<>();
+        }
+
+        char c = 0;
+        int index = 0;
+        char[] cs = new char[s.length() / 2];
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] % 2 == 1) {
+                c = (char) i;
+            }
+
+            for (int j = 0; j < bucket[i] / 2; j++) {
+                cs[index++] = (char) i;
+            }
+        }
+
+        Set<String> ans = new HashSet<>();
+        permute(ans, 0, cs, c);
+        return new ArrayList<>(ans);
+    }
+
+    private boolean canPermutePalindromes(String s, int[] bucket) {
+        int count = 0;
+        for (char c : s.toCharArray()) {
+            bucket[c]++;
+            if (bucket[c] % 2 == 0) {
+                count--;
+            } else {
+                count++;
+            }
+        }
+        
+        return count <= 1;
+    }
+
+    private void swap(char[] cs, int x, int y) {
+        char c = cs[x];
+        cs[x] = cs[y];
+        cs[y] = c;
+    }
+
+    private void permute(Set<String> ans, int index, char[] cs, char c) {
+        if (index == cs.length) {
+            ans.add(new String(cs) + (c == 0 ? "" : c) + new StringBuilder(new String(cs)).reverse());
+            return;
+        }
+
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] != cs[index] || i == index) {
+                swap(cs, i, index);
+                permute(ans, index + 1, cs, c);
+                swap(cs, i, index);
+            }
+        }
+    }
+}
+```
