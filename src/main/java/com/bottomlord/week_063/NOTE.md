@@ -134,3 +134,87 @@ class Solution {
     }
 }
 ```
+# LeetCode_270_最接近的二叉搜索数值
+## 题目
+给定一个不为空的二叉搜索树和一个目标值 target，请在该二叉搜索树中找到最接近目标值 target 的数值。
+
+注意：
+```
+给定的目标值 target 是一个浮点数
+题目保证在该二叉搜索树中只会存在一个最接近目标值的数
+```
+示例：
+```
+输入: root = [4,2,5,1,3]，目标值 target = 3.714286
+
+    4
+   / \
+  2   5
+ / \
+1   3
+
+输出: 4
+```
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    private double minDiff = Double.MAX_VALUE;
+    private int min = Integer.MAX_VALUE;
+    public int closestValue(TreeNode root, double target) {
+        dfs(root, target);
+        return min;
+    }
+    
+    private void dfs(TreeNode node, double target) {
+        if (node == null) {
+            return;
+        }
+
+        double diff = Math.abs(node.val - target);
+        if (diff < minDiff) {
+            minDiff = diff;
+            min = node.val;
+        }
+
+        if (node.val > target) {
+            dfs(node.left, target);
+        } else {
+            dfs(node.right, target);
+        }
+    }
+}
+```
+## 解法二
+### 思路
+无状态dfs
+### 代码
+```java
+class Solution {
+    public int closestValue(TreeNode root, double target) {
+        return dfs(root, target, root.val);
+    }
+
+    private int dfs(TreeNode node, double target, int best) {
+        if (Math.abs(best - target) > Math.abs(node.val - target)) {
+            best = node.val;
+        }
+
+        if (target > node.val) {
+            if (node.right == null) {
+                return best;
+            } else {
+                return dfs(node.right, target, best);
+            }
+        } else {
+            if (node.left == null) {
+                return best;
+            } else {
+                return dfs(node.left, target, best);
+            }
+        }
+    }
+}
+```
