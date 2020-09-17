@@ -328,3 +328,72 @@ public class Codec {
     }
 }
 ```
+# LeetCode_272_最接近的二叉搜索树值
+## 题目
+给定一个不为空的二叉搜索树和一个目标值 target，请在该二叉搜索树中找到最接近目标值 target 的 k 个值。
+
+注意：
+```
+给定的目标值 target 是一个浮点数
+你可以默认 k 值永远是有效的，即 k ≤ 总结点数
+题目保证该二叉搜索树中只会存在一种 k 个值集合最接近目标值
+```
+示例：
+```
+输入: root = [4,2,5,1,3]，目标值 = 3.714286，且 k = 2
+
+    4
+   / \
+  2   5
+ / \
+1   3
+
+输出: [4,3]
+拓展：
+假设该二叉搜索树是平衡的，请问您是否能在小于 O(n)（n 为总结点数）的时间复杂度内解决该问题呢？
+```
+## 解法
+### 思路
+- 中序遍历二叉搜索树，遍历的顺序是从小到大的升序
+- 在遍历时用一个list存储可能的值
+- 在处理当前节点时，使用如下规则：
+    - 如果list的大小不到k，直接将当前值放入
+    - 否则：
+        - 如果当前值与target的差，小于第一个元素（最小）的元素与target的差，那么将第一个元素去除，将当前值放入list尾部
+        - 如果不是，就直接跳过
+    - 如上规则能够有效的原因：
+        - 遍历顺序是升序，所以入list的值的序列也只会是升序
+        - 那么从list头部的值开始，依次遍历并与target比较的过程，一定是如下情况：
+            - 不断趋近：说明头部的值会是最差解，如果有比其更好的值，就替换
+            - 不断远离：说明头部的值会是最优解，不可能有比其更好的值
+            - 趋近后再远离：
+                - 说明头部的值一定在开始阶段是最差解，此时有更优解，应该替换
+                - 如果第一次出现比头部值更差的解，且此时还在list容量范围内，那么之后也就不会有比头部值更好的解了
+- 遍历结束后，返回list
+### 代码
+```java
+class Solution {
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {
+        LinkedList<Integer> ans = new LinkedList<>();
+        dfs(root, target, k, ans);
+        return ans;
+    }
+
+    private void dfs(TreeNode node, double target, int k, LinkedList<Integer> list) {
+        if (node == null) {
+            return;
+        }
+
+        dfs(node.left, target, k, list);
+        if (list.size() < k) {
+            list.addLast(node.val);
+        } else if (Math.abs(node.val - target) < Math.abs(list.getFirst() - target)) {
+            list.removeFirst();
+            list.addLast(node.val);
+        } else {
+            return;
+        }
+        dfs(node.right, target, k, list);
+    }
+}
+```
