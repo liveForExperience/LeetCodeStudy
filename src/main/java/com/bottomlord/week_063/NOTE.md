@@ -397,3 +397,120 @@ class Solution {
     }
 }
 ```
+# LeetCode_685_冗余链接II
+## 题目
+在本问题中，有根树指满足以下条件的有向图。该树只有一个根节点，所有其他节点都是该根节点的后继。每一个节点只有一个父节点，除了根节点没有父节点。
+
+输入一个有向图，该图由一个有着N个节点 (节点值不重复1, 2, ..., N) 的树及一条附加的边构成。附加的边的两个顶点包含在1到N中间，这条附加的边不属于树中已存在的边。
+
+结果图是一个以边组成的二维数组。 每一个边 的元素是一对 [u, v]，用以表示有向图中连接顶点 u 和顶点 v 的边，其中 u 是 v 的一个父节点。
+
+返回一条能删除的边，使得剩下的图是有N个节点的有根树。若有多个答案，返回最后出现在给定二维数组的答案。
+
+示例 1:
+```
+输入: [[1,2], [1,3], [2,3]]
+输出: [2,3]
+解释: 给定的有向图如下:
+  1
+ / \
+v   v
+2-->3
+```
+示例 2:
+```
+输入: [[1,2], [2,3], [3,4], [4,1], [1,5]]
+输出: [4,1]
+解释: 给定的有向图如下:
+5 <- 1 -> 2
+     ^    |
+     |    v
+     4 <- 3
+```
+注意:
+```
+二维数组大小的在3到1000范围内。
+二维数组中的每个整数在1到N之间，其中 N 是二维数组的大小。
+```
+## 解法
+### 思路
+并查集
+- 有根树的特点:
+    - 只有一个入度为0的节点，这个节点为根节点
+    - 除根节点外，其他节点的入度都为1
+    - 不成环
+- 判断：
+    - 根据有向图，计算入度
+    - 然后倒序遍历有向图集合，判断入度为2的节点所在这条边，如果不放入并查集中，是否会形成有向图，如果不会，这条边就是额外的边
+    - 如果入度都不为2，那就遍历有向图集合，判断哪条边删除后，不是有环图，那么这条边就是额外的边
+### 代码
+```java
+class Solution {
+    public int[] findRedundantDirectedConnection(int[][] edges) {
+        int len = edges.length;
+
+        int[] inDegrees = new int[len + 1];
+        for (int[] edge : edges) {
+            inDegrees[edge[1]]++;
+        }
+
+        for (int i = len - 1; i >= 0; i--) {
+            if (inDegrees[edges[i][1]] == 2 && removeAndNoCircle(edges, i)) {
+                return edges[i];
+            }
+        }
+
+        for (int i = len - 1; i >= 0; i--) {
+            if (removeAndNoCircle(edges, i)) {
+                return edges[i];
+            }
+        }
+
+        return null;
+    }
+
+    private boolean removeAndNoCircle(int[][] edges, int i) {
+        int len = edges.length;
+        UnionFind unionFind = new UnionFind(len + 1);
+
+        for (int j = 0; j < len; j++) {
+            if (i == j) {
+                continue;
+            }
+
+            if (!unionFind.union(edges[j][1], edges[j][0])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    static class UnionFind {
+        private int[] parents;
+        public UnionFind(int n) {
+            this.parents = new int[n];
+            for (int i = 0; i < n; i++) {
+                this.parents[i] = i;
+            }
+        }
+
+        public int find(int x) {
+            if (x != parents[x]) {
+                parents[x] = find(parents[x]);
+            }
+            return parents[x];
+        }
+
+        public boolean union(int x, int y) {
+            int px = find(x), py = find(y);
+            if (px == py) {
+                return false;
+            }
+
+            parents[px] = py;
+            return true;
+        }
+    }
+}
+```
