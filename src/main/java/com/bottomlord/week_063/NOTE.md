@@ -514,3 +514,119 @@ class Solution {
     }
 }
 ```
+# LeetCode_273_整数转换英文表示
+## 题目
+将非负整数转换为其对应的英文表示。可以保证给定输入小于 231 - 1 。
+
+示例 1:
+```
+输入: 123
+输出: "One Hundred Twenty Three"
+```
+示例 2:
+```
+输入: 12345
+输出: "Twelve Thousand Three Hundred Forty Five"
+```
+示例 3:
+```
+输入: 1234567
+输出: "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+```
+示例 4:
+```
+输入: 1234567891
+输出: "One Billion Two Hundred Thirty Four Million Five Hundred Sixty Seven Thousand Eight Hundred Ninety One"
+```
+## 解法
+### 思路
+硬做：
+- 用两个map存储会用到的字符串
+    - 一个用来存1000以内的数会用到的所有字符串
+    - 一个用来存储3个位一段所对应的字符串
+- 将数字分成3个一部分，用字符串表示出1000以内的数字
+- 然后拼接上当前这段的字符串表示
+### 代码
+```java
+class Solution {
+    private Map<Integer, String> map = new HashMap<>();
+    private Map<Integer, String> map2 = new HashMap<>();
+
+    {
+        map.put(1, "One");
+        map.put(2, "Two");
+        map.put(3, "Three");
+        map.put(4, "Four");
+        map.put(5, "Five");
+        map.put(6, "Six");
+        map.put(7, "Seven");
+        map.put(8, "Eight");
+        map.put(9, "Nine");
+        map.put(10, "Ten");
+        map.put(11, "Eleven");
+        map.put(12, "Twelve");
+        map.put(13, "Thirteen");
+        map.put(14, "Fourteen");
+        map.put(15, "Fifteen");
+        map.put(16, "Sixteen");
+        map.put(17, "Seventeen");
+        map.put(18, "Eighteen");
+        map.put(19, "Nineteen");
+        map.put(20, "Twenty");
+        map.put(30, "Thirty");
+        map.put(40, "Forty");
+        map.put(50, "Fifty");
+        map.put(60, "Sixty");
+        map.put(70, "Seventy");
+        map.put(80, "Eighty");
+        map.put(90, "Ninety");
+        map2.put(0, "");
+        map2.put(1, "Thousand");
+        map2.put(2, "Million");
+        map2.put(3, "Billion");
+    }
+
+    public String numberToWords(int num) {
+        if (num == 0) {
+            return "Zero";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        while (num != 0) {
+            int cur = num % 1000;
+
+            if (cur != 0) {
+                sb.insert(0, " ");
+                sb.insert(0, map2.get(index));
+
+                int n = cur % 100;
+                if (n == 0) {
+
+                } else if (n < 20) {
+                    sb.insert(0, " ");
+                    sb.insert(0, map.get(n));
+                } else if (map.containsKey(n)){
+                    sb.insert(0, " ");
+                    sb.insert(0, map.get(n));
+                } else {
+                    sb.insert(0, " ");
+                    sb.insert(0, map.get(n % 10));
+                    sb.insert(0, " ");
+                    sb.insert(0, map.get(n / 10 * 10));
+                }
+
+                if (cur / 100 * 100 != 0) {
+                    sb.insert(0, " ");
+                    sb.insert(0, map.get(cur / 100) + " Hundred");
+                }
+            }
+
+            index++;
+            num /= 1000;
+        }
+
+        return sb.toString().trim();
+    }
+}
+```
