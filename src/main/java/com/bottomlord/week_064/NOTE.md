@@ -70,3 +70,66 @@ class Solution {
     }
 }
 ```
+# LeetCode_968_监控二叉树
+## 题目
+给定一个二叉树，我们在树的节点上安装摄像头。
+
+节点上的每个摄影头都可以监视其父对象、自身及其直接子对象。
+
+计算监控树的所有节点所需的最小摄像头数量。
+
+示例 1：
+```
+输入：[0,0,null,0,0]
+输出：1
+解释：如图所示，一台摄像头足以监控所有节点。
+```
+示例 2：
+```
+输入：[0,0,null,0,null,0,null,null,0]
+输出：2
+解释：需要至少两个摄像头来监视树的所有节点。 上图显示了摄像头放置的有效位置之一。
+```
+提示：
+```
+给定树的节点数的范围是 [1, 1000]。
+每个节点的值都是 0。
+```
+## 解法
+### 思路
+贪心算法：
+- 如果叶子节点上放camera，能够监控到自身和父节点
+- 如果叶子节点的父节点放camera，能够监控到自身，叶子节点，叶子节点的兄弟节点
+- 第二种方法好于第一种
+- 所以从底部向上，只给叶子节点的父节点设置camera，然后删除被覆盖的节点
+- 继续之前的逻辑
+- 过程：
+- dfs
+- 如果当前节点为叶子节点，设置为0返回
+- 如果当前节点的左右子节点有叶子节点，camera计数，并返回1
+- 如果当前节点的子节点没有叶子节点，且有设置camera的节点，返回2，代表已经被监控
+- 最后返回camera数量，同时判断root节点是否是0，如果是，说明root还需要设置camera来监控自己
+### 代码
+```java
+class Solution {
+    int camera = 0;
+    public int minCameraCover(TreeNode root) {
+        return (dfs(root) == 0 ? 1 : 0) + camera;
+    }
+    
+    private int dfs(TreeNode node) {
+        if (node == null) {
+            return 2;
+        }
+        
+        int left = dfs(node.left), right = dfs(node.right);
+        
+        if (left == 0 || right == 0) {
+            camera++;
+            return 1;
+        }
+        
+        return left == 1 || right == 1 ? 2 : 0;
+    }
+}
+```
