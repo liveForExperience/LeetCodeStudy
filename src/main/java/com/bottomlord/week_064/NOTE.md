@@ -269,3 +269,108 @@ public class Solution extends Relation {
     }
 }
 ```
+# LeetCode_280_摆动排序
+## 题目
+给你一个无序的数组 nums, 将该数字 原地 重排后使得 nums[0] <= nums[1] >= nums[2] <= nums[3]...。
+
+示例:
+```
+输入: nums = [3,5,2,1,6,4]
+输出: 一个可能的解答是 [3,5,1,6,2,4]
+```
+## 解法
+### 思路
+- 拷贝并排序生成order
+- 生成头尾指针`head`和`tail`，用于标记order
+- 然后从头开始，`head`递增，`tail`递减地相向重新生成数组，知道`head`和`tail`相遇
+### 代码
+```java
+class Solution {
+    public void wiggleSort(int[] nums) {
+        int len = nums.length;
+        if (len < 2) {
+            return;
+        }
+        
+        int[] copy = Arrays.copyOf(nums, len);
+        quickSort(copy, 0, len - 1);
+        int head = 0, tail = len - 1;
+        
+        int i = 0;
+        while (head <= tail) {
+            if (head == tail) {
+                nums[i] = copy[head++];
+            } else {
+                nums[i++] = copy[head++];
+                nums[i++] = copy[tail--];
+            }
+        }
+    }
+    private void quickSort(int[] nums, int head, int tail) {
+        if (head >= tail) {
+            return;
+        }
+        int index = partition(nums, head, tail);
+
+        quickSort(nums, head, index - 1);
+        quickSort(nums, index + 1, tail);
+    }
+
+    private int partition(int[] nums, int head, int tail) {
+        int pivot = nums[head];
+
+        while (head < tail) {
+            while (head < tail && nums[tail] >= pivot) {
+                tail--;
+            }
+
+            nums[head] = nums[tail];
+
+            while (head < tail && nums[head] <= pivot) {
+                head++;
+            }
+
+            nums[tail] = nums[head];
+        }
+
+        nums[head] = pivot;
+        return head;
+    }
+}
+```
+## 解法二
+### 思路
+- 排序
+- 从第二个元素(下标1)开始，和后面一个元素互换
+### 代码
+```java
+class Solution {
+    public void wiggleSort(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 1; i < nums.length - 1; i += 2) {
+            int tmp = nums[i];
+            nums[i] = nums[i + 1];
+            nums[i + 1] = tmp;
+        }
+    }
+}
+```
+## 解法三
+### 思路
+- 一次遍历：
+    - 如果是奇数位，且比后一个元素大，交换
+    - 如果是偶数位，且比后一个元素小，交换
+### 代码
+```java
+class Solution {
+    public void wiggleSort(int[] nums) {
+        for (int i = 0; i < nums.length - 1; i++) {
+            if ((i % 2 == 0) == (nums[i] > nums[i + 1])) {
+                int tmp = nums[i];
+                nums[i] = nums[i + 1];
+                nums[i + 1] = tmp;
+            }
+        }
+    }
+}
+```
