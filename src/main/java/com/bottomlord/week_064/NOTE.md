@@ -433,3 +433,83 @@ public class ZigzagIterator {
     }
 }
 ```
+# LeetCode_282_给表达式添加运算符
+## 题目
+给定一个仅包含数字 0-9 的字符串和一个目标值，在数字之间添加二元运算符（不是一元）+、- 或 * ，返回所有能够得到目标值的表达式。
+
+示例 1:
+```
+输入: num = "123", target = 6
+输出: ["1+2+3", "1*2*3"] 
+```
+示例 2:
+```
+输入: num = "232", target = 8
+输出: ["2*3+2", "2+3*2"]
+```
+示例 3:
+```
+输入: num = "105", target = 5
+输出: ["1*0+5","10-5"]
+```
+示例 4:
+```
+输入: num = "00", target = 0
+输出: ["0+0", "0-0", "0*0"]
+```
+示例 5:
+```
+输入: num = "3456237490", target = 9191
+输出: []
+```
+## 解法
+### 思路
+回溯
+- 使用StringBuilder记录可能的组合，并对其进行回溯的相关操作
+- 计算`+`和`-`时，只需要记录之前的结果，再与当前层产生的数值基于符号进行计算即可，然后不断下钻，直到遍历到字符串最后
+- 但增加了`*`后，因为有了优先级的概念，则必须优先计算`*`，所以如果当前层要与之前的结果进行相乘，必须先让结果`eval`与上一次`+`或`-`的操作数`pre`相减，然后再加上`pre * num`才行
+- 而如果之前的操作数对应的是符号`*`，则这个`pre`的值应该是上一层的pre再乘以上一层的num得到的
+- 所以在出现`*`后，回溯过程中不仅需要有上一层计算的结果，还需要有`pre`代表最近的非`*`对应的操作数，这个操作数可能是累乘得到的
+- 还要注意，在每一层生成当前`num`时，需要注意起始值为`0`的情况，这种数字是不合法的
+### 代码
+```java
+class Solution {
+    public List<String> addOperators(String num, int target) {
+        List<String> ans = new ArrayList<>();
+        dfs(num, target, ans, new StringBuilder(), 0, 0, 0);
+        return ans;
+    }
+
+    private void dfs(String num, int target, List<String> ans, StringBuilder sb, int start, long eval, long pre) {
+        if (start == num.length()) {
+            if (eval == target) {
+                ans.add(sb.toString());
+            }
+            return;
+        }
+
+        for (int i = start; i < num.length(); i++) {
+            if (num.charAt(start) == '0' && i > start) {
+                break;
+            }
+
+            long cur = Long.parseLong(num.substring(start, i + 1));
+            int len = sb.length();
+            
+            if (start == 0) {
+                dfs(num, target, ans, sb.append(cur), i + 1, cur, cur);
+                sb.setLength(len);
+            } else {
+                dfs(num, target, ans, sb.append("+").append(cur), i + 1, eval + cur, cur);
+                sb.setLength(len);
+
+                dfs(num, target, ans, sb.append("-").append(cur), i + 1, eval - cur, -cur);
+                sb.setLength(len);
+
+                dfs(num, target, ans, sb.append("*").append(cur), i + 1, eval - pre + pre * cur, pre * cur);
+                sb.setLength(len);
+            }
+        }
+    }
+}
+```
