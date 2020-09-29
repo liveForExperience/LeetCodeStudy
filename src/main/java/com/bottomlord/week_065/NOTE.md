@@ -136,3 +136,78 @@ class ValidWordAbbr {
     }
 }
 ```
+# LeetCode_291_单词规律II
+## 题目
+给你一种规律 pattern 和一个字符串 str，请你判断 str 是否遵循其相同的规律。
+
+这里我们指的是 完全遵循，例如 pattern 里的每个字母和字符串 str 中每个 非空 单词之间，存在着双向连接的对应规律。
+
+示例1:
+```
+输入: pattern = "abab", str = "redblueredblue"
+输出: true
+```
+示例2:
+```
+输入: pattern = "aaaa", str = "asdasdasdasd"
+输出: true
+```
+示例3:
+```
+输入: pattern = "aabb", str = "xyzabcxzyabc"
+输出: false
+```
+提示：
+```
+你可以默认 pattern 和 str 都只会包含小写字母。
+```
+## 解法
+### 思路
+回溯
+- 实例变量：map，用来暂存pattern和对应字符串之间的映射关系
+- 退出条件：
+    - patern和str的长度皆为0，返回true，说明搜索结束，全部匹配
+    - patern的长度为0，str不为0，返回false，说明当前映射方式不匹配
+- 处理部分：
+    1. 截取pattern的第一个字符，作为当前要确定的模式字符
+    2. 从1开始循环`str - pattern`的长度，代表，遍历从长度为1到最大可能映射长度的所有可能性
+    3. 循环体内，根据确定的映射字段长度，确定映射字符串
+    4. 通过截取的pattern第一个字符，到map中获取映射字段，然后判断是否符合如下情况，如果符合就进行实际的下钻和回溯
+        - 映射字段不为空，且与截取的待确定字段相等，说明当前待确认字符串是和之前层确定的字符串映射一致的，可以继续下钻
+        - 映射字段为空，且map中没有桶截取字段一致的value，代表当前待确认字符串能和截取的pattern组成一组新的映射
+    5. 将截取的pattern字符和映射字符串放入map中
+    6. 下钻，下钻时str进行截取，将当前确定的映射字符串从str中截去
+    7. 如果回溯的结果是true，代表已经匹配成功，直接返回true
+    8. 如果不是true，则将新增的映射关系，也就是当前层映射字段为空的情况下，将put的映射去除
+    9. 如果不是新增的映射关系，则不需处理，在当前层处理结束后，通过回溯再去除
+    10. 如果循环结束，没有返回true，则代表当前层的所有可能都不能匹配，返回false
+### 代码
+```java
+class Solution {
+    private Map<String, String> map = new HashMap<>();
+    public boolean wordPatternMatch(String pattern, String str) {
+        if (pattern.length() == 0) {
+            return str.length() == 0;
+        }
+
+        String p = pattern.substring(0, 1);
+        for (int i = 1; i <= str.length() - pattern.length() + 1; i++) {
+            String s = str.substring(0, i), mapping = map.get(p);
+
+            boolean isNewMatch = mapping == null && !map.containsValue(s),
+                    isOldMatch = mapping != null && Objects.equals(map.get(p), s);
+            if (isNewMatch || isOldMatch) {
+                map.put(p, s);
+                if (wordPatternMatch(pattern.substring(1), str.substring(i))) {
+                    return true;
+                }
+                if (isNewMatch) {
+                    map.remove(p);
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+```
