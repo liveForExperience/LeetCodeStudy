@@ -137,3 +137,42 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+dfs：
+- 自底向上
+- 使用1个变量：`node`代表当前层节点的指针
+- 退出条件：`node`为空时，返回0，说明当前层没有节点，距离就是0
+- 过程：
+    - 递归左右子树
+    - 返回左右子树的距离值，返回的值并不考虑当前层是否与上一层的节点形成升序
+    - 在当前层处理时，就需要考虑是否与下一层的节点是否能形成升序，如果能，就累加在这个距离中
+    - 所以返回的左右子树的距离，需要分别判断是否与下一层能够相连，如果可以，就在其距离上+1，否则说明当前层和之前层断开，只记录当前层这1个节点的距离值1
+    - 之后，将当前层计算完成后，与全局变量ans做比较，更新最大距离
+- 返回：当前层，基于左右子树返回的距离，重新计算与当前层节点关系后，生成的新值，并取两者之间的最大值返回
+### 代码
+```java
+class Solution {
+    private int ans;
+    public int longestConsecutive(TreeNode root) {
+        dfs(root);
+        return ans;
+    }
+
+    private int dfs(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        
+        int left = dfs(node.left),
+            right = dfs(node.right);
+        
+        left = node.left != null && node.left.val == node.val + 1 ? left + 1 : 1;
+        right = node.right != null && node.right.val == node.val + 1 ? right + 1 : 1;
+        
+        ans = Math.max(ans, Math.max(left, right));
+        
+        return Math.max(left, right);
+    }
+}
+```
