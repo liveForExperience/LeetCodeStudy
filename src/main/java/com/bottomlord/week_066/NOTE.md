@@ -69,3 +69,71 @@ class Solution {
     }
 }
 ```
+# LeetCode_298_二叉树最长连续序列
+## 题目
+给你一棵指定的二叉树，请你计算它最长连续序列路径的长度。
+
+该路径，可以是从某个初始结点到树中任意结点，通过「父 - 子」关系连接而产生的任意路径。
+
+这个最长连续的路径，必须从父结点到子结点，反过来是不可以的。
+
+示例 1：
+```
+输入:
+
+   1
+    \
+     3
+    / \
+   2   4
+        \
+         5
+
+输出: 3
+
+解析: 当中，最长连续序列是 3-4-5，所以返回结果为 3
+```
+示例 2：
+```
+输入:
+
+   2
+    \
+     3
+    / 
+   2    
+  / 
+ 1
+
+输出: 2 
+
+解析: 当中，最长连续序列是 2-3。注意，不是 3-2-1，所以返回 2。
+```
+## 解法
+### 思路
+dfs：
+- 自顶向下
+- 使用3个变量进行递归：
+    - `len`记录当前的长度
+    - `pre`记录父节点引用
+    - `node`记录当前节点引用
+- 退出条件：当前节点为null，返回len值
+- 过程：判断pre是否为null且pre的值是否与当前节点形成升序，如果是就在len基础上+1，否则就初始化为1
+- 返回：当前len与左右子树递归后获得的结果的最大值，再作比较，取最大值返回
+### 代码
+```java
+class Solution {
+    public int longestConsecutive(TreeNode root) {
+        return dfs(null, root, 0);
+    }
+    
+    private int dfs(TreeNode pre, TreeNode node, int len) {
+        if (node == null) {
+            return len;
+        }
+        
+        len = (pre != null && pre.val == node.val - 1) ? len + 1 : 1;
+        return Math.max(len, Math.max(dfs(node, node.left, len), dfs(node, node.right, len)));
+    }
+}
+```
