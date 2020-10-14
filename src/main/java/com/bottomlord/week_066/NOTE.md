@@ -255,3 +255,35 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 题目限制了2个字符串的长度永远相等
+- bull的个数就是同位且同值的个数
+- cow的个数：
+    - 两个字符串在某一个数字上出现次数的最小值，也就是这个数字在两个字符串中同时出现的次数，将这些数字的次数累加
+    - 将累加值减去求出bull的个数，也就是总的同时出现的个数 - 同位同值的个数，就得到了同值不同位的个数
+### 代码
+```java
+class Solution {
+    public String getHint(String secret, String guess) {
+        int[] s = new int[10],
+              g = new int[10];
+        
+        int bull = 0, cow = 0;
+        for (int i = 0; i < secret.length(); i++) {
+            s[secret.charAt(i) - '0']++;
+            g[guess.charAt(i) - '0']++;
+            
+            bull += secret.charAt(i) == guess.charAt(i) ? 1 : 0;
+        }
+        
+        for (int i = 0; i < s.length; i++) {
+            cow += Math.min(s[i], g[i]);
+        }
+        
+        cow -= bull;
+        
+        return bull + "A" + cow + "B";
+    }
+}
+```
