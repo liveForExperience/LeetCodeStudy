@@ -287,3 +287,97 @@ class Solution {
     }
 }
 ```
+# LeetCode_301_删除无效的括号
+## 题目
+删除最小数量的无效括号，使得输入的字符串有效，返回所有可能的结果。
+
+说明: 输入可能包含了除 ( 和 ) 以外的字符。
+
+示例 1:
+```
+输入: "()())()"
+输出: ["()()()", "(())()"]
+```
+示例 2:
+```
+输入: "(a)())()"
+输出: ["(a)()()", "(a())()"]
+```
+示例 3:
+```
+输入: ")("
+输出: [""]
+```
+## 解法
+### 思路
+- 判断：
+    - 字符串中左右括号数相等是有效括号的必要非充分条件
+    - 如果从左往右遍历字符串，右括号的个数比左括号大，则必不是有效括号
+- 算法：回溯，将所有可能的字符串枚举出来，并记录改动量最小的一组
+    - 递归的变量：
+        - `s`：初始字符串
+        - `i`：字符坐标，记录递归当前层处理到的字符
+        - `l`：左括号个数
+        - `r`：右括号个数
+        - `expression`：暂存的可能字符串
+        - `removeCount`：暂存的移除的次数
+    - 过程：
+        - 如果`i == s.length`，则代表递归退出，判断当前字符串是否是有效括号：
+            - 如果是，用`removeCount`和全局变量`minRemoveCOunt`比较
+                - 如果大于`minRemoveCount`就不使用当前字符串
+                - 如果小于则要重置之前的字符串集合
+                - 如果小于等于就将`expression`加到结果集合中
+        - 判断当前字符是否是括号，如果不是，直接将字符加到`expression`中，并继续递归
+        - 如果是括号：
+            - 假设当前字符被删除，直接递归，removeCount+1
+            - 假设保留当前字符：
+                - 则需先判断，是否是右括号，如果是，则当前右括号数是否大于左括号数，如果是的话，就直接剪枝，不递归
+                - 如果可以保留，则将字符累加到`expression`中
+        - 所有的递归动作都在expression上做回溯的操作，也就是append和delete当前递归层字符
+### 代码
+```java
+class Solution {
+    private Set<String> set = new HashSet<>();
+    private int minRemoveCount = Integer.MAX_VALUE;
+    public List<String> removeInvalidParentheses(String s) {
+        backTrack(s, 0, 0, 0, 0, new StringBuilder());
+        return new ArrayList<>(set);
+    }
+    
+    private void backTrack(String s, int index, int l, int r, int removeCount, StringBuilder expression) {
+        if (index == s.length()) {
+            if (l == r) {
+                if (removeCount <= minRemoveCount) {
+                    String str = expression.toString();
+                    
+                    if (removeCount < minRemoveCount) {
+                        set.clear();
+                        minRemoveCount = removeCount;
+                    }
+                    
+                    set.add(str);
+                }
+            }
+        } else {
+            char c = s.charAt(index);
+            int len = expression.length();
+            if (c != '(' && c != ')') {
+                expression.append(c);
+                backTrack(s, index + 1, l, r, removeCount, expression);
+                expression.deleteCharAt(len);
+            } else {
+                backTrack(s, index + 1, l, r, removeCount + 1, expression);
+                expression.append(c);
+                
+                if (c == '(') {
+                    backTrack(s, index + 1, l + 1, r, removeCount, expression);
+                } else if (r < l) {
+                    backTrack(s, index + 1, l, r + 1, removeCount, expression);
+                }
+                
+                expression.deleteCharAt(len);
+            }
+        }
+    }
+}
+```
