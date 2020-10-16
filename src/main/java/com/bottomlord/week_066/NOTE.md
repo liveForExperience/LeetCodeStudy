@@ -435,3 +435,44 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+题目前提条件是黑色相连，所以可以使用dfs
+### 代码
+```java
+class Solution {
+    private int left, right, top, bottom;
+    public int minArea(char[][] image, int x, int y) {
+        if (image.length == 0 || image[0].length == 0) {
+            return 0;
+        }
+        
+        left = x;
+        right = x;
+        top = y;
+        bottom = y;
+        
+        dfs(image, image.length, image[0].length, x, y);
+        
+        return (right - left) * (bottom - top);
+    }
+    
+    private void dfs(char[][] image, int r, int c, int x, int y) {
+        if (x < 0 || x >= r || y < 0 || y >= c || image[x][y] == '0') {
+            return;
+        }
+        
+        left = Math.min(left, x);
+        right = Math.max(right, x + 1);
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y + 1);
+        
+        image[x][y] = '0';
+        
+        dfs(image, r, c, x + 1, y);
+        dfs(image, r, c, x - 1, y);
+        dfs(image, r, c, x, y + 1);
+        dfs(image, r, c, x, y - 1);
+    }
+}
+```
