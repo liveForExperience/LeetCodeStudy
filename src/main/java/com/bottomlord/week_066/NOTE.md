@@ -381,3 +381,57 @@ class Solution {
     }
 }
 ```
+# LeetCode_302_包含全部黑色像素的最小矩形
+## 题目
+图片在计算机处理中往往是使用二维矩阵来表示的。
+
+假设，这里我们用的是一张黑白的图片，那么 0 代表白色像素，1 代表黑色像素。
+
+其中黑色的像素他们相互连接，也就是说，图片中只会有一片连在一块儿的黑色像素（像素点是水平或竖直方向连接的）。
+
+那么，给出某一个黑色像素点 (x, y) 的位置，你是否可以找出包含全部黑色像素的最小矩形（与坐标轴对齐）的面积呢？
+
+示例:
+```
+输入:
+[
+  "0010",
+  "0110",
+  "0100"
+]
+和 x = 0, y = 2
+
+输出: 6
+```
+## 解法
+### 思路
+- 初始化矩形的上下左右4个变量，用来计算最后的面积
+- 遍历二维数组，找到所有黑色像素
+- 使用找到的黑色像素坐标与初始化的上下左右做比较和更新：
+    - `up = min(up, y)`
+    - `bottom = max(bottom, y + 1)`
+    - `left = min(left, x)`
+    - `right = max(right, x + 1)`
+- 最后根据上下左右返回面积`(right - left) * (bottom - up)`
+### 代码
+```java
+class Solution {
+    public int minArea(char[][] image, int x, int y) {
+        int left = x, right = x,
+            top = y, bottom = y;
+
+        for (int i = 0; i < image.length; i++) {
+            for (int j = 0; j < image[0].length; j++) {
+                if (image[i][j] == '1') {
+                    left = Math.min(left, i);
+                    right = Math.max(right, i + 1);
+                    top = Math.min(top, j);
+                    bottom = Math.max(bottom, j + 1);
+                }
+            }
+        }
+        
+        return (right - left) * (bottom - top);
+    }
+}
+```
