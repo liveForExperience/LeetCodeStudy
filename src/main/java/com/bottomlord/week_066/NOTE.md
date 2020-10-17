@@ -476,3 +476,111 @@ class Solution {
     }
 }
 ```
+## 解法三
+### 思路
+二分查找：
+- 通过题目可知，二位数组可以被压缩成一维的看待：
+    - 如果在确定黑色像素的行时，只要任意行上的任意列有黑色像素，这一行就可以看作是黑色的
+    - 同理，确定列的时候，任意列上的任意行像素是黑色，这一列也可以看作是黑色的
+    - 就好像倒映在墙上的银子，三位立体的人被压缩成了一个二位的平面影子
+- 通过如上的解释，在题目初始给定的坐标基础上，可以将二维数组分成4个部分，且这4部分是有重叠的
+    - 确定行的范围的时候：
+        - 行上[0,x]这个范围的的部分，找到最靠上的黑色像素坐标
+        - 行上[x + 1, r - 1]这个范围的部分，找到最靠下的黑色像素坐标、
+    - 确定列的范围的时候：
+        - 列上[0, y]这个范围的部分，找到最靠左的黑色像素坐标
+        - 列上[y + 1, c - 1]这个范围的部分，找到最靠右的黑色像素坐标
+    - 在找这4个部分的时候，确定每一个坐标是否是黑色，就可以用压缩的方法，查看当前行或列上是否有其他的黑色像素坐标
+### 代码
+```java
+class Solution {
+    public int minArea(char[][] image, int x, int y) {
+        if (image.length == 0 || image[0].length == 0) {
+            return 0;
+        }
+
+        int l = findLeft(image, y);
+        int r = findRight(image, y);
+        int t = findTop(image, x);
+        int b = findBottom(image, x);
+
+        return (r - l) * (b - t);
+    }
+
+    private int findLeft(char[][] image, int y) {
+        int head = 0, tail = y;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+            int index = 0;
+            while (index < image.length && image[index][mid] == '0') {
+                index++;
+            }
+
+            if (index == image.length) {
+                head = mid + 1;
+            } else {
+                tail = mid;
+            }
+        }
+
+        return head;
+    }
+
+    private int findRight(char[][] image, int y) {
+        int head = y + 1, tail = image[0].length;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+            int index = 0;
+            while (index < image.length && image[index][mid] == '0') {
+                index++;
+            }
+
+            if (index == image.length) {
+                tail = mid;
+            } else {
+                head = mid + 1;
+            }
+        }
+
+        return head;
+    }
+
+    private int findTop(char[][] image, int x) {
+        int head = 0, tail = x;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+            int index = 0;
+            while (index < image[0].length && image[mid][index] == '0') {
+                index++;
+            }
+
+            if (index == image[0].length) {
+                head = mid + 1;
+            } else {
+                tail = mid;
+            }
+        }
+
+        return head;
+    }
+
+    private int findBottom(char[][] image, int x) {
+        int head = x + 1, tail = image.length;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+            int index = 0;
+            while (index < image[0].length && image[mid][index] == '0') {
+                index++;
+            }
+
+            if (index == image[0].length) {
+                tail = mid;
+            } else {
+                head = mid + 1;
+            }
+        }
+
+        return head;
+    }
+}
+```
