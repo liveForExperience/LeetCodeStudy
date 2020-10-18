@@ -650,3 +650,268 @@ class NumMatrix {
     }
 }
 ```
+# LeetCode_305_岛屿数量II
+## 题目
+假设你设计一个游戏，用一个 m 行 n 列的 2D 网格来存储你的游戏地图。
+
+起始的时候，每个格子的地形都被默认标记为「水」。我们可以通过使用 addLand 进行操作，将位置 (row, col) 的「水」变成「陆地」。
+
+你将会被给定一个列表，来记录所有需要被操作的位置，然后你需要返回计算出来 每次 addLand 操作后岛屿的数量。
+
+注意：一个岛的定义是被「水」包围的「陆地」，通过水平方向或者垂直方向上相邻的陆地连接而成。你可以假设地图网格的四边均被无边无际的「水」所包围。
+
+请仔细阅读下方示例与解析，更加深入了解岛屿的判定。
+
+示例:
+```
+输入: m = 3, n = 3, positions = [[0,0], [0,1], [1,2], [2,1]]
+输出: [1,1,2,3]
+```
+解析:
+```
+起初，二维网格 grid 被全部注入「水」。（0 代表「水」，1 代表「陆地」）
+
+0 0 0
+0 0 0
+0 0 0
+操作 #1：addLand(0, 0) 将 grid[0][0] 的水变为陆地。
+
+1 0 0
+0 0 0   Number of islands = 1
+0 0 0
+操作 #2：addLand(0, 1) 将 grid[0][1] 的水变为陆地。
+
+1 1 0
+0 0 0   岛屿的数量为 1
+0 0 0
+操作 #3：addLand(1, 2) 将 grid[1][2] 的水变为陆地。
+
+1 1 0
+0 0 1   岛屿的数量为 2
+0 0 0
+操作 #4：addLand(2, 1) 将 grid[2][1] 的水变为陆地。
+
+1 1 0
+0 0 1   岛屿的数量为 3
+0 1 0
+```
+拓展：
+```
+你是否能在 O(k log mn) 的时间复杂度程度内完成每次的计算？（k 表示 positions 的长度）
+```
+## 失败解法
+### 失败原因
+超时
+### 思路
+每次更新一次地图就做一次dfs
+### 代码
+```java
+class Solution {
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        List<Integer> ans = new ArrayList<>();
+        if (m == 0 || n == 0 || positions == null || positions.length == 0) {
+            return ans;
+        }
+        
+        int[][] matrix = new int[m][n];
+        for (int i = 0; i < positions.length; i++) {
+            matrix[positions[i][0]][positions[i][1]] = 1;
+            
+            int[][] tmpMatrix = new int[m][n];
+            for (int j = 0; j < m; j++) {
+                tmpMatrix[j] = Arrays.copyOfRange(matrix[j], 0, n);
+            }
+            ans.add(count(tmpMatrix));
+        }
+        
+        return ans;
+    }
+    
+    private int count(int[][] matrix) {
+        int count = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 1) {
+                    count++;
+                    dfs(matrix, i, j);
+                }
+            }
+        }
+        
+        return count;
+    }
+    
+    private void dfs(int[][] matrix, int r, int c) {
+        if (r < 0 || r >= matrix.length || c < 0 || c >= matrix[0].length || matrix[r][c] != 1) {
+            return;
+        }
+        
+        matrix[r][c] = 0;
+        
+        dfs(matrix, r + 1, c);
+        dfs(matrix, r - 1, c);
+        dfs(matrix, r, c + 1);
+        dfs(matrix, r, c - 1);
+    }
+}
+```
+## 失败解法二
+### 失败原因
+超时
+### 思路
+在失败解法一基础上增加记忆化搜索
+### 代码
+```java
+class Solution {
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        List<Integer> ans = new ArrayList<>();
+        if (m == 0 || n == 0 || positions == null || positions.length == 0) {
+            return ans;
+        }
+        
+        int[][] matrix = new int[m][n];
+        for (int i = 0; i < positions.length; i++) {
+            matrix[positions[i][0]][positions[i][1]] = 1;
+            
+            int[][] tmpMatrix = new int[m][n];
+            for (int j = 0; j < m; j++) {
+                tmpMatrix[j] = Arrays.copyOfRange(matrix[j], 0, n);
+            }
+            ans.add(count(tmpMatrix));
+        }
+        
+        return ans;
+    }
+    
+    private int count(int[][] matrix) {
+        int count = 0;
+        boolean[][] memo = new boolean[matrix.length][matrix[0].length];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 1) {
+                    count++;
+                    dfs(matrix, i, j, memo);
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private void dfs(int[][] matrix, int r, int c, boolean[][] memo) {
+        if (r < 0 || r >= matrix.length || c < 0 || c >= matrix[0].length || matrix[r][c] != 1 || memo[r][c]) {
+            return;
+        }
+
+        matrix[r][c] = 0;
+        memo[r][c] = true;
+        
+        dfs(matrix, r + 1, c, memo);
+        dfs(matrix, r - 1, c, memo);
+        dfs(matrix, r, c + 1, memo);
+        dfs(matrix, r, c - 1, memo);
+    }
+}
+```
+## 解法
+### 思路
+并查集
+### 代码
+```java
+class Solution {
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        List<Integer> ans = new ArrayList<>();
+        if (m == 0 || n == 0 || positions == null || positions.length == 0) {
+            return ans;
+        }
+
+        UnionFind uf = new UnionFind(m * n);
+        for (int[] position : positions) {
+            int r = position[0], c = position[1];
+            List<Integer> overlap = new ArrayList<>();
+
+            if (r >= 1 && uf.isValid((r - 1) * n + c)) {
+                overlap.add((r - 1) * n + c);
+            }
+
+            if (r < (m - 1) && uf.isValid((r + 1) * n + c)) {
+                overlap.add((r + 1) * n + c);
+            }
+
+            if (c >= 1 && uf.isValid(r * n + c - 1)) {
+                overlap.add(r * n + c - 1);
+            }
+
+            if (c < (n - 1) && uf.isValid(r * n + c + 1)) {
+                overlap.add(r * n + c + 1);
+            }
+            
+            int index = r * n + c;
+            if (uf.parent[index] == -1) {
+                uf.setParent(index);
+                
+                for (int i : overlap) {
+                    uf.union(i, index);
+                }
+            }
+            
+            ans.add(uf.count);
+        }
+        
+        return ans;
+    }
+
+    class UnionFind {
+        private int count;
+        private int[] parent;
+        private int[] rank;
+
+        public UnionFind(int n) {
+            parent = new int[n];
+            Arrays.fill(parent, -1);
+            
+            rank = new int[n];
+            count = 0;
+        }
+
+        public int count() {
+            return count;
+        }
+
+        public boolean isValid(int n) {
+            return parent[n] >= 0;
+        }
+
+        public void setParent(int n) {
+            parent[n] = n;
+            count++;
+        }
+
+        public int find(int x) {
+            if (parent[x] != x) {
+                parent[x] = find(parent[x]);
+            }
+
+            return parent[x];
+        }
+
+        public void union(int x, int y) {
+            int rootX = find(x),
+                rootY = find(y);
+
+            if (rootX != rootY) {
+                if (rank[rootX] > rank[rootY]) {
+                    parent[rootY] = rootX;
+                } else if(rank[rootX] < rank[rootY]) {
+                    parent[rootX] = rootY;
+                } else {
+                    rank[rootX]++;
+                    parent[rootY] = rootX;
+                }
+                
+                count--;
+            }
+        }
+    }
+}
+```
