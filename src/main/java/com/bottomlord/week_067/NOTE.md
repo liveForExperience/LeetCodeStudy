@@ -69,3 +69,77 @@ class Solution {
     }
 }
 ```
+# LeetCode_307_区域和检索-数组可修改
+## 题目
+给定一个整数数组  nums，求出数组从索引 i 到 j  (i ≤ j) 范围内元素的总和，包含 i,  j 两点。
+
+update(i, val) 函数可以通过将下标为 i 的数值更新为 val，从而对数列进行修改。
+
+示例:
+```
+Given nums = [1, 3, 5]
+
+sumRange(0, 2) -> 9
+update(1, 2)
+sumRange(0, 2) -> 8
+```
+说明:
+```
+数组仅可以在 update 函数下进行修改。
+你可以假设 update 函数与 sumRange 函数的调用次数是均匀分布的。
+```
+## 解法
+### 思路
+暴力，查询一次遍历一次
+### 代码
+```java
+class NumArray {
+    private int[] nums;
+    public NumArray(int[] nums) {
+        this.nums = nums;
+    }
+
+    public void update(int i, int val) {
+        nums[i] = val;
+    }
+
+    public int sumRange(int i, int j) {
+        int sum = 0;
+        for (int index = i; index <= j; index++) {
+            sum += nums[index];
+        }
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+前缀和，更新一次，维护一次前缀和
+### 代码
+```java
+class NumArray {
+    private int[] nums;
+    public NumArray(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        
+        this.nums = new int[nums.length];
+        this.nums[0] = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            this.nums[i] = this.nums[i - 1] + nums[i];
+        }
+    }
+
+    public void update(int i, int val) {
+        int diff = i == 0 ? -(nums[0] - val) : -(nums[i] - nums[i - 1] - val);
+        for (int index = i; index < nums.length; index++) {
+            nums[index] += diff;
+        }
+    }
+
+    public int sumRange(int i, int j) {
+        return i == 0 ? nums[j] : nums[j] - nums[i - 1];
+    }
+}
+```
