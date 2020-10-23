@@ -356,3 +356,130 @@ class Solution {
     }
 }
 ```
+# LeetCode_314_二叉树的垂直遍历
+## 题目
+给定一个二叉树，返回其结点 垂直方向（从上到下，逐列）遍历的值。
+
+如果两个结点在同一行和列，那么顺序则为 从左到右。
+
+示例 1：
+```
+输入: [3,9,20,null,null,15,7]
+
+   3
+  /\
+ /  \
+9   20
+    /\
+   /  \
+  15   7 
+
+输出:
+
+[
+  [9],
+  [3,15],
+  [20],
+  [7]
+]
+```
+示例 2:
+```
+输入: [3,9,8,4,0,1,7]
+
+     3
+    /\
+   /  \
+  9    8
+  /\   /\
+ /  \ /  \
+4   0 1   7 
+
+输出:
+
+[
+  [4],
+  [9],
+  [3,0,1],
+  [8],
+  [7]
+]
+```
+示例 3:
+```
+输入: [3,9,8,4,0,1,7,null,null,null,2,5]（注意：0 的右侧子节点为 2，1 的左侧子节点为 5）
+
+     3
+    /\
+   /  \
+   9   8
+  /\  /\
+ /  \/  \
+ 4  01   7
+    /\
+   /  \
+   5   2
+
+输出:
+
+[
+  [4],
+  [9,5],
+  [3,0,1],
+  [8,2],
+  [7]
+]
+```
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+
+        TreeMap<Integer, List<Integer>> map = new TreeMap<>();
+        
+        Queue<WrapTreeNode> queue = new ArrayDeque<>();
+        queue.offer(new WrapTreeNode(root, 0));
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            
+            while (count-- > 0) {
+                WrapTreeNode wrapTreeNode = queue.poll();
+                if (wrapTreeNode == null) {
+                    continue;
+                }
+                
+                List<Integer> indexList = map.getOrDefault(wrapTreeNode.index, new ArrayList<>());
+                TreeNode treeNode = wrapTreeNode.treeNode;
+                indexList.add(treeNode.val);
+                map.put(wrapTreeNode.index, indexList);
+                
+                if (treeNode.left != null) {
+                    queue.offer(new WrapTreeNode(treeNode.left, wrapTreeNode.index - 1));
+                }
+                
+                if (treeNode.right != null) {
+                    queue.offer(new WrapTreeNode(treeNode.right, wrapTreeNode.index + 1));
+                }
+            }
+        }
+        
+        return new ArrayList<>(map.values());
+    }
+    
+    class WrapTreeNode {
+        private TreeNode treeNode;
+        private int index;
+        
+        public WrapTreeNode(TreeNode treeNode, int index) {
+            this.treeNode = treeNode;
+            this.index = index;
+        }
+    }
+}
+```
