@@ -130,10 +130,69 @@ class Solution {
 输入：s = "cbacdcbc"
 输出："acdb"
 ```
-## 解法
+## 失败解法
+### 失败原因
+改变了相对顺序
 ### 思路
-
+- 转字符数组
+- 快速排序
+- 遍历数组append
 ### 代码
 ```java
-
+class Solution {
+    public String removeDuplicateLetters(String s) {
+        char[] cs = s.toCharArray();
+        Arrays.sort(cs);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < cs.length; i++) {
+            if (i == cs.length - 1) {
+                sb.append(cs[i]);
+                break;
+            }
+            
+            if (cs[i] == cs[i + 1]) {
+                continue;
+            }
+            
+            sb.append(cs[i]);
+        }
+        return sb.toString();
+    }
+}
+```
+## 解法
+### 思路
+- 为了保证字符的相对顺序，且同时是最小字典序列，那么序列小的小字符能够在前面的条件就是：我前面比我大的字符，在我之后也存在
+- 首先对字符串中出现的字符进行计数，用于在遍历过程中判断是否当前字符已经是相同字符中的最后一个
+- 在找那个尽可能小的字符时，先暂定一个当前搜索范围内的最小字符，并不断比较更新
+- 然后将当前遍历到的字符从计数中-1
+- 如果发现当前字符是最后一个出现的字符了，那么说明当前那个最小字符，就是目前字符串中能够排在前面的最小字典序列的字符了，因为就算后面有更小的，它之后也没有前面比它大的那些字符了，也就保证不了原来的相对顺序
+- 然后就重复如上的顺序，在递归过程中，截取当前最小字符所在位置之前的所有字符，那些在其后都存在，已经不需要了，同时，将其后字符中与当前最小字符相同的字符去除
+- 递归的退出条件就是字符串长度为0
+- 每一层递归的目的就是获得当前字符串中能够排在最前面且字典序列符合条件前提下最小的字符，将他们通过递归的方式拼接，就是最终需要的字符串了
+### 代码
+```java
+class Solution {
+    public String removeDuplicateLetters(String s) {
+        int len = s.length();
+        if (len == 0) {
+            return "";
+        }
+        int[] count = new int[26];
+        
+        for (char c : s.toCharArray()) {
+            count[c - 'a']++;
+        }
+        
+        int index = 0;
+        for (int i = 0; i < len; i++) {
+            index = s.charAt(index) <= s.charAt(i) ? index : i;
+            if (--count[s.charAt(i) - 'a'] == 0) {
+                break;
+            }
+        }
+        
+        return s.charAt(index) + removeDuplicateLetters(s.substring(index + 1).replaceAll("" + s.charAt(index), ""));
+    }
+}
 ```
