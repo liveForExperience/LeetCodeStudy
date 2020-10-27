@@ -196,3 +196,48 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用栈暂存遍历字符串时找到的字符
+- 使用set记录当前字符是否在栈中
+- 使用map记录字符在字符串中的最大坐标
+- 过程:
+    - 遍历字符串
+    - 如果set中没有字符串，那么当前字符可以被加到stack中作为结果
+    - 将当前字符`c`与栈顶元素比较，这个栈顶元素就是当前作为结果字符串的最后一个字符
+    - 如果`c`比栈顶元素小，且栈顶元素在剩余遍历字符串中还存在，就将这个栈顶元素弹出，并将该元素从set中去掉
+    - 重复如上比较的过程，直到不能再弹栈为止
+    - 然后将当前字符加入到stack中，并加入到set中
+- 最终从栈底开始遍历字符，拼接后返回这个结果
+### 代码
+```java
+class Solution {
+    public String removeDuplicateLetters(String s) {
+        Stack<Character> stack = new Stack<>();
+        Set<Character> set = new HashSet<>();
+        Map<Character, Integer> map = new HashMap<>();
+
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            map.put(cs[i], i);
+        }
+
+        for (int i = 0; i < cs.length; i++) {
+            char c = cs[i];
+            if (!set.contains(c)) {
+                while (!stack.isEmpty() && c < stack.peek() && map.get(stack.peek()) > i) {
+                    set.remove(stack.pop());
+                }
+                set.add(c);
+                stack.push(c);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (char c : stack) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+}
+```
