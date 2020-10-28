@@ -241,3 +241,95 @@ class Solution {
     }
 }
 ```
+# LeetCode_317_离建筑物最近的距离
+## 题目
+你是个房地产开发商，想要选择一片空地 建一栋大楼。你想把这栋大楼够造在一个距离周边设施都比较方便的地方，通过调研，你希望从它出发能在 最短的距离和 内抵达周边全部的建筑物。请你计算出这个最佳的选址到周边全部建筑物的 最短距离和。
+
+提示：
+```
+你只能通过向上、下、左、右四个方向上移动。
+给你一个由 0、1 和 2 组成的二维网格，其中：
+0 代表你可以自由通过和选择建造的空地
+1 代表你无法通行的建筑物
+2 代表你无法通行的障碍物
+```
+示例：
+```
+输入：[[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
+
+1 - 0 - 2 - 0 - 1
+|   |   |   |   |
+0 - 0 - 0 - 0 - 0
+|   |   |   |   |
+0 - 0 - 1 - 0 - 0
+输出：7 
+解析：
+给定三个建筑物 (0,0)、(0,4) 和 (2,2) 以及一个位于 (0,2) 的障碍物。
+由于总距离之和 3+3+1=7 最优，所以位置 (1,2) 是符合要求的最优地点，故返回7。
+```
+## 解法
+### 思路
+bfs：
+- 遍历二维数组，从建筑物开始bfs
+- 因为有n个建筑物，而空地的起始值是0，所以可以每次搜索完一个空地后，将这个空地的值-1，并在bfs外层统一定义当前层的空地的值，比如，第一个建筑物搜索完后，统一是-1，第二次统一是-2，这样每次搜索时就能直到哪些是已经搜索过的
+- 在bfs过程中，记录每一个空地坐标到达当前这座建筑物的物理距离，并存放在一个二维数组中，同时和暂存的最小值进行比较，实时更新结果
+- 所有建筑物都搜索完以后，就返回那个暂存的结果，如果结果是初始的int最大值，则返回-1
+### 代码
+```java
+class Solution {
+    private int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+    public int shortestDistance(int[][] grid) {
+        int row = grid.length;
+        if (row == 0) {
+            return 0;
+        }
+
+        int col = grid[0].length;
+        int[][] totalDistance = new int[row][col];
+
+        int mark = 0, ans = Integer.MAX_VALUE;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 1) {
+                    ans = bfs(grid, row, col, i, j, mark, totalDistance);
+                    mark--;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private int bfs(int[][] grid, int row, int col, int r, int c, int mark, int[][] totalDistance) {
+        int ans = Integer.MAX_VALUE;
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.offer(new int[]{r, c, 0});
+
+        while (!queue.isEmpty()) {
+            int[] arr = queue.poll();
+            if (arr == null) {
+                continue;
+            }
+
+            int curDistance = arr[2];
+
+            for (int i = 0; i < directions.length; i++) {
+                int nextRow = arr[0] + directions[i][0],
+                    nextCol = arr[1] + directions[i][1];
+                
+                if (nextRow >= 0 && nextRow < row && nextCol >= 0 && nextCol < col && grid[nextRow][nextCol] == mark) {
+                    int nextDistance = curDistance + 1;
+                    totalDistance[nextRow][nextCol] += nextDistance;
+                    ans = Math.min(ans, totalDistance[nextRow][nextCol]);
+                    
+                    queue.offer(new int[]{nextRow, nextCol, nextDistance});
+                    grid[nextRow][nextCol]--;
+                }
+            }
+        }
+
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+}
+```
