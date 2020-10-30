@@ -404,3 +404,68 @@ class Solution {
     }
 }
 ```
+# LeetCode_320_列举单词的全部缩写
+## 题目
+请你写出一个能够举单词全部缩写的函数。
+
+注意：输出的顺序并不重要。
+
+示例：
+```
+输入: "word"
+输出:
+["word", "1ord", "w1rd", "wo1d", "wor1", "2rd", "w2d", "wo2", "1o1d", "1or1", "w1r1", "1o2", "2r1", "3d", "w3", "4"]
+```
+## 解法
+### 思路
+回溯：
+- 传递的变量：
+    - word：原字符串
+    - sb：回溯时记录的临时结果字符串
+    - num：搜索时用来记录略过的字符个数，最终用该值来作为结果中的简写
+    - index：搜索时记录的下标值，作为递归退出条件的依据
+    - ans：作为储存结果的集合
+- 过程：
+    - 退出条件：index越界，代表word已经被搜索完，此时只有num需要被判断是否要累加到sb中，因为字符会在每一层的递归过程中被作为一个路径分支append到sb上，并将sb放入ans中
+    - 递归过程：
+        - 先记录当前sb的长度len，这个len会用在回溯时做状态恢复的依据
+        - 选择2种路径:
+            - 用数字代替当前字符，直接掠过，此时index和num同时累加并开始递归
+            - 将当前字符append到sb中：
+                - 先将之前记录的非0的num加入到sb中
+                - 将当前index对应的字符放入sb中
+                - 递归，index加1，num归0
+        - 回溯时利用len将sb状态恢复
+### 代码
+```java
+class Solution {
+    public List<String> generateAbbreviations(String word) {
+        List<String> ans = new ArrayList<>();
+        backTrack(word, 0, 0, new StringBuilder(), ans);
+        return ans;
+    }
+
+    private void backTrack(String word, int index, int num, StringBuilder sb, List<String> ans) {
+        int len = sb.length();
+        
+        if (index == word.length()) {
+            if (num != 0) {
+                sb.append(num);
+            }
+            ans.add(sb.toString());
+        } else {
+            backTrack(word, index + 1, num + 1, sb, ans);
+
+            if (num != 0) {
+                sb.append(num);
+            }
+
+            sb.append(word.charAt(index));
+            backTrack(word, index + 1, 0, sb, ans);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        
+        sb.setLength(len);
+    }
+}
+```
