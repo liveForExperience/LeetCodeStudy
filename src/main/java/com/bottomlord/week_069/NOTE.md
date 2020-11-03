@@ -130,3 +130,123 @@ class Solution {
     }
 }
 ```
+# LeetCode_323_无向图中连通分量的数量
+## 题目
+给定编号从 0 到 n-1 的 n 个节点和一个无向边列表（每条边都是一对节点），请编写一个函数来计算无向图中连通分量的数目。
+
+示例 1:
+```
+输入: n = 5 和 edges = [[0, 1], [1, 2], [3, 4]]
+
+     0          3
+     |          |
+     1 --- 2    4 
+
+输出: 2
+```
+示例 2:
+```
+输入: n = 5 和 edges = [[0, 1], [1, 2], [2, 3], [3, 4]]
+
+     0           4
+     |           |
+     1 --- 2 --- 3
+
+输出:  1
+```
+注意:
+```
+你可以假设在 edges 中不会出现重复的边。而且由于所以的边都是无向边，[0, 1] 与 [1, 0]  相同，所以它们不会同时在 edges 中出现。
+```
+## 解法
+### 思路
+dfs：
+- 将顶点对组成存储无向图顶点联通性的集合
+- 使用记忆化搜索，所有顶点，如果没有搜索过，则开始dfs，并计数1
+- 最终范围最外层dfs的次数
+### 代码
+```java
+class Solution {
+    public int countComponents(int n, int[][] edges) {
+        boolean[] memo = new boolean[n];
+        List<List<Integer>> graph = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        for (int[] edge : edges) {
+            graph.get(edge[0]).add(edge[1]);
+            graph.get(edge[1]).add(edge[0]);
+        }
+
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            if (!memo[i]) {
+                count++;
+                dfs(graph, memo, i);
+            }
+        }
+        
+        return count;
+    }
+
+    private void dfs(List<List<Integer>> graph, boolean[] memo, int index) {
+        if (memo[index]) {
+            return;
+        }
+        
+        memo[index] = true;
+        
+        for (int i = 0; i < graph.get(index).size(); i++) {
+            if (!memo[graph.get(index).get(i)]) {
+                dfs(graph, memo, graph.get(index).get(i));
+            }
+        }
+    }
+}
+```
+## 解法二
+### 思路
+并查集
+### 代码
+```java
+class Solution {
+    public int countComponents(int n, int[][] edges) {
+        UnionFind unionFind = new UnionFind(n);
+        for (int[] edge : edges) {
+            unionFind.union(edge[0], edge[1]);
+        }
+        return unionFind.count;
+    }
+    
+    class UnionFind {
+        private int[] parent;
+        private int count;
+
+        public UnionFind(int n) {
+            this.parent = new int[n];
+            this.count = n;
+            for (int i = 0; i < n; i++) {
+                this.parent[i] = i;
+            }
+        }
+
+        public int find(int n) {
+            if (parent[n] != n) {
+                parent[n] = find(parent[n]);
+            }
+
+            return parent[n];
+        }
+
+        public void union(int x, int y) {
+            int px = find(x), py = find(y);
+            if (px != py) {
+                parent[px] = py;
+                count--;
+            }
+        }
+    }
+}
+```
