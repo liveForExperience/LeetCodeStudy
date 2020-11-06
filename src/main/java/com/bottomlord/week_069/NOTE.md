@@ -250,3 +250,145 @@ class Solution {
     }
 }
 ```
+# LeetCode_324_摆动排序II
+## 题目
+给定一个无序的数组 nums，将它重新排列成 nums[0] < nums[1] > nums[2] < nums[3]... 的顺序。
+
+示例 1:
+```
+输入: nums = [1, 5, 1, 1, 6, 4]
+输出: 一个可能的答案是 [1, 4, 1, 5, 1, 6]
+```
+示例 2:
+```
+输入: nums = [1, 3, 2, 2, 3, 1]
+输出: 一个可能的答案是 [2, 3, 1, 3, 1, 2]
+说明:
+你可以假设所有输入都会得到有效的结果。
+```
+进阶:
+```
+你能用 O(n) 时间复杂度和 / 或原地 O(1) 额外空间来实现吗？
+```
+## 解法
+### 思路
+快排：
+- 复制原数组生成copy
+- 排序copy
+- 从copy的中间和尾部向前遍历元素，并依次放入nums中
+- 如果数组是偶数个，中间位置左
+- 从中间和尾部开始遍历的原因：不能相向遍历，否则会导致相同元素被相邻放置在新数组中
+- 大数部分和奇数相等或比奇数多一个的原因：当放置元素时，因为是从大到小放置，所以如果小数先用完，那么剩下位置的元素放置的就是大数部分最小的一个，而这个最小的数一定比最后一个小数部分大，因为小数部分是整个数组最小的数
+### 代码
+```java
+class Solution {
+    public void wiggleSort(int[] nums) {
+        int len = nums.length;
+        int[] copy = Arrays.copyOf(nums,len);
+        Arrays.sort(copy);
+        int mid = len % 2 == 1 ? len / 2 : len / 2 - 1, l = mid, r = nums.length - 1, index = 0;
+        while (l >= 0 || r > nums.length / 2) {
+            if (l >= 0) {
+                nums[index++] = copy[l--];
+            }
+
+            if (r > mid) {
+                nums[index++] = copy[r--];
+            }
+        }
+    }
+}
+```
+## 解法二
+### 思路
+快排变种：
+- 分治递归找到中位数
+    - 传递参数：
+        - 数组
+        - 需要定位的数组起始位置
+        - 需要定位的数组的结尾位置
+        - 需要定位的位置
+    - 过程：
+        - 定义pivot为数组起始元素，假设这个值为中位数，看有多少比它小，多少比它大
+        - 定义head指针，用来代表比pivot小的值的最大坐标位置 + 1的位置
+        - 定义tail指针，用来达标比pivot大的值的最小坐标位置 - 1的位置
+        - head和tail相向进行搜索
+        - 如果tail对应的值比pivot大，就直接左移tail，否则就和head对应的值互换，并右移head，代表小值确定了一个
+        - 如果head对应的值比pivot小，就直接右移head，否则就和tail对应的值互换，并左移tail，代表大值确定了一个
+        - 当两个指针相遇的时候：
+            - 先将head指针对应值的位置设置为pivot
+            - 如果head指针与中间位置一样大，说明找到了中位数
+            - 如果head指针比中间位置小，说明中间位置还在head的右边，继续递归
+            - 如果head指针比中间位置大，说明中间位置还在head的左边，继续递归
+- 找到中位数后使用3-way-partition将数组按与中位数的大小关系分成左右两部分，且保证与中位数相等的元素与中位数相邻
+- 最后复制大小两部分数组，将内容反序依次插入到nums中
+### 代码
+```java
+class Solution {
+    public void wiggleSort(int[] nums) {
+        int midIndex = quickSelect(nums, 0, nums.length - 1);
+        int mid = nums[midIndex];
+
+        int l = 0, r = nums.length - 1, k = 0;
+        while (l <= r) {
+            if (nums[l] > mid) {
+                swap(nums, l, r);
+                r--;
+            } else if (nums[l] < mid) {
+                swap(nums, l, k);
+                l++;
+                k++;
+            } else {
+                l++;
+            }
+        }
+        
+        midIndex = nums.length % 2 == 1 ? midIndex + 1 : midIndex;
+        int[] partA = Arrays.copyOfRange(nums, 0, midIndex),
+              partB = Arrays.copyOfRange(nums, midIndex, nums.length);
+
+        for (int i = 0; i < partA.length; i++) {
+            nums[2 * i] = partA[partA.length - 1 - i];
+        }
+
+        for (int i = 0; i < partB.length; i++) {
+            nums[2 * i + 1] = partB[partB.length - 1 - i];
+        }
+    }
+
+    private int quickSelect(int[] nums, int l, int r) {
+        int pivot = nums[l];
+
+        int head = l, tail = r;
+        while (head < tail) {
+            while (head < tail && nums[tail] >= pivot) {
+                tail--;
+            }
+            nums[head] = nums[tail];
+
+            while (head < tail && nums[head] <= pivot) {
+                head++;
+            }
+            nums[tail] = nums[head];
+        }
+
+        nums[head] = pivot;
+
+        if (head == nums.length / 2) {
+            return head;
+        }
+
+        if (head < nums.length / 2) {
+            return quickSelect(nums, head + 1, r);
+        } else {
+            return quickSelect(nums, l, head - 1);
+        }
+    }
+
+    private void swap(int[] nums, int x, int y) {
+        int tmp = nums[x];
+        nums[x] = nums[y];
+        nums[y] = tmp;
+    }
+}
+```
