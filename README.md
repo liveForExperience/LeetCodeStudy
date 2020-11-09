@@ -71,7 +71,8 @@
 |66|2020/10/12 - 2020/10/18| [7](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_066) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_066/NOTE.md) | - | - |:mask:|407|
 |67|2020/10/19 - 2020/10/25| [6](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_067) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_067/NOTE.md) | - | - |:mask:|410|
 |68|2020/10/26 - 2020/11/1| [6](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_068) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_068/NOTE.md) | - | - |:mask:|414|
-|69|2020/11/2 - 2020/11/8| [5](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_069) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_069/NOTE.md) | - | - |:mask:||
+|69|2020/11/2 - 2020/11/8| [5](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_069) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_069/NOTE.md) | - | - |:mask:|417|
+|70|2020/11/9 - 2020/11/15| [1](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_070) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_070/NOTE.md) | - | - |:mask:||
 ## 竞赛
 <table>
     <tr align="center">
