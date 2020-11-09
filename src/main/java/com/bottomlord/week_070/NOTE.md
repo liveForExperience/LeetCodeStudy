@@ -46,3 +46,62 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+hash表+前缀和
+### 代码
+```java
+class Solution {
+    public int maxSubArrayLen(int[] nums, int k) {
+        int len = nums.length, sum = 0;
+        int[] sums = new int[len];
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            sums[i] = (sum += nums[i]);
+
+            List<Integer> list = map.getOrDefault(sum, new ArrayList<>());
+            list.add(i);
+            map.put(sum, list);
+        }
+
+        int max = 0;
+        for (int i = 0; i < len; i++) {
+            int num = sums[i] + k - nums[i];
+            if (map.containsKey(num)) {
+                for (int index : map.get(num)) {
+                    max = Math.max(max, index - i + 1);
+                }
+            }
+        }
+        
+        return max;
+    }
+}
+```
+## 优化代码
+### 思路
+在解法二的基础上，因为求的是最大举例，而循环的是起始举例，所以hash的value存储对应前缀和最大的坐标值即可，不用存储list
+### 代码
+```java
+class Solution {
+    public int maxSubArrayLen(int[] nums, int k) {
+        int len = nums.length, sum = 0;
+        int[] sums = new int[len];
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            sums[i] = (sum += nums[i]);
+            map.put(sum, i);
+        }
+
+        int max = 0;
+        for (int i = 0; i < len; i++) {
+            int num = sums[i] + k - nums[i];
+            if (map.containsKey(num)) {
+                max = Math.max(max, map.get(num) - i + 1);
+            }
+        }
+
+        return max;
+    }
+}
+```
