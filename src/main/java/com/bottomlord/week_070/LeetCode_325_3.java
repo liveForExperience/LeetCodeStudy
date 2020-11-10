@@ -9,7 +9,7 @@ import java.util.Map;
  * @author ChenYue
  * @date 2020/11/9 8:44
  */
-public class LeetCode_352_3 {
+public class LeetCode_325_3 {
     public int maxSubArrayLen(int[] nums, int k) {
         int len = nums.length, sum = 0;
         int[] sums = new int[len];
