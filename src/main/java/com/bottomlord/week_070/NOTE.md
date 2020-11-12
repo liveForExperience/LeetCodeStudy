@@ -195,10 +195,65 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+- 将二叉树的节点及空节点都视为1个槽位
+- 每一个节点都消耗1个槽位
+- 非空节点同时可以生成2个槽位
+- 遍历所有的节点元素，看槽位是否足够放置节点数，且数量一致，如果不是，就代表不是有效的二叉树
+- 因为序列是前序排列，所以可以从序列的第一个节点（根节点）开始统计槽位数，在遍历过程中查看槽位数是否小于0，如果是就代表槽位已经不足，判定不是二叉树
+- 在遍历结束后查看槽位数是否为0，如果不为0也不是二叉树
 ### 代码
 ```java
+class Solution {
+    public boolean isValidSerialization(String preorder) {
+        String[] elements = preorder.split(",");
+        int slots = 1;
+        for (String element : elements) {
+            slots--;
+            
+            if (slots < 0) {
+                return false;
+            }
+            
+            if (!Objects.equals(element, "#")) {
+                slots += 2;
+            }
+        }
+        return slots == 0;
+    }
+}
+```
+## 解法二
+### 思路
+- 不使用额外字符串数组，而是直接遍历字符串
+- 需要注意在过程中，当遇到`,`时对槽位数做处理和判断
+- 所以当字符串遍历结束后，还需要对字符串的最后一个字符做判断，确定是否是空节点，并对应处理
+### 代码
+```java
+class Solution {
+    public boolean isValidSerialization(String preorder) {
+        int slots = 1, len = preorder.length();
+        for (int i = 0; i < len; i++) {
+            if (preorder.charAt(i) == ',') {
+                slots--;
+                
+                if (slots < 0) {
+                    return false;
+                }
+                
+                if (preorder.charAt(i - 1) != '#') {
+                    slots += 2;
+                }
+            }
+        }
 
+        if (preorder.charAt(len - 1) == ',') {
+            return false;
+        }
+        
+        slots = preorder.charAt(len - 1) == '#' ? slots - 1 : slots + 1;
+        return slots == 0;
+    }
+}
 ```
 # LeetCode_514_自由之路
 ## 题目
