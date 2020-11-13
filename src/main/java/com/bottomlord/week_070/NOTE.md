@@ -328,3 +328,170 @@ class Solution {
     }
 }
 ```
+# LeetCode_333_最大BST树
+## 题目
+给定一个二叉树，找到其中最大的二叉搜索树（BST）子树，并返回该子树的大小。其中，最大指的是子树节点数最多的。
+
+二叉搜索树（BST）中的所有节点都具备以下属性：
+
+左子树的值小于其父（根）节点的值。
+
+右子树的值大于其父（根）节点的值。
+
+注意:
+```
+子树必须包含其所有后代。
+```
+进阶:
+```
+你能想出 O(n) 时间复杂度的解法吗？
+```
+示例 1：
+```
+输入：root = [10,5,15,1,8,null,7]
+输出：3
+解释：本例中最大的 BST 子树是高亮显示的子树。返回值是子树的大小，即 3 。
+```
+示例 2：
+```
+输入：root = [4,2,7,2,3,5,null,2,null,null,null,null,null,1]
+输出：2
+```
+提示：
+```
+树上节点数目的范围是 [0, 104]
+-104 <= Node.val <= 104
+```
+## 解法
+### 思路
+- bfs遍历二叉树
+- 每个节点dfs中序遍历
+- 如果节点生成的序列是升序就更新结果值为序列长度
+- bfs结束后，返回结果
+### 代码
+```java
+class Solution {
+    public int largestBSTSubtree(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+        int ans = 0;
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+
+                List<Integer> inOrderList = new ArrayList<>();
+                inOrder(node, inOrderList);
+                if (natureOrder(inOrderList)) {
+                    ans = Math.max(ans, inOrderList.size());
+                }
+
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private void inOrder(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+
+        inOrder(node.left, list);
+        list.add(node.val);
+        inOrder(node.right, list);
+    }
+
+    private boolean natureOrder(List<Integer> list) {
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i) <= list.get(i - 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+- 如果当前节点的左右子树是BST，那么：
+    - 当前值比左子树的最大值大，比右子树的最小值小，则返回左右子树的节点值总和+1
+    - 如果不是就返回左右子树中最大的那个BST
+- 如果只有一个子树是BST，就返回那个
+- 如果没有子树是，就返回null
+- 这样看就需要自底向上的遍历这棵树
+- 定义一个遍历结果的抽象：
+    - 遍历后找到的最大BST的根节点
+    - 最大BST的最大值
+    - 最大BST的最小值
+    - 最大BST的节点数
+### 代码
+```java
+class Solution {
+    public int largestBSTSubtree(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        Result result = find(root);
+        return result == null ? 0 : result.size;
+    }
+
+    private Result find(TreeNode node) {
+        if (node == null) {
+            return null;
+        }
+
+        Result left = null, right = null;
+        if (node.left != null) {
+            left = find(node.left);
+        }
+
+        if (node.right != null) {
+            right = find(node.right);
+        }
+
+        boolean leftIsValid = node.left == null || (left.root == node.left && left.max < node.val),
+                rightIsValid = node.right == null || (right.root == node.right && right.min > node.val);
+
+        if (leftIsValid && rightIsValid) {
+            Result result = new Result();
+            result.root = node;
+            result.min = left == null ? node.val : left.min;
+            result.max = right == null ? node.val : right.max;
+            result.size = (left == null ? 0 : left.size) + (right == null ? 0 : right.size) + 1;
+            return result;
+        }
+
+        if (left != null && right != null) {
+            return left.size > right.size ? left : right;
+        }
+
+        if (left != null) {
+            return left;
+        }
+
+        return right;
+    }
+
+    class Result {
+        private TreeNode root;
+        private int min;
+        private int max;
+        private int size;
+    }
+}
+```
