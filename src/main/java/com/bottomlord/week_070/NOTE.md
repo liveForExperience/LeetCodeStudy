@@ -495,3 +495,93 @@ class Solution {
     }
 }
 ```
+# LeetCode_334_递增的三元子序列
+## 题目
+给定一个未排序的数组，判断这个数组中是否存在长度为 3 的递增子序列。
+
+数学表达式如下:
+```
+如果存在这样的 i, j, k,  且满足 0 ≤ i < j < k ≤ n-1，
+使得 arr[i] < arr[j] < arr[k] ，返回 true ; 否则返回 false 。
+说明: 要求算法的时间复杂度为 O(n)，空间复杂度为 O(1) 。
+```
+示例 1:
+```
+输入: [1,2,3,4,5]
+输出: true
+```
+示例 2:
+```
+输入: [5,4,3,2,1]
+输出: false
+```
+## 解法
+### 思路
+动态规划：
+- dp[i]：结尾元素为i的序列中升序序列的最大个数
+- 状态转移方程：
+    - 确定结尾元素i
+    - 从0开始遍历指针j到i坐标结束
+    - 如果`nums[j] < nums[i]`，则`dp[i] = max(dp[i], dp[j] + 1)`
+- base case：`dp[i] = 1`
+- 如果dp[i] >= 3，返回true
+### 代码
+```java
+class Solution {
+    public boolean increasingTriplet(int[] nums) {
+        if (nums == null || nums.length < 3) {
+            return false;
+        }
+        
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp, 1);
+
+        for (int i = 1; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+            }
+            
+            if (dp[i] >= 3) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+- 初始化2个指针：
+    - min：代表序列中的最小数，初始化为int最大值
+    - second：代表序列中的第二小的数，初始化为int的最大值
+- 过程：
+    - 遍历序列
+    - 如果发现当前元素小于等于min，说明这个序列中不会因为当前这个元素而组成超过3个的升序，更新min，并继续循环
+    - 如果大于min，但小于等于second，那么与上一状态相同，无法组成超过2个的升序序列，且此时的second代表的另一层含义是，目前有比当前second小的数存在，已经存在长度为2的升序序列，且这个升序序列的最大值是second，更新second，继续循环
+    - 如果大于second，那么代表当前元素与min和second可以组成升序
+### 代码
+```java
+class Solution {
+    public boolean increasingTriplet(int[] nums) {
+        if (nums == null || nums.length < 3) {
+            return false;
+        }
+        
+        int min = Integer.MAX_VALUE, second = Integer.MAX_VALUE;
+        for (int num : nums) {
+            if (num <= min) {
+                min = num;
+            } else if (num <= second) {
+                second = num;
+            } else {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
