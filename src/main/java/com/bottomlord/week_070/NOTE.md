@@ -585,3 +585,76 @@ class Solution {
     }
 }
 ```
+# LeetCode_402_移掉k位数字
+## 题目
+给定一个以字符串表示的非负整数 num，移除这个数中的 k 位数字，使得剩下的数字最小。
+
+注意:
+```
+num 的长度小于 10002 且 ≥ k。
+num 不会包含任何前导零。
+```
+示例 1 :
+```
+输入: num = "1432219", k = 3
+输出: "1219"
+解释: 移除掉三个数字 4, 3, 和 2 形成一个新的最小的数字 1219。
+```
+示例 2 :
+```
+输入: num = "10200", k = 1
+输出: "200"
+解释: 移掉首位的 1 剩下的数字为 200. 注意输出不能有任何前导零。
+```
+示例 3 :
+```
+输入: num = "10", k = 2
+输出: "0"
+解释: 从原数字移除所有的数字，剩余为空就是0。
+```
+## 解法
+### 思路
+贪心+单调栈
+- 从字符串左边开始，依次比较两个相邻两个字符的大小，如果前一个大于后一个，就把前一个去除
+- 生成一个队列
+- 遍历字符串过程中，如果：
+    - 队列不为空
+    - 队列尾部的字符(邻近的字符)比当前字符大
+    - k>0
+- 如上3种情况同时满足，那么就将队列尾部的字符弹出，并循环如上的判断和之后的动作，直到条件不符合为止
+- 将当前字符放入队列中
+- 字符串遍历结束后，队列中的存在的字符，从队列头到队列尾的顺序就是数字的顺序，在返回时还要处理数字头为0的情况，将字符串头部所有连续的0去除后，返回这个值，如果是空字符串，就返回"0"
+### 代码
+```java
+class Solution {
+    public String removeKdigits(String num, int k) {
+        LinkedList<Character> queue = new LinkedList<>();
+        for (int i = 0; i < num.length(); i++) {
+            char digit = num.charAt(i);
+            while (!queue.isEmpty() && k > 0 && queue.peekLast() > digit) {
+                queue.pollLast();
+                k--;
+            }
+            queue.offer(digit);
+        }
+        
+        for (int i = 0; i < k; i++) {
+            queue.pollLast();
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        boolean zeroStart = true;
+        while (!queue.isEmpty()) {
+            char digit = queue.pollFirst();
+            if (zeroStart && digit == '0') {
+                continue;
+            }
+            
+            zeroStart = false;
+            sb.append(digit);
+        }
+
+        return sb.length() == 0 ? "0" : sb.toString();
+    }
+}
+```
