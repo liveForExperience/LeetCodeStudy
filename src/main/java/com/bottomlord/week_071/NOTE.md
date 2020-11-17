@@ -250,3 +250,55 @@ class Solution {
     }
 }
 ```
+# [LeetCode_339_嵌套列表权重和](https://leetcode-cn.com/problems/nested-list-weight-sum/)
+## 题目
+给定一个嵌套的整数列表，请返回该列表按深度加权后所有整数的总和。
+
+每个元素要么是整数，要么是列表。同时，列表中元素同样也可以是整数或者是另一个列表。
+
+示例 1:
+```
+输入: [[1,1],2,[1,1]]
+输出: 10 
+解释: 因为列表中有四个深度为 2 的 1 ，和一个深度为 1 的 2。
+```
+示例 2:
+```
+输入: [1,[4,[6]]]
+输出: 27 
+解释: 一个深度为 1 的 1，一个深度为 2 的 4，一个深度为 3 的 6。所以，1 + 4*2 + 6*3 = 27。
+```
+## 解法
+### 思路
+递归求和
+### 代码
+```java
+class Solution {
+    public int depthSum(List<NestedInteger> nestedList) {
+        int sum = 0;
+        for (NestedInteger nestedInteger : nestedList) {
+            sum += sum(nestedInteger, 1);
+        }
+        
+        return sum;
+    }
+    
+    private int sum(NestedInteger nestedInteger, int depth) {
+        if (nestedInteger == null) {
+            return 0;
+        }
+        
+        if (nestedInteger.isInteger()) {
+            return nestedInteger.getInteger() * depth;
+        }
+        
+        List<NestedInteger> nestedIntegers = nestedInteger.getList();
+        int sum = 0;
+        for (NestedInteger ni : nestedIntegers) {
+            sum += sum(ni, depth + 1);
+        }
+        
+        return sum;
+    }
+}
+```
