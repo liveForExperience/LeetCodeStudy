@@ -302,3 +302,69 @@ class Solution {
     }
 }
 ```
+# [LeetCode_340_至多包含K个不同字符](https://leetcode-cn.com/problems/longest-substring-with-at-most-k-distinct-characters/)
+## 题目
+给定一个字符串 s ，找出 至多 包含 k 个不同字符的最长子串 T。
+
+示例 1:
+```
+输入: s = "eceba", k = 2
+输出: 3
+解释: 则 T 为 "ece"，所以长度为 3。
+```
+示例 2:
+```
+输入: s = "aa", k = 1
+输出: 2
+解释: 则 T 为 "aa"，所以长度为 2。
+```
+## 解法
+### 思路
+双指针+哈希表：
+- 初始化两个指针用来记录：
+    - x：记录有效字符串的起始坐标
+    - y：记录有效字符串的结尾坐标
+- 初始化哈希表map：记录遍历到的字符及个数
+- 初始化两个数值记录变量：
+    - sum：记录当前字符串的长度
+    - max：记录当前暂存的最长字符串的值
+- 过程：
+    - 移动y，一步步确定当前可用的字符串
+    - 每次确定完新字符串后，做一些准备动作
+        - sum++，先更新字符串长度
+        - 往map里放字符并记录个数
+    - 准备动作做完后，判断map的长度是否大于k
+        - 如果不是，就更新max
+        - 如果是：就开始移动x，并判断是否满足了map的size小于等于k的条件，并更新sum，直到满足位置
+    - y越界后，返回max
+### 代码
+```java
+class Solution {
+    public int lengthOfLongestSubstringKDistinct(String s, int k) {
+        int x = 0, y =0, max = 0, sum = 0;
+        Map<Character, Integer> map = new HashMap<>();
+        char[] cs = s.toCharArray();
+        while (y < cs.length) {
+            map.put(cs[y], map.getOrDefault(cs[y], 0) + 1);
+            y++;
+            sum++;
+            if (map.size() <= k) {
+                max = Math.max(max, sum);
+            } else {
+                while (x < y) {
+                    sum--;
+                    map.put(cs[x], map.get(cs[x]) - 1);
+                    if (map.get(cs[x]) <= 0) {
+                        map.remove(cs[x]);
+                    }
+                    x++;
+                    if (map.size() <= k) {
+                        break;
+                    }
+                }
+            }
+        }
+        return max;
+    }
+}
+```
