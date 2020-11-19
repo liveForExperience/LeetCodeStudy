@@ -282,3 +282,53 @@ class TicTacToe {
     }
 }
 ```
+## 解法二
+### 思路
+使用一维数组模拟，使用正负1代表玩家在当前行或列或对角线出现的记录，这样最终只要计算当前行、列和两个对角线有没有出现总和的绝对值是初始长度n的情况，就可以判断有人胜出，而谁赢就通过值是正数还是负数来判断
+### 代码
+```java
+class TicTacToe {
+    private int[] rows, cols;
+    private int n, pie, na;
+
+    public TicTacToe(int n) {
+        this.n = n;
+        this.pie = 0;
+        this.na = 0;
+        this.rows = new int[n];
+        this.cols = new int[n];
+    }
+
+    public int move(int row, int col, int player) {
+        if (row == col) {
+            na = player == 1 ? na + 1 : na - 1;
+        }
+
+        if (row + col == n - 1) {
+            pie = player == 1 ? pie + 1: pie - 1;
+        }
+
+        rows[row] = player == 1 ? rows[row] + 1 : rows[row] - 1;
+        cols[col] = player == 1 ? cols[col] + 1 : cols[col] - 1;
+
+        if (Math.abs(na) == n) {
+            return na > 0 ? 1 : 2;
+        }
+
+        if (Math.abs(pie) == n) {
+            return pie > 0 ? 1 : 2;
+        }
+
+        if (Math.abs(rows[row]) == n) {
+            return rows[row] > 0 ? 1 : 2;
+        }
+
+        if (Math.abs(cols[col]) == n) {
+            return cols[col] > 0 ? 1 : 2;
+        }
+
+        return 0;
+    }
+
+}
+```
