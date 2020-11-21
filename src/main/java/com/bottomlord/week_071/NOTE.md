@@ -332,3 +332,145 @@ class TicTacToe {
 
 }
 ```
+# [LeetCode_351_安卓系统手势解锁](https://leetcode-cn.com/problems/android-unlock-patterns/)
+## 解法
+### 思路
+记忆化+回溯：
+- 使用坐标`[0,8]`对应数字盘
+- 递归过程中传递的参数：
+    - `last`：上一个坐标，初始化为-1
+    - `len`：剩余深度
+    - `memo`：记忆化搜索的缓存
+- 退出条件：
+    - `len = 0`：代表生成完成，返回值1
+- 过程：
+    - 遍历所有9个坐标，判断该坐标是否符合要求
+        - `last == -1`：代表当前是第一个数字，返回true
+        - `memo[index] == true`：代表已经使用过该数字，返回false
+        - `(index + last) % 2 == 1`：代表两个数之间在行或列上相邻
+        - `(index + last) / 2 == 4`：代表两个数分别在数字盘的对角顶点
+        - `index % 3 != last % 3`：代表两个数不在同一列
+        - `index / 3 != last / 3`：代表两个数不在同一行
+        - `(index % 3 != last % 3) && (index / 3 != last / 3)`：代表两个点在同一斜线上
+        - 如上所有条件都判断过后，就只剩下在同一行或同一列且中间隔一个坐标的情况
+    - 如果当前坐标符合要求，memo设置为遍历过，继续递归，递归时len-1，递归返回值与当前层暂存的计数值累加，并回溯重置memo
+    - 最终返回当前层累加的暂存值  
+- 最外层通过遍历`[m,n]`的区间，也就是len的长度来驱动回溯的结果，将所有长度的可能累加作为最终的结果返回
+### 代码
+```java
+class Solution {
+    public int numberOfPatterns(int m, int n) {
+        int sum = 0;
+        for (int i = m; i <= n; i++) {
+            sum += backTrack(-1, i, new boolean[9]);
+        }
+        return sum;
+    }
+    
+    private int backTrack(int last, int len, boolean[] memo) {
+        if (len == 0) {
+            return 1;
+        }
+        
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            if (isValid(last, i, memo)) {
+                memo[i] = true;
+                sum += backTrack(i, len - 1, memo);
+                memo[i] = false;
+            }
+        }
+        return sum;
+    }
+    
+    private boolean isValid(int last, int index, boolean[] memo) {
+        if (memo[index]) {
+            return false;
+        }
+        
+        if (last == -1) {
+            return true;
+        }
+        
+        if ((index + last) % 2 == 1) {
+            return true;
+        }
+        
+        int mid = (last + index) / 2;
+        if (mid == 4) {
+            return memo[mid];
+        }
+        
+        if ((index % 3 != last % 3) && (index / 3) != (last / 3)) {
+            return true;
+        }
+        
+        return memo[mid];
+    }
+}
+```
+## 解法二
+### 思路
+在解法一的基础上，将最外层驱动的过程从9次缩减成3次：
+- 1、3、7、9这4个点对称
+- 2、4、6、8这4个点对称
+- 5
+### 代码
+```java
+class Solution {
+    public int numberOfPatterns(int m, int n) {
+        int sum = 0;
+        for (int i = m; i <= n; i++) {
+            boolean[] memo = new boolean[9];
+            memo[0] = true;
+            sum += backTrack(0, i - 1, memo) * 4;
+            
+            Arrays.fill(memo, false);
+            memo[1] = true;
+            sum += backTrack(1, i - 1, memo) * 4;
+            
+            Arrays.fill(memo, false);
+            memo[4] = true;
+            sum += backTrack(4, i - 1, memo);
+        }
+        return sum;
+    }
+
+    private int backTrack(int last, int len, boolean[] memo) {
+        if (len == 0) {
+            return 1;
+        }
+
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            if (isValid(last, i, memo)) {
+                memo[i] = true;
+                sum += backTrack(i, len - 1, memo);
+                memo[i] = false;
+            }
+        }
+        return sum;
+    }
+
+    private boolean isValid(int last, int index, boolean[] memo) {
+        if (memo[index]) {
+            return false;
+        }
+
+        if ((index + last) % 2 == 1) {
+            return true;
+        }
+
+        int mid = (last + index) / 2;
+        if (mid == 4) {
+            return memo[mid];
+        }
+
+        if ((index % 3 != last % 3) && (index / 3) != (last / 3)) {
+            return true;
+        }
+
+        return memo[mid];
+    }
+}
+```
