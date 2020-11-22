@@ -474,3 +474,63 @@ class Solution {
     }
 }
 ```
+# [LeetCode_352_将数据流变为多个不相交区域](https://leetcode-cn.com/problems/data-stream-as-disjoint-intervals/)
+## 解法
+### 思路
+- 使用treeSet保存数值
+- 分流时，遍历set，查看当前遍历到的元素
+    - 是否是数据流的中的中间元素，也就是它的前后值是否存在于set中
+    - 是否是数据流的起始元素，也就是没有小1，有大1的元素
+    - 是否是数据流的结尾元素，也就是没有大1，有小1的元素
+    - 是否是数据流中单一个点，也就是没有大1，也没有小1的元素
+### 代码
+```java
+class SummaryRanges {
+        private Set<Integer> set;
+        
+        public SummaryRanges() {
+            this.set = new TreeSet<>();
+        }
+
+        public void addNum(int val) {
+            this.set.add(val);
+        }
+
+        public int[][] getIntervals() {
+            List<int[]> list = new LinkedList<>();
+            int[] nums = new int[2];
+            Iterator<Integer> iterator = set.iterator();
+            while (iterator.hasNext()) {
+                int num = iterator.next();
+                if (!set.contains(num - 1) && !set.contains(num + 1)) {
+                    nums = new int[]{num, num};
+                    list.add(nums);
+                    nums = new int[2];
+                    continue;
+                }
+
+                if (set.contains(num - 1) && set.contains(num + 1)) {
+                    continue;
+                }
+
+                if (!set.contains(num - 1) && set.contains(num + 1)) {
+                    nums[0] = num;
+                    continue;
+                }
+
+                if (set.contains(num - 1) && !set.contains(num + 1)) {
+                    nums[1] = num;
+                    list.add(nums);
+                    nums = new int[2];
+                }
+            }
+
+            int[][] ans = new int[list.size()][2];
+            for (int i = 0; i < list.size(); i++) {
+                ans[i][0] = list.get(i)[0];
+                ans[i][1] = list.get(i)[1];
+            }
+            return ans;
+        }
+    }
+```
