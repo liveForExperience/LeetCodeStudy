@@ -206,3 +206,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_356_直线镜像](https://leetcode-cn.com/problems/line-reflection/)
+## 解法
+### 思路
+- 找到序列中x轴上值的最大最小值，并计算其中间值作为平行于y轴的中分线
+- 遍历所有点，生成镜像点并放入map中，key为x值，value为set，存y值
+- 再遍历所有点，找到map中是否存在镜像值，如果不存在就返回false
+### 代码
+```java
+class Solution {
+    public boolean isReflected(int[][] points) {
+        if (points.length == 0) {
+            return true;
+        }
+
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int[] point : points) {
+            min = Math.min(min, point[0]);
+            max = Math.max(max, point[0]);
+        }
+
+        double mid = (max + min) / 2D;
+
+        Map<Double, Set<Integer>> map = new HashMap<>();
+        for (int[] point : points) {
+            Set<Integer> set = map.getOrDefault((double) point[0], new HashSet<>());
+            set.add(point[1]);
+            map.put((double) point[0], set);
+        }
+
+        for (int[] point : points) {
+            double target = mid * 2 - point[0];
+
+            if (!map.containsKey(target)) {
+                return false;
+            }
+
+            if (!map.get(target).contains(point[1])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
