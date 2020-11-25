@@ -119,3 +119,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1370_上升下降字符串](https://leetcode-cn.com/problems/increasing-decreasing-string/)
+## 解法
+### 思路
+桶计数，升序倒叙的遍历26个字符，直到新生成的字符串和原字符串一样长
+### 代码
+```java
+class Solution {
+    public String sortString(String s) {
+        int[] count = new int[26];
+        for (char c : s.toCharArray()) {
+            count[c - 'a']++;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (sb.length() < s.length()) {
+            for (int i = 0; i < 26; i++) {
+                if (count[i] > 0) {
+                    sb.append((char)(i + 'a'));
+                    count[i]--;
+                }
+            }
+            
+            for (int i = 25; i >= 0; i--) {
+                if (count[i] > 0) {
+                    sb.append((char)(i + 'a'));
+                    count[i]--;
+                }
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
