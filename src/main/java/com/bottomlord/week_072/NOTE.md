@@ -119,6 +119,59 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+使用[lis扑克牌二分查找](https://github.com/labuladong/fucking-algorithm/blob/master/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%B3%BB%E5%88%97/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%AE%BE%E8%AE%A1%EF%BC%9A%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97.md)，替换解法一的dp查找方法：
+- 初始化变量：
+    - 牌堆顶元素序列：top
+    - 牌堆数：piles，初始化为0
+- 遍历待查数组
+- 以牌堆个数作为右边界
+- 以当前遍历到的元素作为标准，与，以查找左边界的方法进行二分查找
+- 如果最后获得的坐标是一开始的有边界，说明没有找到元素，那么当前这个元素单独成为一个牌堆，牌堆数+1
+- 所有元素遍历结束后，牌堆数相当于最大升序序列
+### 代码
+```java
+class Solution {
+    public int maxEnvelopes(int[][] envelopes) {
+        if (envelopes.length == 0) {
+            return 0;
+        }
+
+        Arrays.sort(envelopes, (x, y) -> {
+            if (x[0] == y[0]) {
+                return y[1] - x[1];
+            }
+
+            return x[0] - y[0];
+        });
+
+        int piles = 0;
+        int[] top = new int[envelopes.length];
+        for (int[] envelope : envelopes) {
+            int num = envelope[1];
+            int left = 0, right = piles;
+            while (left < right) {
+                int mid = left + (right - left) / 2;
+
+                if (top[mid] < num) {
+                    left = mid + 1;
+                } else {
+                    right = mid;
+                }
+            }
+
+            if (left == piles) {
+                piles++;
+            }
+
+            top[left] = num;
+        }
+
+        return piles;
+    }
+}
+```
 # [LeetCode_1370_上升下降字符串](https://leetcode-cn.com/problems/increasing-decreasing-string/)
 ## 解法
 ### 思路
