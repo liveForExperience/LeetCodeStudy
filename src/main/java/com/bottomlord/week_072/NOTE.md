@@ -251,3 +251,59 @@ class Solution {
     }
 }
 ```
+# LeetCode_358_K距离间隔重排字符串
+## 解法
+### 思路
+- 统计字符串s中字符的出现个数，因为是26个小写字母，可以用数组统计
+- 初始化一个大顶堆`maxHeap`，元素为`int[]`，长度为2，坐标0的元素为字母的下标映射，坐标1的元素为该字母出现的个数
+- 遍历统计数组，将字母和对应个数依次放入大顶堆`maxHeap`
+- 初始化一个sb，用于暂存结果字符串
+- `maxHeap`的作用相当于一个触发器，确定那个字符可以被追加到sb中
+- 初始化一个`queue`，每次`maxHeap`触发，都将触发的字符和个数（此处个数会-1，代表已经使用过一次）放入`queue`中
+- 这个queue的作用是根据题目给出的k的限制，将字母与字母之间的距离控制k的长度，而实现的方式是，每次`maxHeap`追加完一个字母，并将字母放入`queue`，会判断下`queue`的长度是否大于了k，如果大于了k，就说明队列头的那个元素，在上一次追加后，已经有k个其他字母被追加过了，此时可以将这个字母重新放回`maxHeap`中，准备追加
+- 然后就循环上述`maxHeap`和`queue`之间的联动过程，等`maxHeap`为空，然后判断`s`和`sb`的长度是否相等
+    - 如果没有了，那说明完美匹配完，返回sb
+    - 如果还有，那说明无法完美匹配，返回空字符串
+- 需要注意k为0的特殊情况，此时返回s即可
+### 代码
+```java
+class Solution {
+    public String rearrangeString(String s, int k) {
+        if (k == 0) {
+            return s;
+        }
+        
+        int[] bucket = new int[26];
+        for (char c : s.toCharArray()) {
+            bucket[c - 'a']++;
+        }
+
+        PriorityQueue<int[]> maxHeap = new PriorityQueue<>((x, y) -> y[1] - x[1]);
+        
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] != 0) {
+                maxHeap.offer(new int[]{i, bucket[i]});
+            }
+        }
+
+        Queue<int[]> queue = new ArrayDeque<>();
+        StringBuilder sb = new StringBuilder();
+        while (!maxHeap.isEmpty()) {
+            int[] node = maxHeap.poll();
+            sb.append((char)(node[0] + 'a'));
+            node[1]--;
+            queue.offer(node);
+
+            if (queue.size() == k) {
+                int[] lastAlphabet = queue.poll();
+
+                if (lastAlphabet[1] != 0) {
+                    maxHeap.offer(lastAlphabet);
+                }
+            }
+        }
+        
+        return sb.length() == s.length() ? sb.toString() : "";
+    }
+}
+```
