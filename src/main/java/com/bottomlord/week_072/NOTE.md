@@ -251,7 +251,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_358_K距离间隔重排字符串
+# [LeetCode_358_K距离间隔重排字符串](https://leetcode-cn.com/problems/rearrange-string-k-distance-apart/)
 ## 解法
 ### 思路
 - 统计字符串s中字符的出现个数，因为是26个小写字母，可以用数组统计
@@ -307,7 +307,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_359_日志速率限制器
+#[ LeetCode_359_日志速率限制器](https://leetcode-cn.com/problems/logger-rate-limiter/)
 ## 解法
 ### 思路
 - 用hash表`map`存储`message`和`timestamp`，用作判断
@@ -334,6 +334,50 @@ class Logger {
         }
         
         return send;
+    }
+}
+```
+# [LeetCode_360_有序转化数组](https://leetcode-cn.com/problems/sort-transformed-array/)
+## 解法
+### 思路
+双指针
+- 二次函数图像确保其一定包含一个最大或最小值，a>0则存在最小值，a<0则存在最大值
+- 定义双指针，从数组的左右相向遍历
+- 每次计算左右指针的值，根据a的大小确定当前获取的应该是比较大还是比较小
+    - 如果a>0，说明相向而行，数值越来越小，就要比较谁更大，就先放置谁并移动该指针
+    - 如果a<0，说明相向而行，数值越来越大，就要比较谁更小，就先放置谁并移动该指针 
+### 代码
+```java
+class Solution {
+    public int[] sortTransformedArray(int[] nums, int a, int b, int c) {
+        int len = nums.length, index = 0;
+        int[] ans = new int[len];
+        int left = 0, right = len - 1;
+        while (left <= right) {
+            int leftNum = a * nums[left] * nums[left] + b * nums[left] + c,
+                rightNum = a * nums[right] * nums[right] + b * nums[right] + c;
+            
+            if (a > 0) {
+                if (leftNum < rightNum) {
+                    ans[len - 1 - index] = rightNum;
+                    right--;
+                } else {
+                    ans[len - 1 - index] = leftNum;
+                    left++;
+                }
+            } else {
+                if (leftNum < rightNum) {
+                    ans[index] = leftNum;
+                    left++;
+                } else {
+                    ans[index] = rightNum;
+                    right--;
+                }
+            }
+            index++;
+        }
+        
+        return ans;
     }
 }
 ```
