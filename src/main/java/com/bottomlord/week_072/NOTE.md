@@ -307,3 +307,33 @@ class Solution {
     }
 }
 ```
+# LeetCode_359_日志速率限制器
+## 解法
+### 思路
+- 用hash表`map`存储`message`和`timestamp`，用作判断
+- 如果`map`中没有`message`或者`timestamp`大于`preTimeStamp`10秒，则可以发送
+- 只有在可以发送的情况下才需要更新`timestamp`
+### 代码
+```java
+class Logger {
+    private Map<String, Integer> map;
+    
+    public Logger() {
+        this.map = new HashMap<>();
+    }
+
+    public boolean shouldPrintMessage(int timestamp, String message) {
+        boolean send = true;
+        if (map.containsKey(message)) {
+            Integer preTimeStamep = map.get(message);
+            send = timestamp - preTimeStamep >= 10;
+        }
+
+        if (send) {
+            map.put(message, timestamp);
+        }
+        
+        return send;
+    }
+}
+```
