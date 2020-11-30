@@ -148,3 +148,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_362_敲击计数器](https://leetcode-cn.com/problems/design-hit-counter/)
+## 解法
+### 思路
+队列计数
+### 代码
+```java
+class HitCounter {
+    private ArrayDeque<int[]> queue;
+    public HitCounter() {
+        queue = new ArrayDeque<>();
+    }
+
+    public void hit(int timestamp) {
+        if (!queue.isEmpty()) {
+            int[] last = queue.getLast();
+            if (last[0] == timestamp) {
+                last[1]++;
+                return;
+            }
+        }
+
+        queue.offer(new int[]{timestamp, 1});
+    }
+
+    public int getHits(int timestamp) {
+        int pre5minTimestamp = timestamp - 5 * 60, count = 0;
+        while (!queue.isEmpty()) {
+            int[] element = queue.peek();
+            if (element[0] <= pre5minTimestamp) {
+                queue.poll();
+            } else {
+                break;
+            }
+        }
+
+        for (int[] element : queue) {
+            count += element[1];
+        }
+
+        return count;
+    }
+}
+```
