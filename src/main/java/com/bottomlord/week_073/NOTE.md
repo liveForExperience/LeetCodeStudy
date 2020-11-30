@@ -1,10 +1,89 @@
 # [LeetCode_493_翻转对](https://leetcode-cn.com/problems/reverse-pairs/)
-## 解法
+## 失败解法
 ### 思路
-
+- 从数组最后向前循环遍历，时间复杂度是O(N^2)
+- 注意int值溢出，比对时转成long
 ### 代码
 ```java
+class Solution {
+    public int reversePairs(int[] nums) {
+        int count = 0;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            for (int j = i - 1; j >= 0; j--) {
+                if ((long)nums[i] * 2 < (long)nums[j]) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+```
+## 解法
+### 思路
+归并排序
+- 在归并的二分排序后，合并之前，对两个有序的数组进行计数统计
+- 因为两个序列独自是升序的，而两个序列之间在原序列基础上又是相对有序的，所以只要以比如右边序列的1个元素作为`nums[j]`，与左边序列的元素进行比较，然后找到符合题目的零界点，那么左边该元素之后的所有元素也都是符合题目要求的
+- 暂存一个全局变量count进行计数
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int reversePairs(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return 0;
+        }
 
+        mergeSort(nums, 0, nums.length - 1);
+        return count;
+    }
+
+    private void mergeSort(int[] nums, int left, int right) {
+        if (left == right) {
+            return;
+        }
+
+        int mid = left + (right - left) / 2;
+        mergeSort(nums, left, mid);
+        mergeSort(nums, mid + 1, right);
+
+        int i = left, j = mid + 1;
+        while (i <= mid) {
+            while (j <= right && (long)nums[i] > (long)nums[j] * 2) {
+                j++;
+            }
+
+            count += j - mid - 1;
+            i++;
+        }
+
+        int[] tmp = new int[right - left + 1];
+        int index = 0;
+        i = left;
+        j = mid + 1;
+
+        while (i <= mid && j <= right) {
+            if (nums[i] < nums[j]) {
+                tmp[index++] = nums[i++];
+            } else {
+                tmp[index++] = nums[j++];
+            }
+        }
+
+        while (i <= mid) {
+            tmp[index++] = nums[i++];
+        }
+
+        while (j <= right) {
+            tmp[index++] = nums[j++];
+        }
+
+        for (i = 0, j = left; j <= right; i++, j++) {
+            nums[j] = tmp[i];
+        }
+    }
+}
 ```
 # [LeetCode_767_重构字符串](https://leetcode-cn.com/problems/reorganize-string/)
 ## 解法
