@@ -191,3 +191,41 @@ class HitCounter {
     }
 }
 ```
+# [LeetCode_363_矩形区域不超过K的最大数值和](https://leetcode-cn.com/problems/max-sum-of-rectangle-no-larger-than-k/)
+## 解法
+### 思路
+动态规划：
+- `dp[r1][c1][r2][c2]`：左上角(r1,c1)与右下角(r2,c2)组成的矩形的面积
+- 状态转移方程：`dp[r1][c1][r2][c2] = dp[r1][c1][r2 - 1][c2] + dp[r1][c1][r2][c2 - 1] - dp[r1][c1][r2 - 1][c2 - 1] + matrix[r2][c2]`
+- 优化dp：从如上的状态转移方程中可以看到，左上角的(r1,c1)在计算时不会变化，所有可以直接只记录右下角的坐标
+- `dp[r1][c1]`：右下角为(r1,c1)的矩形的面积
+- 新的状态转移方程：`dp[r1][c1] = dp[r1 - 1][c1] + dp[r1][c1 - 1] - dp[r1 - 1][c1 - 1] + matrix[r1][c1]`
+- base case：遍历时的第一个矩形，`dp[i][j] = matrix[i][j]`
+- 过程：
+    - 从第一个矩形开始不断扩大矩形右下角的取值范围
+    - 然后通过状态转移方程计算当前矩形的面积，并与k作比较，取适合的值作为最大值
+- 结果返回暂存的最大值
+### 代码
+```java
+class Solution {
+    public int maxSumSubmatrix(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[0].length, max = Integer.MIN_VALUE;
+
+        for (int i = 1; i <= row; i++) {
+            for (int j = 1; j <= col; j++) {
+                int[][] dp = new int[row + 1][col + 1];
+                for (int r = i; r <= row; r++) {
+                    for (int c = j; c <= col; c++) {
+                        dp[r][c] = dp[r - 1][c] + dp[r][c - 1] - dp[r - 1][c - 1] + matrix[r - 1][c - 1];
+                        if (dp[r][c] <= k && dp[r][c] > max) {
+                            max = dp[r][c];
+                        }
+                    }
+                }
+            }
+        }
+        
+        return max;
+    }
+}
+```
