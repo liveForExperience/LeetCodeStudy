@@ -229,3 +229,109 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用前缀和将二维数组压缩成一维
+- 在确定列的左右边界后，通过计算前缀和数组（每一个元素就是当前行的左右边界元素总和）的最大连续和，并与k作比较，就可以获得max
+### 代码
+```java
+class Solution {
+    public int maxSumSubmatrix(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[0].length, max = Integer.MIN_VALUE;
+
+        for (int i = 0; i < col; i++) {
+            int[] sum = new int[row];
+            for (int j = i; j < col; j++) {
+                for (int l = 0; l < row; l++) {
+                    sum[l] += matrix[l][j];
+                }
+
+                max = Math.max(max, dpMax(sum, k));
+            }
+        }
+
+        return max;
+    }
+
+    private int dpMax(int[] sum, int k) {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < sum.length; i++) {
+            int count = 0;
+            for (int j = i; j < sum.length; j++) {
+                count += sum[j];
+
+                if (count <= k && count > max) {
+                    max = count;
+                }
+            }
+        }
+
+        return max;
+    }
+}
+```
+## 解法三
+### 思路
+优化解法三的dpMax函数
+- 在求最大连续子序列和的时候，如果没有k的限制，那在遍历数组的时候，就确保每次要累加的前一个dp值是正数
+    - 如果是正数，就继续累加
+    - 如果不是正数，那就重新从当前这个前缀和开始累加
+- 但是因为有了k这个限制，所以当按照上面的方法求得最大值时，如果这个值<=k，那么这个值就是正确答案，但是如果>k，那么就需要重新用解法二的暴力方法求解了
+### 代码
+```java
+class Solution {
+    public int maxSumSubmatrix(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[0].length, max = Integer.MIN_VALUE;
+
+        for (int i = 0; i < col; i++) {
+            int[] sum = new int[row];
+            for (int j = i; j < col; j++) {
+                for (int l = 0; l < row; l++) {
+                    sum[l] += matrix[l][j];
+                }
+
+                max = Math.max(max, dpMax(sum, k));
+            }
+        }
+
+        return max;
+    }
+
+    private int dpMax(int[] sum, int k) {
+        int rollSum = sum[0], max = rollSum;
+        for (int i = 1; i < sum.length; i++) {
+            if (rollSum > 0) {
+                rollSum += sum[i];
+            } else {
+                rollSum = sum[i];
+            }
+            
+            if (rollSum > max) {
+                max = rollSum;
+            }
+        }
+        
+        if (max <= k) {
+            return max;
+        }
+
+        max = Integer.MIN_VALUE;
+        for (int i = 0; i < sum.length; i++) {
+            int count = 0;
+            for (int j = i; j < sum.length; j++) {
+                count += sum[j];
+
+                if (count == k) {
+                    return k;
+                }
+                
+                if (count < k && count > max) {
+                    max = count;
+                }
+            }
+        }
+
+        return max;
+    }
+}
+```
