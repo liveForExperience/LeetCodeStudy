@@ -419,3 +419,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_368_最大正数子集](https://leetcode-cn.com/problems/largest-divisible-subset/)
+## 解法
+### 思路
+- 如果将整个数组排序，那么某一个大数如果能被某一个最大值小的序列的最大值整除，那么这个序列的所有数都能整除这个大数，所以可以做动态规划
+- dp[i]：以坐标i为最大数的序列
+- 状态转移方程：`nums[i] % nums[k] == 0 && dp[k] + 1 > dp[i],dp[i] = dp[k] + 1，k ∈[0, i)`
+- base case：`dp[0] = {nums[0]}`
+- 过程：
+    - 排序数组
+    - 初始化dp
+    - 遍历数组，从坐标1开始遍历，确定当前需要被整除的数值`nums[i]`
+    - 判断：`nums[i] % nums[k] == 0 && dp[k] + 1 > dp[i]`
+        - 如果是，就更新`dp[i]`
+    - 同时判断当前dp[i]是否是最长序列，如果是，就更新暂存的结果序列
+### 代码
+```java
+class Solution {
+    public List<Integer> largestDivisibleSubset(int[] nums) {
+        int len = nums.length;
+        if (len == 0) {
+            return new ArrayList<>();
+        }
+
+        Arrays.sort(nums);
+        List[] dp = new List[len];
+        dp[0] = new ArrayList();
+        dp[0].add(nums[0]);
+        
+        List<Integer> ans = dp[0];
+        for (int i = 1; i < len; i++) {
+            dp[i] = new ArrayList();
+            dp[i].add(nums[i]);
+            for (int j = 0; j < i; j++) {
+                if (nums[i] % nums[j] == 0 && dp[i].size() < dp[j].size() + 1) {
+                    dp[i] = new ArrayList(dp[j]);
+                    dp[i].add(nums[i]);
+                }
+            }
+            
+            if (ans.size() < dp[i].size()) {
+                ans = dp[i];
+            }
+        }
+        
+        return ans;
+    }
+}
+```
