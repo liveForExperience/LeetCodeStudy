@@ -335,3 +335,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_364_加权嵌套序列和II](https://leetcode-cn.com/problems/nested-list-weight-sum-ii/)
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+    public int depthSumInverse(List<NestedInteger> nestedList) {
+        Queue<NestedInteger> queue = new ArrayDeque<>();
+        for (NestedInteger nestedInteger : nestedList) {
+            queue.offer(nestedInteger);
+        }
+        List<Integer> list = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            int sum = 0;
+            while (count-- > 0) {
+                NestedInteger nestedInteger = queue.poll();
+                if (nestedInteger == null) {
+                    continue;
+                }
+                
+                if (nestedInteger.isInteger()) {
+                    sum += nestedInteger.getInteger();
+                    continue;
+                }
+                
+                List<NestedInteger> nestedIntegers = nestedInteger.getList();
+                for (NestedInteger element : nestedIntegers) {
+                    queue.offer(element);
+                }
+            }
+            
+            list.add(sum);
+        }
+
+        int ans = 0;
+        for (int i = 0; i < list.size(); i++) {
+            ans += list.get(i) * (list.size() - i);
+        }
+        return ans;
+    }
+}
+```
