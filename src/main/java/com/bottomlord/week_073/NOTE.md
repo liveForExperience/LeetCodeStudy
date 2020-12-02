@@ -379,3 +379,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_366_寻找二叉树的叶子节点](https://leetcode-cn.com/problems/find-leaves-of-binary-tree/)
+## 解法
+### 思路
+- 循环dfs，dfs中将叶子节点置空并将值放入list中
+- 循环直至root为null
+- dfs时做的是前序遍历
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> findLeaves(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+        
+        while (root != null) {
+            List<Integer> list = new ArrayList<>();
+            root = preOrder(root, list);
+            ans.add(list);
+        }
+        
+        return ans;
+    }
+    
+    private TreeNode preOrder(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return null;
+        }
+        
+        if (node.left == null && node.right == null) {
+            list.add(node.val);
+            return null;
+        }
+        
+        node.left = preOrder(node.left, list);
+        node.right = preOrder(node.right, list);
+        return node;
+    }
+}
+```
