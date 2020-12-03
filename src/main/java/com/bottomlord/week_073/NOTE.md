@@ -513,3 +513,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_370_区间加法](https://leetcode-cn.com/problems/range-addition/)
+## 解法
+### 思路
+暴力法
+### 代码
+```java
+class Solution {
+    public int[] getModifiedArray(int length, int[][] updates) {
+        int[] ans = new int[length];
+        for (int[] update : updates) {
+            int start = update[0], end = update[1];
+            for (int i = start; i <= end; i++) {
+                ans[i] += update[2];
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 初始化一个数组，用来记录update所对应的变化
+- 在记录变化的时候，只需要记录start一个点的变化值，因为在实际生成结果数组的时候，生成的方式是`ans[i + 1] = ans[i]`，这样如果i是某个update的区间的中间一个元素，我就只需要关心i-1坐标的值就可以了
+- 那么update区间的结束则可以通过`ans[i] = -update[2]`，这就代表当前区间结束了，区间结尾元素的后一个元素的变化是`-update[2]`
+### 代码
+```java
+class Solution {
+    public int[] getModifiedArray(int length, int[][] updates) {
+        int[] ans = new int[length];
+        for (int[] update : updates) {
+            ans[update[0]] += update[2];
+
+            if (update[1] < length - 1) {
+                ans[update[1] + 1] -= update[2];
+            }
+        }
+
+        for (int i = 1; i < length; i++) {
+            ans[i] += ans[i - 1];
+        }
+        
+        return ans;
+    }
+}
+```
