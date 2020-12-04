@@ -558,3 +558,79 @@ class Solution {
     }
 }
 ```
+# [超级次方](https://leetcode-cn.com/problems/super-pow/)
+## 解法
+### 思路
+- 因为`a^[x1,x2,x3,x4] = a^x4 * a^[x1,x2,x3]^10`，所以可以使用递归来计算，退出条件就是代表指数的数组长度为0的时候，返回1
+- `(a*b)%c = ((a%c)*(b%c))%c`，推演的公式：
+    - 假设`a = x1 * c + y1`，`b = x2 * c + y2`，所以`ab = x1x2c^2 + x1y2c + x2y1c + y1y2`
+    - 所以`ab % c = y1y2 % c`
+    - 因为`a % c = y1`，`b % c = y2`，所以`(a*b)%c = ((a%c)*(b%c))%c`
+- 于是通过如上的推演，在满足题目要求，对结果做取模时候，可以在每个因数上进行取模，然后在乘积上再取模，从而获得结果
+### 代码
+```java
+class Solution {
+    private final int base = 1337;
+    
+    public int superPow(int a, int[] b) {
+        if (b.length == 0) {
+            return 1;
+        }
+        
+        int last = b[b.length - 1];
+        int part1 = pow(a, last), part2 = pow(superPow(a, Arrays.copyOfRange(b, 0, b.length - 1)), 10);
+        return (part1 * part2) % base;
+    }
+    
+    private int pow(int a, int b) {
+        if (b == 0) {
+            return 1;
+        }
+        
+        a %= base;
+        int ans = 1;
+        for (int i = 0; i < b; i++) {
+            ans *= a;
+            ans %= base;
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+在上一个解法的基础上，在计算幂时候可以做提速：
+- 如果指数是奇数：`a^b = a^(b - 1) * a`
+- 如果指数是偶数：`a^b = a^(b/2) * a^(b/2)`，`c = a^(b/2)`，`a^b = c*c`如果只计算c的话，整个过程递归就是一个O(logN)的时间复杂度的计算
+### 代码
+```java
+class Solution {
+    private final int base = 1337;
+    
+    public int superPow(int a, int[] b) {
+        if (b.length == 0) {
+            return 1;
+        }
+        
+        int last = b[b.length - 1];
+        int part1 = pow(a, last), part2 = pow(superPow(a, Arrays.copyOfRange(b, 0, b.length - 1)), 10);
+        return (part1 * part2) % base;
+    }
+    
+    private int pow(int a, int b) {
+        if (b == 0) {
+            return 1;
+        }
+        
+        a %= base;
+        
+        if (b % 2 == 1) {
+            return (a * (pow(a, b - 1))) % base;
+        } else {
+            int c = pow(a, b / 2);
+            return (c * c) % base;
+        }
+    }
+}
+```
