@@ -634,3 +634,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_659_分割数组为连续子序列](https://leetcode-cn.com/problems/split-array-into-consecutive-subsequences/)
+## 解法
+### 思路
+- 遍历序列，在遍历过程中，将连续的元素作为一个序列，累加计数
+- 然后将序列的结尾数字作为key，累加的序列长度作为value保存，且判断累加的时候，肯定是判断当前元素的前一个元素存不存在，它的序列有多长，如果连起来以后，上一个数和它对应的序列长度就没用了，那就删掉
+- 遍历的时候，肯定出现重复的数字，那么同一个数就需要保存多个序列的长度，而之后的数如果要连接当前这个数的序列，在选择序列的时候，应该找到的是短的那个序列，那么value就应该存一个小顶堆，将序列长度放在小顶堆里
+- 等整个序列被遍历完以后，在遍历下map中的所有entry，查一下有没有小于3的序列长度，有的话就是false，否则是true
+### 代码
+```java
+class Solution {
+    public boolean isPossible(int[] nums) {
+        Map<Integer, PriorityQueue<Integer>> map = new HashMap<>();
+        for (int num : nums) {
+            if (!map.containsKey(num)) {
+                map.put(num, new PriorityQueue<>());
+            }
+
+            if (map.containsKey(num - 1)) {
+                Integer preLen = map.get(num - 1).poll();
+                map.get(num).offer(preLen + 1);
+
+                if (map.get(num - 1).isEmpty()) {
+                    map.remove(num - 1);
+                }
+            } else {
+                map.get(num).offer(1);
+            }
+        }
+
+        for (Map.Entry<Integer, PriorityQueue<Integer>> entry : map.entrySet()) {
+            PriorityQueue<Integer> queue = entry.getValue();
+            for (Integer num : queue) {
+                if (num < 3) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+}
+```
