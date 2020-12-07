@@ -676,3 +676,53 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 使用2个map，分别统计：
+    - `countMap`：数字出现的个数
+    - `endMap`：数字在序列中作为结尾出现的个数
+- 过程：
+    - 遍历`nums`序列，在`countMap`中统计数字出现的个数
+    - 再遍历`nums`序列，根据遍历到的数字，在`endMap`中查找是否存在比当前元素小1的数字，也就是找当前遍历到的序列中是否存在与当前元素紧接着的序列
+        - 如果有：将该序列的结尾数字对应的个数减1，代表有1个这样的序列和当前元素连接，这个序列的结尾数字变成当前数字，所以在`endMap`中将当前元素作为key放入map中，并在对应value中加1
+        - 如果没有：说明当前元素是单独的，那就检查`countMap`中是否存在和当前元素紧接着的2个数字，如果不存在，那就直接返回false，否则，就将这连续的3个数字的出现个数减1，并将3个数字的最后一个数字作为`endMap`中又一个序列的结尾数字，放入`endMap`中并计数
+    - `nums`序列遍历结束后，直接返回true，代表所有元素都已经遍历完，且都可以和其他元素组成序列
+    - 在第二次遍历`nums`的过程中，需要先检查`countMap`中当前元素的出现个数，如果是0，代表当前元素在之前的处理`endMap`时已经减去，可以直接跳过
+### 代码
+```java
+class Solution {
+    public boolean isPossible(int[] nums) {
+        Map<Integer, Integer> countMap = new HashMap<>(), endMap = new HashMap<>();
+        for (int num : nums) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+        
+        for (int num : nums) {
+            if (countMap.get(num) == 0) {
+                continue;
+            }
+            
+            int preEndCount = endMap.getOrDefault(num - 1, 0);
+            if (preEndCount > 0) {
+                endMap.put(num, endMap.getOrDefault(num, 0) + 1);
+                endMap.put(num - 1, preEndCount - 1);
+                countMap.put(num, countMap.get(num) - 1);
+            } else {
+                int secondCount = countMap.getOrDefault(num + 1, 0),
+                    thirdCount = countMap.getOrDefault(num + 2, 0);
+                
+                if (secondCount > 0 && thirdCount > 0) {
+                    countMap.put(num, countMap.get(num) - 1);
+                    countMap.put(num + 1, secondCount - 1);
+                    countMap.put(num + 2, thirdCount - 1);
+                    endMap.put(num + 2, endMap.getOrDefault(num + 2, 0) + 1);
+                } else {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+}
+```
