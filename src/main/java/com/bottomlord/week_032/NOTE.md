@@ -1242,6 +1242,32 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+递归+记忆化搜索
+### 代码
+```java
+class Solution {
+    public int fib(int n) {
+        return f(n, new HashMap<>());
+    }
+    
+    private int f(int n, Map<Integer, Integer> memo) {
+        if (memo.containsKey(n)) {
+            return memo.get(n);
+        }
+
+        if (n <= 1) {
+            memo.put(n, n);
+            return n;
+        }
+
+        int ans = (f(n - 1, memo) + f(n - 2, memo)) % 1000000007;
+        memo.put(n, ans);
+        return ans;
+    }
+}
+```
 # Interview_10II_青蛙跳台阶问题
 ## 题目
 一只青蛙一次可以跳上1级台阶，也可以跳上2级台阶。求该青蛙跳上一个 n 级的台阶总共有多少种跳法。
