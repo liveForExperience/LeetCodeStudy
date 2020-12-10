@@ -108,3 +108,100 @@ class Solution {
     }
 }
 ```
+# [LeetCode_375_猜数字大小II](https://leetcode-cn.com/problems/guess-number-higher-or-lower-ii/)
+## 失败解法
+### 思路
+- 题意：在[1,n]的区间中找到开销最小的情况，而为了使每一种开销可能都是最差的情况，则就是如下这种情况
+    - 猜的数字不对
+    - 然后在指示下寻找下一个数字时，又选错
+    - 直到剩下一个数字可以选择
+- 基于题意分析，这个找到一种开销的最差情况的过程可以被拆分成分治的状态：`nums[i] + max(f(start, i - 1), f(i + 1, end))`
+- f()就是整体计算开销的递归方法
+- f()的过程：
+    - 退出条件：`start >= end`，代表当前计算开销的过程结束了，最后那个该被找到的值找到了
+    - 然后开始循环遍历数组`[start, end]`，顺序选取数字作为当前第一个猜错的数字，并继续递归
+    - 通过计算公式`nums[i] + max(f(start, i - 1), f(i + 1, end))`得出以当前这个数为第一个猜错数字后，最大的开销值
+    - 然后用这个开销值与其他遍历到的开销值作比较，暂存一个最小值
+    - 递归的最后，将计算出来的最小值返回到上一层
+### 代码
+```java
+class Solution {
+    public int getMoneyAmount(int n) {
+        return recurse(1, n);
+    }
+    
+    private int recurse(int start, int end) {
+        if (start >= end) {
+            return 0;
+        }
+        
+        int min = Integer.MAX_VALUE;
+        for (int i = start; i <= end; i++) {
+            int sum = i + Math.max(recurse(start, i - 1), recurse(i + 1, end));
+            min = Math.min(min, sum);
+        }
+        
+        return min;
+    }
+}
+```
+## 失败解法二
+### 思路
+在失败解法上做记忆化搜索
+### 代码
+```java
+class Solution {
+    public int getMoneyAmount(int n) {
+        return recurse(1, n, new HashMap<>());
+    }
+
+    private int recurse(int start, int end, Map<String, Integer> memo) {
+        if (start >= end) {
+            return 0;
+        }
+
+        if (memo.containsKey(start + " " + end)) {
+            return memo.get(start + " " + end);
+        }
+
+        int min = Integer.MAX_VALUE;
+        for (int i = start; i <= end; i++) {
+            int sum = i + Math.max(recurse(start, i - 1, memo), recurse(i + 1, end, memo));
+            min = Math.min(min, sum);
+        }
+
+        memo.put(start + " " + end, min);
+        return min;
+    }
+}
+```
+## 解法
+### 思路
+在`[start,end]`区间中，如果遍历的范围是`[start, (start + end) / 2]`，那么开销值较大的永远是右边区间，所以可以直接从`(start + end) / 2`范围开始遍历，免去不必要的开销
+### 代码
+```java
+class Solution {
+    public int getMoneyAmount(int n) {
+        return recurse(1, n, new HashMap<>());
+    }
+
+    private int recurse(int start, int end, Map<String, Integer> memo) {
+        if (start >= end) {
+            return 0;
+        }
+        
+        if (memo.containsKey(start + " " + end)) {
+            return memo.get(start + " " + end);
+        }
+
+        int min = Integer.MAX_VALUE;
+        for (int i = (start + end) / 2; i <= end; i++) {
+            int sum = i + Math.max(recurse(start, i - 1, memo), recurse(i + 1, end, memo));
+            min = Math.min(min, sum);
+        }
+
+        memo.put(start + " " + end, min);
+        return min;
+    }
+}
+```
