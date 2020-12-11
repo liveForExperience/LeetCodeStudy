@@ -205,3 +205,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_649_Dota2](https://leetcode-cn.com/problems/dota2-senate/)
+## 解法
+### 思路
+循环队列：
+- 初始化两个队列，分别用来存储两个阵营参议院的下下标
+- 遍历一次字符串，将两个阵营的参议院坐标分别压入对应队列中
+- 然后再开始一个循环
+    - 退出条件：有一个队列为空
+    - 过程：同时弹出两个队列的头元素，比较下标大小，小的那个保留，重新压入队列中，但此时在原来的坐标基础上加上总参议员的个数
+    - 最终返回那个有剩余参议院对应的字符串
+### 代码
+```java
+class Solution {
+    public String predictPartyVictory(String senate) {
+        int len = senate.length();
+        
+        Queue<Integer> radiantQueue = new LinkedList<>(),
+                       direQueue = new LinkedList<>();
+        
+        for (int i = 0; i < len; i++) {
+            if (senate.charAt(i) == 'R') {
+                radiantQueue.offer(i);
+            } else {
+                direQueue.offer(i);
+            }
+        }
+        
+        while (!radiantQueue.isEmpty() && !direQueue.isEmpty()) {
+            int rIndex = radiantQueue.poll(), dIndex = direQueue.poll();
+            
+            if (rIndex < dIndex) {
+                radiantQueue.offer(rIndex + len);
+            } else {
+                direQueue.offer(dIndex + len);
+            }
+        }
+        
+        return radiantQueue.isEmpty() ? "Dire" : "Radiant";
+    }
+}
+```
