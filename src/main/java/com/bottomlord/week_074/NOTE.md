@@ -246,3 +246,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_376_摆动序列](https://leetcode-cn.com/problems/wiggle-subsequence/)
+## 解法
+### 思路
+动态规划：
+- up[i], down[i]：分别代表前i个元素中，以下行或上行作为结尾的摆动序列的最大长度
+- 状态转移方程：
+    - nums[i] > nums[i - 1]：说明当前元素和前一个元素可以组成上行，此时就有2种情况需要比较，因为比前一个元素大，所以以i-1为元素范围的`up[i - 1]`一定可以作为当前`up[i]`的一种选择，而另一种选择就是取`down[i - 1]`的值。因为`nums[i-1]`比`nums[i]`小，那么不论`nums[i - 1]`是不是`down[i - 1]`这个对应序列的最后元素，这个序列的最后元素肯定会比`nums[i]`小，所以可以把当前元素拼接到`down[i - 1]`对应的序列中去。.所以转移方程就是`up[i] = max(up[i - 1], down[i - 1] + 1), down[i] = down[i - 1]`
+    - nums[i] < nums[i - 1]：推理过程和上一种情况类似，`down[i] = max(down[i - 1], up[i - 1] + 1), up[i] = up[i - 1]`
+    - nums[i] = nums[i - 1]：代表当前元素不考虑，`up[i] = up[i - 1], down[i] = down[i - 1]`
+- base case：`up[0] = down[0] = 1`
+- 返回结果：`max(up[len - 1], down[len - 1])`
+### 代码
+```java
+class Solution {
+    public int wiggleMaxLength(int[] nums) {
+        int len = nums.length;
+        if (len <= 1) {
+            return len;
+        }
+        
+        int[] up = new int[len], down = new int[len];
+        up[0] = down[0] = 1;
+
+        for (int i = 1; i < len; i++) {
+            if (nums[i] - nums[i - 1] > 0) {
+                up[i] = Math.max(up[i - 1], down[i - 1] + 1);
+                down[i] = down[i - 1];
+            } else if (nums[i] - nums[i - 1] < 0) {
+                down[i] = Math.max(down[i - 1], up[i - 1] + 1);
+                up[i] = up[i - 1];
+            } else {
+                up[i] = up[i - 1];
+                down[i] = down[i - 1];
+            }
+        }
+        
+        return Math.max(up[len - 1], down[len - 1]);
+    }
+
+}
+```
