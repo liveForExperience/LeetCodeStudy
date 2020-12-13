@@ -287,3 +287,83 @@ class Solution {
 
 }
 ```
+# [LeetCode_377_组合总和IV](https://leetcode-cn.com/problems/combination-sum-iv/)
+## 失败解法
+### 思路
+回溯+剪枝
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int combinationSum4(int[] nums, int target) {
+        Arrays.sort(nums);
+        backTrack(nums, 0, target);
+        return count;
+    }
+
+    private void backTrack(int[] nums, int sum, int target) {
+        if (sum > target) {
+            return;
+        }
+
+        if (sum == target) {
+            count++;
+            return;
+        }
+
+        Set<Integer> memo = new HashSet<>();
+        for (int num : nums) {
+            if (sum + num > target) {
+                break;
+            }
+
+            if (memo.contains(num)) {
+                continue;
+            }
+
+            memo.add(num);
+            backTrack(nums, sum + num, target);
+        }
+    }
+}
+```
+## 解法
+### 思路
+回溯+记忆化搜索
+### 代码
+```java
+class Solution {
+    public int combinationSum4(int[] nums, int target) {
+        return dfs(nums, target, new HashMap<>());
+    }
+    
+    private int dfs(int[] nums, int target, Map<Integer, Integer> memo) {
+        Integer count = memo.get(target);
+        
+        if (count != null) {
+            return count;
+        }
+        
+        if (target == 0) {
+            return 1;
+        }
+        
+        if (target < 0) {
+            return 0;
+        }
+        
+        count = 0;
+
+        for (int num : nums) {
+            if (num == target) {
+                count++;
+            } else {
+                count += dfs(nums, target - num, memo);
+            }
+        }
+        
+        memo.put(target, count);
+        return count;
+    }
+}
+```
