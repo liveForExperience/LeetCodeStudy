@@ -58,3 +58,83 @@ class PhoneDirectory {
     }
 }
 ```
+# [LeetCode_738_单调递增的数字](https://leetcode-cn.com/problems/monotone-increasing-digits/)
+## 失败解法
+### 思路
+暴力
+### 代码
+```java
+class Solution {
+    public int monotoneIncreasingDigits(int N) {
+        for (int i = N; i >= 0; i--) {
+            if (isValid(i)) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
+    private boolean isValid(int n) {
+        int pre = n % 10;
+        n /= 10;
+
+        while (n > 0) {
+            int cur = n % 10;
+            if (cur > pre) {
+                return false;
+            }
+
+            pre = cur;
+            n /= 10;
+        }
+
+        return true;
+    }
+}
+```
+## 解法
+### 思路
+- 从尾部开始判断两个相邻元素之间的关系，如果后一个元素比前一个元素大，那么就需要标记当前元素，标记的目的是为了表示从当前元素开始到最低位，所有值都是9，同时将前一个较大数的值-1
+- 然后继续循环判断并在必要情况下更新标记
+- 循环结束后，将字符串进行截取，截取范围是0到标记的位置，并拼接从标记位置到字符串结尾
+### 代码
+```java
+class Solution {
+    public int monotoneIncreasingDigits(int N) {
+        if (N < 10) {
+            return N;
+        }
+
+        String str = Integer.toString(N);
+        char[] cs = str.toCharArray();
+        int start9Index = str.length();
+        for (int i = cs.length - 1; i > 0; i--) {
+            if (cs[i] < cs[i - 1]) {
+                cs[i - 1] = (char)(cs[i - 1] - 1);
+                start9Index = i;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int start = 0;
+        for (; start < start9Index; start++) {
+            if (cs[start] != '0') {
+                break;
+            }
+        }
+
+        for (int i = start; i < start9Index; i++) {
+            sb.append(cs[i]);
+        }
+
+        if (start9Index < str.length()) {
+            char[] cs9 = new char[str.length() - start9Index];
+            Arrays.fill(cs9, '9');
+            sb.append(cs9);
+        }
+
+        return Integer.parseInt(sb.toString());
+    }
+}
+```
