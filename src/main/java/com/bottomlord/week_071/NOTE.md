@@ -160,23 +160,23 @@ class Solution {
 class Solution {
     public int depthSum(List<NestedInteger> nestedList) {
         int sum = 0;
-        for (NestedInteger nestedInteger : nestedList) {
-            sum += sum(nestedInteger, 1);
+        for (NestedInteger INestedInteger : nestedList) {
+            sum += sum(INestedInteger, 1);
         }
         
         return sum;
     }
     
-    private int sum(NestedInteger nestedInteger, int depth) {
-        if (nestedInteger == null) {
+    private int sum(NestedInteger INestedInteger, int depth) {
+        if (INestedInteger == null) {
             return 0;
         }
         
-        if (nestedInteger.isInteger()) {
-            return nestedInteger.getInteger() * depth;
+        if (INestedInteger.isInteger()) {
+            return INestedInteger.getInteger() * depth;
         }
         
-        List<NestedInteger> nestedIntegers = nestedInteger.getList();
+        List<NestedInteger> nestedIntegers = INestedInteger.getList();
         int sum = 0;
         for (NestedInteger ni : nestedIntegers) {
             sum += sum(ni, depth + 1);

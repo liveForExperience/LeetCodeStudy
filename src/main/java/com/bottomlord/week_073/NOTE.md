@@ -344,25 +344,25 @@ bfs
 class Solution {
     public int depthSumInverse(List<NestedInteger> nestedList) {
         Queue<NestedInteger> queue = new ArrayDeque<>();
-        for (NestedInteger nestedInteger : nestedList) {
-            queue.offer(nestedInteger);
+        for (NestedInteger INestedInteger : nestedList) {
+            queue.offer(INestedInteger);
         }
         List<Integer> list = new ArrayList<>();
         while (!queue.isEmpty()) {
             int count = queue.size();
             int sum = 0;
             while (count-- > 0) {
-                NestedInteger nestedInteger = queue.poll();
-                if (nestedInteger == null) {
+                NestedInteger INestedInteger = queue.poll();
+                if (INestedInteger == null) {
                     continue;
                 }
                 
-                if (nestedInteger.isInteger()) {
-                    sum += nestedInteger.getInteger();
+                if (INestedInteger.isInteger()) {
+                    sum += INestedInteger.getInteger();
                     continue;
                 }
                 
-                List<NestedInteger> nestedIntegers = nestedInteger.getList();
+                List<NestedInteger> nestedIntegers = INestedInteger.getList();
                 for (NestedInteger element : nestedIntegers) {
                     queue.offer(element);
                 }

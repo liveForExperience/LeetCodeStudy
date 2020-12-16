@@ -1,6 +1,6 @@
 package com.bottomlord.week_013;
 
-import com.bottomlord.NestedInteger;
+import com.bottomlord.INestedInteger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,18 +9,18 @@ import java.util.List;
 public class LeetCode_341_1_扁平化嵌套列表迭代器 {
     public class NestedIterator implements Iterator<Integer> {
         private Iterator<Integer> iterator;
-        public NestedIterator(List<NestedInteger> nestedList) {
+        public NestedIterator(List<INestedInteger> nestedList) {
             List<Integer> list = new ArrayList<>();
             recurse(list, nestedList);
             iterator = list.iterator();
         }
 
-        private void recurse(List<Integer> list, List<NestedInteger> nestedList) {
-            for (NestedInteger nestedInteger : nestedList) {
-                if (nestedInteger.isInteger()) {
-                    list.add(nestedInteger.getInteger());
+        private void recurse(List<Integer> list, List<INestedInteger> nestedList) {
+            for (INestedInteger INestedInteger : nestedList) {
+                if (INestedInteger.isInteger()) {
+                    list.add(INestedInteger.getInteger());
                 } else {
-                    recurse(list, nestedInteger.getList());
+                    recurse(list, INestedInteger.getList());
                 }
             }
         }

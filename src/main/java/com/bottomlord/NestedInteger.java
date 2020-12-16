@@ -2,10 +2,37 @@ package com.bottomlord;
 
 import java.util.List;
 
-public interface NestedInteger {
-  boolean isInteger();
+/**
+ * @author ChenYue
+ * @date 2020/12/16 8:42
+ */
+public class NestedInteger implements INestedInteger {
+    public NestedInteger(){}
 
-  Integer getInteger();
+    public NestedInteger(int value) {}
 
-  List<NestedInteger> getList();
+    @Override
+    public boolean isInteger() {
+        return false;
+    }
+
+    @Override
+    public Integer getInteger() {
+        return null;
+    }
+
+    @Override
+    public void setInteger(int value) {
+
+    }
+
+    @Override
+    public void add(NestedInteger ni) {
+
+    }
+
+    @Override
+    public List<NestedInteger> getList() {
+        return null;
+    }
 }

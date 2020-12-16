@@ -1,6 +1,6 @@
 package com.bottomlord.week_013;
 
-import com.bottomlord.NestedInteger;
+import com.bottomlord.INestedInteger;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,10 +8,10 @@ import java.util.List;
 
 public class LeetCode_341_2 {
     public class NestedIterator implements Iterator<Integer> {
-        private LinkedList<Iterator<NestedInteger>> stack = new LinkedList<>();
+        private LinkedList<Iterator<INestedInteger>> stack = new LinkedList<>();
         private boolean flag = false;
         private Integer num;
-        public NestedIterator(List<NestedInteger> nestedList) {
+        public NestedIterator(List<INestedInteger> nestedList) {
             stack.offer(nestedList.iterator());
         }
 
@@ -24,18 +24,18 @@ public class LeetCode_341_2 {
         @Override
         public boolean hasNext() {
             while (!stack.isEmpty() && !flag) {
-                Iterator<NestedInteger> iterator = stack.peekFirst();
+                Iterator<INestedInteger> iterator = stack.peekFirst();
                 if (iterator.hasNext()) {
-                    NestedInteger nestedInteger = iterator.next();
-                    if (nestedInteger == null) {
+                    INestedInteger INestedInteger = iterator.next();
+                    if (INestedInteger == null) {
                         continue;
                     }
 
-                    if (nestedInteger.isInteger()) {
+                    if (INestedInteger.isInteger()) {
                         flag = true;
-                        num = nestedInteger.getInteger();
+                        num = INestedInteger.getInteger();
                     } else {
-                        stack.offerFirst(nestedInteger.getList().iterator());
+                        stack.offerFirst(INestedInteger.getList().iterator());
                         iterator.remove();
                     }
                 } else {

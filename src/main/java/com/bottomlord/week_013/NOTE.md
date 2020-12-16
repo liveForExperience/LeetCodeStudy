@@ -480,11 +480,11 @@ public class NestedIterator implements Iterator<Integer> {
     }
 
     private void recurse(List<Integer> list, List<NestedInteger> nestedList) {
-        for (NestedInteger nestedInteger : nestedList) {
-            if (nestedInteger.isInteger()) {
-                list.add(nestedInteger.getInteger());
+        for (NestedInteger INestedInteger : nestedList) {
+            if (INestedInteger.isInteger()) {
+                list.add(INestedInteger.getInteger());
             } else {
-                recurse(list, nestedInteger.getList());
+                recurse(list, INestedInteger.getList());
             }
         }
     }
@@ -524,16 +524,16 @@ public class NestedIterator implements Iterator<Integer> {
         while (!stack.isEmpty() && !flag) {
             Iterator<NestedInteger> iterator = stack.peekFirst();
             if (iterator.hasNext()) {
-                NestedInteger nestedInteger = iterator.next();
-                if (nestedInteger == null) {
+                NestedInteger INestedInteger = iterator.next();
+                if (INestedInteger == null) {
                     continue;
                 }
 
-                if (nestedInteger.isInteger()) {
+                if (INestedInteger.isInteger()) {
                     flag = true;
-                    num = nestedInteger.getInteger();
+                    num = INestedInteger.getInteger();
                 } else {
-                    stack.offerFirst(nestedInteger.getList().iterator());
+                    stack.offerFirst(INestedInteger.getList().iterator());
                     iterator.remove();
                 }
             } else {
