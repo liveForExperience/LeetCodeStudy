@@ -268,3 +268,19 @@ class Solution {
     }
 }
 ```
+# [LeetCode_390_消除游戏](https://leetcode-cn.com/problems/elimination-game/)
+## 解法
+### 思路
+- 第一次消除后剩下的元素，重新从尾部开始编号后，每一个元素转变回初始的元素值都可以通过如下公式获得
+```math
+f(2k)=2(k+1−f(k))
+```
+- 那么通过递归就可以获得最终剩下的那个数字了
+### 代码
+```java
+class Solution {
+    public int lastRemaining(int n) {
+        return n == 1 ? 1 : 2 * (n / 2 + 1 - lastRemaining(n / 2));
+    }
+}
+```
