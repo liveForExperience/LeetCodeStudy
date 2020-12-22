@@ -83,3 +83,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_395_至少有K个重复字符的最长子串](https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/)
+## 解法
+### 思路
+递归：
+- 以不足k个的字符为界，切分字符串
+- 然后进行递归
+    - 退出条件：
+        - 字符串总长度小于k
+        - 当前字符串中不含有小于k个的字符，直接返回字符长度
+    - 如果包含就继续递归，并返回所有可能的最大值
+### 代码
+```java
+class Solution {
+    public int longestSubstring(String s, int k) {
+        if (s.length() < k) {
+            return 0;
+        }
+
+        int[] arr = new int[26];
+        for (char c : s.toCharArray()) {
+            arr[c - 'a']++;
+        }
+
+        for (int i = 0; i < 26; i++) {
+            if (arr[i] != 0 && arr[i] < k) {
+                String[] strs = s.split("" + (char) (i + 'a'));
+                int max = 0;
+                for (String str : strs) {
+                    if ("".equals(str)) {
+                        continue;
+                    }
+                    max = Math.max(max, longestSubstring(str, k));
+                }
+                return max;
+            }
+        }
+
+        return s.length();
+    }
+}
+```
