@@ -124,3 +124,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_396_旋转函数]()
+## 解法
+### 思路
+旋转重新计算f的过程可以看作：在计算f(n)时，是在f(n - 1)的基础上增加所有元素的总和，这样所有元素的乘数上都加了1，但此时最后的那个元素是要被移动到头部并乘以0的，于是就只要确定当前要旋转哪个元素，把它从和中减去就可以了
+### 代码
+```java
+class Solution {
+    public int maxRotateFunction(int[] A) {
+        int len = A.length, sum = 0, f = 0;
+        for (int i = 0; i < len; i++) {
+            sum += A[i];
+            f += A[i] * i;
+        }
+
+        int max = f;
+        for (int i = len - 1; i > 0; i--) {
+            f = f + sum - (len) * A[i];
+            max = Math.max(max, f);
+        }
+
+        return max;
+    }
+}
+```
