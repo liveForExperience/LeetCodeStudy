@@ -124,7 +124,7 @@ class Solution {
     }
 }
 ```
-# [LeetCode_396_旋转函数]()
+# [LeetCode_396_旋转函数](https://leetcode-cn.com/problems/rotate-function/)
 ## 解法
 ### 思路
 旋转重新计算f的过程可以看作：在计算f(n)时，是在f(n - 1)的基础上增加所有元素的总和，这样所有元素的乘数上都加了1，但此时最后的那个元素是要被移动到头部并乘以0的，于是就只要确定当前要旋转哪个元素，把它从和中减去就可以了
@@ -145,6 +145,41 @@ class Solution {
         }
 
         return max;
+    }
+}
+```
+# [LeetCode_397_正数替换](https://leetcode-cn.com/problems/integer-replacement/)
+## 解法
+### 思路
+记忆化搜索+递归
+### 代码
+```java
+class Solution {
+    public int integerReplacement(int n) {
+        return recurse(n, new HashMap<>());
+    }
+    
+    private int recurse(long num, Map<Long, Integer> memo) {
+        if (num == 1) {
+            return 0;
+        }
+
+        if (memo.containsKey(num)) {
+            return memo.get(num);
+        }
+
+        int count = 0;
+        if (num % 2 == 0) {
+            count = recurse(num / 2, memo) + 1;
+        } else {
+            int bCount = recurse(num + 1, memo) + 1,
+                sCount = recurse(num - 1, memo) + 1;
+
+            count = Math.min(bCount, sCount);
+        }
+
+        memo.put(num, count);
+        return count;
     }
 }
 ```
