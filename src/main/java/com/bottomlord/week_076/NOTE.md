@@ -237,3 +237,48 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+哈希表：
+- 初始化一个哈希表map：
+    - key存储的是stone中所有的值，另加一个0，代表青蛙可以落脚的位置
+    - value中存储每个石头位置对应的，可以从其他之前石头跳跃过来的距离
+    - 初始化的时候，key为0的value放入一个距离0
+- 遍历map的key，之后遍历key对应的value集合，判断每个集合中的距离distance| distance + 1 | distance - 1三种情况在map中是否存在对应的key，如果存在，就将这个距离放入找到的key 对应的value集合中
+- 最后判断最后石头的位置在map中的value长度是否大于0，大于达标可以到达
+- value要用set去重，否则会有很多重复的距离放到list中
+### 代码
+```java
+class Solution {
+    int[] diffs = new int[]{-1,0,1};
+    
+    public boolean canCross(int[] stones) {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int i = 0; i < stones.length; i++) {
+            if (i == 0) {
+                map.put(stones[0], new HashSet<Integer>(){{this.add(0);}});
+            } else {
+                map.put(stones[i], new HashSet<>());
+            }
+        }
+
+        for (int i = 0; i < stones.length - 1; i++) {
+            Set<Integer> values = map.get(stones[i]);
+
+            for (int value : values) {
+                for (int diff : diffs) {
+                    if (value + diff <= 0) {
+                        continue;
+                    }
+
+                    if (map.containsKey(stones[i] + value + diff)) {
+                        map.get(stones[i] + value + diff).add(value + diff);
+                    }
+                }
+            }
+        }
+
+        return !map.get(stones[stones.length - 1]).isEmpty();
+    }
+}
+```
