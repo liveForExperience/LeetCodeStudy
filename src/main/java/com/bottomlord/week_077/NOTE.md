@@ -53,3 +53,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_408_有效单词缩写](https://leetcode-cn.com/problems/valid-word-abbreviation/)
+## 解法
+### 思路
+- 同时遍历两个字符串的字符
+- 如果字符相等，则同时向后移动
+- 如果缩写字符为数字，则对应移动原字符串的字符个数，同时缩写字符移动至非数字字符
+- 如果某一个字符串搜索完毕，而另一个没有搜索完毕，则不是缩写
+- 如果数字的字符长度大于1，则不能以0开头
+- 不能是0
+### 代码
+```java
+class Solution {
+    public boolean validWordAbbreviation(String word, String abbr) {
+        int wIndex = 0, aIndex = 0, wLen = word.length(), aLen = abbr.length();
+        while (wIndex < wLen && aIndex < aLen) {
+            if (word.charAt(wIndex) == abbr.charAt(aIndex)) {
+                wIndex++;
+                aIndex++;
+                continue;
+            }
+            
+            if (!Character.isDigit(abbr.charAt(aIndex))) {
+                return false;
+            }
+            
+            StringBuilder numSb = new StringBuilder();
+            while (aIndex < aLen && Character.isDigit(abbr.charAt(aIndex))) {
+                numSb.append(abbr.charAt(aIndex++));
+            }
+            
+            if (numSb.charAt(0) == '0') {
+                return false;
+            }
+            
+            int num = Integer.parseInt(numSb.toString());
+            wIndex += num;
+        }
+        
+        return wIndex == wLen && aIndex == aLen;
+    }
+}
+```
