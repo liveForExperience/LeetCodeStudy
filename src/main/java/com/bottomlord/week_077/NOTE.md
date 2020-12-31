@@ -175,3 +175,120 @@ class Solution {
     }
 }
 ```
+# [LeetCode_417_太平洋大西洋水流问题](https://leetcode-cn.com/problems/pacific-atlantic-water-flow/)
+## 解法
+### 思路
+2个dfs+记忆化搜索
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> pacificAtlantic(int[][] matrix) {
+        List<List<Integer>> ans = new ArrayList<>();
+        int row = matrix.length;
+        if (row == 0) {
+            return ans;
+        }
+
+        int col = matrix[0].length;
+        if (col == 0) {
+            return ans;
+        }
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                int a = bfs(matrix, null, i, j, row, col, -1, -1, new boolean[row][col]);
+                int b = bfs(matrix, null, i, j, row, col, row, col, new boolean[row][col]);
+                if (a + b == 2) {
+                    List<Integer> list = new ArrayList<>();
+                    list.add(i);
+                    list.add(j);
+                    ans.add(list);
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private int bfs(int[][] matrix, Integer pre, int r, int c, int row, int col, int targetR, int targetC, boolean[][] visited) {
+        if (r == targetR || c == targetC) {
+            return 1;
+        }
+
+        if (r < 0 || r >= row || c < 0 || c >= col || visited[r][c]) {
+            return 0;
+        }
+
+        if (pre != null && matrix[r][c] > pre) {
+            return 0;
+        }
+        visited[r][c] = true;
+
+        int down = bfs(matrix, matrix[r][c], r + 1, c, row, col, targetR, targetC, visited),
+            top = bfs(matrix, matrix[r][c], r - 1, c, row, col, targetR, targetC, visited),
+            right = bfs(matrix, matrix[r][c], r, c + 1, row, col, targetR, targetC, visited),
+            left = bfs(matrix, matrix[r][c], r, c - 1, row, col, targetR, targetC, visited);
+
+        if (down + top + right + left >= 1) {
+            return 1;
+        }
+
+        return 0;
+    }
+}
+```
+## 解法二
+### 思路
+- 解法一是遍历所有点，判断是否能到达海洋
+- 当前解法反过来，从海洋边开始出发，判断对应坐标是否能到达海洋
+### 代码
+```java
+class Solution {
+    int row, col;
+    int[][] dirs = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+    public List<List<Integer>> pacificAtlantic(int[][] matrix) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return ans;
+        }
+
+        row = matrix.length;
+        col = matrix[0].length;
+
+        int[][] pac = new int[row][col], atl = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            dfs(matrix, i, 0, pac);
+            dfs(matrix, i, col - 1, atl);
+        }
+
+        for (int i = 0; i < col; i++) {
+            dfs(matrix, 0, i, pac);
+            dfs(matrix, row - 1, i, atl);
+        }
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (pac[i][j] == 1 && atl[i][j] == 1) {
+                    ans.add(Arrays.asList(i, j));
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private void dfs(int[][] matrix, int r, int c, int[][] memo) {
+        memo[r][c] = 1;
+
+        for (int[] dir : dirs) {
+            int newR = r + dir[0], newC = c + dir[1];
+            if (newR < 0 || newR >= row || newC < 0 || newC >= col || memo[newR][newC] == 1 || matrix[r][c] > matrix[newR][newC]) {
+                continue;
+            }
+            
+            dfs(matrix, newR, newC, memo);
+        }
+    }
+}
+```
