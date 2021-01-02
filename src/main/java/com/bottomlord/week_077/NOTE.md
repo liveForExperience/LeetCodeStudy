@@ -292,3 +292,67 @@ class Solution {
     }
 }
 ```
+# [LeetCode_435_无重叠区域](https://leetcode-cn.com/problems/non-overlapping-intervals/)
+## 解法
+### 思路
+动态规划：
+- dp[i]：第i个区域为结尾的区域序列的最大长度
+- 状态转移方程：`dp[i] = max(dp[j] + 1, dp[i])，intervals[i][0] >= intervals[j][1]`
+- base case：dp所有元素的值为1，代表最大长度至少是1
+- 结果：intervals的长度减去dp中的最大值
+- 这个算法的前提是，需要对数组根据interval的第一个元素进行排序，使得动态转移时可以按照下标顺序遍历并进行状态转移
+### 代码
+```java
+class Solution {
+    public int eraseOverlapIntervals(int[][] intervals) {
+        if (intervals == null || intervals.length == 0) {
+            return 0;
+        }
+        
+        int len = intervals.length;
+        
+        Arrays.sort(intervals, Comparator.comparingInt(x -> x[0]));
+        int[] dp = new int[len];
+        Arrays.fill(dp, 1);
+        
+        int max = 1;
+        for (int i = 1; i < len; i++) {
+            for (int j = 0; j < i; j++) {
+                if (intervals[j][1] <= intervals[i][0]) {
+                    dp[i] = Math.max(dp[j] + 1, dp[i]);
+                    max = Math.max(max, dp[i]);
+                }
+            }
+        }
+        
+        return len - max;
+    }
+}
+```
+## 解法二
+### 思路
+贪心算法：
+- 将intervals按end排序，使得区间的结束区域越早的放在越前面，这样排序后，在循环处理时，能够使得后面被遍历到的区间可以有更大区域做判断
+- 这样在循环后，每次都与之前确定的区间做比较，如果当前区间的起始大于等于之前的结束位置，那么就累加，并将当前区间作为被选择的区间
+### 代码
+```java
+class Solution {
+    public int eraseOverlapIntervals(int[][] intervals) {
+        if (intervals == null || intervals.length == 0) {
+            return 0;
+        }
+        
+        Arrays.sort(intervals, Comparator.comparingInt(x -> x[1]));
+        
+        int right = intervals[0][1], count = 1;
+        for (int i = 1; i < intervals.length; i++) {
+            if (intervals[i][0] >= right) {
+                count++;
+                right = intervals[i][1];
+            }
+        }
+        
+        return intervals.length - count;
+    }
+}
+```
