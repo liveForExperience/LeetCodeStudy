@@ -204,3 +204,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1711_大餐计数](https://leetcode-cn.com/problems/count-good-meals/)
+## 解法
+### 思路
+- 使用hash表存储菜品美味程度和个数的映射关系
+- 因为(a,b)与(b,a)是同一种情况，所以需要一边比较一边填充映射，否则回重复
+- 外层遍历菜品列表，获取美味程度的值
+- 内层遍历所有2的21次以内的幂的值，取21次是因为美味值最大是20次方，查询幂与当前值的差是否能在map中找到，如果有，就累加其映射的个数
+- 需要注意对结果取模
+### 代码
+```java
+class Solution {
+    public int countPairs(int[] deliciousness) {
+        Map<Integer, Integer> map = new HashMap<>();
+        
+        int mod = 1000000007, ans = 0;
+        for (int num : deliciousness) {
+            int power = 1;
+            for (int i = 0; i <= 21; i++) {
+                if (map.containsKey(power - num)) {
+                    ans += map.get(power - num);
+                    ans %= mod;
+                }
+                
+                power *= 2;
+            }
+            
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        
+        return ans;
+    }
+}
+```
