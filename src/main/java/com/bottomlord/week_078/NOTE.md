@@ -177,3 +177,30 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1710_卡车上的最大单元数](https://leetcode-cn.com/problems/maximum-units-on-a-truck/)
+## 解法
+### 思路
+- 对boxType中每一个一维数组的第二个元素做降序排序
+- 暂存`truckSize`值用来记录还剩下多少卡车空间
+- 遍历排序后的boxType，通过求`truckSize`和`numberOfUnitsPerBoxi`的商，再与`numberOfBoxesi`求最小值，然后再更新`truckSize`
+- 直到`truckSize == 0`为止
+### 代码
+```java
+class Solution {
+    public int maximumUnits(int[][] boxTypes, int truckSize) {
+        Arrays.sort(boxTypes, (x, y) -> y[1] - x[1]);
+        int sum = 0;
+        for (int[] boxType : boxTypes) {
+            if (truckSize <= 0) {
+                break;
+            }
+
+            int cost = Math.min(boxType[0], truckSize);
+            truckSize -= cost;
+            sum += cost * boxType[1];
+        }
+        
+        return sum;
+    }
+}
+```
