@@ -90,3 +90,90 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1712_将数组分成三个子数组的方案数](https://leetcode-cn.com/problems/ways-to-split-array-into-three-subarrays/)
+## 失败解法
+### 思路
+暴力，嵌套循环确定2个分界点并累加
+### 代码
+```java
+class Solution {
+    public int waysToSplit(int[] nums) {
+        int len = nums.length;
+
+        int[] sum = new int[len];
+        sum[0] = nums[0];
+        for (int i = 1; i < len; i++) {
+            sum[i] = sum[i - 1] + nums[i];
+        }
+
+        int target = sum[len - 1] / 3, ans = 0;
+        for (int i = 0; i < len && sum[i] <= target; i++) {
+            for (int j = i + 1; j < len; j++) {
+                if (sum[i] <= sum[j] - sum[i] && sum[j] - sum[i] <= sum[len - 1] - sum[j]) {
+                    ans++;
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+N平方的时间复杂度导致超时，所以在外层循环确定`left`和`mid`的分界点后，内层的分界点可以采用二分法的方式。
+- 一个有效的`mid`和`right`的分界点，它有两个需要满足的条件：
+    - 它确定了`mid`的值大小，所以`mid >= left`
+    - 它确定了`right`的大小，所以`mid <= right`
+- 如上两种情况可以分别通过求这个可能的分界点取值范围边界来获得
+- 通过二分法，获得最小的分界点，满足`mid >= left`
+- 通过二分法，获得最大的分界点，满足`mid <= right`
+- 然后这次循环中获得2个分界点的距离就是可能数
+### 代码
+```java
+class Solution {
+    public int waysToSplit(int[] nums) {
+        int len = nums.length, mod = 1000000007;
+        long ans = 0;
+        int[] sum = new int[len];
+        sum[0] = nums[0];
+        for (int i = 1; i < len; i++) {
+            sum[i] = sum[i - 1] + nums[i];
+        }
+
+        for (int i = 0; i < len; i++) {
+            if (sum[i] * 3 > sum[len - 1]) {
+                break;
+            }
+
+            int minL = i + 1, minR = len - 2;
+            while (minL <= minR) {
+                int mid = minL + (minR - minL) / 2;
+
+                if (sum[mid] - sum[i] >= sum[i]) {
+                    minR = mid - 1;
+                } else {
+                    minL = mid + 1;
+                }
+            }
+
+            int maxL = i + 1, maxR = len - 2;
+            while (maxL <= maxR) {
+                int mid = maxL + (maxR - maxL) / 2;
+
+                if (sum[mid] - sum[i] <= sum[len - 1] - sum[mid]) {
+                    maxL = mid + 1;
+                } else {
+                    maxR = mid - 1;
+                }
+            }
+
+            if (maxR >= minL) {
+                ans = (ans + maxR - minL + 1) % mod;    
+            }
+        }
+
+        return (int)ans % mod;
+    }
+}
+```
