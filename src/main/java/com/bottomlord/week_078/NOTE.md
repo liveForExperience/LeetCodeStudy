@@ -237,3 +237,134 @@ class Solution {
     }
 }
 ```
+# [LeetCode_420_强密码检验器](https://leetcode-cn.com/problems/strong-password-checker/)
+## 解法
+### 思路
+- 先解决简单的：
+    - 初始化变量：
+        - 3个布尔变量记录是否有满足要求的3种情况
+        - int值`kind`，用来记录已经满足的情况数量
+        - list集合`continuous`，用来记录超过连续重复限制的情况
+    - 遍历字符串，记录满足3种要求的情况，同时记录不符合的情况
+    - 遍历完成后，判断是否满足题目要求，如果满足就返回0
+- 再解决不符合时候，复杂的情况：
+    - 如果数量满足要求：这些字符串只需要做替换动作就能符合要求，那么就只要求2个值
+        - 还差多少值到达3种类型的要求
+        - 根据统计出的continuous，计算出需要替换的个数，其实也就是`continuous / 3`的商
+        - 求得上述2个值后，计算它们的最大值作为这种情况下要修改的值
+    - 如果数量不足，那代表需要做添加操作：
+        - 因为种类是3种，数量是[1,5]，所以如果需要插入的是1个，那在这种情况下，最坏的情况就是5个元素都一样，那这样的，就需要将5个连续的元素中的1个做更新，同时再加上1个，这样就能满足
+        - 其他情况，首先种类最多需要2种，所以在insert的时候满足种类要求即可
+        - 于是，计算出要插入的个数，只有在需要插入1个且连续序列长度是5的时候，需要返回2，其他都只要返回要插入的个数就可以了
+    - 如果数量大于20，相对上面两种更加复杂：
+        - 如果在删除最少字符的情况下，也就是保留20个字符，能够处理掉所有的连续字符，那么就可以直接通过删除掉所有多余20字符，并替换需要的类型数字来满足要求
+        - 如果在删除最少字符的情况下不能处理掉所有的连续序列，就需要考虑通过减少处理剩下的update内容来处理
+            - 通过观察发现，如果连续序列是3的整数倍，那么也就需要update整数倍次，但是，如果在这些数字上-1，那么就可以减少一次update，且删除也只需耗费1次
+            - 相应的，如果是3的倍数+1，同样消耗2次操作，也能实现减少update的效果
+            - 按照如上两步操作后，剩下的连续序列就都是差3的整数倍为1的长度了，如果还剩下需要删除的字符数，就继续循环清除3个字符长度，这样等同于减少一次update操作，这步操作是循环的，处理到可以删除的字符数不足3个为止
+            - 在如上情况都处理完之后，就只需要计算下`过长的长度+max(需要更新的个数，需要补齐的种类数)`
+### 代码
+```java
+class Solution {
+    public int strongPasswordChecker(String password) {
+        int len = password.length(), kind = 0;
+        boolean num, lower, upper;
+        num = lower = upper = false;
+        char[] cs = password.toCharArray();
+        List<Integer> continuesList = new ArrayList<>();
+
+        for (int i = 0; i < cs.length; i++) {
+            char c = cs[i];
+            if (!num && Character.isDigit(c)) {
+                num = true;
+                kind++;
+            } else if (!lower && Character.isLowerCase(c)) {
+                lower = true;
+                kind++;
+            } else if (!upper && Character.isUpperCase(c)) {
+                upper = true;
+                kind++;
+            }
+
+            int continues = 1;
+            while (i < len - 1 && cs[i + 1] == c) {
+                i++;
+                continues++;
+            }
+
+            if (continues >= 3) {
+                continuesList.add(continues);
+            }
+        }
+
+        if (len >= 6 && len <= 20 && kind == 3 && continuesList.isEmpty()) {
+            return 0;
+        }
+
+        int needChangeKind = 3 - kind;
+        if (len >= 6 && len <= 20) {
+            int needChangeContinusCount = 0;
+            for (int count : continuesList) {
+                needChangeContinusCount += count / 3;
+            }
+            return Math.max(needChangeContinusCount, needChangeKind);
+        }
+
+        if (len < 6) {
+            int needInsert = 6 - len;
+            return needInsert == 1 && continuesList.size() == 1 && continuesList.get(0) == 5 ? 2 : needInsert;
+        }
+
+        int needDelete = len - 20, continusDeleteCount = 0;
+        for (int count : continuesList) {
+            continusDeleteCount += (count - 2);
+        }
+        if (needDelete - continusDeleteCount >= 0) {
+            return needDelete + needChangeKind;
+        }
+
+        int remain = needDelete;
+        for (int i = 0; i < continuesList.size(); i++) {
+            int count = continuesList.get(i);
+            if (count % 3 == 0) {
+                remain -= 1;
+                continuesList.set(i, count - 1);
+                if (remain == 0) {
+                    break;
+                }
+            }
+        }
+
+        if (remain >= 2) {
+            for (int i = 0; i < continuesList.size(); i++) {
+                int count = continuesList.get(i);
+                if ((count - 1) % 3 == 0) {
+                    continuesList.set(i, count - 2);
+                    if ((remain -= 2) < 2) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        while (remain >= 3) {
+            for (int i = 0; i < continuesList.size(); i++) {
+                int count = continuesList.get(i);
+                if (count > 2) {
+                    continuesList.set(i, count - 3);
+                    if ((remain -= 3) < 3) {
+                        break;
+                    }
+                }
+            }
+        }
+        
+        int needChangeContinusCount = 0;
+        for (int count : continuesList) {
+            needChangeContinusCount += count / 3;
+        }
+        
+        return needDelete + Math.max(needChangeContinusCount, needChangeKind);
+    }
+}
+```
