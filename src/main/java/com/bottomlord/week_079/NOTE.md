@@ -241,3 +241,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_422_有效的单词方块](https://leetcode-cn.com/problems/valid-word-square/)
+## 解法
+### 思路
+遍历二维数组做判断
+### 代码
+```java
+class Solution {
+    public boolean validWordSquare(List<String> words) {
+        int row = words.size();
+        if (row == 0) {
+            return true;
+        }
+
+        for (int i = 0; i < row; i++) {
+            String word = words.get(i);
+            for (int j = 0; j < word.length(); j++) {
+                if (j >= words.size()) {
+                    return false;
+                }
+                
+                if (i >= words.get(j).length()) {
+                    return false;
+                }
+                
+                if (words.get(j).charAt(i) != word.charAt(j)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+}
+```
