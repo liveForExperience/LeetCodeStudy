@@ -1,55 +1,13 @@
-# [LeetCode_425_单词方块](https://leetcode-cn.com/problems/word-squares/)
-## 解法
-### 思路
+package com.bottomlord.week_080;
 
-### 代码
-```java
+import java.util.*;
 
-```
-# [LeetCode_1232_缀点成线](https://leetcode-cn.com/problems/check-if-it-is-a-straight-line/)
-## 解法
-### 思路
-- 将第一个点平移到原点位置，同时其他所有点对应平移
-- 遍历数组，基于`ax + bx == 0`判断是否是同一直线的方式求结果
-- 其中`a = coordinator[1][1]`，`b = coordinator[1][0]`
-### 代码
-```java
-class Solution {
-    public boolean checkStraightLine(int[][] coordinates) {
-        int deltaA = coordinates[0][0], deltaB = coordinates[0][1], n = coordinates.length;
-        for (int i = 0; i < n; i++) {
-            coordinates[i][0] -= deltaA;
-            coordinates[i][1] -= deltaB;
-        }
-
-        int a = coordinates[1][1], b = -coordinates[1][0];
-
-        for (int i = 2; i < n; i++) {
-            if (coordinates[i][0] * a + coordinates[i][1] * b != 0) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-}
-```
-# [LeetCode_721_账户合并](https://leetcode-cn.com/problems/accounts-merge/)
-## 解法
-### 思路
-并查集
-- 遍历accounts二维数组，生成如下内容：
-    - 生成一个邮箱和坐标id的映射关系`emailIndexMap`
-    - 生成一个邮箱和账户的映射关系`emailAccountMap`
-    - 需要注意：重复出现的邮箱只生成一次坐标id，这样才能将不同账户，相同邮箱的情况通过并查集关联起来
-- 遍历accounts二维数组，通过`emailIndexMap`，将坐标通过并查集关联起来
-- 初始化`indexEmailListMap`，key为index，value为email的集合，作为并查集父index与关联email的映射关系
-- 遍历`emailIndexMap`的key集合，通过并查集将index的parentIndex求出，作为key，然后将email放入对应的list中
-- 遍历`indexEmailListMap`的values集合，通过list的第一个email到`emailAccountMap`中获得账户，并对values排序，最后放入结果集合中
-### 代码
-```java
-class Solution {
-        public List<List<String>> accountsMerge(List<List<String>> accounts) {
+/**
+ * @author ChenYue
+ * @date 2021/1/18 8:43
+ */
+public class LeetCode_721_1_账户合并 {
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
         Map<String, Integer> emailIndexMap = new HashMap<>();
         Map<String, String> emailAccountMap = new HashMap<>();
 
@@ -92,7 +50,7 @@ class Solution {
             list.addAll(emails);
             ans.add(list);
         }
-        
+
         return ans;
     }
 
@@ -103,7 +61,7 @@ class Solution {
         public Uf(int n) {
             parent = new int[n];
             rank = new int[n];
-            
+
             for (int i = 0; i < n; i++) {
                 parent[i] = i;
                 rank[i] = 1;
@@ -136,4 +94,3 @@ class Solution {
         }
     }
 }
-```
