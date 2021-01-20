@@ -137,3 +137,100 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1584_连接所有点的最小费用](https://leetcode-cn.com/problems/min-cost-to-connect-all-points/)
+## 解法
+### 思路
+- 获取一个有N个节点的图，且答案要求的是从这个图中获取一个子图，子图中2点之间有且仅有一条路径，而这样一个子图一定是一颗树
+- 通过图获取最小生成树的算法：Kruskal
+    - 将图G=\{V,E\}G={V,E}中的所有边按照长度由小到大进行排序，等长的边可以按任意顺序。
+    - 初始化图G'为{V,∅}，从前向后扫描排序后的边，如果扫描到的边e在G'中连接了两个相异的连通块,则将它插入G'中。
+    - 最后得到的图G'就是图G的最小生成树。 
+- 实际代码过程：
+    - 将完全图中的边全部提取到边集数组中
+    - 对所有边进行排序
+    - 从小到大枚举所有边，每次都贪心选择并放入答案中
+    - 选择的条件是，通过维护的并查集，检查连通性，如果不联通就选择
+### 代码
+```java
+class Solution {
+        public int minCostConnectPoints(int[][] points) {
+        int len = points.length;
+
+        List<Edge> edges = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                edges.add(new Edge(dist(points, i, j), i, j));
+            }
+        }
+
+        edges.sort(Comparator.comparingInt(x -> x.len));
+
+        Uf uf = new Uf(len);
+        int ans = 0, num = 1;
+        for (Edge edge : edges) {
+            if (uf.union(edge.x, edge.y)) {
+                ans += edge.len;
+                num++;
+
+                if (num == len) {
+                    break;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private int dist(int[][] points, int i, int j) {
+        return Math.abs(points[i][0]  - points[j][0]) + Math.abs(points[i][1] - points[j][1]);
+    }
+
+    private static class Edge {
+        private int len, x, y;
+        public Edge(int len, int x, int y) {
+            this.len = len;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    private static class Uf {
+        private int[] parent;
+        private int[] rank;
+
+        public Uf(int n) {
+            this.parent = new int[n];
+            this.rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+                rank[i] = 1;
+            }
+        }
+
+        private int find(int x) {
+            if (parent[x] != x) {
+                parent[x] = find(parent[x]);
+            }
+            return parent[x];
+        }
+
+        private boolean union(int x, int y) {
+            int rootX = find(x), rootY = find(y);
+            if (rootX == rootY) {
+                return false;
+            }
+
+            if (rank[rootX] < rank[rootY]) {
+                parent[rootY] = parent[rootX];
+            } else if (rank[rootX] > rank[rootY]) {
+                parent[rootX] = parent[rootY];
+            } else {
+                parent[rootY] = rootX;
+                rank[rootX]++;
+            }
+
+            return true;
+        }
+    }
+}
+```
