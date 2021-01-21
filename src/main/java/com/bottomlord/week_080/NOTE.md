@@ -234,3 +234,113 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1489_找到最小生成树里的关键边和伪关键边](https://leetcode-cn.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/solution/zhao-dao-zui-xiao-sheng-cheng-shu-li-de-gu57q/)
+## 解法
+### 思路
+Kruskal最小生成树算法：
+- 生成一个新的边的集合，这个集合的元素在原来集合元素的基础上，多存储一个原来集合元素的坐标
+- 对新的边集合根据权重从小到大排序
+- 通过kruskal算法获得最小生成树的权重和value
+- 然后遍历所有的边，依次做如下判断：
+    - 如果故意删除当前边，再通过kruskal算法计算权重和，得到的值是否比value大，如果是的话认为这条边为关键边，直接判断下一条边
+    - 如果当前边不是关键边，那就只需要判断当前边是否能组成最小树集合，就能判断是不是伪关键边
+    - 遍历过程中，如果符合如上2种情况，就保存下原来的边集合坐标
+- 最后返回暂存的结果集合
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> findCriticalAndPseudoCriticalEdges(int n, int[][] edges) {
+                int[][] newEdges = new int[edges.length][4];
+        for (int i = 0; i < edges.length; i++) {
+            System.arraycopy(edges[i], 0, newEdges[i], 0, 3);
+            newEdges[i][3] = i;
+        }
+
+        Arrays.sort(newEdges, Comparator.comparingInt(x -> x[2]));
+        Uf uf = new Uf(n);
+        int value = 0;
+        for (int i = 0; i < edges.length; i++) {
+            if (uf.union(newEdges[i][0], newEdges[i][1])) {
+                value += newEdges[i][2];
+            }
+        }
+
+        List<List<Integer>> ans = new ArrayList<>();
+        ans.add(new ArrayList<>());
+        ans.add(new ArrayList<>());
+
+        for (int i = 0; i < edges.length; i++) {
+            int v = 0;
+            Uf uf1 = new Uf(n);
+            for (int j = 0; j < edges.length; j++) {
+                if (i != j && uf1.union(newEdges[j][0], newEdges[j][1])) {
+                    v += newEdges[j][2];
+                }
+            }
+
+            if (uf1.count != 1 || v > value) {
+                ans.get(0).add(newEdges[i][3]);
+                continue;
+            }
+
+            Uf uf2 = new Uf(n);
+            uf2.union(newEdges[i][0], newEdges[i][1]);
+            int v2 = newEdges[i][2];
+
+            for (int j = 0; j < edges.length; j++) {
+                if (i != j && uf2.union(newEdges[j][0], newEdges[j][1])) {
+                    v2 += newEdges[j][2];
+                }
+            }
+
+            if (uf2.count == 1 && v2 == value) {
+                ans.get(1).add(newEdges[i][3]);
+            }
+        }
+
+        return ans;
+    }
+
+    private static class Uf {
+        private final int[] parent;
+        private final int[] rank;
+        private int count;
+
+        public Uf(int n) {
+            this.parent = new int[n];
+            this.rank = new int[n];
+            this.count = n;
+            for (int i = 0; i < n; i++) {
+                this.parent[i] = i;
+                this.rank[i] = 1;
+            }
+        }
+
+        public int find(int x) {
+            if (parent[x] != x) {
+                parent[x] = find(parent[x]);
+            }
+            return parent[x];
+        }
+
+        public boolean union(int x, int y) {
+            int rootX = find(x), rootY = find(y);
+            if (rootX == rootY) {
+                return false;
+            }
+
+            if (rank[rootX] > rank[rootY]) {
+                parent[rootY] = rootX;
+            } else if (rank[rootX] < rank[rootY]) {
+                parent[rootX] = rootY;
+            } else {
+                rank[rootX]++;
+                parent[rootY] = rootX;
+            }
+
+            count--;
+            return true;
+        }
+    }
+}
+```
