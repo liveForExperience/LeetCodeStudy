@@ -1,10 +1,103 @@
 # [LeetCode_425_单词方块](https://leetcode-cn.com/problems/word-squares/)
 ## 解法
 ### 思路
-
+回溯：
+- 遍历words列表，从每一个单词开始查找组合的可能性，查找可能性的方式就是回溯
+- 回溯：
+    - 参数：
+        - 坐标index：记录当前遍历到单词的第几个字符，也相当于矩形的第几行
+        - 字符串集合wordList：记录了可以作为下一行候选的单词集合，回溯和返回结果时，都是基于这个集合
+    - 退出的条件：
+        - 单词长度遍历完，将当前的集合放入结果大集合中
+        - 没有符合前缀要求的字符串作为下一个单词，返回
+    - 过程：
+        - 根据`index`，获取下一个单词需要符合的前缀字符串，用来寻找下一行的集合
+        - 遍历所有符合要求的单词，也就是符合前缀的单词，然后将这个单词加入到`wordList`，然后进入下一层，回溯返回时，再从`wordList`中去除当前加入的这个单词
 ### 代码
 ```java
+class Solution {
+    public List<List<String>> wordSquares(String[] words) {
+        int len = words[0].length();
+        List<List<String>> ans = new ArrayList<>();
+        for (String word : words) {
+            backTrack(1, len, words, new ArrayList<String>(){{this.add(word);}}, ans);
+        }
+        return ans;
+    }
 
+    private void backTrack(int index, int len, String[] words, List<String> wordList, List<List<String>> ans) {
+        if (index == len) {
+            ans.add(new ArrayList<>(wordList));
+            return;
+        }
+
+        StringBuilder prefixSb = new StringBuilder();
+        for (String word : wordList) {
+            prefixSb.append(word.charAt(index));
+        }
+        String prefix = prefixSb.toString();
+
+        for (String word : words) {
+            if (word.startsWith(prefix)) {
+                wordList.add(word);
+                backTrack(index + 1, len, words, wordList, ans);
+                wordList.remove(wordList.size() - 1);
+            }
+        }
+    }
+}
+```
+## 解法二
+### 思路
+在解法一的基础上增加一个hash表，这个hash表用来加速的步骤是：回溯过程中能匹配前缀的字符串集合
+### 代码
+```java
+class Solution {
+    public List<List<String>> wordSquares(String[] words) {
+        int len = words[0].length();
+        Map<String, List<String>> map = new HashMap<>();
+        List<List<String>> ans = new ArrayList<>();
+        for (String word : words) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < len - 1; i++) {
+                sb.append(word.charAt(i));
+                String prefix = sb.toString();
+                List<String> list = map.getOrDefault(prefix, new ArrayList<>());
+                list.add(word);
+                map.put(prefix, list);
+            }
+        }
+
+        for (String word : words) {
+            backTrack(1, len, new ArrayList<String>(){{this.add(word);}}, ans, map);
+        }
+
+        return ans;
+    }
+
+    private void backTrack(int index, int len, List<String> wordList, List<List<String>> ans, Map<String, List<String>> map) {
+        if (index == len) {
+            ans.add(new ArrayList<>(wordList));
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (String word : wordList) {
+            sb.append(word.charAt(index));
+        }
+        String prefix = sb.toString();
+
+        if (!map.containsKey(prefix)) {
+            return;
+        }
+
+        for (String word : map.get(prefix)) {
+            wordList.add(word);
+            backTrack(index + 1, len, wordList, ans, map);
+            wordList.remove(wordList.size() - 1);
+        }
+    }
+}
 ```
 # [LeetCode_1232_缀点成线](https://leetcode-cn.com/problems/check-if-it-is-a-straight-line/)
 ## 解法
