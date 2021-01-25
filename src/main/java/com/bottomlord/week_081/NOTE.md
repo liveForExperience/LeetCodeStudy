@@ -113,3 +113,88 @@ class Counter {
     }
 }
 ```
+# [LeetCode_431_将N叉树编码成二叉树](https://leetcode-cn.com/problems/encode-n-ary-tree-to-binary-tree/)
+## 解法
+### 思路
+- Node转TreeNode：
+    - 将每个节点的children节点转换成TreeNode，并依次作为右子树节点连接起来
+    - 将这些兄弟节点的头节点，作为左子树节点连接到父节点上
+- TreeNode转Node：
+    - dfs遍历，左子树返回一个list，作为children，右子树遍历放入兄弟list中
+### 代码
+```java
+class Codec {
+    public TreeNode encode(Node root) {
+        if (root == null) {
+            return null;
+        }
+
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.offer(root);
+
+        Queue<TreeNode> treeQueue = new ArrayDeque<>();
+        TreeNode rootTreeNode = new TreeNode(root.val);
+        treeQueue.offer(rootTreeNode);
+
+        while (!queue.isEmpty()) {
+            Node node = queue.poll();
+            TreeNode treeNode = treeQueue.poll();
+
+            if (node == null || treeNode == null) {
+                continue;
+            }
+
+            List<Node> children = node.children;
+            if (children == null || children.size() == 0) {
+                continue;
+            }
+
+            TreeNode fakeTreeNode = new TreeNode(0);
+            TreeNode pre = fakeTreeNode;
+
+            for (Node child : children) {
+                TreeNode childTreeNode = new TreeNode(child.val);
+                if (child.children != null && child.children.size() != 0) {
+                    queue.offer(child);
+                    treeQueue.offer(childTreeNode);
+                }
+
+                pre.right = childTreeNode;
+                pre = childTreeNode;
+            }
+
+            treeNode.left = fakeTreeNode.right;
+        }
+
+        return rootTreeNode;
+    }
+
+    public Node decode(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+
+        return dfs(root, null);
+    }
+
+    private Node dfs(TreeNode treeNode, List<Node> bros) {
+        if (treeNode == null) {
+            return null;
+        }
+
+        Node node = new Node(treeNode.val);
+
+        if (bros != null) {
+            bros.add(node);
+        }
+
+        List<Node> children = new ArrayList<>();
+        dfs(treeNode.left, children);
+        node.children = children;
+
+        dfs(treeNode.right, bros);
+
+        return node;
+    }
+}
+```
