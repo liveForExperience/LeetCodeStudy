@@ -364,3 +364,49 @@ class AllOne {
     }
 }
 ```
+# LeetCode_436_寻找右区间
+## 解法
+### 思路
+- 初始化两个小顶堆，元素为数组`[start,end,index]`，并分别以start和end值作为比较进行排序
+- 初始化一个结果数组，长度为intervals的长度
+- 以end为排序条件的，称之为endQueue，以start为排序条件的，称之为startQueue
+- 遍历endQueue，以此动作作为驱动，检查startQueue的堆顶是否有`start`大于endQueue的`end`的元素，没有的话就弹出，直到找到为止
+- 如果找不到，就ans的对应index位置放置-1，否则就放置`startQueue`的index值
+- 注意：结果里记录的start数组是可以重复的
+### 代码
+```java
+class Solution {
+    public int[] findRightInterval(int[][] intervals) {
+        int len = intervals.length;
+        PriorityQueue<int[]> startQueue = new PriorityQueue<>(Comparator.comparingInt(x -> x[0])),
+                             endQueue = new PriorityQueue<>(Comparator.comparingInt(x -> x[1]));
+        int[] ans = new int[len];
+        Arrays.fill(ans, -1);
+        
+        for (int i = 0; i < intervals.length; i++) {
+            int[] arr = new int[3];
+            arr[0] = intervals[i][0];
+            arr[1] = intervals[i][1];
+            arr[2] = i;
+
+            startQueue.offer(arr);
+            endQueue.offer(arr);
+        }
+
+        while (!endQueue.isEmpty()) {
+            int[] endArr = endQueue.poll();
+            while (!startQueue.isEmpty()) {
+                int[] startArr = startQueue.peek();
+                if (startArr[0] >= endArr[1]) {
+                    ans[endArr[2]] = startArr[2];
+                    break;
+                }
+                
+                startQueue.poll();
+            }
+        }
+        
+        return ans;
+    }
+}
+```
