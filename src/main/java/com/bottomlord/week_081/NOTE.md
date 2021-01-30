@@ -410,3 +410,51 @@ class Solution {
     }
 }
 ```
+# LeetCode_1631_最小体力消耗路径
+## 解法
+### 思路
+bfs+二分查找
+- 因为消耗体力的范围是[0,999999]，所以可以通过二分法寻找那个最小的消耗值
+- 而判断二分出来的值是否是合理的值，就可以通过bfs来遍历二维数组，来判断
+    - 如果能遍历到右下角位置，说明当前体力消耗是合理值，那么就可以继续找有没有更小的消耗值
+    - 如果能不能遍历到，说明当前体力消耗值太大了，那么就寻找更大的消耗值
+### 代码
+```java
+class Solution {
+    int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    public int minimumEffortPath(int[][] heights) {
+        int start = 0, end = 999999, ans = 0, row = heights.length, col = heights[0].length;
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+
+            Queue<int[]> queue = new ArrayDeque<>();
+            queue.offer(new int[]{0, 0});
+            
+            boolean[] memo = new boolean[row * col];
+            memo[0] = true;
+            
+            while (!queue.isEmpty()) {
+                int[] height = queue.poll();
+
+                for (int i = 0; i < directions.length; i++) {
+                    int r = height[0] + directions[i][0], c = height[1] + directions[i][1];
+                    if (r >= 0 && r < row && c >= 0 && c < col && !memo[r * col + c] && Math.abs(heights[r][c] - heights[height[0]][height[1]]) <= mid) {
+                        queue.offer(new int[]{r, c});
+                        memo[r * col + c] = true;
+                    }
+                }
+            }
+            
+            if (memo[row * col - 1]) {
+                end = mid - 1;
+                ans = mid;
+            } else {
+                start = mid + 1;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
