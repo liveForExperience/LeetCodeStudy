@@ -410,7 +410,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_1631_最小体力消耗路径
+# [LeetCode_1631_最小体力消耗路径](https://leetcode-cn.com/problems/path-with-minimum-effort/submissions/)
 ## 解法
 ### 思路
 bfs+二分查找
@@ -457,4 +457,114 @@ class Solution {
         return ans;
     }
 }
+```
+## 解法二
+### 思路
+并查集
+- 将所有点与点之间的关系，转换为边，然后存储在一个集合中，边记录了两个顶点的坐标及对应边的权值
+- 然后根据集合元素的权值，对集合进行排序
+- 然后遍历这个集合，将集合元素中的两个顶点在并查集中关联，同时检查是否左上和右下的顶点已经关联在一起，如果是，就停止遍历，同时，当前使用到的权值就是最小的权值
+### 代码
+```java
+class Solution {
+    public int minimumEffortPath(int[][] heights) {
+        int row = heights.length, col = heights[0].length;
+
+        int[][] arrs = new int[row * (col - 1) + col * (row - 1)][3];
+        int index = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                int id = i * col + j;
+                if (i > 0) {
+                    arrs[index++] = new int[]{id - col, id, Math.abs(heights[i][j] - heights[i - 1][j])};
+                }
+
+                if (j > 0) {
+                    arrs[index++] = new int[]{id - 1, id, Math.abs(heights[i][j] - heights[i][j - 1])};
+                }
+            }
+        }
+
+        quickSort(arrs);
+        UF uf = new UF(row * col);
+
+        for (int[] arr : arrs) {
+            int x = arr[0], y = arr[1], v = arr[2];
+            uf.union(x, y);
+            if (uf.isConnected(0, row * col - 1)) {
+                return v;
+            }
+        }
+
+        return 0;
+    }
+
+    private void quickSort(int[][] arr) {
+        doQuickSort(arr, 0, arr.length - 1);
+    }
+
+    private void doQuickSort(int[][] arr, int start, int end) {
+        if (start >= end) {
+            return;
+        }
+
+        int partition = partition(arr, start, end);
+
+        doQuickSort(arr, start, partition - 1);
+        doQuickSort(arr, partition + 1, end);
+    }
+
+    private int partition(int[][] arr, int start, int end) {
+        int[] pivot = arr[start];
+
+        while (start < end) {
+            while (start < end && arr[end][2] >= pivot[2]) {
+                end--;
+            }
+            arr[start] = arr[end];
+
+            while (start < end && arr[start][2] <= pivot[2]) {
+                start++;
+            }
+            arr[end] = arr[start];
+        }
+
+        arr[start] = pivot;
+        return start;
+    }
+
+    static class UF {
+        private int[] parents;
+
+        public UF(int n) {
+            this.parents = new int[n];
+            for (int i = 0; i < n; i++) {
+                parents[i] = i;
+            }
+        }
+
+        public int find(int x) {
+            if (x != parents[x]) {
+                parents[x] = find(parents[x]);
+            }
+            return parents[x];
+        }
+
+        public void union(int x, int y) {
+            parents[find(x)] = find(y);
+        }
+
+        public boolean isConnected(int x, int y) {
+            return find(x) == find(y);
+        }
+    }
+}
+```
+# [LeetCode_778_水位上升的游泳池中游泳](https://leetcode-cn.com/problems/swim-in-rising-water/)
+## 解法
+### 思路
+
+### 代码
+```java
+
 ```
