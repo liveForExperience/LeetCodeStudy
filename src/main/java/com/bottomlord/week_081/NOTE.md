@@ -610,3 +610,71 @@ public class Solution {
 
 }
 ```
+## 解法二
+### 思路
+并查集
+- 将二维数组看作一个无向图，遍历这个二维数组，统计相邻顶点的坐标及之间的最大值，放入一个集合中
+- 对这个集合进行排序
+- 遍历集合，将集合元素根据顶点坐标进行关联，并判断左上和右下是否已经关联，如果是，当前平台高度就是结果
+### 代码
+```java
+public class Solution {
+public int swimInWater(int[][] grid) {
+        int n = grid.length;
+        List<int[]> list = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                int index = i * n + j;
+                if (i > 0) {
+                    list.add(new int[]{index - n, index, Math.max(grid[i - 1][j], grid[i][j])});
+                }
+
+                if (j > 0) {
+                    list.add(new int[]{index - 1, index, Math.max(grid[i][j - 1], grid[i][j])});
+                }
+            }
+        }
+
+        list.sort(Comparator.comparingInt(x -> x[2]));
+        
+        UF uf = new UF(n * n);
+        for (int i = 0; i < list.size(); i++) {
+            int x = list.get(i)[0], y = list.get(i)[1], v = list.get(i)[2];
+            uf.union(x, y);
+            if (uf.isConnected(0, n * n - 1)) {
+                return v;
+            }
+        }
+        
+        return n * n - 1;
+    }
+    
+    static class UF {
+        private int[] parents;
+        
+        public UF(int n) {
+            this.parents = new int[n];
+            for (int i = 0; i < n; i++) {
+                this.parents[i] = i;
+            }
+        }
+        
+        public int find(int x) {
+            if (x != parents[x]) {
+                parents[x] = find(parents[x]);
+            }
+            
+            return parents[x];
+        }
+        
+        public void union(int x, int y) {
+            parents[find(x)] = find(y);
+        }
+        
+        public boolean isConnected(int x, int y) {
+            return find(x) == find(y);
+        }
+    } 
+
+}
+```
