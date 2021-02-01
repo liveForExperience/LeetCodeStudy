@@ -1,47 +1,19 @@
-# [LeetCode_888_公平的糖果棒交换](https://leetcode-cn.com/problems/fair-candy-swap/)
-## 解法
-### 思路
-hash表+迭代
-### 代码
-```java
-class Solution {
-    public int[] fairCandySwap(int[] A, int[] B) {
-        int a = Arrays.stream(A).sum(), b = Arrays.stream(B).sum(), diff = a - b;
-        Set<Integer> set = new HashSet<>();
-        for (int num : A) {
-            set.add(num);
-        }
+package com.bottomlord.week_082;
 
-        for (int num : B) {
-            if (set.contains(diff / 2 + num)) {
-                return new int[]{diff / 2 + num, num};
-            }
-        }
-
-        throw new RuntimeException();
-    }
-}
-```
-# [LeetCode_1579_保证图可完全遍历](https://leetcode-cn.com/problems/remove-max-number-of-edges-to-keep-graph-fully-traversable/)
-## 解法
-### 思路
-并查集：
-- 定义两个并查集，分别代表Alice和Bob的无向图，并通过计算确定他们的联通分量
-- 然后遍历公共边，确定哪些公共边是不需要的，也就说要连接的两个顶点已经在一个连通分量中，就累加起来
-- 然后分别遍历Alice和Bob的边，同样确定哪些边是不需要的，累加
-- 最后判断两个并查集是否有大于1个的连通分量，如果有就返回-1，否则就返回累加值
-### 代码
-```java
-class Solution {
-        public int maxNumEdgesToRemove(int n, int[][] edges) {
+/**
+ * @author ChenYue
+ * @date 2021/2/1 8:49
+ */
+public class LeetCode_1579_1_保证图可完全遍历 {
+    public int maxNumEdgesToRemove(int n, int[][] edges) {
         UF ufa = new UF(n), ufb = new UF(n);
         for (int[] edge : edges) {
             edge[1]--;
             edge[2]--;
         }
-        
+
         int ans = 0;
-        
+
         for (int[] edge : edges) {
             if (edge[0] == 3) {
                 if (!ufa.union(edge[1], edge[2])) {
@@ -51,7 +23,7 @@ class Solution {
                 }
             }
         }
-        
+
         for (int[] edge : edges) {
             if (edge[0] == 1) {
                 if (!ufa.union(edge[1], edge[2])) {
@@ -63,42 +35,43 @@ class Solution {
                 }
             }
         }
-        
+
         if (ufa.count != 1 || ufb.count != 1) {
             return -1;
         }
-        
+
         return ans;
     }
-    
+
     static class UF {
         private int[] parent;
         private int[] rank;
         private int count;
-        
+
         public UF(int n) {
             this.parent = new int[n];
             this.rank = new int[n];
             this.count = n;
+
             for (int i = 0; i < n; i++) {
                 parent[i] = i;
                 rank[i] = 1;
             }
         }
-        
+
         public int find(int x) {
             if (x != parent[x]) {
                 parent[x] = find(parent[x]);
             }
             return parent[x];
         }
-        
+
         public boolean union(int x, int y) {
             int rx = find(x), ry = find(y);
             if (rx == ry) {
                 return false;
             }
-            
+
             if (rank[rx] < rank[ry]) {
                 parent[rx] = parent[ry];
             } else if (rank[rx] > rank[ry]) {
@@ -107,10 +80,9 @@ class Solution {
                 rank[rx]++;
                 parent[ry] = parent[rx];
             }
-            
+
             count--;
             return true;
         }
     }
 }
-```
