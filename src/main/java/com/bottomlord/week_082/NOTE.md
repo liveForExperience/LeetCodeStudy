@@ -114,3 +114,69 @@ class Solution {
     }
 }
 ```
+# [LeetCode_439_三元表达式解析器](https://leetcode-cn.com/problems/ternary-expression-parser/)
+## 解法
+### 思路
+分治
+- 三元表达式可以根据`?`和`:`拆分成3部分
+    - 第一部分是布尔值，位于`?`之前
+    - 第二部分是为true时的返回值，位于`?`和`:`之间
+    - 第三部分时为false时的返回值，位于`:`之后
+- 通过遍历字符串，找到第一个`?`，标记，接着当遍历到第一个`:`的时候，意味着三部分的元素都找到了，这个时候，需要进行分治递归
+- 根据第一部分的结果，确定返回第二部分还是第三部分，同时以递归的方式，是为了防止嵌套的表达式的出现，从而能更好的解析
+### 代码
+```java
+class Solution {
+    public String parseTernary(String expression) {
+        if (expression == null || expression.length() == 0) {
+            return expression;
+        }
+
+        int len = expression.length(), count = 0;
+        for (int i = 1; i < len; i++) {
+            if (expression.charAt(i) == '?') {
+                count++;
+            }
+
+            if (expression.charAt(i) == ':') {
+                count--;
+            }
+
+            if (count == 0) {
+                return expression.charAt(0) == 'T' ? parseTernary(expression.substring(2, i)) : parseTernary(expression.substring(i + 1, len));
+            }
+        }
+
+        return expression;
+    }
+}
+```
+## 解法
+### 思路
+栈：
+- 从右向左遍历字符串，步长是2，从而先行处理嵌套的表达式且跳过`?`和`:`的判断
+- 通过`:`来判断表达式是否使用栈来暂存`:`之后的false对应的值
+- 通过`?`来判断是否计算表达式结果，也就是根据第一部分的布尔值判断时取`:`之前还是之后的值，并直接覆盖在第一部分上，方便继续遍历表达式计算
+### 代码
+```java
+class Solution {
+    public String parseTernary(String expression) {
+        int len = expression.length();
+        char[] cs = expression.toCharArray();
+        Stack<Character> stack = new Stack<>();
+        for (int i = len - 1; i >= 2; i-=2) {
+            if (cs[i - 1] == ':') {
+                stack.push(cs[i]);
+            } else {
+                if (cs[i - 2] == 'T') {
+                    cs[i - 2] = cs[i];
+                } else {
+                    cs[i - 2] = stack.peek();
+                }
+                stack.pop();
+            }
+        }
+        return "" + cs[0];
+    }
+}
+```
