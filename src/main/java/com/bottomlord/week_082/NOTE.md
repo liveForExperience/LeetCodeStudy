@@ -180,3 +180,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_295_数据流的中位数](https://leetcode-cn.com/problems/find-median-from-data-stream/)
+## 解法
+### 思路
+两个优先级队列
+### 代码
+```java
+class MedianFinder {
+        private PriorityQueue<Integer> maxHeap, minHeap;
+        private int count;
+        public MedianFinder() {
+            this.count = 0;
+            this.maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+            this.minHeap = new PriorityQueue<>();
+        }
+
+        public void addNum(int num) {
+            count++;
+            maxHeap.offer(num);
+            minHeap.offer(maxHeap.poll());
+
+            if ((count & 1) != 0) {
+                maxHeap.offer(minHeap.poll());
+            }
+        }
+
+        public double findMedian() {
+            if (count == 0) {
+                return 0;
+            }
+            
+            return (count & 1) != 0 ? (double)maxHeap.peek() : ((double)maxHeap.peek() + (double)minHeap.peek()) / 2;
+        }
+}
+```
+# [LeetCode_480_滑动窗口中位数](https://leetcode-cn.com/problems/sliding-window-median/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
