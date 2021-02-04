@@ -217,8 +217,148 @@ class MedianFinder {
 # [LeetCode_480_滑动窗口中位数](https://leetcode-cn.com/problems/sliding-window-median/)
 ## 解法
 ### 思路
-
+优先级队列+延迟删除
+- 使用两个优先级队列，不同的排序器，分别存储窗口的较大一半和较小一般的元素，且保证较小一半的队列总是和较大一半的队列多1个或一样
+- 在窗口移动的时候，总是会做增加元素到窗口，和删除元素的动作
+    - 新增的时候：
+        - 先放入小队列
+        - 然后将小队列排序后的堆顶元素放入大队列
+        - 判断窗口大小是否是奇数还是偶数，如果是奇数就再将大队列的堆顶元素放回到小队列
+    - 删除的时候：
+        - 判断堆顶元素是否是要删除的元素
+            - 如果是小队列的堆顶元素：
+                - 窗口元素是奇数，直接弹出
+                - 窗口元素是偶数，弹出堆顶元素后，将大队列元素弹出到小队列
+            - 如果是大队列的堆顶元素：
+                - 窗口元素是奇数，弹出堆顶元素后，将小队列的堆顶元素弹出到大队列
+                - 窗口元素是偶数，直接弹出大队列的堆顶元素
+        - 如果不是堆顶元素，就使用一个hash表记录要删除的元素，并统计删除次数
+        - 每次删除后，最后还要确认是否可以清理hash表中待删除的元素
 ### 代码
 ```java
+class Solution {
+    public double[] medianSlidingWindow(int[] nums, int k) {
+        if (nums.length - k + 1 <= 0) {
+            return new double[0];
+        }
+        
+        double[] ans = new double[nums.length - k + 1];
+        MedianFinder medianFinder = new MedianFinder();
+        for (int i = 0; i < k; i++) {
+            medianFinder.add(nums[i]);
+        }
+        
+        ans[0] = medianFinder.median();
+        
+        for (int i = 1; i < ans.length; i++) {
+            medianFinder.add(nums[i + k - 1]);
+            medianFinder.del(nums[i - 1]);
+            ans[i] = medianFinder.median();
+        }
+        
+        return ans;
+    }
+    
+    static class MedianFinder {
+        private PriorityQueue<Integer> minHeap, maxHeap;
+        private Map<Integer, Integer> freq;
+        private int count;
+        
+        public MedianFinder (){
+            minHeap = new PriorityQueue<>(Comparator.reverseOrder());
+            maxHeap = new PriorityQueue<>();
+            freq = new HashMap<>();
+            count = 0;
+        }
+        
+        public void add(int num) {
+            count++;
+            minHeap.offer(num);
+            maxHeap.offer(minHeap.poll());
+            if (count % 2 == 1) {
+                minHeap.offer(maxHeap.poll());
+            }
+        }
+        
+        public void del(int num) {
+            if (minHeap.isEmpty() && maxHeap.isEmpty()) {
+                return;
+            }
 
+            freq.put(num, freq.getOrDefault(num, 0) + 1);
+
+            if (!minHeap.isEmpty() && Objects.equals(num, minHeap.peek())) {
+                minHeap.poll();
+                if (count % 2 == 0) {
+                    minHeap.offer(maxHeap.poll());
+                }
+
+                freq.put(num, freq.get(num) - 1);
+                if (freq.get(num) == 0) {
+                    freq.remove(num);
+                }
+            } else if (!maxHeap.isEmpty() && Objects.equals(num, maxHeap.peek())) {
+                maxHeap.poll();
+                if (count % 2 == 1) {
+                    maxHeap.offer(minHeap.poll());
+                }
+
+                freq.put(num, freq.get(num) - 1);
+                if (freq.get(num) == 0) {
+                    freq.remove(num);
+                }
+            } else if (!minHeap.isEmpty() && num < minHeap.peek()) {
+                if (count % 2 == 0) {
+                    minHeap.offer(maxHeap.poll());
+                }
+            } else {
+                if (count % 2 == 1) {
+                    maxHeap.offer(minHeap.poll());
+                }
+            }
+
+            boolean hasRemove = true;
+            Set<Integer> set = new HashSet<>();
+            while (hasRemove) {
+                hasRemove = false;
+                for (Integer key : freq.keySet()) {
+                    if (set.contains(key)) {
+                        continue;
+                    }
+                    
+                    boolean hasRemoveCurrent = false;
+                    if (!minHeap.isEmpty() && Objects.equals(key, minHeap.peek())) {
+                        minHeap.poll();
+                        hasRemove = true;
+                        hasRemoveCurrent = true;
+                    } else if (!maxHeap.isEmpty() && Objects.equals(key, maxHeap.peek())) {
+                        maxHeap.poll();
+                        hasRemove = true;
+                        hasRemoveCurrent = true;
+                    }
+
+                    if (hasRemoveCurrent) {
+                        freq.put(key, freq.get(key) - 1);
+                        if (Objects.equals(freq.get(key), 0)) {
+                            set.add(key);
+                        }
+                    }
+                }
+            }
+
+            for (Integer key : set) {
+                freq.remove(key);
+            }
+            count--;
+        }
+        
+        public double median() {
+            if (minHeap.isEmpty() && maxHeap.isEmpty()) {
+                return 0;
+            }
+            
+            return count % 2 == 0 ? ((double)minHeap.peek() + (double)maxHeap.peek()) / 2 : (double)minHeap.peek();
+        }
+    }
+}
 ```
