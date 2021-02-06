@@ -362,3 +362,103 @@ class Solution {
     }
 }
 ```
+# [LeetCode_440_字典序的第k小数字](https://leetcode-cn.com/problems/k-th-smallest-in-lexicographical-order/)
+## 失败解法
+### 原因
+超出内存限制
+### 思路
+遍历数字，转字符串，放入优先级队列，长度保持为k个
+### 代码
+```java
+class Solution {
+    public int findKthNumber(int n, int k) {
+        PriorityQueue<String> queue = new PriorityQueue<>(k);
+        for (int i = 1; i <= n; i++) {
+            queue.offer("" + i);
+        }
+        
+        for (int i = 0; i < k; i++) {
+            if (i == k - 1) {
+                return Integer.parseInt(queue.poll());
+            }
+            queue.poll();
+        }
+        
+        throw new RuntimeException(); 
+    }
+}
+```
+## 解法
+### 思路
+- 数字的字典序排列可以建模成十叉树
+- 从小到大的排列可以通过先序遍历的方式实现
+- 题目要求找到n个数内的第k小的数，也就是在找到先序遍历过程中的第k个节点
+- 先序遍历过程，可以看成2种情况：
+    - 第k个元素在当前节点的子树中，这种情况就需要递归下去继续找
+    - 第k个元素不在当前节点的子树中，这种情况，就可以直接跳过当前节点，去兄弟节点继续查
+- 当知道n的时候，其实并不知道这颗十叉树的深度是多少，所以在确定第k个节点是否在当前节点子树的时候，可以通过计算当前层兄弟节点最小值的方式，确定当前层是否包含n这个值，如果第一次大于n，说明当前层是最大深度
+- 获取当前层节点最小值的方式，又可以通过每次在当前父节点值的基础上*10的方式获取
+- 同时在找这个最大深度的过程中，下一个节点和当前节点之间当前层的个数差就相当于先序遍历的次数，但有一个特殊情况，是当前层对应的节点数大于n的时候，就不是最小值之间的差，而是n和前一节点最小值之间的差
+- 在右移兄弟节点和下钻的选择过程中：
+    - 右移就是当前节点值+1
+    - 下钻就是当前节点值*10
+- 退出就是知道步数=k
+### 代码
+```java
+
+```
+# [LeetCode_1423_可获得的最大点数](https://leetcode-cn.com/problems/maximum-points-you-can-obtain-from-cards/)
+## 解法
+### 思路
+前缀和
+### 代码
+```java
+class Solution {
+    public int maxScore(int[] cardPoints, int k) {
+        int len = cardPoints.length;
+        int[] sums = new int[len + 1];
+        sums[1] = cardPoints[0];
+        for (int i = 2; i < len + 1; i++) {
+            sums[i] = sums[i - 1] + cardPoints[i - 1];
+        }
+
+        int max = 0;
+        for (int i = 0; i <= k; i++) {
+            int left = i, right = len - k + i;
+            int cur = sums[left] - sums[0] + sums[len] - sums[right];
+            max = Math.max(max, cur);
+        }
+        return max;
+    }
+}
+```
+## 解法二
+### 思路
+模拟没有被挑中的牌的窗口，然后移动窗口，计算窗口最小值
+### 代码
+```java
+class Solution {
+    public int maxScore(int[] cardPoints, int k) {
+        int len = cardPoints.length, wLen = len - k, sum = 0;
+        for (int cardPoint : cardPoints) {
+            sum += cardPoint;
+        }
+        
+        if (wLen == 0) {
+            return sum;
+        }
+        
+        int wSum = 0;
+        for (int i = 0; i < wLen; i++) {
+            wSum += cardPoints[i];
+        }
+        
+        int min = wSum;
+        for (int i = 1; i < len - wLen + 1; i++) {
+            wSum = wSum - cardPoints[i - 1] + cardPoints[i + wLen - 1];
+            min = Math.min(min, wSum);
+        }
+        return sum - min;
+    }
+}
+```
