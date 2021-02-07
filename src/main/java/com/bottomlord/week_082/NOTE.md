@@ -498,3 +498,98 @@ class Solution {
     }
 }
 ```
+# [LeetCode_444_序列重建](https://leetcode-cn.com/problems/sequence-reconstruction/)
+## 解法
+### 思路
+拓扑排序：
+- 去除各种不符合要求的状态：
+    - seqs中的数值超出`[1,n]`
+    - 没有覆盖所有节点
+    - 有环
+- 经典拓扑排序逻辑：
+    - 构建邻接表
+    - 统计入度数
+    - bfs遍历，获取的入度为零的元素，与对应坐标的值比较，是否一致，如果不一致也是不符合题意的
+### 代码
+```java
+class Solution {
+    public boolean sequenceReconstruction(int[] org, List<List<Integer>> seqs) {
+        int n = org.length;
+        if (n == 0 || seqs.isEmpty()) {
+            return false;
+        }
+
+        Set<Integer> set = new HashSet<>();
+        for (List<Integer> list : seqs) {
+            for (int num : list) {
+                if (num <= 0 || num > n) {
+                    return false;
+                }
+
+                set.add(num);
+            }
+        }
+
+        if (set.size() < n) {
+            return false;
+        }
+
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+
+        for (List<Integer> seq : seqs) {
+            for (int i = 0; i < seq.size() - 1; i++) {
+                adj.get(seq.get(i)).add(seq.get(i + 1));
+            }
+        }
+
+        int[] inDegree = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int j = 0; j < adj.get(i).size(); j++) {
+                inDegree[adj.get(i).get(j)]++;
+            }
+        }
+
+        Queue<Integer> queue = new ArrayDeque<>();
+        for (int i = 1; i < inDegree.length; i++) {
+            if (inDegree[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        if (queue.size() != 1) {
+            return false;
+        }
+
+        int index = 0;
+        while (!queue.isEmpty()) {
+            Integer num = queue.poll();
+            if (num == null) {
+                continue;
+            }
+
+            if (org[index++] != num) {
+                return false;
+            }
+
+            boolean hasZero = false;
+            for (int in : adj.get(num)) {
+                inDegree[in]--;
+                if (inDegree[in] == 0) {
+                    if (hasZero) {
+                        return false;
+                    }
+
+                    hasZero = true;
+                    queue.offer(in);
+                }
+            }
+        }
+
+        return index == n;
+    }
+}
+```
