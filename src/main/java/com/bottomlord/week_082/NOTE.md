@@ -402,10 +402,46 @@ class Solution {
 - 在右移兄弟节点和下钻的选择过程中：
     - 右移就是当前节点值+1
     - 下钻就是当前节点值*10
-- 退出就是知道步数=k
+- 实际解法：
+    - 变量cur作为模拟10叉树当前遍历的节点值
+    - 设置`cur = 1`，代表从1开始遍历10叉树，遍历规则为先序遍历
+    - 通过循环判断k的值来驱动遍历过程，k对应的就是还剩几个位置的值没有确认，在算法遍历过程中，通过确定遍历节点来确定`[0,k]`的每个值
+    - 在遍历过程中，有2个方向：
+        - 向右：以当前节点为根，所有可能的子节点的个数之和小于等于k，说明当前节点的子树不需要遍历了，向右去判断下一个节点的子树（等于的情况也要右移是因为，计算子节点时，将树的根节点也算在了步数中，但其实根节点已经在算法开始的时候被统计了，`cur = 1; k--;`，这两部就是代表已经将起始节点算为k的第一个节点。而计算子树节点的算法又算了根节点的值，所以以此类推，如果`step == k`，那么就代表第k个数时当前节点右边那个节点，所以也右移
+        - 向下：以当前节点为根，所有可能的子节点的个数之和大于k，说明第k个数就在子树中，所以就向下
+    - 向右就是`cur*=10`，同时k消耗1
+    - 向下就是`cur++`，同时k消耗子节点个数
+    - 算法驱动过程以k被消耗完终结，而k能够被正好消耗完，是因为k不大于n，而`step`每次都计算出子树的正确个数。 
 ### 代码
 ```java
+class Solution {
+    public int findKthNumber(int n, int k) {
+        int cur = 1;
+        k--;
+        while (k > 0) {
+            int step = step(cur, cur + 1, n);
 
+            if (step > k) {
+                cur *= 10;
+                k--;
+            } else {
+                cur++;
+                k -= step;
+            }
+        }
+        return cur;
+    }
+
+    private int step(long cur, long next, int n) {
+        int step = 0;
+        while (cur <= n) {
+            step += Math.min(n + 1, next) - cur;
+            cur *= 10;
+            next *= 10;
+        }
+        return step;
+    }
+}
 ```
 # [LeetCode_1423_可获得的最大点数](https://leetcode-cn.com/problems/maximum-points-you-can-obtain-from-cards/)
 ## 解法
