@@ -102,12 +102,93 @@ class Solution {
 }
 ```
 # [LeetCode_446_等差数列划分II子数组](https://leetcode-cn.com/problems/arithmetic-slices-ii-subsequence/)
-## 解法
+## 失败解法
+### 失败原因
+超时
 ### 思路
-
+- dfs深度遍历，记录当前遍历的深度，也就是数组`A`的坐标位置
+- 使用一个list列表记录dfs时选取的元素
+- 下钻的路径为：
+    - 选择当元素，选择后，在返回的时候需要去除选择的元素，恢复状态
+    - 不选择当前元素
+- 退出条件，深度与`A`的长度相等，此时判断列表`list`
+    - 元素个数是否大于2个
+    - 序列是否是等差
+- 需要注意溢出的情况，列表存储的元素应为long
 ### 代码
 ```java
+class Solution {
+    private int[] arr;
+    private int len, ans;
+    public int numberOfArithmeticSlices(int[] A) {
+        this.arr = A;
+        this.len = A.length;
+        dfs(new ArrayList<>(), 0);
+        return ans;
+    }
 
+    private void dfs(List<Long> list, int depth) {
+        if (depth == len) {
+            if (list.size() < 3) {
+                return;
+            }
+            
+            long diff = list.get(1) - list.get(0);
+            for (int i = 2; i < list.size(); i++) {
+                if (list.get(i) - list.get(i - 1) != diff) {
+                    return;
+                }
+            }
+            ans++;
+            return;
+        }
+        
+        dfs(list, depth + 1);
+        list.add((long)arr[depth]);
+        dfs(list, depth + 1);
+        list.remove(list.size() - 1);
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][d]`：以`A[i]`为结尾的等差为`d`的等差数列
+- 因为实际等差数列的元素个数必须大于2，所以当i和j做状态转移的时候，并无法获取到起始的状态，因为2个元素组成的并不是真正的等差数列
+- 但是如果将这2个元素组成的序列也暂时当作等差数列，计算结束后，再将2个元素组成的序列从状态总数中删除，就可以了，而删除的值通过排列求职公式得到
+- 状态转移方程：`dp[i][d] += dp[j][d] + 1`
+    - 累加`dp[j][d]`的原因是，每次在原来的等差数列基础上新增一个有效元素后，以这个元素为底，就会新生成原来等差数列个数个的新数列
+    - 这里的加1，代表的就是`i`和`j`2个元素组成的伪等差数列
+- base case：dp数组初始化为0
+- 结果：在状态转移过程中，累加所有新增加的数组个数，也就是`dp[j][d]`这个值
+- dp数组要使用一个数组，元素为一个map，map的key是d值，也就是等差数列的差，value就是数组的个数
+- 遍历过程中，外层遍历`A`数组，下标为i，而内层则遍历`[0,i]`这个区间，用来确定`i`和当前内层坐标`j`对应元素的差值是否已有至少2个元素的序列情况
+    - 如果没有，则说明j这个元素上没有当前差值的序列，连2个的伪等差数列也没有，此时就在坐标i上的map里生成一个当前差值为key，值为1的entry，用来代表一个伪等差数列，下次如果有新的元素和当前j元素形成相同差值的等差数列，就能累加这个值
+    - 如果有，那就累加这个值，说明`j`元素可以和这些以`A[i]`元素为底的等差数列组成新的等差数列
+### 代码
+```java
+class Solution {
+    public int numberOfArithmeticSlices(int[] A) {
+        int len = A.length, ans = 0;
+        HashMap<Integer, Integer>[] dp = new HashMap[len];
+        for (int i = 0; i < len; i++) {
+            dp[i] = new HashMap<>();
+            for (int j = 0; j < i; j++) {
+                long delta = (long) A[i] - A[j];
+                if (delta < Integer.MIN_VALUE || delta > Integer.MAX_VALUE) {
+                    continue;
+                }
+
+                int diff = (int)delta;
+                int pre = dp[j].getOrDefault(diff, 0), cur = dp[i].getOrDefault(diff, 0);
+                dp[i].put(diff, pre + cur + 1);
+                ans += pre;
+            }
+        }
+
+        return ans;
+    }
+}
 ```
 # [LeetCode_992_k个不同整数的子数组](https://leetcode-cn.com/problems/subarrays-with-k-different-integers/)
 ## 失败解法
