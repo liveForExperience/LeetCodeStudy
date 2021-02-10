@@ -211,3 +211,56 @@ class Solution {
     }
 }
 ```
+# LeetCode_567_字符串的排列
+## 解法
+### 思路
+滑动窗口
+- 这题相当于求s2的子数组，且子数组的长度为s1的长度，然后再比较s2的子数组字符个数和s1的字符个数
+- 遍历s2模拟窗口移动，每次都更新新增和减去的字符个数，然后与s1的个数进行匹配
+- 判断的规则是，比较字符出现的个数是否相等
+### 代码
+```java
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        int len1 = s1.length(), len2 = s2.length();
+        if (len1 > len2) {
+            return false;
+        }
+
+        int[] count1 = new int[26], count2 = new int[26];
+        
+        for (char c : s1.toCharArray()) {
+            count1[c - 'a']++;
+        }
+        
+        for (int i = 0; i < len1; i++) {
+            count2[s2.charAt(i) - 'a']++;
+        }
+
+        if (fit(count1, count2)) {
+            return true;
+        }
+        
+        for (int i = len1 - 1; i < len2 - 1; i++) {
+            count2[s2.charAt(i + 1) - 'a']++;
+            count2[s2.charAt(i - len1 + 1) - 'a']--;
+
+            if (fit(count1, count2)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private boolean fit(int[] c1, int[] c2) {
+        for (int i = 0; i < 26; i++) {
+            if (c1[i] != c2[i]) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
