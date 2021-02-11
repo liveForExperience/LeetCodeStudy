@@ -345,3 +345,56 @@ class Solution {
     }
 }
 ```
+# LeetCode_450_删除二叉搜索树中的节点
+## 解法
+### 思路
+- 当去除一个二叉搜索树节点，会需要考虑3种情况：
+    - 当前节点是叶子节点：直接删除当前节点
+    - 当前节点有右子树：找到当前节点的后驱节点，也就是右子树的最左的叶子节点，将该节点作为当前节点，并同时删除该最左节点
+    - 当前节点有左子树：找到当前节点的前驱节点，也就是左子树的最右的叶子节点，将该节点作为当前节点，并同时删除该最右节点
+### 代码
+```java
+class Solution {
+    public TreeNode deleteNode(TreeNode root, int key) {
+        if (root == null) {
+            return null;
+        }
+
+        if (key > root.val) {
+            root.right = deleteNode(root.right, key);
+        } else if (key < root.val) {
+            root.left = deleteNode(root.left, key);
+        } else {
+            if (root.left == null && root.right == null) {
+                return null;
+            }
+            
+            if (root.right != null) {
+                root.val = processNode(root);
+                root.right = deleteNode(root.right, root.val);
+            } else {
+                root.val = preNode(root);
+                root.left = deleteNode(root.left, root.val);
+            }
+        }
+
+        return root;
+    }
+    
+    private int processNode(TreeNode node) {
+        node = node.right;
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node.val;
+    }
+    
+    private int preNode(TreeNode node) {
+        node = node.left;
+        while (node.right != null) {
+            node = node.right;
+        }
+        return node.val;
+    }
+}
+```
