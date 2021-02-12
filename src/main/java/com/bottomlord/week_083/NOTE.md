@@ -398,3 +398,70 @@ class Solution {
     }
 }
 ```
+# LeetCode_456_132模式
+## 失败解法
+### 原因
+超时
+### 思路
+暴力
+### 代码
+```java
+class Solution {
+    public boolean find132pattern(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                if (nums[i] >= nums[j]) {
+                    continue;
+                }
+
+                for (int k = j + 1; k < nums.length; k++) {
+                    if (nums[i] < nums[k] && nums[k] < nums[j]) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+- 题目的意思，第一个数小于第三个数，第三个数小于第二个数
+- 所以第一个数应该尽可能的小，可以通过遍历数组，求[0,i]区间的最小值作为可能的第一个元素并生成数组mins
+- 然后第三个数应该在第一个和第二个数之间，那么为了求这第三个数，可以从数组末尾开始遍历，然后将元素存储在栈中。
+- 栈中的元素就是可能的第三个数，而能进入栈中的，应该是比第一个数大的最小值，所以栈顶元素应该随遍历过程做更新，如果当前栈顶元素比第一个元素小就弹出，直到第一个大的为止
+- 同时整个算法是1层循环，从mins的末尾开始往前遍历，同时因为mins和nums的长度相同，遍历使用的数组下标同时可以作为nums的元素指针
+- 遍历过程中：
+    - 更新栈顶元素，也就是比较mins[i]的值是否小于stack的栈顶元素，如果不是就把栈顶元素弹出
+    - 其次就是判断mins[i]和stack.peek和nums[i]是否形成升序排列，如果是就返回true
+- 遍历结束，返回false
+### 代码
+```java
+class Solution {
+    public boolean find132pattern(int[] nums) {
+        int len = nums.length;
+        int[] mins = new int[len];
+        mins[0] = nums[0];
+        for (int i = 1; i < len; i++) {
+            mins[i] = Math.min(nums[i], mins[i - 1]);
+        }
+
+        Stack<Integer> stack = new Stack<>();
+        for (int i = len - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && stack.peek() <= mins[i]) {
+                stack.pop();
+            }
+
+            if (!stack.isEmpty() && mins[i] < stack.peek() && stack.peek() < nums[i]) {
+                return true;
+            }
+
+            stack.push(nums[i]);
+        }
+
+        return false;
+    }
+}
+```
