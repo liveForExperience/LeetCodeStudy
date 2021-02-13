@@ -292,7 +292,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_567_字符串的排列
+# [LeetCode_567_字符串的排列](https://leetcode-cn.com/problems/permutation-in-string/)
 ## 解法
 ### 思路
 滑动窗口
@@ -345,7 +345,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_450_删除二叉搜索树中的节点
+# [LeetCode_450_删除二叉搜索树中的节点](https://leetcode-cn.com/problems/delete-node-in-a-bst/)
 ## 解法
 ### 思路
 - 当去除一个二叉搜索树节点，会需要考虑3种情况：
@@ -398,7 +398,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_456_132模式
+# [LeetCode_456_132模式](https://leetcode-cn.com/problems/132-pattern/)
 ## 失败解法
 ### 原因
 超时
@@ -462,6 +462,67 @@ class Solution {
         }
 
         return false;
+    }
+}
+```
+# [LeetCode_457_环形数组循环](https://leetcode-cn.com/problems/circular-array-loop/)
+## 解法
+### 思路
+快慢指针：
+- 因为数组中不会出现0，所以用0代表已经搜索过的元素
+- 因为索引有负数，所以模拟遍历环形列表的过程就是`((i + nums[i] + len) % len + len) % len`
+- 2层循环：
+    - 外层循环定义慢指针的起始坐标，如果起始坐标对应的值是0.说明当前坐标值已经在之前搜索过，不能形成环，就跳过。而之所以会有0，是因为，在探索过程中，会将遍历过的元素置为0
+    - 内层循环：
+        - 首先确定快慢指针，慢指针是外层坐标，快指针是基于索引的下一个坐标
+        - 然后循环判断，当前慢指针的值与快指针的值是否是同符号，同时和快指针的下一个坐标的值是否也是同符号，如果不是，就退出循环，说明当前慢指针为起始，无法形成环。
+        - 这样判断的原因是，如果要形成环，索引的符号需要先保持一致，否则与语义相悖
+        - 然后判断快慢指针是否有相同的情况：
+            - 如果有，则再判断，慢指针与快指针的下一个坐标是否也一样，如果还一样，说明当前环的长度为1，不符合要求，退出循环，找下一个起始的慢坐标。否则就说明找到环了，返回true结束
+            - 如果没有，就更新快慢指针
+        - 如果内层的循环结束了，说明当前起始的慢指针不能找到环，则将当前循环探索过的元素置为0
+    - 循环结束，则返回false
+- 如果是空数组，就返回false
+### 代码
+```java
+class Solution {
+    public boolean circularArrayLoop(int[] nums) {
+        int len = nums.length;
+        if (len == 0) {
+            return false;
+        }
+
+        for (int i = 0; i < len; i++) {
+            if (nums[i] == 0) {
+                continue;
+            }
+
+            int slow = i, fast = next(nums, slow, len), val = nums[slow];
+            while (val * nums[fast] > 0 && val * nums[next(nums, fast, len)] > 0) {
+                if (slow == fast) {
+                    if (slow == next(nums, slow, len)) {
+                        break;
+                    }
+
+                    return true;
+                }
+                
+                slow = next(nums, slow, len);
+                fast = next(nums, next(nums, fast, len), len);
+            }
+            
+            slow = i;
+            while (val * nums[slow] > 0) {
+                nums[slow] = 0;
+                slow = next(nums, slow, len);
+            }
+        }
+        
+        return false;
+    }
+
+    private int next(int[] nums, int index, int len) {
+        return ((index + nums[index]) % len + len) % len;
     }
 }
 ```
