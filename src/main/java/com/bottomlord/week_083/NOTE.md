@@ -526,3 +526,76 @@ class Solution {
     }
 }
 ```
+# LeetCode_765_情侣牵手
+## 解法
+### 思路
+并查集：
+- 将情侣2人看作一个节点，当n个情侣之间位置交错，那么只要交换n-1次就可以将他们换成符合题意的组合
+- 而这个题目就可以看成找到图中的连通分量，然后算出连通分量的节点个数，然后-1就是要换的次数
+- 使用并查集来求连通分量
+- 遍历数组，求出相邻2个元素对应的节点值，节点值就是当前int值/2的商，这两个值响铃就说明两个值在一个联通分量里，将他们union在一起
+- 然后遍历并查集，求出连通分量个数和节点数，最后得到次数
+### 代码
+```java
+class Solution {
+    public int minSwapsCouples(int[] row) {
+        int len = row.length, total = len / 2;
+        Uf uf = new Uf(total);
+        
+        for (int i = 0; i < len; i += 2) {
+            int x = row[i] / 2, y = row[i + 1] / 2;
+            uf.union(x, y);
+        }
+        
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < total; i++) {
+            int r = uf.find(i);
+            map.put(r, map.getOrDefault(r, 0) + 1);
+        }
+        
+        int ans = 0;
+        for (Integer value : map.values()) {
+            ans += (value - 1);
+        }
+        return ans;
+    }
+
+    private static class Uf {
+        private int[] parent;
+        private int[] rank;
+
+        public Uf(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+                rank[i] = 1;
+            }
+        }
+
+        public int find(int x) {
+            if (x != parent[x]) {
+                parent[x] = find(parent[x]);
+            }
+            return parent[x];
+        }
+        
+        public void union(int x, int y) {
+            int rx = find(x), ry = find(y);
+            
+            if (rx == ry) {
+                return;
+            }
+            
+            if (rank[rx] < rank[ry]) {
+                parent[rx] = ry;
+            } else if (rank[rx] > rank[ry]) {
+                parent[ry] = rx;
+            } else {
+                parent[ry] = rx;
+                rank[rx]++;
+            }
+        }
+    }
+}
+```
