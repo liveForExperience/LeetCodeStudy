@@ -1,11 +1,3 @@
-# [LeetCode_458_可怜的小猪](https://leetcode-cn.com/problems/poor-pigs/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_995_K连续位的最小翻转次数](https://leetcode-cn.com/problems/minimum-number-of-k-consecutive-bit-flips/)
 ## 解法
 ### 思路
@@ -146,6 +138,65 @@ class Solution {
             ans = Math.max(ans, r - l + 1);
         }
 
+        return ans;
+    }
+}
+```
+# [LeetCode_1438_绝对差不超过限制的最长连续子数组](https://leetcode-cn.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/)
+## 失败解法
+### 原因
+超时，时间复杂度过高
+### 思路
+暴力
+### 代码
+```java
+class Solution {
+    public int longestSubarray(int[] nums, int limit) {
+        int len = nums.length, ans = 0;
+        for (int i = 0; i < len; i++) {
+            int max = nums[i], min = nums[i], j = i;
+            while (j < len && Math.abs(nums[j] - max) <= limit && Math.abs(nums[j] - min) <= limit) {
+                min = Math.min(min, nums[j]);
+                max = Math.max(max, nums[j]);
+                j++;
+            }
+            
+            ans = Math.max(ans, j - i);
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 其实按照题目的要求，只要求一个连续子数组区间内的最大值和最小值的差不超过limit就可以，所以这个题目就是求一个滑动窗口
+- 然后就是用一个集合来保证窗口变化的时候，最大值和最小值能尽可能快速的被更新，此时就可以用到红黑树
+- 算法过程：
+    - 遍历数组确定滑动窗口的r坐标
+    - 内层被动确定滑动窗口的l坐标
+    - 维护红黑树集合，并判断最大和最小值的差是否大于limit
+        - 如果不大于，那就更新结果值并移动r坐标
+        - 如果大于，就移动l坐标，并更新红黑树
+### 代码
+```java
+class Solution {
+    public int longestSubarray(int[] nums, int limit) {
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        int len = nums.length, ans = 0, l = 0;
+        for (int r = 0; r < len; r++) {
+            map.put(nums[r], map.getOrDefault(nums[r], 0) + 1);
+            while (map.lastKey() - map.firstKey() > limit) {
+                map.put(nums[l], map.get(nums[l]) - 1);
+                if (map.get(nums[l]) == 0) {
+                    map.remove(nums[l]);
+                }
+                l++;
+            }
+            
+            ans = Math.max(ans, r - l + 1);
+        }
+        
         return ans;
     }
 }
