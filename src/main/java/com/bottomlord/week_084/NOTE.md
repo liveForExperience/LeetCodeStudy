@@ -201,3 +201,42 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 因为在判断过程中只需要直到滑动窗口的最大和最小值，所以可以使用单调队列替换红黑树集合
+- 维护两个单调队列分别记录最大值和最小值
+### 代码
+```java
+class Solution {
+    public int longestSubarray(int[] nums, int limit) {
+        ArrayDeque<Integer> maxQ = new ArrayDeque<>(), minQ = new ArrayDeque<>();
+        int len = nums.length, ans = 0, l = 0;
+        for (int r = 0; r < len; r++) {
+            while (!maxQ.isEmpty() && maxQ.peekLast() < nums[r]) {
+                maxQ.pollLast();
+            }
+            while (!minQ.isEmpty() && minQ.peekLast() > nums[r]) {
+                minQ.pollLast();
+            }
+            maxQ.offerLast(nums[r]);
+            minQ.offerLast(nums[r]);
+
+            while(!minQ.isEmpty() && !maxQ.isEmpty() && maxQ.peekFirst() - minQ.peekFirst() > limit) {
+                if (maxQ.peekFirst() == nums[l]) {
+                    maxQ.pollFirst();
+                }
+                
+                if (minQ.peekFirst() == nums[l]) {
+                    minQ.pollFirst();
+                }
+
+                l++;
+            }
+            
+            ans = Math.max(ans, r - l + 1);
+        }
+        
+        return ans;
+    }
+}
+```
