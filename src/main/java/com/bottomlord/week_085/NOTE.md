@@ -16,3 +16,92 @@ class Solution {
     }
 }
 ```
+# [LeetCode_464_我能赢吗](https://leetcode-cn.com/problems/can-i-win/)
+## 解法
+### 思路
+记忆化回溯
+- 用一个数组记录当前哪些数字被使用过，1代表使用，0代表没有使用
+- 使用map的key记录当前数组状态，对应的value记录当前这种状态的结果
+- 回溯的过程就是遍历所有的数，判断当前是否已经能达到目标值，或者对方下一次不能达到目标值（递归获得对方执行的结果）
+- 回溯过程中记得状态恢复，并记录数字使用状态和对应结果的关系，做到剪枝
+### 代码
+```java
+class Solution {
+    public boolean canIWin(int maxChoosableInteger, int desiredTotal) {
+        if (maxChoosableInteger >= desiredTotal) {
+            return true;
+        }
+        
+        if ((1 + maxChoosableInteger) * maxChoosableInteger / 2 < desiredTotal) {
+            return false;
+        }
+        
+        int[] state = new int[maxChoosableInteger + 1];
+        
+        return backTrack(desiredTotal, state, new HashMap<>());
+    }
+    
+    private boolean backTrack(int desiredTotal, int[] state, Map<String, Boolean> memo) {
+        String key = Arrays.toString(state);
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
+        
+        for (int i = 1; i < state.length; i++) {
+            if (state[i] == 0) {
+                state[i] = 1;
+                if (desiredTotal - i <= 0 || !backTrack(desiredTotal - i, state, memo)) {
+                    memo.put(key, true);
+                    state[i] = 0;
+                    return true;
+                }
+                state[i] = 0;
+            }
+        }
+        
+        memo.put(key, false);
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+- 使用位来记录状态，使用Boolean数组记录不同位代表的值对应的状态，总的状态数就是2的可选数次幂
+- 因为上一个解法中，使用的是一个数组来记录状态，并转化为字符串存入记忆化map中，所以需要回溯状态，而当前数组就类似于之前map的作用，所以可以省去回溯的动作
+### 代码
+```java
+class Solution {
+    public boolean canIWin(int maxChoosableInteger, int desiredTotal) {
+        if (maxChoosableInteger >= desiredTotal) {
+            return true;
+        }
+
+        if ((1 + maxChoosableInteger) * maxChoosableInteger / 2 < desiredTotal) {
+            return false;
+        }
+        
+        Boolean[] states = new Boolean[(1 << maxChoosableInteger) - 1];
+        return backTrack(states, 0, maxChoosableInteger, desiredTotal);
+    }
+    
+    private boolean backTrack(Boolean[] states, int state, int maxChoosableInteger, int desiredTotal) {
+        if (states[state] != null) {
+            return states[state];
+        }
+
+        for (int i = 1; i <= maxChoosableInteger; i++) {
+            int cur = 1 << (i - 1);
+            if ((cur & state) == 0) {
+                if (desiredTotal - i <= 0 || !backTrack(states, state | cur, maxChoosableInteger, desiredTotal - i)) {
+                    states[state] = true;
+                    return true;
+                }
+            }
+
+        }
+
+        states[state] = false;
+        return false;
+    }
+}
+```
