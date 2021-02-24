@@ -105,3 +105,56 @@ class Solution {
     }
 }
 ```
+# LeetCode_465_最优账单平衡
+## 解法
+### 思路
+- 如果一个人借出和借入是一样的，那么这个人就可以从借贷关系中脱离出来
+- 借出和借入最后集中到同一个人身上后，算是最后一次处理借贷关系
+- 然后尝试使用哪种路径可以最快的处理完所有的借贷关系
+### 代码
+```java
+class Solution {
+    private int ans = Integer.MAX_VALUE;
+    public int minTransfers(int[][] transactions) {
+        int len = transactions.length;
+        Map<Integer, Integer> sum = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            sum.put(transactions[i][0], sum.getOrDefault(transactions[i][0], 0) + transactions[i][2]);
+            sum.put(transactions[i][1], sum.getOrDefault(transactions[i][1], 0) - transactions[i][2]);
+        }
+
+        List<Integer> list = new ArrayList<>();
+        for (Integer key : sum.keySet()) {
+            if (sum.get(key) != 0) {
+                list.add(sum.get(key));
+            }
+        }
+
+        dfs(0, 0, list);
+        return ans;
+    }
+
+    private void dfs(int index, int count, List<Integer> list) {
+        if (count > ans) {
+            return;
+        }
+
+        while (index < list.size() && list.get(index) == 0) {
+            index++;
+        }
+
+        if (index == list.size()) {
+            ans = Math.min(ans, count);
+            return;
+        }
+
+        for (int i = index + 1; i < list.size(); i++) {
+            if (list.get(index) * list.get(i) < 0) {
+                list.set(i, list.get(i) + list.get(index));
+                dfs(index + 1, count + 1, list);
+                list.set(i, list.get(i) - list.get(index));
+            }
+        }
+    }
+}
+```
