@@ -158,3 +158,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_467_环绕字符串中唯一的子字符串](https://leetcode-cn.com/problems/unique-substrings-in-wraparound-string/)
+## 解法
+### 思路
+- 题目的意思是在p串中找到连续的s和p的子串，s因为是从a到z的连续循环字符串，所以相当于求以某个字母为结尾的连续子串个数的总和
+- 通过滑动窗口求
+- 过程：
+    - 定义窗口右边界r，循环遍历该右边界
+    - 定义变量sum，暂存当前窗口的可能序列个数
+    - 循环中判断右边界对应的元素与前一个元素是否符合题目要求的连续规则
+        - 如果符合，就累加sum值，累加后得到的值，就是当前窗口因为新增了一个元素而能够组成的新的子数组
+        - 如果不符合，就重置sum值为1，代表当前右边界只能生成1个子数组
+    - 每次循环都判断当前元素对应的字母能够组成的子序列的个数和已存在的该字母的个数大小，取大的值更新
+### 代码
+```java
+class Solution {
+    public int findSubstringInWraproundString(String p) {
+        if (p == null || p.length() == 0) {
+            return 0;
+        }
+        
+        int sum = 1;
+        int[] arr = new int[26];
+        arr[p.charAt(0) - 'a'] = sum;
+        
+        for (int r = 1; r < p.length(); r++) {
+            if (p.charAt(r) - p.charAt(r - 1) == 1 || p.charAt(r) - p.charAt(r - 1) == -25) {
+                sum++;
+            } else {
+                sum = 1;
+            }
+            
+            arr[p.charAt(r) - 'a'] = Math.max(arr[p.charAt(r) - 'a'], sum);
+        }
+        
+        return Arrays.stream(arr).sum();
+    }
+}
+```
