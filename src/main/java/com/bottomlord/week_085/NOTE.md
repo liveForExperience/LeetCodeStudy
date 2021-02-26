@@ -268,3 +268,141 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1178_猜字谜](https://leetcode-cn.com/problems/number-of-valid-words-for-each-puzzle/)
+## 失败解法
+### 原因
+超时
+### 思路
+暴力
+### 代码
+```java
+class Solution {
+    public List<Integer> findNumOfValidWords(String[] words, String[] puzzles) {
+        List<Integer> ans = new ArrayList<>();
+
+        for (int i = 0; i < puzzles.length; i++) {
+            boolean[] dict = new boolean[26];
+            
+            for (char c : puzzles[i].toCharArray()) {
+                dict[c - 'a'] = true;
+            }
+            int count = 0;
+            for (String word : words) {
+                boolean matchHead = false, matchAll = true;
+                for (char c : word.toCharArray()) {
+                    if (c == puzzles[i].charAt(0)) {
+                        matchHead = true;
+                    }
+
+                    if (!dict[c - 'a']) {
+                        matchAll = false;
+                        break;
+                    }
+                }
+
+                if (matchAll && matchHead) {
+                    count++;
+                }
+            }
+
+            ans.add(count);
+        }
+        
+        return ans;
+    }
+}
+```
+## 失败解法二
+### 原因
+超时
+### 思路
+在解法1的基础上，对words提前做桶计数
+### 代码
+```java
+class Solution {
+    public List<Integer> findNumOfValidWords(String[] words, String[] puzzles) {
+        List<Integer> ans = new ArrayList<>();
+        HashSet<Character>[] wordDict = new HashSet[words.length];
+        for (int i = 0; i < words.length; i++) {
+            wordDict[i] = new HashSet();
+            for (char c : words[i].toCharArray()) {
+                wordDict[i].add(c);
+            }
+        }
+
+        for (int i = 0; i < puzzles.length; i++) {
+            boolean[] pDict = new boolean[26];
+            for (char c : puzzles[i].toCharArray()) {
+                pDict[c - 'a'] = true;
+            }
+
+            int count = 0;
+            for (HashSet<Character> wDict : wordDict) {
+                if (!wDict.contains(puzzles[i].toCharArray()[0])) {
+                    continue;
+                }
+
+                boolean miss = false;
+                for (Character c : wDict) {
+                    if (!pDict[c - 'a']) {
+                        miss = true;
+                        break;
+                    }
+                }
+
+                if (!miss) {
+                    count++;
+                }
+            }
+
+            ans.add(count);
+        }
+
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 使用二进制来存储words以及puzzle的状态
+- 首先遍历words，将每一个word存储到一个数字中，然后放入map中进行计数
+- 然后遍历puzzle，生成二进制数，根据公式`mask & (sub - 1)`遍历所有当前puzzle的可能二进制值，如果匹配就累加map中的值
+### 代码
+```java
+class Solution {
+    public List<Integer> findNumOfValidWords(String[] words, String[] puzzles) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (String word : words) {
+            int mask = 0;
+            for (char c : word.toCharArray()) {
+                mask |= (1 << (c - 'a'));
+            }
+
+            if (Integer.bitCount(mask) <= 7) {
+                map.put(mask, map.getOrDefault(mask, 0) + 1);
+            }
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        for (String puzzle : puzzles) {
+            int mask = 0;
+            for (int i = 1; i < puzzle.length(); i++) {
+                mask |= (1 << (puzzle.charAt(i) - 'a'));
+            }
+
+            int sub = mask, count = 0;
+            do {
+                int tmp = sub | (1 << (puzzle.charAt(0) - 'a'));
+                if (map.containsKey(tmp)) {
+                    count += map.get(tmp);
+                }
+                sub = mask & (sub - 1);
+            } while (sub != mask);
+
+            ans.add(count);
+        }
+
+        return ans;
+    }
+}
+```
