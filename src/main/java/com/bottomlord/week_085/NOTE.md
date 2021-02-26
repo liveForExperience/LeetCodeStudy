@@ -196,3 +196,75 @@ class Solution {
     }
 }
 ```
+# [LeetCode_468_验证IP地址](https://leetcode-cn.com/problems/validate-ip-address/)
+## 解法
+### 思路
+根据2种ip编码的要求判断字符串
+### 代码
+```java
+class Solution {
+    public String validIPAddress(String IP) {
+        if (IP.chars().filter(x -> x == '.').count() == 3) {
+            return validateIp4(IP) ? "IPv4" : "Neither";
+        }
+
+        if (IP.chars().filter(x -> x == ':').count() == 7) {
+            return validateIp6(IP) ? "IPv6" : "Neither";
+        }
+
+        return "Neither";
+    }
+
+    private boolean validateIp4(String ip) {
+        String[] strs = ip.split("\\.");
+        if (strs.length != 4) {
+            return false;
+        }
+
+        for (String str : strs) {
+            if (str.length() == 0 || str.length() > 3) {
+                return false;
+            }
+
+            if (str.startsWith("0") && str.length() > 1) {
+                return false;
+            }
+
+            int num;
+            try {
+                num = Integer.parseInt(str);
+            } catch (Exception e) {
+                return false;
+            }
+
+            if (num < 0 || num > 255) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean validateIp6(String ip) {
+        String[] strs = ip.split(":");
+        String hexdigits = "0123456789abcdefABCDEF";
+        if (strs.length != 8) {
+            return false;
+        }
+
+        for (String str : strs) {
+            if (str.length() == 0 || str.length() > 4) {
+                return false;
+            }
+
+            for (char c : str.toCharArray()) {
+                if (hexdigits.indexOf(c) == -1) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+}
+```
