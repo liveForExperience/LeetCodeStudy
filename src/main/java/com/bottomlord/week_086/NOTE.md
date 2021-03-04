@@ -57,3 +57,106 @@ class Solution {
     }
 }
 ```
+# [LeetCode_472_连接词](https://leetcode-cn.com/problems/concatenated-words/)
+## 失败解法
+### 原因
+时间复杂度过高
+### 思路
+- 使用set集合存储所有word
+- 遍历word，再通过回溯判断是否是链接单词
+    - 回溯中通过遍历word的字符，判断当前子字符串是否存在于set中
+    - 回溯过程中有一个前提，需要把当前word从set中去除掉，否则判断时需要去除本身这个特殊情况
+    - 回溯时，不断切除头部包含在set中的子字符串，然后将剩余的字符串递归到下一层
+    - 回溯的退出条件是字符串为空，所以回溯前还要跳过字符串为空的情况
+    - 将符合条件的字符串放入结果
+### 代码
+```java
+class Solution {
+    public List<String> findAllConcatenatedWordsInADict(String[] words) {
+        List<String> ans = new ArrayList<>();
+        Set<String> set = new HashSet<>(Arrays.asList(words));
+        for (String word : words) {
+            if (Objects.equals("", word)) {
+                continue;
+            }
+
+            set.remove(word);
+            if (backTrack(word, set)) {
+                ans.add(word);
+            }
+            set.add(word);
+        }
+
+        return ans;
+    }
+
+    private boolean backTrack(String word, Set<String> set) {
+        if (word.length() == 0) {
+            return true;
+        }
+
+        boolean result = false;
+        for (int i = 0; i < word.length(); i++) {
+            if (set.contains(word.substring(0, i + 1))) {
+                result = backTrack(word.substring(i + 1), set);
+            }
+
+            if (result) {
+                break;
+            }
+        }
+
+        return result;
+    }
+}
+```
+## 解法
+### 思路
+- 失败解法的原因是时间复杂度过高，没有记录之前遍历过的字符串中失败的内容，导致重复失败。
+- 在算法中增加记忆化搜索，记录失败的字符串，形成剪枝
+### 代码
+```java
+class Solution {
+    public List<String> findAllConcatenatedWordsInADict(String[] words) {
+        List<String> ans = new ArrayList<>();
+        Set<String> set = new HashSet<>(Arrays.asList(words)), memo = new HashSet<>();
+        for (String word : words) {
+            if (Objects.equals("", word)) {
+                continue;
+            }
+
+            set.remove(word);
+            if (backTrack(word, set, memo)) {
+                ans.add(word);
+            }
+            set.add(word);
+        }
+
+        return ans;
+    }
+
+    private boolean backTrack(String word, Set<String> set, Set<String> memo) {
+        if (word.length() == 0) {
+            return true;
+        }
+
+        boolean result = false;
+        for (int i = 1; i <= word.length(); i++) {
+            if (set.contains(word.substring(0, i))) {
+                String right = word.substring(i);
+                if (memo.contains(right)) {
+                    continue;
+                }
+                
+                if (backTrack(word.substring(i), set, memo)) {
+                    return true;
+                }
+                
+                memo.add(right);
+            }
+        }
+
+        return result;
+    }
+}
+```
