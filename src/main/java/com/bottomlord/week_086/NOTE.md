@@ -236,3 +236,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_478_在园内随机生成点](https://leetcode-cn.com/problems/generate-random-point-in-a-circle/)
+## 解法
+### 思路
+- 通过圆心和半径，求出一个能正好覆盖原型的矩形
+- 通过圆心和半径，求出模拟出的矩形的一角的坐标`x0,y0`，以这个左边作为计算的原点
+- 然后基于这个坐标，在2倍的边长中找一个随机边长，加上这个原点坐标，获得一个新点
+- 通过新点和圆心点，求曼哈顿距离，然后和半径比较，判断是否在园内
+### 代码
+```java
+class Solution {
+    private double rad, xc, yc;
+    public Solution(double radius, double x_center, double y_center) {
+        this.rad = radius;
+        this.xc = x_center;
+        this.yc = y_center;
+    }
+
+    public double[] randPoint() {
+        double x0 = xc - rad, y0 = yc - rad;
+        
+        while (true) {
+            double xr = x0 + Math.random() * 2 * rad, yr = y0 + Math.random() * 2 * rad;
+            if (Math.sqrt(Math.pow(xr - xc, 2) + Math.pow(yr - yc, 2)) <= rad) {
+                return new double[]{xr, yr};
+            }
+        }
+    }
+}
+```
