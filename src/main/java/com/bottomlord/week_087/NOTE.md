@@ -85,3 +85,132 @@ class Solution {
     }
 }
 ```
+# [LeetCode_484_寻找排列](https://leetcode-cn.com/problems/find-permutation/)
+## 失败解法
+### 原因
+超时
+### 思路
+暴力回溯
+### 代码
+```java
+class Solution {
+    public int[] findPermutation(String s) {
+        int len = s.length();
+        if (len == 0) {
+            return new int[0];
+        }
+
+        int[] ans = new int[len + 1];
+        char[] cs = s.toCharArray();
+        boolean[] memo = new boolean[len + 2];
+
+        backTrack(0, cs, ans, memo);
+        return ans;
+    }
+
+    private boolean backTrack(int index, char[] cs, int[] ans, boolean[] memo) {
+        if (index == ans.length) {
+            return true;
+        }
+
+        for (int i = 1; i <= ans.length; i++) {
+            if (memo[i]) {
+                continue;
+            }
+            
+            if (index == 0) {
+                memo[i] = true;
+                ans[index] = i;
+                boolean result = backTrack(index + 1, cs, ans, memo);
+                if (result) {
+                    return true;
+                }
+
+                ans[index] = 0;
+                memo[i] = false;
+                
+            } else {
+                if (cs[index - 1] == 'I') {
+                    if (i > ans[index - 1]) {
+                        memo[i] = true;
+                        ans[index] = i;
+                        boolean result = backTrack(index + 1, cs, ans, memo);
+                        if (result) {
+                            return true;
+                        }
+
+                        memo[i] = false;
+                        ans[index] = 0;
+                    }
+                } else {
+                    if (i < ans[index - 1]) {
+                        memo[i] = true;
+                        ans[index] = i;
+                        boolean result = backTrack(index + 1, cs, ans, memo);
+                        if (result) {
+                            return true;
+                        }
+
+                        memo[i] = false;
+                        ans[index] = 0;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+- 原始序列是严格的升序排列
+- 假设是连续的`III`序列，那么原始序列就不需要变更
+- 假设是连续的`DDD`序列，那么整个序列可以直接翻转，就成为了符合的序列
+- 那么将2种序列合并一起处理时候，发现也不会产生冲突，升序就不处理数组，碰到需要降序了，就累计一下连续的降序序列，然后在对应的原始序列中将子序列做一下翻转，因为原始序列是严格递增的，所以反转后原看来子序列的最后一个数字，变成了现在的第一个数字，仍然比前一个数要大。
+- 算法过程：
+    - 初始化从1开始升序的数组ans
+    - 定义一个指针i，用来遍历确定s字符串的密码字符
+    - 如果是I，说明不需要处理ans的对应元素
+    - 如果是D：
+        - 暂存i的值为j，这个j对应的是第一个D这个字符，同时也相当于ans中升序的最后一个数字，也就是波峰
+        - 然后在通过i，内层继续遍历s，找到所有连续的D，直到找到第一个I或者s遍历结束为止
+        - 此时i对应的是ans中降序的最后一个数字，也就是波谷
+        - 将波峰和波谷的这个区间的数字以中心点进行翻转
+    - 处理完之后继续走，直到循环结束，返回ans
+### 代码
+```java
+class Solution {
+    public int[] findPermutation(String s) {
+        int[] ans = new int[s.length() + 1];
+        for (int i = 1; i <= s.length() + 1; i++) {
+            ans[i - 1] = i;
+        }
+
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == 'I') {
+                continue;
+            }
+
+            int j = i;
+            while (i < s.length() && s.charAt(i) == 'D') {
+                i++;
+            }
+
+            reserve(ans, j, i);
+        }
+
+        return ans;
+    }
+
+    private void reserve(int[] arr, int start, int end) {
+        while (start <= end) {
+            int tmp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = tmp;
+            start++;
+            end--;
+        }
+    }
+}
+```

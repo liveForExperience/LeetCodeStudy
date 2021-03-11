@@ -573,7 +573,12 @@ class Solution {
         int result = 0;
 
         if (!stack.isEmpty()) {
-            result = (int)stack.pop();
+            Object obj = stack.pop();
+            if (obj instanceof Character && (char)obj == '-') {
+                result = -(int) stack.pop();
+            } else {
+                result = (int) obj;
+            }
         }
 
         while (!stack.isEmpty() && (char)stack.peek() != ')') {
