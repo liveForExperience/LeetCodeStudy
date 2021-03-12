@@ -214,3 +214,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_487_最大连续1的个数II](https://leetcode-cn.com/problems/max-consecutive-ones-ii/)
+## 解法
+### 思路
+- 定义2个指针
+    - 指针i遍历数组
+    - 指针j标记为0的坐标，初始化为-1，代表没有遇到
+- 过程：
+    - i遍历数组，并累加当前1的个数
+    - 如果第一次遇到0，记录j，同时将当前坐标当成1继续累加
+    - 如果第二次遇到0：
+        - 使用暂存值与最大值比较，更新最大值
+        - 计算当前0与第一次0的距离，更新暂存值
+        - 更新坐标j
+    - 循环结束，比较暂存值与最大值，返回最大值
+### 代码
+```java
+class Solution {
+    public int findMaxConsecutiveOnes(int[] nums) {
+        int j = -1, cur = 0, max = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 1) {
+                cur++;
+            }
+            
+            if (nums[i] == 0) {
+                if (j == -1) {
+                    j = i;
+                    cur++;
+                } else {
+                    max = Math.max(max, cur);
+                    cur = i - j;
+                    j = i;
+                }
+            }
+        }
+        
+        return Math.max(max, cur);
+    }
+}
+```
