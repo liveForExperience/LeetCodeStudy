@@ -346,3 +346,52 @@ class LRUCache {
     }
 }
 ```
+# [LeetCode_705_设计哈希集合](https://leetcode-cn.com/problems/design-hashset/)
+## 解法
+### 思路
+链地址法
+- 创建链表数组，长度设置一个较长的质数，例如769
+- 增加的数都对769取余，然后放到对应的坐标位置。如果发现该下标位置有元素，则将元素放在链表的最后
+- 删除的数也是对769取余，然后找对应相等的元素，做删除操作
+- 查找也是类似的操作
+### 代码
+```java
+class MyHashSet {
+
+    private static final int BASE = 769;
+        private final LinkedList<Integer>[] bucket;
+        
+        @SuppressWarnings("unchecked")
+        public MyHashSet() {
+            bucket = new LinkedList[BASE];
+            for (int i = 0; i < BASE; i++) {
+                bucket[i] = new LinkedList<>();
+            }
+        }
+
+        public void add(int key) {
+            LinkedList<Integer> list = bucket[hash(key)];
+            list.addLast(key);
+        }
+
+        public void remove(int key) {
+            LinkedList<Integer> list = bucket[hash(key)];
+            list.removeIf(integer -> integer == key);
+        }
+
+        public boolean contains(int key) {
+            LinkedList<Integer> list = bucket[hash(key)];
+            for (Integer integer : list) {
+                if (integer == key) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        private int hash(int key) {
+            return key % BASE;
+        }
+}
+```
