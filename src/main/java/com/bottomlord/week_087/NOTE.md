@@ -1,13 +1,18 @@
 # [LeetCode_479_最大回文数乘积](https://leetcode-cn.com/problems/largest-palindrome-product/)
+
 ## 解法
+
 ### 思路
+
 - 求出n位数乘积的最大值和最小值
 - 通过最大值求出可能的回文数字的前面一半
 - 然后依次生成回文数后，判断当前回文数是否可以被n位数整除
     - 如果找到就返回
     - 如果没有就累减一半的回文数，继续求
     - 在寻找过程中，如果用来取余的值的两两乘积小于回文数，则提前终止，寻找下一个
+
 ### 代码
+
 ```java
 class Solution {
     public int largestPalindrome(int n) {
@@ -15,8 +20,8 @@ class Solution {
             return 9;
         }
 
-        long up = (long)Math.pow(10, n) - 1, low = up / 10 + 1,
-             max = up * up, half = (long) (max / Math.pow(10, n));
+        long up = (long) Math.pow(10, n) - 1, low = up / 10 + 1,
+                max = up * up, half = (long) (max / Math.pow(10, n));
 
         while (true) {
             long cur = get(half);
@@ -28,7 +33,7 @@ class Solution {
                 }
 
                 if (cur % i == 0) {
-                    return (int)(cur % 1337);
+                    return (int) (cur % 1337);
                 }
             }
 
@@ -42,9 +47,13 @@ class Solution {
     }
 }
 ```
+
 # [LeetCode_483_最小好进制](https://leetcode-cn.com/problems/smallest-good-base/)
+
 ## 解法
+
 ### 思路
+
 - n可以理解成连续`s + 1`位都为1的k进制值
 - 通过k进制与10进制转换的关系，可以得到`n > k ^ s`
 - 通过对k进制与10进制的转换，带入二项式定理则`n < (k + 1) ^ s`
@@ -59,7 +68,9 @@ class Solution {
     - 然后计算s位都是1的k进制值，枚举s + 1次，每次都累乘k进制值再+1
     - 如果结果与n相同就返回
     - 如果枚举了59次都没有找到，那么就返回比n小1的数作为进制数
+
 ### 代码
+
 ```java
 class Solution {
     public String smallestGoodBase(String n) {
@@ -85,13 +96,21 @@ class Solution {
     }
 }
 ```
+
 # [LeetCode_484_寻找排列](https://leetcode-cn.com/problems/find-permutation/)
+
 ## 失败解法
+
 ### 原因
+
 超时
+
 ### 思路
+
 暴力回溯
+
 ### 代码
+
 ```java
 class Solution {
     public int[] findPermutation(String s) {
@@ -117,7 +136,7 @@ class Solution {
             if (memo[i]) {
                 continue;
             }
-            
+
             if (index == 0) {
                 memo[i] = true;
                 ans[index] = i;
@@ -128,7 +147,7 @@ class Solution {
 
                 ans[index] = 0;
                 memo[i] = false;
-                
+
             } else {
                 if (cs[index - 1] == 'I') {
                     if (i > ans[index - 1]) {
@@ -162,12 +181,16 @@ class Solution {
     }
 }
 ```
+
 ## 解法
+
 ### 思路
+
 - 原始序列是严格的升序排列
 - 假设是连续的`III`序列，那么原始序列就不需要变更
 - 假设是连续的`DDD`序列，那么整个序列可以直接翻转，就成为了符合的序列
-- 那么将2种序列合并一起处理时候，发现也不会产生冲突，升序就不处理数组，碰到需要降序了，就累计一下连续的降序序列，然后在对应的原始序列中将子序列做一下翻转，因为原始序列是严格递增的，所以反转后原看来子序列的最后一个数字，变成了现在的第一个数字，仍然比前一个数要大。
+-
+那么将2种序列合并一起处理时候，发现也不会产生冲突，升序就不处理数组，碰到需要降序了，就累计一下连续的降序序列，然后在对应的原始序列中将子序列做一下翻转，因为原始序列是严格递增的，所以反转后原看来子序列的最后一个数字，变成了现在的第一个数字，仍然比前一个数要大。
 - 算法过程：
     - 初始化从1开始升序的数组ans
     - 定义一个指针i，用来遍历确定s字符串的密码字符
@@ -178,7 +201,9 @@ class Solution {
         - 此时i对应的是ans中降序的最后一个数字，也就是波谷
         - 将波峰和波谷的这个区间的数字以中心点进行翻转
     - 处理完之后继续走，直到循环结束，返回ans
+
 ### 代码
+
 ```java
 class Solution {
     public int[] findPermutation(String s) {
@@ -214,9 +239,13 @@ class Solution {
     }
 }
 ```
+
 # [LeetCode_487_最大连续1的个数II](https://leetcode-cn.com/problems/max-consecutive-ones-ii/)
+
 ## 解法
+
 ### 思路
+
 - 定义2个指针
     - 指针i遍历数组
     - 指针j标记为0的坐标，初始化为-1，代表没有遇到
@@ -228,7 +257,9 @@ class Solution {
         - 计算当前0与第一次0的距离，更新暂存值
         - 更新坐标j
     - 循环结束，比较暂存值与最大值，返回最大值
+
 ### 代码
+
 ```java
 class Solution {
     public int findMaxConsecutiveOnes(int[] nums) {
@@ -237,7 +268,7 @@ class Solution {
             if (nums[i] == 1) {
                 cur++;
             }
-            
+
             if (nums[i] == 0) {
                 if (j == -1) {
                     j = i;
@@ -249,16 +280,22 @@ class Solution {
                 }
             }
         }
-        
+
         return Math.max(max, cur);
     }
 }
 ```
+
 # [LeetCode_146_LRU缓存机制](https://leetcode-cn.com/problems/lru-cache/submissions/)
+
 ## 解法
+
 ### 思路
+
 使用hashmap和双向链表实现
+
 ### 代码
+
 ```java
 class LRUCache {
     private int capacity, size;
@@ -292,7 +329,7 @@ class LRUCache {
             addHead(map.get(key));
             return;
         }
-        
+
         if (capacity == 0) {
             return;
         }
@@ -304,7 +341,7 @@ class LRUCache {
             size++;
             return;
         }
-        
+
         map.remove(tail.pre.key);
         remove(tail.pre);
         map.put(key, node);
@@ -325,7 +362,7 @@ class LRUCache {
         node.pre.next = node;
         node.next.pre = node;
     }
-    
+
     private void addTail(Node node) {
         node.next = tail;
         node.pre = tail.pre;
@@ -346,52 +383,143 @@ class LRUCache {
     }
 }
 ```
+
 # [LeetCode_705_设计哈希集合](https://leetcode-cn.com/problems/design-hashset/)
+
 ## 解法
+
 ### 思路
+
 链地址法
+
 - 创建链表数组，长度设置一个较长的质数，例如769
 - 增加的数都对769取余，然后放到对应的坐标位置。如果发现该下标位置有元素，则将元素放在链表的最后
 - 删除的数也是对769取余，然后找对应相等的元素，做删除操作
 - 查找也是类似的操作
+
 ### 代码
+
 ```java
 class MyHashSet {
 
     private static final int BASE = 769;
-        private final LinkedList<Integer>[] bucket;
-        
-        @SuppressWarnings("unchecked")
-        public MyHashSet() {
-            bucket = new LinkedList[BASE];
-            for (int i = 0; i < BASE; i++) {
-                bucket[i] = new LinkedList<>();
+    private final LinkedList<Integer>[] bucket;
+
+    @SuppressWarnings("unchecked")
+    public MyHashSet() {
+        bucket = new LinkedList[BASE];
+        for (int i = 0; i < BASE; i++) {
+            bucket[i] = new LinkedList<>();
+        }
+    }
+
+    public void add(int key) {
+        LinkedList<Integer> list = bucket[hash(key)];
+        list.addLast(key);
+    }
+
+    public void remove(int key) {
+        LinkedList<Integer> list = bucket[hash(key)];
+        list.removeIf(integer -> integer == key);
+    }
+
+    public boolean contains(int key) {
+        LinkedList<Integer> list = bucket[hash(key)];
+        for (Integer integer : list) {
+            if (integer == key) {
+                return true;
             }
         }
 
-        public void add(int key) {
-            LinkedList<Integer> list = bucket[hash(key)];
-            list.addLast(key);
-        }
+        return false;
+    }
 
-        public void remove(int key) {
-            LinkedList<Integer> list = bucket[hash(key)];
-            list.removeIf(integer -> integer == key);
-        }
+    private int hash(int key) {
+        return key % BASE;
+    }
+}
+```
 
-        public boolean contains(int key) {
-            LinkedList<Integer> list = bucket[hash(key)];
-            for (Integer integer : list) {
-                if (integer == key) {
-                    return true;
-                }
+# [LeetCode_706_设计哈希映射](https://leetcode-cn.com/problems/design-hashmap/)
+
+## 解法
+
+### 思路
+
+数组加链表
+
+### 代码
+
+```java
+    class MyHashMap {
+    private static final int BASE = 769;
+    private LinkedList<Node>[] bucket;
+
+    @SuppressWarnings("unchecked")
+    public MyHashMap() {
+        this.bucket = new LinkedList[BASE];
+        for (int i = 0; i < BASE; i++) {
+            bucket[i] = new LinkedList<>();
+        }
+    }
+
+    public void put(int key, int value) {
+        int index = hash(key);
+
+        if (bucket[index].isEmpty()) {
+            bucket[index].add(new Node(key, value));
+        } else {
+            LinkedList<Node> nodes = bucket[index];
+            Node node = iteratorAction(nodes, key);
+            if (node == null) {
+                nodes.add(new Node(key, value));
+            } else {
+                node.value = value;
             }
-            
-            return false;
         }
-        
-        private int hash(int key) {
-            return key % BASE;
+    }
+
+    public int get(int key) {
+        LinkedList<Node> nodes = bucket[hash(key)];
+        if (nodes.isEmpty()) {
+            return -1;
+        } else {
+            Node node = iteratorAction(nodes, key);
+            return node == null ? -1 : node.value;
         }
+    }
+
+    public void remove(int key) {
+        LinkedList<Node> nodes = bucket[hash(key)];
+        if (nodes.isEmpty()) {
+            return;
+        }
+
+        nodes.removeIf(node -> node.key == key);
+    }
+
+    private Node iteratorAction(LinkedList<Node> nodes, int key) {
+        for (Node node : nodes) {
+            if (node.key == key) {
+                return node;
+            }
+        }
+
+        return null;
+    }
+
+    private int hash(int key) {
+        return key % BASE;
+    }
+
+    private class Node {
+        private int key;
+        private int value;
+
+        public Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
 }
 ```
