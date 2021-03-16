@@ -105,3 +105,54 @@ class Solution {
     }
 }
 ```
+# [LeetCode_489_扫地机器人](https://leetcode-cn.com/problems/robot-room-cleaner/)
+## 解法
+### 思路
+回溯：
+- 初始化机器人的位置为`0,0`，朝向为0
+- 定义机器人上下左右4个方向
+- 机器人清扫过的位置也当作障碍，不再清扫
+- 清扫过程：
+    - 判断当前放下的下一个各自是否有障碍，如果没有，继续清扫
+    - 如果有障碍，则右转，变换朝向
+    - 如果四个方向都清扫完毕（已清扫回溯，或无法清扫有障碍），则回溯到上一格
+- 在清扫的过程中，为了做到不再清扫已经清扫过的路径，就需要做记忆化搜索，将路径记录下来，可以用set记录，元素为横坐标和纵坐标加特殊符号的拼接
+### 代码
+```java
+class Solution {
+    private final int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    public void cleanRoom(Robot robot) {
+        backTrack(robot, 0, 0, 0, new HashSet<>());
+    }
+
+    private void backTrack(Robot robot, int r, int c, int d, Set<String> memo) {
+        memo.add(getDir(r, c));
+        robot.clean();
+
+        for (int i = 0; i < 4; i++) {
+            int newD = (d + i) % 4;
+            int newR = r + directions[newD][0], newC = c + directions[newD][1];
+            String newDir = getDir(newR, newC);
+
+            if (!memo.contains(newDir) && robot.move()) {
+                backTrack(robot, newR, newC, newD, memo);
+                back(robot);
+            }
+
+            robot.turnRight();
+        }
+    }
+
+    public void back(Robot robot) {
+        robot.turnRight();
+        robot.turnRight();
+        robot.move();
+        robot.turnRight();
+        robot.turnRight();
+    }
+
+    private String getDir(int x, int y) {
+        return x + "#" + y;
+    }
+}
+```
