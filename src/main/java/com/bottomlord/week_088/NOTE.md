@@ -222,3 +222,54 @@ class Solution {
     }
 }
 ```
+# [LeetCode_92_反转链表](https://leetcode-cn.com/problems/reverse-linked-list-ii/)
+## 解法
+### 思路
+- 初始化一个假头，方便编程
+- 遍历链表，过程中记录前置指针，前置指针初始化时指向假头
+- 先找到需要反转的链表区间起始节点
+- 找到后记录需要反转的区间的前置节点
+- 然后开始反转，并在最后一个节点时停下
+- 将前置节点原来的next指针指向的节点的next，指向当前停下节点的next
+- 然后将前置节点的next指向停下的节点
+- 然后继续遍历，直到遍历结束
+### 代码
+```java
+class Solution {
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        ListNode node = head, fakeHead = new ListNode(0), pre = fakeHead, beforeStart;
+        fakeHead.next = head;
+        int index = 1;
+        while (node != null) {
+            if (index == left) {
+                beforeStart = pre;
+                ListNode start = node, afterEnd = null;
+                while (index <= right) {
+                    ListNode next = node.next;
+                    node.next = pre;
+                    pre = node;
+                    if (index == right) {
+                        afterEnd = next;
+                    } else {
+                        node = next;
+                    }
+
+                    index++;
+                }
+
+
+                beforeStart.next = node;
+                start.next = afterEnd;
+
+                node = afterEnd;
+            } else {
+                pre = node;
+                node = node.next;
+                index++;
+            }
+        }
+
+        return fakeHead.next;
+    }
+}
+```
