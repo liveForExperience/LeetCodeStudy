@@ -273,7 +273,7 @@ class Solution {
     }
 }
 ```
-# LeetCode_1603_设计停车系统
+# [LeetCode_1603_设计停车系统](https://leetcode-cn.com/problems/design-parking-system/submissions/)
 ## 解法
 ### 思路
 - 3个变量存3个尺寸的容量
@@ -301,6 +301,108 @@ class ParkingSystem {
         }
         
         return false;
+    }
+}
+```
+# [LeetCode_494_目标和](https://leetcode-cn.com/problems/target-sum/)
+## 解法
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    private int ans, target;
+    public int findTargetSumWays(int[] nums, int S) {
+        target = S;
+        backTrack(nums, 0, 0);
+        return ans;
+    }
+
+    private boolean backTrack(int[] nums, int index, int sum) {
+        if (index == nums.length) {
+            if (sum == target) {
+                ans++;
+                return true;
+            }
+            return false;
+        }
+        
+        return backTrack(nums, index + 1, sum + nums[index]) | 
+               backTrack(nums, index + 1, sum - nums[index]);
+    } 
+}
+```
+## 解法二
+### 思路
+动态规划：
+- `dp[i][j]`：计算到第`i`个元素时总和为`j`的个数
+- 状态转移方程：`dp[i][j] = dp[i - 1][j - nums[i - 1]] + dp[i - 1][j + nums[i - 1]]`
+- 初始状态：`dp[0][nums[0]]，dp[0][-nums[0]]`
+- 最终结果：`dp[len - 1][S]`
+- 过程：
+    - 将所有状态通过二维表表示，横坐标是处理到第几个元素，纵坐标就是所有可能的值，横坐标和纵坐标对应的单元格就是计算完当前元素后获得的总和的可能组合个数
+    - 外层循环迭代数组，确定横坐标，内层循环所有可能值，确定纵坐标，可能值的范围依据题目是-1000到1000
+    - 因为使用二维数组无法用负数代表下标，所以需要在纵坐标上+1000特殊处理
+    - 内存循环时判断当前横坐标-1的单元格是否有值，有值代表处理到该数时，这个纵坐标的值有可能的组合，然后套用状态转移方程
+    - 循环结束后，返回结果
+### 代码
+```java
+class Solution {
+    public int findTargetSumWays(int[] nums, int S) {
+        if (S > 1000) {
+            return 0;
+        }
+        
+        int len = nums.length;
+        int[][] dp = new int[len][2001];
+        
+        dp[0][nums[0] + 1000]++;
+        dp[0][-nums[0] + 1000]++;
+        
+        for (int i = 1; i < len; i++) {
+            for (int j = -1000; j <= 1000; j++) {
+                if (dp[i - 1][j + 1000] > 0) {
+                    dp[i][j - nums[i] + 1000] += dp[i - 1][j + 1000];
+                    dp[i][j + nums[i] + 1000] += dp[i - 1][j + 1000];
+                }
+            }
+        }
+        
+        return dp[len - 1][S + 1000];
+    }
+}
+```
+## 解法三
+### 思路
+- 因为在状态转移的时发现，状态表中当前列的状态只依赖前一列的状态做变更
+- 所以可以只维护一个一位表，每次变更横坐标的时候，更新这个一维表就可以了
+- 这样就可以省去大量空间
+### 代码
+```java
+class Solution {
+    public int findTargetSumWays(int[] nums, int S) {
+        if (S > 1000) {
+            return 0;
+        }
+
+        int len = nums.length;
+        int[] dp = new int[2001];
+
+        dp[nums[0] + 1000]++;
+        dp[-nums[0] + 1000]++;
+
+        for (int i = 1; i < len; i++) {
+            int[] next = new int[2001];
+            for (int j = -1000; j <= 1000; j++) {
+                if (dp[j + 1000] > 0) {
+                    next[j - nums[i] + 1000] += dp[j + 1000];
+                    next[j + nums[i] + 1000] += dp[j + 1000];
+                }
+            }
+            dp = next;
+        }
+        
+        return dp[S + 1000];
     }
 }
 ```
