@@ -273,3 +273,34 @@ class Solution {
     }
 }
 ```
+# LeetCode_1603_设计停车系统
+## 解法
+### 思路
+- 3个变量存3个尺寸的容量
+- 3个变量存已有的个数
+### 代码
+```java
+class ParkingSystem {
+    private int big, medium, small, bigSize, mediumSize, smallSize;
+    public ParkingSystem(int big, int medium, int small) {
+        this.big = big;
+        this.medium = medium;
+        this.small = small;
+    }
+
+    public boolean addCar(int carType) {
+        if (carType == 1 && bigSize < big) {
+            bigSize++;
+            return true;
+        } else if (carType == 2 && mediumSize < medium) {
+            mediumSize++;
+            return true;
+        } else if (carType == 3 && smallSize < small) {
+            smallSize++;
+            return true;
+        }
+        
+        return false;
+    }
+}
+```
