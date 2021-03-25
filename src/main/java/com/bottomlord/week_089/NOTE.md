@@ -218,10 +218,112 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+记忆化+bfs：
+- 首先确定记忆化的定义，如果某个节点在经过某个点时已经路过的路径超过了当前点记录的最小值，说明当前这个路径不符合要求，无需再继续走下去
+- bfs处理过程中的每个节点，定义的是球滚动过程中停下来时候的状态，包括：
+    - 停止时的横坐标
+    - 停止时的纵坐标
+    - 已经路径的路程
+    - 所经过路程所对应的字符串表达式
+- 遍历过程中，就是基于当前获取的停止的节点状态，遍历4个方向，开始移动，边移动边记录移动的距离
+- 移动的停止边界状态是
+    - 要么越界
+    - 要么碰壁
+- 然后获取这个停止状态，更新便利的距离。
+- 基于停止时的坐标，和记忆化内容的值进行比较
+    - 如果比记忆化内容的值小，说明当前路径时可取的，更新记忆化状态，更新自身的表达式内容，放入队列进入下个判断循环
+    - 如果和记忆化内容一样，说明当前路径可取，但无需更新记忆化状态，其他动作和小于的时候一致
+    - 如果大于说明不可取，直接中断这个路径
+- 同时如上比较过程中，还要考虑到达终点的情况，在可取的情况下，同时还到达终点了，那么外层4个方向的遍历过程就可以终止了，因为只可能有一个方法到达终点，而其他方向到达终点的路径一定长于当前
+- 将终点状态放入treemap中，节点的状态表达式作为key
 ### 代码
 ```java
+class Solution {
+private int[][] dirs = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
+    public String findShortestWay(int[][] maze, int[] ball, int[] hole) {
+        int row = maze.length, col = maze[0].length;
+        TreeMap<String, Integer> treeMap = new TreeMap<>();
+        int[][] memo = new int[row][col];
+        for (int[] arr : memo) {
+            Arrays.fill(arr, Integer.MAX_VALUE);
+        }
+        Queue<Node> queue = new ArrayDeque<>();
+        Node node = new Node(ball[0], ball[1], 0, "");
+        queue.offer(node);
+
+        while (!queue.isEmpty()) {
+            Node cur = queue.poll();
+            if (cur == null) {
+                continue;
+            }
+
+            for (int i = 0; i < dirs.length; i++) {
+                int x = cur.x, y = cur.y;
+                int[] dir = dirs[i];
+                int count = 0;
+                int nextX = x + dir[0], nextY = y + dir[1];
+
+                while (nextX >= 0 && nextX < row && nextY >= 0 && nextY < col && maze[nextX][nextY] != 1) {
+                    nextX += dir[0];
+                    nextY += dir[1];
+                    count++;
+
+                    if (nextX - dir[0] == hole[0] && nextY - dir[1] == hole[1]) {
+                        break;
+                    }
+                }
+
+                if (count == 0) {
+                    continue;
+                }
+
+                count += cur.count;
+
+                x = nextX - dir[0];
+                y = nextY -  dir[1];
+                Node newNode = new Node(x, y, count, cur.output + getOutput(i));
+                if (count < memo[x][y]) {
+                    memo[x][y] = count;
+                    if (x == hole[0] && y == hole[1]) {
+                        treeMap.clear();
+                        treeMap.put(newNode.output, newNode.count);
+                        break;
+                    } else {
+                        queue.offer(newNode);
+                    }
+                } else if (count == memo[x][y]) {
+                    if (x == hole[0] && y == hole[1]) {
+                        treeMap.put(newNode.output, newNode.count);
+                        break;
+                    } else {
+                        queue.offer(newNode);
+                    }
+                }
+            }
+        }
+
+        return treeMap.isEmpty() ? "impossible" : treeMap.firstKey();
+    }
+
+    private String getOutput(int index) {
+        return index == 0 ? "r" : (index == 1 ? "l" : (index == 2 ? "d" : "u"));
+    }
+
+    static class Node {
+        private final Integer x;
+        private final Integer y;
+        private final int count;
+        private final String output;
+
+        public Node(Integer x, Integer y, int count, String output) {
+            this.x = x;
+            this.y = y;
+            this.count = count;
+            this.output = output;
+        }
+    }
+}
 ```
 # [LeetCode_82_删除排序链表中的重复元素II](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii/)
 ## 解法
