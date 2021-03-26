@@ -359,3 +359,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_83_删除排序链表中的重复元素](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list/)
+## 解法
+### 思路
+- 初始化一个用于遍历链表的指针node，遍历链表
+- 遍历过程中，每次都初始化一个next指针对应node.next，然后通过next遍历链表，并判断是否与当前node指针对应的节点值一致，如果一致就向右移动
+- 然后用node与可能移动过的next重新链接
+- 直到循环结束
+### 代码
+```java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode node = head;
+        while (node != null && node.next != null) {
+            ListNode next = node.next;
+            while (next != null && node.val == next.val) {
+                next = next.next;
+            }
+            
+            node.next = next;
+            node = next;
+        }
+        return head;
+    }
+}
+```
