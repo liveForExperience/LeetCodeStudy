@@ -64,8 +64,56 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+贪心：
+- 要的是k个项目的最大收益，所以每次判断是否可以做项目的情况下，取最大的收益项目即可
+- 每次使用完一个项目以后，就将其的花费值设置为无限大，使得下次不能重复使用
+- 每次都判断可以使用的项目中的最大值，然后累加，直到k和项目数两者之间的最小值的次数被遍历完
 ### 代码
 ```java
+class Solution {
+    public int findMaximizedCapital(int k, int W, int[] Profits, int[] Capital) {
+        boolean speedUp = true;
+        int sum = W;
+        for (int i = 0; i < Capital.length; i++) {
+            if (W < Capital[i]) {
+                speedUp = false;
+                break;
+            }
+        }
 
+        if (speedUp) {
+            PriorityQueue<Integer> queue = new PriorityQueue<>();
+            for (int i = 1; i <= Capital.length; i++) {
+                queue.offer(Profits[i - 1]);
+                
+                if (i > k) {
+                    queue.poll();
+                }
+            }
+            
+            return queue.stream().mapToInt(x -> x).sum() + W;
+        }
+
+        for (int i = 0; i < Math.min(k, Profits.length); i++) {
+            int index = -1;
+
+            for (int j = 0; j < Profits.length; j++) {
+                if (W >= Capital[j]) {
+                    if (index == -1 || Profits[index] < Profits[j]) {
+                        index = j;
+                    }
+                }
+            }
+            
+            if (index == -1) {
+                break;
+            }
+
+            W += Profits[index];
+            Capital[index] = Integer.MAX_VALUE;
+        }
+        
+        return W;
+    }
+}
 ```
