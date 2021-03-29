@@ -384,49 +384,6 @@ class Solution {
     }
 }
 ```
-# [LeetCode_502_IPO](https://leetcode-cn.com/problems/ipo/)
-## 失败解法
-### 原因
-超时，时间复杂度过高，树高k层，第t(t <= n)层的搜索都要检查t-1个节点
-### 思路
-记忆化+回溯
-### 代码
-```java
-class Solution {
-    private int ans;
-
-    public int findMaximizedCapital(int k, int W, int[] Profits, int[] Capital) {
-        this.ans = W;
-        k = Math.min(k, Profits.length);
-        backTrack(k, W, Profits, Capital, new boolean[Profits.length]);
-        return ans;
-    }
-
-    private void backTrack(int time, int w, int[] profits, int[] capital, boolean[] memo) {
-        ans = Math.max(ans, w);
-        if (time == 0) {
-            return;
-        }
-
-        for (int i = 0; i < profits.length; i++) {
-            if (memo[i] || w < capital[i]) {
-                continue;
-            }
-
-            memo[i] = true;
-            backTrack(time -  1, w + profits[i], profits, capital, memo);
-            memo[i] = false;
-        }
-    }
-}
-```
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_61_旋转链表](https://leetcode-cn.com/problems/rotate-list/)
 ## 解法
 ### 思路
