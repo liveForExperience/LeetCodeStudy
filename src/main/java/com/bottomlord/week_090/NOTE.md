@@ -221,3 +221,78 @@ class Solution {
     }
 }
 ```
+# [LeetCode_90_子集](https://leetcode-cn.com/problems/subsets-ii/)
+## 解法
+### 思路
+- 先排序，使得组成的子集按升序排列，这样方便做记忆化处理
+- 回溯+记忆化
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> ans = new ArrayList<>();
+        Set<String> memo = new HashSet<>();
+        
+        for (int i = 0; i < nums.length; i++) {
+            backTrack(nums, i, ans, new LinkedList<>(), memo, new StringBuilder());
+        }
+        
+        return ans;
+    }
+    
+    private void backTrack(int[] nums, int index, List<List<Integer>> ans, LinkedList<Integer> list, Set<String> memo, StringBuilder sb) {
+        if (!memo.contains(sb.toString())) {
+            memo.add(sb.toString());
+            ans.add(new ArrayList<>(list));
+        }
+
+        if (index >= nums.length) {
+            return;
+        }
+        
+        for (int i = index; i < nums.length; i++) {
+            int len = sb.length();
+            sb.append("#").append(nums[i]);
+            if (memo.contains(sb.toString())) {
+                sb.setLength(len);
+                continue;
+            }
+            
+            list.add(nums[i]);
+            backTrack(nums, i + 1, ans, list, memo, sb);
+            list.removeLast();
+            sb.setLength(len);
+        }
+    } 
+}
+```
+## 解法二
+### 思路
+- 解法一中使用字符串hash来判断是否有重复的子集
+- 但其实，当序列被排序后，真正导致出现重复的情况是，连续相同的值在同一层被带入下一层，这样就会导致生成的list的序列出现重复，为了避免这种情况，就可以在同一层中确保相同的值只下钻一次，这样就ok了
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> ans = new ArrayList<>();
+        backTrack(nums, 0, ans, new LinkedList<>());
+        return ans;
+    }
+
+    private void backTrack(int[] nums, int index, List<List<Integer>> ans, LinkedList<Integer> list) {
+        ans.add(new ArrayList<>(list));
+
+        for (int i = index; i < nums.length; i++) {
+            list.add(nums[i]);
+            backTrack(nums, i + 1, ans, list);
+            list.removeLast();
+
+            while (i + 1 < nums.length && nums[i] == nums[i + 1]) {
+                i++;
+            }
+        }
+    }
+}
+```
