@@ -296,3 +296,90 @@ class Solution {
     }
 }
 ```
+# [LeetCode_510_二叉搜索树的中序后继II](https://leetcode-cn.com/problems/inorder-successor-in-bst-ii/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1006_笨阶乘](https://leetcode-cn.com/problems/clumsy-factorial/)
+## 解法
+### 思路
+模拟过程：
+- 初始化一个栈num用来存储操作数
+- 初始化一个队列operators，用来存储操作符，将4个运算符依次放入队列中
+- 然后开始倒叙遍历N
+    - 如果是N，也就是第一个数，就直接将其压入num
+    - 否则就需要将操作符出队做判断
+        - 是乘除，就直接弹出栈顶元素与当前值做运算
+            - 除法：出栈的数除以当前数
+        - 是加减发，就直接将操作符和数字直接分别压入队列和栈中
+        - 是空，是不应该出现的情况，用返回0来代替
+- 处理完一次枚举N个数的过程后，初始化一个栈，用来处理剩下的需要加减的值
+- 将剩下的num的值出栈再入栈到新的栈里
+- 然后仿造之前的操作将栈里剩下的值处理完
+- 最后栈中只剩下1个数值的时候，就返回该值作为结果
+- 注意：压入的操作符比操作数少1个
+### 代码
+```java
+class Solution {
+    public int clumsy(int N) {
+        Stack<Integer> nums1 = new Stack<>();
+        Queue<Character> operators = new ArrayDeque<>();
+        char[] operator = new char[]{'*', '/', '+', '-'};
+        for (int i = 0; i < N - 1; i++) {
+            operators.offer(operator[i % 4]);
+        }
+
+        for (int i = N; i >= 1; i--) {
+            if (i == N) {
+                nums1.push(i);
+            } else {
+                Character op = operators.poll();
+                if (op == null) {
+                    return 0;
+                }
+
+                if (op == '*') {
+                    nums1.push(nums1.pop() * i);
+                }
+
+                if (op == '/') {
+                    nums1.push(nums1.pop() / i);
+                }
+
+                if (op == '+' || op == '-') {
+                    nums1.push(i);
+                    operators.offer(op);
+                }
+            }
+        }
+
+        Stack<Integer> nums2 = new Stack<>();
+        while (!nums1.isEmpty()) {
+            nums2.push(nums1.pop());
+        }
+
+        while (nums2.size() > 1) {
+            Integer first = nums2.pop(), second = nums2.pop();
+            
+            Character op = operators.poll();
+            if (op == null) {
+                return 0;
+            }
+
+            if (op == '+') {
+                nums2.push(first + second);
+            }
+
+            if (op == '-') {
+                nums2.push(first - second);
+            }
+        }
+        
+        return nums2.pop();
+    }
+}
+```
