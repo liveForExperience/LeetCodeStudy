@@ -383,3 +383,41 @@ class Solution {
     }
 }
 ```
+# [Interview_17_21_直方图的水量](https://leetcode-cn.com/problems/volume-of-histogram-lcci/)
+## 解法
+### 思路
+- 决定当前区块能存储多少水，取决于该区块左右两边最高的区块
+- 头尾区块一定没有水
+- 通过两个数组，记录从左到右，和从右到左，高度最大值的变化
+- 然后再遍历依次区块数组，用左右2边的最小值与当前区块相减，获得水量，然后累加
+- 如果区块数组长度小于3，则直接返回0即可
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        int len = height.length;
+        if (len < 3) {
+            return 0;
+        }
+
+        int[] leftMax = new int[len], rightMax = new int[len];
+        leftMax[0] = height[0];
+        rightMax[len - 1] = height[len - 1];
+        
+        for (int i = 1; i < len; i++) {
+            leftMax[i] = Math.max(leftMax[i - 1], height[i]);
+        }
+        
+        for (int i = len - 2; i >= 0; i--) {
+            rightMax[i] = Math.max(rightMax[i + 1], height[i]);
+        }
+        
+        int ans = 0;
+        for (int i = 1; i < len - 1; i++) {
+            ans += Math.max(Math.min(leftMax[i - 1], rightMax[i + 1]) - height[i], 0); 
+        }
+        
+        return ans;
+    }
+}
+```
