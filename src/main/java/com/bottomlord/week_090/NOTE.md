@@ -421,3 +421,40 @@ class Solution {
     }
 }
 ```
+# LeetCode_1143_最长公共子序列
+## 解法
+### 思路
+动态规划
+- dp[i][j]：代表字符串text1的0-i个坐标中与字符串text2字符串0-j坐标中能够组成相等的最长子串
+- 状态转移方程：
+    - 如果text1[i] == text[j]，`dp[i][j] = dp[i- 1][j - 1] + 1`
+    - 如果不相等，`dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1])`
+- 为了方便计算，坐标从1开始，初始状态由坐标0代替
+### 代码
+```java
+class Solution {
+    public int longestCommonSubsequence(String text1, String text2) {
+        int len1 = text1.length(), len2 = text2.length();
+        int[][] dp = new int[len1 + 1][len2 + 1];
+        for (int i = 0; i < len1; i++) {
+            dp[i][0] = 0;
+        }
+        for (int i = 0; i < len2; i++) {
+            dp[0][i] = 0;
+        }
+        
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                    
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        
+        return dp[len1][len2];
+    }
+}
+```
