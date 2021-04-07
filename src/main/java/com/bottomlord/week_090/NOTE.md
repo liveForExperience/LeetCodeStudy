@@ -296,14 +296,6 @@ class Solution {
     }
 }
 ```
-# [LeetCode_510_二叉搜索树的中序后继II](https://leetcode-cn.com/problems/inorder-successor-in-bst-ii/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_1006_笨阶乘](https://leetcode-cn.com/problems/clumsy-factorial/)
 ## 解法
 ### 思路
