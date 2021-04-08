@@ -1,10 +1,48 @@
 # [LeetCode_510_二叉搜索树的中序后继II](https://leetcode-cn.com/problems/inorder-successor-in-bst-ii/)
 ## 解法
 ### 思路
-
+中序后继有2种情况：
+- 如果该节点有右子树，则找到其右节点后，找到其最左的叶子节点
+- 如果该节点没有右子树，则递归找第一个父节点的左节点是当前层节点的节点
 ### 代码
 ```java
-
+class Solution {
+    public Node inorderSuccessor(Node node) {
+        if (node == null) {
+            return null;
+        }
+        
+        if (node.right != null) {
+            return findLeftChild(node.right);
+        } else {
+            return findLeftFather(node.parent, node);
+        }
+    }
+    
+    private Node findLeftChild(Node node) {
+        if (node == null) {
+            return null;
+        }
+        
+        if (node.left == null) {
+            return node;
+        }
+        
+        return findLeftChild(node.left);
+    }
+    
+    private Node findLeftFather(Node father, Node child) {
+        if (father == null) {
+            return null;
+        }
+        
+        if (father.left == child) {
+            return father;
+        }
+        
+        return findLeftFather(father.parent, father);
+    }
+}
 ```
 # [LeetCode_81_搜索旋转排序数组II](https://leetcode-cn.com/problems/search-in-rotated-sorted-array-ii/)
 ## 解法
