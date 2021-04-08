@@ -64,3 +64,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_153_寻找旋转排序数组中的最小值](https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/)
+## 解法
+### 思路
+通过二分查找找到最小值
+- 初始化起始坐标，结尾坐标和最小值变量
+- 先找到中间值，然后用中间值和起始值比较
+    - 循环的继续条件是起始坐标小于结尾坐标
+    - 如果中间值和起始值相等，此时说明数组只剩下至多2个元素，此时比较一下起始值与暂存的最小值，取两者的最小值
+    - 如果中间值比起始值大，说明要么最小值是起始值，要么就在中间值右边
+    - 如果中间值比起始值小，说明最小值在中间值的左边
+### 代码
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        int len = nums.length, head = 0, tail = len - 1, min = Integer.MAX_VALUE;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (nums[mid] == nums[head]) {
+                min = Math.min(nums[head], min);
+                head++;
+            } else if (nums[mid] > nums[head]) {
+                min = Math.min(nums[head], min);
+                head = mid + 1;
+            } else {
+                min = Math.min(nums[mid], min);
+                tail = mid;
+            }
+        }
+
+        return Math.min(nums[head], min);
+    }
+}
+```
