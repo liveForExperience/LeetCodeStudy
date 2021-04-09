@@ -181,3 +181,64 @@ class Solution {
     }
 }
 ```
+# [LeetCode_154_寻找旋转排序数组中的最小值II](https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array-ii/)
+## 解法
+### 思路
+解法同当前周的153题解1
+### 代码
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        int len = nums.length, head = 0, tail = len - 1, min = Integer.MAX_VALUE;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (nums[mid] == nums[head]) {
+                min = Math.min(nums[head], min);
+                head++;
+            } else if (nums[mid] > nums[head]) {
+                min = Math.min(nums[head], min);
+                head = mid + 1;
+            } else {
+                min = Math.min(nums[mid], min);
+                tail = mid;
+            }
+        }
+
+        return Math.min(nums[head], min);
+    }
+}
+```
+## 解法二
+### 思路
+思路和解法一类似，但是在过程中去除不必要的最小值比较
+- 比较中间值mid和尾部值tail的大小：
+    - `mid < tail`：说明mid右边包括mid，是一个升序序列，这里面可能时最小值的只能是mid，所以除了mid外舍弃这部分，右边界设置为mid
+    - `mid > tail`：说明mid左边是一个升序序列，且最小值肯定不在左边，因为可能的最小值是左边起始值，但如果是的话，那么这个数组就应该是一个完全的升序序列，那就不可能导致`mid > tail`，所以最小值一定在右边，左边界设置为`mid + 1`
+    - `mid == tail`：不必去区分到底有哪些可能，直接左移右边界，尝试将相等的情况打破即可
+- 整个驱动的条件就是左边界小于右边界，因为是floor的方式获取的中间值，所以退出条件一定是左边界与右边界相等：
+    - 此时应该就是剩下2个相邻的值
+    - 如果左边界的值小于右边界的值，右边界会左移到和左边界一样，那么最小值就是左边界
+    - 如果左边界的值大于右边界的值，左边界会移动到和右边界一样，导致退出
+    - 如果左右边界相等，那么就会左移右边界，使左右边界一致
+    - 所以无论哪种情况，只需要返回最后左边界指向的数组元素即可
+### 代码
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        int len = nums.length, head = 0, tail = len - 1;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+            if (nums[mid] < nums[tail]) {
+                tail = mid;
+            } else if (nums[mid] > nums[tail]) {
+                head = mid + 1;
+            } else {
+                tail--;
+            }
+        }
+        
+        return nums[head];
+    }
+}
+```
