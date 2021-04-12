@@ -242,3 +242,20 @@ class Solution {
     }
 }
 ```
+# [LeetCodeStudy_179_最大数](https://leetcode-cn.com/problems/largest-number/)
+## 解法
+### 思路
+自定义排序：
+- 如果字符串4和45在一起，那么拼接的时候应该是454而不是445
+- 那么比较的时候其实就是比较a+b和b+a的大小
+### 代码
+```java
+class Solution {
+    public String largestNumber(int[] nums) {
+        String[] numStrs = Arrays.stream(nums).boxed().map(String::valueOf).toArray(String[]::new);
+        Arrays.sort(numStrs, (s1, s2) -> (s2 + s1).compareTo(s1 + s2));
+        String ans = String.join("", numStrs);
+        return ans.charAt(0) == '0' ? "0" : ans;
+    }
+}
+```
