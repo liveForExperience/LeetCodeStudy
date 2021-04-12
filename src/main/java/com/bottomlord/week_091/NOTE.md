@@ -242,7 +242,7 @@ class Solution {
     }
 }
 ```
-# [LeetCodeStudy_179_最大数](https://leetcode-cn.com/problems/largest-number/)
+# [LeetCode_179_最大数](https://leetcode-cn.com/problems/largest-number/)
 ## 解法
 ### 思路
 自定义排序：
