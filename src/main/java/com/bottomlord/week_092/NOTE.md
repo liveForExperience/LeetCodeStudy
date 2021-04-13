@@ -102,3 +102,84 @@ class Solution {
     } 
 }
 ```
+# [LeetCode_519_随机翻转矩阵](https://leetcode-cn.com/problems/random-flip-matrix/)
+## 解法
+### 思路
+- 二维变一维
+- 随机函数获取随机值，随机值范围是一维数组长度
+- set记录翻转过的坐标，重复尝试
+### 代码
+```java
+class Solution {
+    private int len;
+    private int row;
+    private int col;
+    private Set<Integer> memo;
+    private Random random;
+
+    public Solution(int n_rows, int n_cols) {
+        this.len = n_cols * n_rows;
+        this.row = n_rows;
+        this.col = n_cols;
+        this.memo = new HashSet<>();
+        this.random = new Random();
+    }
+
+    public int[] flip() {
+        int r = random.nextInt(len);
+        while (memo.contains(r)) {
+            r = random.nextInt(len);
+        }
+
+        memo.add(r);
+        return new int[]{r / col, r % col};
+    }
+
+    public void reset() {
+        this.memo.clear();
+    }
+}
+```
+## 解法二
+### 思路
+- 解法一为了避免重复会多次调用随机函数
+- 为了解决这问题，就需要使求随机数的时候能够避免找到已经使用坐标
+- 但又因为坐标使随机的，在使用过一个随机数后，能够使用的坐标数是线性减少的，但这个值是随机，这样就无法直接使用设置bound的方式通过random函数求到随机数，而需要中间做一次映射
+- 整个过程可以理解成：
+    - 初始化一个随机数和坐标的映射关系map
+    - 通过可以使用的坐标个数作为随机数的边界，这个边界会在求解过程中不断-1，求得随机数r
+    - 用r在map中查找对应的坐标值，获得的坐标值有2种情况：
+        - r值本身，说明这个随机数代表的坐标值没有被翻转过，这是第一次翻转
+        - 当前边界+1的值，也就是随机数取不到的值，这个值说明与当前随机数值相等的坐标已经被翻转过，它在上一次翻转后，被赋予了当前这个边界+1的数值
+    - 将map中以当前随机值为key的映射所对应的value设置为当前的可用坐标个数，也就是下次随机的边界+1
+    - 同时返回获得的坐标所对应的x和y轴的值
+### 代码
+```java
+class Solution {
+    private int num;
+    private int row;
+    private int col;
+    private Map<Integer, Integer> map;
+    private Random random;
+    public Solution(int n_rows, int n_cols) {
+        this.num = n_cols * n_rows;
+        this.row = n_rows;
+        this.col = n_cols;
+        this.map = new HashMap<>();
+        this.random = new Random();
+    }
+
+    public int[] flip() {
+        int r = random.nextInt(num--);
+        int index = map.getOrDefault(r, r);
+        map.put(r, map.getOrDefault(num, num));
+        return new int[]{index / col, index % col};
+    }
+
+    public void reset() {
+        this.map.clear();
+        this.num = col * row;
+    }
+}
+
+```
