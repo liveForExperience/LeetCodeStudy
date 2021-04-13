@@ -34,3 +34,71 @@ class Solution {
     }
 }
 ```
+# [LeetCode_783_二叉搜索树节点最小距离](https://leetcode-cn.com/problems/minimum-distance-between-bst-nodes/)
+## 解法
+### 思路
+- 中序搜索获取升序序列
+- 遍历升序序列找到最小差值
+### 代码
+```java
+class Solution {
+    public int minDiffInBST(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list);
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i < list.size(); i++) {
+            min = Math.min(min, list.get(i) - list.get(i - 1));
+        }
+        return min;
+    }
+    
+    private void dfs(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, list);
+        list.add(node.val);
+        dfs(node.right, list);
+    } 
+}
+```
+## 解法
+### 思路
+不使用额外的空间，直接在搜索的过程中记录最小距离
+### 代码
+```java
+class Solution {
+    public int minDiffInBST(TreeNode root) {
+        Result result = new Result(-1, Integer.MAX_VALUE);
+        dfs(root, result);
+        return result.min;
+    }
+    
+    private void dfs(TreeNode node, Result result) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, result);
+        if (result.init) {
+            result.init = false;
+        } else {
+            result.min = Math.min(result.min, node.val - result.pre);
+        }
+        result.pre = node.val;
+        dfs(node.right, result);
+    }
+    
+    static class Result {
+        private boolean init;
+        private int pre;
+        private int min;
+        public Result(int pre, int min) {
+            this.pre = pre;
+            this.min = min;
+            this.init = true;
+        }
+    } 
+}
+```
