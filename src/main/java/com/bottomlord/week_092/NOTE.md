@@ -181,5 +181,80 @@ class Solution {
         this.num = col * row;
     }
 }
+```
+# [LeetCode_208_实现Trie前缀树](https://leetcode-cn.com/problems/implement-trie-prefix-tree/)
+## 解法
+### 思路
+- 定义字典树结构
+    - 长度26的数组存当前字典树节点的子节点
+    - 布尔值标识当前节点是否是一个单词的结尾
+- 定义两个搜索函数，一个负责插入，一个负责搜索
+### 代码
+```java
+class Trie {
+    private TrieNode root;
+    /** Initialize your data structure here. */
+    public Trie() {
+        this.root = new TrieNode();
+    }
 
+    /** Inserts a word into the trie. */
+    public void insert(String word) {
+        doInsert(word, 0, root);
+    }
+
+    /** Returns if the word is in the trie. */
+    public boolean search(String word) {
+        return doSearch(word, 0, root, true);
+    }
+
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    public boolean startsWith(String prefix) {
+        return doSearch(prefix, 0, root, false);
+    }
+
+    private void doInsert(String word, int index, TrieNode node) {
+        if (index == word.length()) {
+            return;
+        }
+
+        int ci = word.charAt(index) - 'a';
+        if (node.nodes[ci] == null) {
+            node.nodes[ci] = new TrieNode();
+        }
+
+        if (index == word.length() - 1) {
+            node.nodes[ci].isWord = true;
+        }
+
+        doInsert(word, index + 1, node.nodes[ci]);
+    }
+
+    private boolean doSearch(String str, int index, TrieNode node, boolean needWord) {
+        if (index == str.length()) {
+            if (needWord) {
+                return node.isWord;
+            }
+
+            return true;
+        }
+
+        TrieNode curNode = node.nodes[str.charAt(index) - 'a'];
+        if (curNode == null) {
+            return false;
+        }
+
+        return doSearch(str, index + 1, curNode, needWord);
+    }
+}
+
+class TrieNode {
+    public TrieNode[] nodes;
+    public boolean isWord;
+
+    public TrieNode() {
+        this.nodes = new TrieNode[26];
+        this.isWord = false;
+    }
+}
 ```
