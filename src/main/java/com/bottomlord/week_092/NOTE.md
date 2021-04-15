@@ -305,3 +305,77 @@ class Solution {
     }
 }
 ```
+# [LeetCode_213_打家劫舍II](https://leetcode-cn.com/problems/house-robber-ii/)
+## 解法
+### 思路
+动态规划：
+- 因为头尾是相连的，为了方便计算，可以将数组拆成2种进行计算，然后求最大值：
+    - 只包含头，不包含尾
+    - 只包含尾，不包含头
+- `dp[i]`：`[0,i]`这个范围里能够抢到的最大金额
+- 状态转移方程：
+    - `dp[i] = max(dp[i - 2] + num[i], dp[i - 1])`
+- base case：
+    - `dp[0] = nums[0]`
+### 代码
+```java
+class Solution {
+    public int rob(int[] nums) {
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+        
+        if (len < 3) {
+            return Arrays.stream(nums).max().getAsInt();
+        }
+        
+        return Math.max(doRob(Arrays.copyOfRange(nums, 0, len - 1)),
+                        doRob(Arrays.copyOfRange(nums, 1, len)));
+    }
+    
+    private int doRob(int[] nums) {
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        dp[1] = Math.max(nums[0], nums[1]);
+        for (int i = 2; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 2] + nums[i], dp[i - 1]);
+        }
+        
+        return dp[nums.length - 1];
+    }
+}
+```
+## 解法二
+### 思路
+通过观察解法一发现：在dp状态转移的时候，只用到了dp[i - 2]和dp[i - 1]的值，所以可以通过初始化变量来求解
+### 代码
+```java
+class Solution {
+public int rob(int[] nums) {
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+        
+        if (len < 3) {
+            return Arrays.stream(nums).max().getAsInt();
+        }
+        
+        return Math.max(doRob(Arrays.copyOfRange(nums, 0, len - 1)),
+                        doRob(Arrays.copyOfRange(nums, 1, len)));
+    }
+    
+    private int doRob(int[] nums) {
+        int len = nums.length;
+        int pre2 = nums[0], pre = Math.max(pre2, nums[1]), cur = pre;
+        for (int i = 2; i < len; i++) {
+            cur = Math.max(pre2 + nums[i], pre);
+            pre2 = pre;
+            pre = cur;
+        }
+        
+        return cur;
+    }
+}
+```
