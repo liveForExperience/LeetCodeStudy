@@ -305,6 +305,13 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+
+### 代码
+```java
+
+```
 # [LeetCode_213_打家劫舍II](https://leetcode-cn.com/problems/house-robber-ii/)
 ## 解法
 ### 思路
@@ -376,6 +383,110 @@ public int rob(int[] nums) {
         }
         
         return cur;
+    }
+}
+```
+# [LeetCode_87_扰乱字符串](https://leetcode-cn.com/problems/scramble-string/)
+## 失败解法
+### 原因
+超时
+### 思路
+回溯穷举搜索所有可能，并和另一个字符串比较，如果找到就退出
+### 代码
+```java
+class Solution {
+    public boolean isScramble(String s1, String s2) {
+        if (s1.length() == 1) {
+            return Objects.equals(s1, s2);
+        }
+
+        for (int i = 1; i < s1.length(); i++) {
+            List<String> lefts = dfs(s1.substring(0, i)),
+                         rights = dfs(s1.substring(i));
+
+            for (String left : lefts) {
+                for (String right : rights) {
+                    if (Objects.equals(left + right, s2) ||
+                        Objects.equals(right + left, s2)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private List<String> dfs(String s1) {
+        if (s1.length() == 1) {
+            return Collections.singletonList(s1);
+        }
+
+        List<String> ans = new ArrayList<>();
+        for (int i = 1; i < s1.length(); i++) {
+            List<String> lefts = dfs(s1.substring(0, i)),
+                         rights = dfs(s1.substring(i));
+
+            for (String left : lefts) {
+                for (String right : rights) {
+                    ans.add(left + right);
+                    ans.add(right + left);
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j][l]`：
+    - 字符串s1的子字符串起始坐标i，长度为l
+    - 字符串s2的子字符串起始坐标j，长度为l
+    - 如上2个子字符串的是否互为混乱字符串
+- 状态转移方程：
+    - 引入一个坐标k用来确定扰乱时候的翻转坐标点
+    - `dp[i][j][l] = dp[i][j][k] && dp[i + k][j + k][l - k]`：这段代表当前子字符串无需翻转直接由2个以k为分界线的子子字符串拼接而成
+    - ·dp[i][j][l] = dp[i][j + l - k][k] && dp[i + l - k][j][l - k]`：这段代表翻转后的2段子子字符串是互为扰乱的
+- base case：将l=1的情况填充好
+- 最终返回`dp[0][0][len]`
+### 代码
+```java
+class Solution {
+    public boolean isScramble(String s1, String s2) {
+        int len1 = s1.length(), len2 = s2.length();
+        if (len1 != len2) {
+            return false;
+        }
+        
+        if (len1 == 1) {
+            return Objects.equals(s1, s2);
+        }
+        
+        boolean[][][] dp = new boolean[len1][len1][len1 + 1];
+        for (int i = 0; i < len1; i++) {
+            for (int j = 0; j < len1; j++) {
+                dp[i][j][1] = s1.charAt(i) == s2.charAt(j);
+            }
+        }
+        
+        for (int l = 2; l <= len1; l++) {
+            for (int i = 0; i <= len1 - l; i++) {
+                for (int j = 0; j <= len2 - l; j++) {
+                    for (int k = 1; k < l; k++) {
+                        if ((dp[i][j][k] && dp[i + k][j + k][l - k]) ||
+                            (dp[i][j + l - k][k] && dp[i + k][j][l - k])) {
+                            dp[i][j][l] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return dp[0][0][len1];
     }
 }
 ```
