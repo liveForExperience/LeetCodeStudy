@@ -490,3 +490,63 @@ class Solution {
     }
 }
 ```
+# [LeetCode_523_连续的子数组和](https://leetcode-cn.com/problems/continuous-subarray-sum/)
+## 失败解法
+### 原因
+超时
+### 思路
+- 求前缀和
+- 嵌套2层循环判断总和是否为k的n倍
+### 代码
+```java
+class Solution {
+    public boolean checkSubarraySum(int[] nums, int k) {
+        int[] sums = new int[nums.length + 1];
+        for (int i = 0; i < nums.length; i++) {
+            sums[i + 1] = sums[i] + nums[i];
+        }
+        
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                if ((sums[j + 1] - sums[i]) % k == 0) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+- 失败解法的时间复杂度是O(N2)，还是过高了
+- 尝试使用hash表将复杂度降低到O(N)
+- 题目要求连续子序列的和是k的整数倍
+- 当我求出前缀和之后，每个前缀和就代表了一个连续子序列的和，这个和与k进行取余就可以求出，当前和比k的倍数要大多少
+- 将这个余数存储下来，这样下次有一个前缀和如果也余相同的值，就代表这两个数一减，就能获得k的整数倍，那么根据前缀和的特性，也就是这两个数之间的数与结尾的数组成的子序列的和是符合要求的
+- 基于如上，那么除了要存下余数外，还要记录坐标值，用来计算距离是否满足题目要求的2，同时，当出现有重复的余数，但是距离不满足的时候，不要去覆盖这个坐标
+### 代码
+```java
+class Solution {
+    public boolean checkSubarraySum(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+
+        int sum = 0;
+        map.put(0, -1);
+        for (int i = 0; i < nums.length; i++) {
+            sum = (sum + nums[i]) % k;
+
+            if (map.containsKey(sum)) {
+                if (i - map.get(sum) > 1) {
+                    return true;
+                }
+            } else {
+                map.put(sum, i);
+            }
+        }
+
+        return false;
+    }
+}
+```
