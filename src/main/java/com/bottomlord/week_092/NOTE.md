@@ -587,3 +587,73 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+滑动窗口+桶排序
+- 滑动窗口的思路和解法一一样
+- 排序序列用桶来实现，每个桶就是一段固定的长度是t+1的区间
+  - t+1的原因是，题目要求相距不能超过t的元素，包含元素自身后，就是t+1
+  - 求这个区间，需要区分正数和负数
+    - 正数就是元素/(t + 1)
+    - 负数，需要特殊处理，因为举例，[-1, -10]这10个树，如果不处理，就会得到2种桶的值，所以需要先+1变成[0,-9]，然后除以t+1后再-1，就可以了
+- 然后就遍历，整个过程和解法一类似
+### 代码
+```java
+class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        Map<Long, Long> map = new HashMap<>();
+        int width = t + 1;
+        for (int i = 0; i < nums.length; i++) {
+            long id = getId(nums[i], width);
+            
+            if (map.containsKey(id)) {
+                return true;
+            }
+            
+            if (map.containsKey(id + 1) && Math.abs(nums[i] - map.get(id + 1)) < width) {
+                return true;
+            }
+
+            if (map.containsKey(id - 1) && Math.abs(nums[i] - map.get(id - 1)) < width) {
+                return true;
+            }
+            
+            map.put(id, (long)nums[i]);
+            
+            if (i >= k) {
+                map.remove(getId(nums[i - k], width));
+            }
+        }
+        
+        return false;
+    }
+
+    private long getId(int num, int width) {
+        return num >= 0 ? num / width : (num + 1) / width - 1;
+    }
+}
+```
+# [LeetCode_26_删除有序数组中的重复项](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/submissions/)
+## 解法
+### 思路
+- 2层循环，外层驱动遍历数组
+- 内层用来跳过重复的元素
+- 使用一个坐标index来确定新数组的新元素的位置
+- 最终新数组的长度也就是坐标index的大小
+### 代码
+```java
+class Solution {
+  public int removeDuplicates(int[] nums) {
+    int index = 0;
+    for (int i = 0; i < nums.length; i++) {
+      int cur = nums[i];
+      while (i + 1 < nums.length && cur == nums[i + 1]) {
+        i++;
+      }
+      nums[index++] = cur;
+    }
+
+    return index;
+  }
+}
+```
