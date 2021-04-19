@@ -124,3 +124,71 @@ class Solution {
     }
 }
 ```
+# [LeetCode_525_连续数组](https://leetcode-cn.com/problems/contiguous-array/)
+## 失败解法
+### 原因
+超时
+### 思路
+- 用两个数组，分别计算0和1这两个元素，在0到i坐标范围内的前缀和
+- 2层嵌套循环
+  - 外层确定窗口的长度
+  - 内层确定窗口的左边界
+- 找到2个数组在指定窗口中值一样的情况就直接返回该长度
+### 代码
+```java
+class Solution {
+    public int findMaxLength(int[] nums) {
+        int len = nums.length, oneSum = 0, zeroSum = 0;
+        int[] ones = new int[len], zeros = new int[len];
+        
+        for (int i = 0; i < len; i++) {
+            ones[i] = oneSum += (nums[i] == 1 ? 1 : 0);
+            zeros[i] = zeroSum += (nums[i] == 1 ? 0 : 1);
+        }
+        
+        for (int l = len; l > 0; l--) {
+            for (int i = 0; i + l <= len; i++) {
+                int one = ones[i + l - 1] - ones[i] + (nums[i] == 1 ? 1 : 0),
+                    zero = zeros[i + l - 1] - zeros[i] + (nums[i] == 1 ? 0 : 1);
+                
+                if (one == zero) {
+                    return l;
+                }
+            }
+        }
+        
+        return 0;
+    }
+}
+```
+## 解法
+### 思路
+- 因为数组中只有0和1两种数字，所以可以通过出现1记正数，出现0记负数的方式来判断当前数组的0和1是否平衡，记为count
+- 然后通过额外的数组空间来记录count的值出现的最早坐标，也就是说额外的空间坐标对应count值
+- 当发现记录的count值在数组对应坐标上有记录的坐标值，那就计算当前坐标与记录坐标的差，判断是否出现更大的距离
+- 遍历结束后，返回长度结果
+- 因为存在正负数，所以额外的数组是一个长度为2 * len + 1
+- 因为初始就是count值为0的情况，所以需要初始化arr[len]的值，为了方便计算，就初始化为-1
+- 既然初始化是-1，那么没有初始化就用-2来表示
+### 代码
+```java
+class Solution {
+    public int findMaxLength(int[] nums) {
+        int count = 0, len = nums.length, ans = 0;
+        int[] arr = new int[2 * len + 1];
+        Arrays.fill(arr, -2);
+        arr[len] = -1;
+        for (int i = 0; i < len; i++) {
+            count += nums[i] == 1 ? 1 : -1;
+            
+            if (arr[count + len] >= -1) {
+                ans = Math.max(ans, i - arr[count + len]);
+            } else {
+                arr[count + len] = i;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
