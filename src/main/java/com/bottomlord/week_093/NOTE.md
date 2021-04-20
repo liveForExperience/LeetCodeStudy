@@ -192,3 +192,54 @@ class Solution {
     }
 }
 ```
+# [LeetCode_28_实现strStr](https://leetcode-cn.com/problems/implement-strstr/)
+## 解法
+### 思路
+直接使用String的indexOf
+### 代码
+```java
+class Solution {
+    public int strStr(String haystack, String needle) {
+        return haystack.indexOf(needle);
+    }
+}
+```
+## 解法二
+### 思路
+自己实现indexOf
+### 代码
+```java
+class Solution {
+    public int strStr(String haystack, String needle) {
+        if (Objects.equals("", needle)) {
+            return 0;
+        }
+        
+        if (Objects.equals("", haystack)) {
+            return -1;
+        }
+        
+        if (haystack.length() < needle.length()) {
+            return -1;
+        }
+        
+        if (haystack.length() == needle.length()) {
+            return Objects.equals(haystack, needle) ? 0 : -1;
+        }
+
+        for (int i = 0; i < haystack.length(); i++) {
+            int hi = i, ni = 0;
+            while (hi < haystack.length() && ni < needle.length() && haystack.charAt(hi) == needle.charAt(ni)) {
+                hi++;
+                ni++;
+            }
+
+            if (ni == needle.length()) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+}
+```
