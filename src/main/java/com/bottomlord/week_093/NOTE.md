@@ -243,3 +243,131 @@ class Solution {
     }
 }
 ```
+# [LeetCode_527_单词缩写](https://leetcode-cn.com/problems/word-abbreviation/)
+## 失败解法
+### 原因
+思路错误，原来以为只要字符串之间的缩写不一样就可以，但实际上，缩写如果能对应2个字符串，也不行
+- 例如like和loke，两个字符串最终的缩写只能是like和loke，不能是l2e和loke，因为l2e也能映射为loke
+### 思路
+字典树变形：
+- 使用字典树存储每一个单词
+- 在存储字母时，记录该字母所对应的单词，及当前字母对应单词的坐标
+- 然后深度搜索字典树，在记录的单词数为1的时候，做缩写操作，缩写的时候判断缩写是否小于原始单词
+### 代码
+```java
+class Solution {
+    private TrieNode root = new TrieNode();
+
+    public List<String> wordsAbbreviation(List<String> dict) {
+        List<String> ans = new ArrayList<>();
+        for (String word : dict) {
+            addNode(root, word, 0, ans);
+        }
+        return ans;
+    }
+
+    static class TrieNode {
+        private Map<String, Integer> map;
+        private TrieNode[] nodes;
+
+        TrieNode() {
+            this.map = new HashMap<>();
+            this.nodes = new TrieNode[26];
+        }
+    }
+
+    private void addNode(TrieNode node, String word, int index, List<String> ans) {
+        if (index == word.length()) {
+            return;
+        }
+
+        if (node.nodes[word.charAt(index) - 'a'] == null) {
+            node.nodes[word.charAt(index) - 'a'] = new TrieNode();
+            String abbreviation = word.substring(0, index + 1) + (word.length() - index - 2 == 0 ? "" : (word.length() - index - 2));
+            String suffix;
+            if (index < word.length() - 1) {
+                suffix = "" + word.charAt(word.length() - 1);
+            } else if (index == word.length() - 1) {
+                suffix = "" + word.charAt(word.length() - 1);
+            } else {
+                suffix = "";
+            }
+            abbreviation = abbreviation + suffix;
+            ans.add(abbreviation.length() < word.length() ? abbreviation : word);
+            return;
+        }
+
+        TrieNode trieNode = node.nodes[word.charAt(index) - 'a'];
+        trieNode.map.put(word, index);
+
+        addNode(trieNode, word, index + 1, ans);
+    }
+}
+```
+## 解法
+### 思路
+- 穷举每个单词所有的缩写可能
+- 将缩写与单词做映射关系，映射关系的key是缩写，这个缩写需要通过treeMap排序，排序规则是谁短谁靠前
+- 初始化一个单词与最终使用缩写的映射关系mapping，单词作为key
+- 找到缩写映射的单词数为1的key，且mapping中不包含这个key且缩写长度短语单词长度，则将单词和缩写记录到mapping，否则就跳过。
+- 遍历dict，如果mapping中有就将对应的缩写放入结果列表，否则就放入原始单词
+- 最终返回原始单词
+### 代码
+```java
+class Solution {
+    public List<String> wordsAbbreviation(List<String> dict) {
+        TreeMap<String, List<String>> map = new TreeMap<>((x, y) -> {
+            if (x.length() != y.length()) {
+                return x.length() - y.length();
+            }
+
+            return x.compareTo(y);
+        });
+        
+        for (String word : dict) {
+            for (int i = 0; i < word.length(); i++) {
+                String abbreviation = getAbbreviation(word, i);
+                List<String> list = map.getOrDefault(abbreviation, new ArrayList<>());
+                list.add(word);
+                map.put(abbreviation, list);
+            }
+        }
+
+
+        Map<String, String> mapping = new HashMap<>();
+        
+        for (String abbreviation : map.keySet()) {
+            if (map.get(abbreviation).size() == 1) {
+                String word = map.get(abbreviation).get(0);
+                if (mapping.containsKey(word)) {
+                    continue;
+                }
+                
+                if (abbreviation.length() < word.length()) {
+                    mapping.put(word, abbreviation);
+                }
+            }
+        }
+
+        List<String> ans = new ArrayList<>();
+        for (String word : dict) {
+            ans.add(mapping.getOrDefault(word, word));
+        }
+        
+        return ans;
+    }
+
+    private String getAbbreviation(String word, int index) {
+        String abbreviation = word.substring(0, index + 1) + (word.length() - index - 2 == 0 ? "" : (word.length() - index - 2));
+        String suffix;
+        if (index < word.length() - 1) {
+            suffix = "" + word.charAt(word.length() - 1);
+        } else if (index == word.length() - 1) {
+            suffix = "" + word.charAt(word.length() - 1);
+        } else {
+            suffix = "";
+        }
+        return abbreviation + suffix;
+    }
+}
+```
