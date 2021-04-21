@@ -371,3 +371,141 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_91_解码方法](https://leetcode-cn.com/problems/decode-ways/)
+## 失败解法
+### 原因
+超时
+### 思路
+记忆化+回溯
+- 先做好数字和字母的映射，方便编程
+- 然后记录并回溯查找所有的可能，通过记录进行剪枝
+### 代码
+```java
+class Solution {
+    private Map<String, String> map = new HashMap<>();
+
+    {
+        char c = 'A';
+        for (int i = 1; i <= 26; i++) {
+            map.put("" + i, "" + c);
+            c = (char) ((int) c + 1);
+        }
+    }
+
+    public int numDecodings(String s) {
+        return backTrack(s, 0, new StringBuilder(), new HashSet<>());
+    }
+
+    private int backTrack(String s, int index, StringBuilder sb, Set<String> memo) {
+        if (index == s.length()) {
+            return 1;
+        }
+
+        int ans = 0, len = sb.length();
+        String one = "" + s.charAt(index);
+        if (map.containsKey(one)) {
+            sb.append(map.get(one));
+            if (memo.contains(sb.toString())) {
+                sb.setLength(len);
+            } else {
+                memo.add(sb.toString());
+                ans += backTrack(s, index + 1, sb, memo);
+                sb.setLength(len);
+            }
+        }
+
+        if (index < s.length() - 1) {
+            String two = one + s.charAt(index + 1);
+            if (map.containsKey(two)) {
+                sb.append(map.get(two));
+                if (memo.contains(sb.toString())) {
+                    sb.setLength(len);
+                } else {
+                    memo.add(sb.toString());
+                    ans += backTrack(s, index + 2, sb, memo);
+                    sb.setLength(len);
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i]`：长度为i的字符编码，可以生成的结果数
+- 状态转移方程：
+    - dp[i] = charAt(i) valid ? dp[i - 1] : 0
+    - dp[i] = dp[i] + (charAt(i - 1) + charAt(i) valid ? dp[i - 2] : 0) 
+- base case：
+    - dp[1] = charAt(0) valid ? 1 : 0
+    - dp[2] = dp[1] + (charAt(0) + charAt(1) valid ? 1 : 0)
+- 结果：dp[len]
+- 过程：
+    - 初始化dp数组，长度是字符串长度len+1
+    - 完成base case
+    - 从3开始遍历，通过状态转移方程处理dp数组
+    - 遍历结束，返回dp[len]
+### 代码
+```java
+class Solution {
+    public int numDecodings(String s) {
+        int len = s.length();
+        
+        if (s.startsWith("0")) {
+            return 0;
+        }
+        
+        if (len <= 1) {
+            return len;
+        }
+
+        int[] dp = new int[len + 1];
+        dp[1] = 1;
+        dp[2] = (isValid("" + s.charAt(1)) ? dp[1] : 0) + (isValid("" + s.charAt(0) + s.charAt(1)) ? 1 : 0);
+        
+        for (int i = 3; i <= len; i++) {
+            if (isValid("" + s.charAt(i - 1))) {
+                dp[i] = dp[i - 1];
+            }
+            
+            if (isValid("" + s.charAt(i - 2) + s.charAt(i - 1))) {
+                dp[i] += dp[i - 2];
+            }
+        }
+        
+        return dp[len];
+    }
+    
+    private boolean isValid(String s) {
+        if (s.length() > 2 || s.length() < 1) {
+            return false;
+        }
+        
+        char c = s.charAt(0);
+        if (s.length() == 1) {
+            return c <= '9' && c >= '1';
+        }
+        
+        if (c != '1' && c != '2') {
+            return false;
+        }
+        
+        char c2 = s.charAt(1);
+        if (c == '1') {
+            return c2 >= '0' && c2 <= '9';
+        }
+        
+        return c2 >= '0' && c2 <= '6';
+    }
+}
+```
