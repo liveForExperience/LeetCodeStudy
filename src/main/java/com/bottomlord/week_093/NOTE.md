@@ -509,3 +509,40 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+简化解法一中isValid的判断逻辑
+### 代码
+```java
+class Solution {
+    public int numDecodings(String s) {
+        int len = s.length();
+
+        if (s.charAt(0) == '0') {
+            return 0;
+        }
+
+        if (len <= 1) {
+            return len;
+        }
+
+        int[] dp = new int[len];
+        dp[0] = 1;
+        for (int i = 1; i < len; i++) {
+            if (s.charAt(i) != '0') {
+                dp[i] = dp[i - 1];
+            }
+
+            if (s.charAt(i - 1) == '1' || s.charAt(i - 1) == '2' && s.charAt(i) < '7') {
+                if (i == 1) {
+                    dp[i] += 1;
+                } else {
+                    dp[i] += dp[i - 2];
+                }
+            }
+        }
+        
+        return dp[len - 1];
+    }
+}
+```
