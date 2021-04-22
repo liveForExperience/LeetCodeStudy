@@ -631,3 +631,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_528_按权重随机选择](https://leetcode-cn.com/problems/random-pick-with-weight/)
+## 解法
+### 思路
+- 如果将元素总和作为完整空间
+- 那么一个元素值就是空间的一部分
+- 那么累加所有元素的总和就是完整空间，每一个元素的位置用前缀和来记录，这样在总数空间里求随机数后，找到前缀和数组中比随机数小的最大值，用这个值对应坐标+1作为结果
+- 寻找的过程用二分查找去找
+### 代码 
+```java
+class Solution {
+    private Random random = new Random();
+    private int[] sums;
+    public Solution(int[] w) {
+        int len = w.length;
+        this.sums = new int[len];
+
+        sums[0] = w[0];
+        for (int i = 1; i < len; i++) {
+            sums[i] = sums[i - 1] + w[i];
+        }
+    }
+
+    public int pickIndex() {
+        int target = random.nextInt(sums[sums.length - 1]);
+
+        int head = 0, tail = sums.length - 1;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (target >= sums[mid]) {
+                head = mid + 1;
+            } else {
+                tail = mid;
+            }
+        }
+
+        return head;
+    }
+}
+```
