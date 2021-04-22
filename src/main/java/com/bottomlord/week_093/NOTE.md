@@ -546,3 +546,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_363_矩形区域不超过K的最大数值和](https://leetcode-cn.com/problems/max-sum-of-rectangle-no-larger-than-k/)
+## 解法
+### 思路
+动态规划：
+- dp[r1][c1][r2][c2]：[r1,c1]代表矩形的左上角，[r2,c2]代表矩形的右下角，以这两个点所确定的矩形的和
+- 简化dp的空间复杂度，从4维降到2维，因为其实在状态转移的时候，当确定了左上角，依赖这个点的所有状态都只需要根据右下角来进行转移，所以可以将dp数组变成2维的
+- 状态转移方程：`dp[r][c] = dp[r - 1][c] + dp[r][c - 1] - dp[r - 1][c - 1] + matrix[r][c]`
+- 结果：在遍历所有状态时，实时更新最大值，遍历结束返回
+### 代码
+```java
+class Solution {
+     public int maxSumSubmatrix(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[0].length, ans = Integer.MIN_VALUE;
+        for (int i = 1; i <= row; i++) {
+            for (int j = 1; j <= col; j++) {
+                int[][] dp = new int[row + 1][col + 1];
+                for (int r = i; r <= row; r++) {
+                    for (int c = j; c <= col; c++) {
+                        dp[r][c] = dp[r - 1][c] + dp[r][c - 1] - dp[r - 1][c - 1] + matrix[r - 1][c - 1];
+
+                        if (dp[r][c] <= k && dp[r][c] > ans) {
+                            ans = dp[r][c];
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+     }
+}
+```
