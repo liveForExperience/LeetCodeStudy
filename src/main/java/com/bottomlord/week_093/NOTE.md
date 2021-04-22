@@ -577,3 +577,57 @@ class Solution {
      }
 }
 ```
+## 解法二
+### 思路
+前缀和
+- 生成二维数组记录每一行的前缀和
+- 然后驱动一个2层循环
+    - 外层确定矩形左上角点所在的列
+        - 生成一个数组，坐标元素对应矩形的右下角坐标所在的行，所在的列取决于内层循环的坐标
+    - 内层确定矩形右下角点所在的列
+    - 内层通过前缀和获取以外层坐标作为左上角列，内层坐标作为右下角坐标，外层生成数组坐标作为行的矩形的总和
+    - 2层遍历这个数组，获取可能的最大值
+### 代码
+```java
+class Solution {
+    public int maxSumSubmatrix(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[0].length;
+        int[][] sums = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            sums[i][0] = matrix[i][0];
+            for (int j = 1; j < col; j++) {
+                sums[i][j] = sums[i][j - 1] + matrix[i][j];
+            }
+        }
+
+        int ans = Integer.MIN_VALUE;
+        for (int i = 0; i < col; i++) {
+            for (int j = i; j < col; j++) {
+                int[] colSums = new int[row];
+                for (int r = 0; r < row; r++) {
+                    colSums[r] = sums[r][j] - sums[r][i] + matrix[r][i];
+                }
+
+                ans = Math.max(ans, getMax(colSums, k));
+            }
+        }
+
+        return ans;
+    }
+
+    private int getMax(int[] sums, int k) {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < sums.length; i++) {
+            int sum = 0;
+            for (int j = i; j < sums.length; j++) {
+                sum += sums[j];
+                if (sum <= k && sum > max) {
+                    max = sum;
+                }
+            }
+        }
+
+        return max;
+    }
+}
+```
