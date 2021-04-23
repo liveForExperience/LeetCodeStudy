@@ -671,3 +671,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_368_最大整数子集](https://leetcode-cn.com/problems/largest-divisible-subset/submissions/)
+## 解法
+### 思路
+- 题目是要所有元素互相之间都可以两两整除，那么如果a<b，且a可以整除b，那么c如果大于b，且b可以整除c，则a一定也能整除c
+- 基于如上的推断，可以先将数组进行排序
+- 然后做动态规划
+  - dp[i]：dp数组中存放的元素是一个list，这个数组坐标对应排序后数组的坐标，然后其元素list中的最大值就是这个坐标在排序后数组中对应的元素
+    - 这个dp方程代表，list列表中包含的所有以坐标i对应的元素为最大值，且互相之间可以整除的列表
+  - 状态转移方程：`nums[i] % nums[j] == 0` => `dp[i] = dp[j]`, `dp[i].add(nums[i])` 
+  - base case：`dp[0] = new list`, `dp[0].add(nums[0])`
+  - 在状态转移过程中，更新长度最大的结果值
+### 代码
+```java
+class Solution {
+    public List<Integer> largestDivisibleSubset(int[] nums) {
+        int len = nums.length;
+        
+        if (len == 0) {
+            return Collections.emptyList();
+        }
+
+        Arrays.sort(nums);
+
+        List[] dp = new ArrayList[len];
+        for (int i = 0; i < len; i++) {
+            dp[i] = new ArrayList();
+        }
+        dp[0].add(nums[0]);
+
+        List<Integer> ans = dp[0];
+
+        for (int i = 1; i < len; i++) {
+            dp[i].add(nums[i]);
+            for (int j = 0; j < i; j++) {
+                if (nums[i] % nums[j] == 0 && dp[i].size() <= dp[j].size()) {
+                    dp[i] = new ArrayList(dp[j]);
+                    dp[i].add(nums[i]);
+                }
+
+                if (dp[i].size() > ans.size()) {
+                    ans = dp[i];
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
