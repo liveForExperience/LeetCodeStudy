@@ -855,3 +855,11 @@ class Solution {
     }
 }
 ```
+# [LeetCode_533_孤独像素II](https://leetcode-cn.com/problems/lonely-pixel-ii/)
+## 解法
+### 思路
+思路和[LeetCode_531_孤独像素I](https://leetcode-cn.com/problems/lonely-pixel-i/)类似，求出个数，同时再补充例如每一列B所在的行数
+### 代码
+```java
+
+```
