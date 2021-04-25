@@ -720,3 +720,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_897_递增顺序搜索树](https://leetcode-cn.com/problems/increasing-order-search-tree/)
+## 解法
+### 思路
+- 中序dfs搜索生成列表
+- 遍历列表组装新树
+### 代码
+```java
+class Solution {
+    public TreeNode increasingBST(TreeNode root) {
+        List<TreeNode> nodes = new ArrayList<>();
+        dfs(root, nodes);
+        for (int i = 0; i < nodes.size(); i++) {
+            TreeNode curNode = nodes.get(i);
+            curNode.left = null;
+            if (i != nodes.size() - 1) {
+                curNode.right = nodes.get(i + 1);
+            } else {
+                curNode.right = null;
+            }
+        }
+        return nodes.get(0);
+    }
+    
+    private void dfs(TreeNode node, List<TreeNode> nodes) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, nodes);
+        nodes.add(node);
+        dfs(node.right, nodes);
+    }
+}
+```
