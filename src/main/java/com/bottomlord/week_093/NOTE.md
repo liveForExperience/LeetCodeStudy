@@ -373,10 +373,77 @@ class Solution {
 ```
 ## 解法二
 ### 思路
-
+- 根据题目要求，一个单词的缩写是`前缀+中间代替的数字+结尾1个单词`，如果2个单词生成前缀重复，那么这个缩写的前缀就必须至少增加1的长度
+- 先遍历列表的单词，生成第一次的缩写，然后将缩写作为key，相同缩写的单词列表作为value，存入map中。
+- 列表中的元素作一个封装，封装实体中既包含单词字符串，也包含该字符串的坐标
+- 遍历map的values列表，计算第一次生成的缩写重复的单词的重复单词长度，然后根据长度再做一次缩写的生成
+- 将生成的没有重复的单词放入结果列表的对应位置，这个位置就可以从之前封装的实体中通过属性上取到
+- 最终返回结果列表
 ### 代码
 ```java
+class Solution {
+    public List<String> wordsAbbreviation(List<String> dict) {
+        Map<String, List<IndexedWord>> map = new HashMap<>();
+        for (int i = 0; i < dict.size(); i++) {
+            String word = dict.get(i);
+            String abb = abbreviateWord(word, 0);
+            List<IndexedWord> words = map.getOrDefault(abb, new ArrayList<>());
+            words.add(new IndexedWord(word, i));
+            map.put(abb, words);
+        }
 
+        String[] ansArr = new String[dict.size()];
+        for (List<IndexedWord> indexedWords : map.values()) {
+            indexedWords.sort(Comparator.comparing(x -> x.word));
+            
+            int len = indexedWords.size();
+            
+            int[] commonPrefixLens = new int[len];
+            for (int i = 1; i < len; i++) {
+                IndexedWord x = indexedWords.get(i), y = indexedWords.get(i - 1);
+                int commonPrefixLen = longestCommonPrefix(x.word, y.word);
+                commonPrefixLens[i] = commonPrefixLen;
+                commonPrefixLens[i - 1] = Math.max(commonPrefixLen, commonPrefixLens[i - 1]);
+            }
+
+            for (int i = 0; i < commonPrefixLens.length; i++) {
+                int commonPrefixLen = commonPrefixLens[i];
+                IndexedWord indexedWord = indexedWords.get(i);
+                String abb = abbreviateWord(indexedWord.word, commonPrefixLen);
+                ansArr[indexedWord.index] = abb;
+            }
+        }
+
+        return Arrays.asList(ansArr);
+    }
+
+    private String abbreviateWord(String word, int index) {
+        int len = word.length();
+        if (len - index <= 3) {
+            return word;
+        }
+
+        return word.substring(0, index + 1) + (len - index - 2) + word.charAt(len - 1);
+    }
+
+    private int longestCommonPrefix(String x, String y) {
+        int index = 0;
+        while (index < x.length() && index < y.length() && x.charAt(index) == y.charAt(index)) {
+            index++;
+        }
+        return index;
+    }
+
+    static class IndexedWord {
+        private String word;
+        private int index;
+
+        public IndexedWord(String word, int index) {
+            this.word = word;
+            this.index = index;
+        }
+    }
+}
 ```
 # [LeetCode_91_解码方法](https://leetcode-cn.com/problems/decode-ways/)
 ## 失败解法
