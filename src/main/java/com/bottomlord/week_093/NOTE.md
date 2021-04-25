@@ -821,3 +821,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_531_孤独像素I](https://leetcode-cn.com/problems/lonely-pixel-i/)
+## 解法
+### 思路
+- 遍历二维数组，分别维护纵和横的B出现的个数，并记录这个坐标
+- 遍历维护的B坐标，判断其横坐标和纵坐标，再之前维护的数组中存储的值是否都只是1，如果是的话就累加
+- 最终返回累加的个数
+### 代码
+```java
+class Solution {
+    public int findLonelyPixel(char[][] picture) {
+        int row = picture.length, col = picture[0].length;
+        int[] rc = new int[row], cc = new int[col];
+        List<int[]> list = new ArrayList<>();
+        for (int r = 0; r < row; r++) {
+            for (int c = 0; c < col; c++) {
+                if (picture[r][c] == 'B') {
+                    rc[r] += 1;
+                    cc[c] += 1;
+                    list.add(new int[]{r,c});
+                }
+            }
+        }
+        
+        int ans = 0;
+        for (int[] arr : list) {
+            if (rc[arr[0]] == 1 && cc[arr[1]] == 1) {
+                ans++;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
