@@ -861,5 +861,114 @@ class Solution {
 思路和[LeetCode_531_孤独像素I](https://leetcode-cn.com/problems/lonely-pixel-i/)类似，求出个数，同时再补充例如每一列B所在的行数
 ### 代码
 ```java
+class Solution {
+    public int findBlackPixel(char[][] picture, int target) {
+        int row = picture.length, col = picture[0].length;
+        int[] rc = new int[row], cc = new int[col];
+        Map<Integer, List<Integer>> colBMapping = new HashMap<>();
+        List<int[]> list = new ArrayList<>();
+        for (int r = 0; r < row; r++) {
+            for (int c = 0; c < col; c++) {
+                if (picture[r][c] == 'B') {
+                    rc[r] += 1;
+                    cc[c] += 1;
+                    list.add(new int[]{r,c});
+                    List<Integer> indexes = colBMapping.getOrDefault(c, new ArrayList<>());
+                    indexes.add(r);
+                    colBMapping.put(c, indexes);
+                }
+            }
+        }
 
+        int ans = 0;
+        for (int[] arr : list) {
+            int r = arr[0], c = arr[1];
+            if (rc[r] == target && cc[c] == target) {
+                List<Integer> indexes = colBMapping.get(c);
+                if (indexes != null) {
+                    boolean match = true;
+                    for (int i = 1; i < indexes.size(); i++) {
+                        if (!Arrays.equals(picture[indexes.get(i - 1)], picture[indexes.get(i)])) {
+                            match = false;
+                            break;
+                        }
+                    }
+
+                    if (match) {
+                        ans++;
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+# [LeetCode_536_从字符串生成二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-string/)
+## 解法
+### 思路
+- 根据字符串的格式，解析出当前节点，及左右子树节点的字符串子串
+- 然后递归生成整棵树
+### 代码
+```java
+class Solution {
+    public TreeNode str2tree(String s) {
+        if (s == null || s.length() == 0) {
+            return null;
+        }
+
+        String[] elements = getStrElements(s);
+        TreeNode node = new TreeNode(Integer.parseInt(elements[0]));
+        String[] subTreeStrs = getSubTreeStr(elements[1]);
+
+        if (subTreeStrs != null) {
+            String leftStr = subTreeStrs[0];
+            if (leftStr != null && leftStr.length() != 0) {
+                node.left = str2tree(leftStr.substring(leftStr.indexOf("(") + 1, leftStr.lastIndexOf(")")));
+            }
+
+            String rightStr = subTreeStrs[1];
+            if (rightStr != null && rightStr.length() != 0) {
+                node.right = str2tree(rightStr.substring(rightStr.indexOf("(") + 1, rightStr.lastIndexOf(")")));
+            }
+        }
+
+        return node;
+    }
+
+    private static String[] getStrElements(String s) {
+        int index = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(' || c == ')') {
+                break;
+            }
+
+            index++;
+        }
+
+        return new String[]{s.substring(0, index), s.substring(index)};
+    }
+
+    private String[] getSubTreeStr(String s) {
+        if (s == null || s.length() == 0) {
+            return null;
+        }
+
+        int lNum = 0, rNum = 0, index = 0;
+        do {
+            while (s.charAt(index) != '(' && s.charAt(index) != ')') {
+                index++;
+            }
+
+            if (s.charAt(index++) == '(') {
+                lNum++;
+            } else {
+                rNum++;
+            }
+        } while (lNum != rNum);
+
+        return new String[]{s.substring(0, index), s.substring(index)};
+    }
+}
 ```
