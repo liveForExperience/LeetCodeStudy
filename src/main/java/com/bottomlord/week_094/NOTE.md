@@ -109,3 +109,52 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 解法一中的右边界可以再缩小为以最大值为所有元素的值，然后根据天数求出来的平均值
+### 代码
+```java
+class Solution {
+public int shipWithinDays(int[] weights, int D) {
+        int max = Integer.MIN_VALUE;
+        for (int weight : weights) {
+            max = Math.max(max, weight);
+        }
+        
+        int head = max, tail = max * weights.length / D;
+        while (head < tail) {
+            int mid = head + ((tail - head) >>> 1);
+            
+            if (isValid(weights, mid, D)) {
+                tail = mid;
+            } else {
+                head = mid + 1;
+            }
+        }
+        
+        return head;
+    }
+    
+    private boolean isValid(int[] weights, int target, int day) {
+        int cur = target;
+        
+        for (int i = 0; i < weights.length;) {
+            int weight = weights[i];
+            
+            if (cur - weight < 0) {
+                cur = target;
+                day--;
+            } else {
+                cur -= weight;
+                i++;
+            }
+            
+            if (day <= 0) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
