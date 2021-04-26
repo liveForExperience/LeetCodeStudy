@@ -158,3 +158,40 @@ public int shipWithinDays(int[] weights, int D) {
     }
 }
 ```
+# [LeetCode_544_输出比赛匹配对](https://leetcode-cn.com/problems/output-contest-matches/)
+## 解法
+### 思路
+递归：
+- 将n转换为从1开始的n个元素的字符串数组
+- 递归将字符串数组的头尾元素按照题目要求做拼接
+- 最终当数组长度为1，返回这一个元素
+### 代码
+```java
+class Solution {
+    public String findContestMatch(int n) {
+        String[] arr = new String[n];
+        for (int i = 1; i <= n; i++) {
+            arr[i - 1] = "" + i;
+        }
+
+        return recuse(arr);
+    }
+
+    private String recuse(String[] arr) {
+        if (arr.length == 1) {
+            return arr[0];
+        }
+
+        String[] newArr = new String[arr.length / 2];
+        for (int i = 0; i < arr.length / 2; i++) {
+            newArr[i] = combineStr(arr[i], arr[arr.length - 1 - i]);
+        }
+
+        return recuse(newArr);
+    }
+
+    private String combineStr(String x, String y) {
+        return "(" + x + "," + y + ")";
+    }
+}
+```
