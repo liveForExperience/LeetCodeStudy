@@ -787,6 +787,139 @@ class Solution {
     }
 }
 ```
+# [LeetCode_377_组合总和IV](https://leetcode-cn.com/problems/combination-sum-iv/)
+## 失败解法
+### 原因
+超时
+### 思路
+回溯+穷举
+### 代码
+```java
+class Solution {
+    public int combinationSum4(int[] nums, int target) {
+        return backTrack(nums, 0, target);
+    }
+    
+    private int backTrack(int[] nums, int sum, int target) {
+        if (sum > target) {
+            return 0;
+        }
+        
+        if (sum == target) {
+            return 1;
+        }
+        
+        int ans = 0;
+        for (int num : nums) {
+            ans += backTrack(nums, sum + num, target);
+        }
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+记忆化+dfs
+### 代码
+```java
+class Solution {
+    public int combinationSum4(int[] nums, int target) {
+        return dfs(nums, 0, target, new HashMap<>());
+    }
+    
+    private int dfs(int[] nums, int sum, int target, Map<Integer, Integer> memo) {
+        Integer count = memo.get(sum);
+        if (count != null) {
+            return count;
+        }
+        
+        if (sum > target) {
+            return 0;
+        }
+        
+        if (sum == target) {
+            return 1;
+        }
+        
+        count = 0;
+        for (int num : nums) {
+            count += dfs(nums, sum + num, target, memo);
+        }
+        
+        memo.put(sum, count);
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+优化dfs函数入参
+### 代码
+```java
+class Solution {
+  public int combinationSum4(int[] nums, int target) {
+    return dfs(nums, 0, target, new HashMap<>());
+  }
+
+  private int dfs(int[] nums, int sum, int target, Map<Integer, Integer> memo) {
+    Integer count = memo.get(sum);
+    if (count != null) {
+      return count;
+    }
+
+    if (sum > target) {
+      return 0;
+    }
+
+    if (sum == target) {
+      return 1;
+    }
+
+    count = 0;
+    for (int num : nums) {
+      count += dfs(nums, sum + num, target, memo);
+    }
+
+    memo.put(sum, count);
+    return count;
+  }
+}
+```
+## 解法三
+### 思路
+使用数组代替解法二里的map
+### 代码
+```java
+class Solution {
+  public int combinationSum4(int[] nums, int target) {
+    int[] memo = new int[target + 1];
+    Arrays.sort(nums);
+    return dfs(nums, memo, target);
+  }
+
+  private int dfs(int[] nums, int[] memo, int target) {
+    if (target < 0) {
+      return 0;
+    }
+
+    if (target == 0) {
+      return 1;
+    }
+
+    if (memo[target] >= 0) {
+      return memo[target];
+    }
+
+    int count = 0;
+    for (int num : nums) {
+      count += dfs(nums, memo, target - num);
+    }
+
+    memo[target] = count;
+    return count;
+  }
+}
+```
 # [LeetCode_897_递增顺序搜索树](https://leetcode-cn.com/problems/increasing-order-search-tree/)
 ## 解法
 ### 思路
