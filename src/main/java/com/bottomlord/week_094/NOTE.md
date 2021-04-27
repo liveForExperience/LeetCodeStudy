@@ -198,10 +198,84 @@ class Solution {
 # [LeetCode_545_二叉树的边界](https://leetcode-cn.com/problems/boundary-of-binary-tree/)
 ## 解法
 ### 思路
-
+- 把过程分成3个部分：
+    - 查找左边界
+    - 查找叶子节点
+    - 查找右边界
+- 左边界和右边界的查找逻辑类似但条件相反
+- 叶子节点通过dfs来查找
+- 还要注意输出的顺序：
+    - 左边界是先父节点再子节点
+    - 右边界是先子节点再父节点
 ### 代码
 ```java
+class Solution {
+    public List<Integer> boundaryOfBinaryTree(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
 
+        if (root == null) {
+            return ans;
+        }
+
+        ans.add(root.val);
+        findLeft(root.left, ans);
+        if (root.left != null || root.right != null) {
+            findLeaf(root, ans);
+        }
+        findRight(root.right, ans);
+
+        return ans;
+    }
+
+    private void findLeft(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.left == null && node.right == null) {
+            return;
+        }
+
+        list.add(node.val);
+
+        findLeft(node.left, list);
+
+        if (node.left == null) {
+            findLeft(node.right, list);
+        }
+    }
+
+    private void findLeaf(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.left == null && node.right == null) {
+            list.add(node.val);
+        }
+
+        findLeaf(node.left, list);
+        findLeaf(node.right, list);
+    }
+
+    private void findRight(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.left == null && node.right == null) {
+            return;
+        }
+
+        if (node.right == null) {
+            findRight(node.left, list);
+        }
+
+        findRight(node.right, list);
+
+        list.add(node.val);
+    }
+}
 ```
 # [LeetCode_938_二叉搜索树的范围和](https://leetcode-cn.com/problems/range-sum-of-bst/)
 ## 解法
