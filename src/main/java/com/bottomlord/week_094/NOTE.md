@@ -195,3 +195,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_545_二叉树的边界](https://leetcode-cn.com/problems/boundary-of-binary-tree/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_938_二叉搜索树的范围和](https://leetcode-cn.com/problems/range-sum-of-bst/)
+## 解法
+### 思路
+- 深度优先搜索，通过比较当前节点值和最大最小值，来判断是否要累加当前节点并返回
+    - 如果当前节点是空节点，就返回0
+    - 如果当前节点小于最小值，就累加其右子树的节点
+    - 如果当前节点大于最大值，就累加其左子树的节点
+    - 否则就累加左右子树的节点
+### 代码
+```java
+class Solution {
+    public int rangeSumBST(TreeNode root, int low, int high) {
+        if (root == null) {
+            return 0;
+        }
+
+        int ans = 0, val = root.val;
+        if (val >= low && val <= high) {
+            ans += val;
+        }
+        
+        return ans + 
+               (val < low ? 0 : rangeSumBST(root.left, low, high)) + 
+               (val > high ? 0 : rangeSumBST(root.right, low, high));
+    }
+}
+```
