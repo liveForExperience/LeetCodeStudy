@@ -431,10 +431,42 @@ class Solution {
 ```
 ## 解法
 ### 思路
-
+- 数组会被拆分成4个部分
+- 如果先求出前2部分相等的情况，然后记录这些情况，同时基于第二个分界坐标，尝试右边的相等两部分，如果相等的值再之前左半部分暂存的里面能找到，就说明可以分成相等的4部分
+- 那么只要外层确定把数组一分为二的那个节点坐标，然后内层分2步
+    - 第1步求左边相等的情况，用set暂存起来
+    - 第2步求右边相等的部分，与set中的值匹配，找到就返回true
+- 所有情况遍历完如果还没找到，就返回false
 ### 代码
 ```java
+class Solution {
+    public boolean splitArray(int[] nums) {
+        int len = nums.length;
+        int[] sums = new int[len];
+        sums[0] = nums[0];
+        for (int i = 1; i < len; i++) {
+            sums[i] = sums[i - 1] + nums[i];
+        }
 
+        for (int j = 3; j < len - 3; j++) {
+            Set<Integer> set = new HashSet<>();
+            for (int i = 1; i + 1 < j; i++) {
+                if (sums[i - 1] == sums[j - 1] - sums[i]) {
+                    set.add(sums[i - 1]);
+                }
+            }
+
+            for (int k = j + 2; k < len - 1; k++) {
+                int tempSum = sums[k - 1] - sums[j];
+                if (tempSum == sums[len - 1] - sums[k] && set.contains(tempSum)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
 ```
 # [LeetCode_633_平方数之和](https://leetcode-cn.com/problems/sum-of-square-numbers/)
 ## 解法
@@ -485,9 +517,34 @@ class Solution {
 }
 ```
 ## 解法三
+### 思路
 费马平方和定理
 > 一个非负整数 `c` 如果能够表示为两个整数的平方和，当且仅当 `c` 的所有形如 `4k + 3` 的质因子的幂均为偶数。
 - 遍历c所有可能的质因子
-- 先求出当前质因子的幂
+- 先求出当前质因子的幂，求的过程中c也不断调整，调整方式是按照质数整除缩小，因为是质数，所以不影响求其他质因数
 - 然后判断当前质因子是否是形为4k+3，且幂不是偶数的，如果是就说明不符合，返回false
 - 如果可能的质因子都符合定理，再判断c如果是质数，其是否形如4k+3，如果是，那么他的幂就不是偶数，就返回false，反之为true
+### 代码
+```java
+class Solution {
+    public boolean judgeSquareSum(int c) {
+        for (int base = 2; base * base <= c; base++) {
+            if (c % base != 0) {
+                continue;
+            }
+
+            int exp = 0, cur = c;
+            while (cur % base == 0) {
+                cur /= base;
+                exp++;
+            }
+
+            if (c % 4 == 3 && exp % 2 != 0) {
+                return false;
+            }
+        }
+
+        return c % 4 != 3;
+    }
+}
+```
