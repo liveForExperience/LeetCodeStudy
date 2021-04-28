@@ -304,3 +304,190 @@ class Solution {
     }
 }
 ```
+# [LeetoCde_548_将数组分割成和相等的子数组](https://leetcode-cn.com/problems/split-array-with-equal-sum/)
+## 失败解法
+### 原因
+超时
+### 思路
+- 求前缀和
+- 3层循环判断
+### 代码
+```java
+class Solution {
+    public boolean splitArray(int[] nums) {
+        int len = nums.length;
+        int[] sums = new int[len];
+        sums[0] = nums[0];
+        for (int i = 1; i < sums.length; i++) {
+            sums[i] = sums[i - 1] + nums[i];
+        }
+
+        for (int i = 1; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                for (int k = j + 1; k < len; k++) {
+                    if (sums[i - 1] == sums[j - 1] - sums[i] &&
+                        sums[j - 1] - sums[i] == sums[k - 1] - sums[j] &&
+                        sums[k - 1] - sums[j] == sums[len - 1] - sums[k]) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 失败解法
+### 原因
+超时
+### 思路
+前缀和+3重循环+提前失败
+### 代码
+```java
+class Solution {
+    public boolean splitArray(int[] nums) {
+        int len = nums.length;
+        int[] sums = new int[len];
+        sums[0] = nums[0];
+        for (int i = 1; i < sums.length; i++) {
+            sums[i] = sums[i - 1] + nums[i];
+        }
+
+        for (int i = 1; i < len; i++) {
+            int one = sums[i - 1];
+            for (int j = i + 1; j < len; j++) {
+                int two = sums[j - 1] - sums[i];
+                if (one != two) {
+                    continue;
+                }
+                for (int k = j + 1; k < len; k++) {
+                    int three = sums[k - 1] - sums[j],
+                        four = sums[len - 1] - sums[k];
+                    
+                    if (two == three && three == four) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+### 失败解法
+### 原因
+超时
+### 思路
+引入hashmap
+- 先算出第一个和第二个分割点，然后求出能使得两部分相等的值，key为值，value为坐标的集合，存储起来
+- 然后遍历所有可能相等的key，找到他们的values，以这些values为起始坐标，第3部分和第4部分相等的值，看下是否与key匹配，如果匹配就返回true
+### 代码
+```java
+class Solution {
+    public boolean splitArray(int[] nums) {
+        int len = nums.length;
+        int[] sums = new int[len];
+        sums[0] = nums[0];
+        for (int i = 1; i < len; i++) {
+            sums[i] = sums[i - 1] + nums[i];
+        }
+
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 1; i < len; i++) {
+            int one = sums[i - 1];
+            for (int j = i + 1; j < len; j++) {
+                if (sums[j - 1] - sums[i] == sums[i - 1]) {
+                    List<Integer> list = map.getOrDefault(one, new ArrayList<>());
+                    list.add(j);
+                    map.put(one, list);
+                }
+            }
+        }
+        
+        for (Integer sum : map.keySet()) {
+            List<Integer> list = map.get(sum);
+            
+            for (Integer start : list) {
+                for (int i = start + 1; i < len; i++) {
+                    int three = sums[i - 1] - sums[start];
+                    if (three != sum) {
+                        continue;
+                    }
+                    
+                    for (int j = i + 1; j < len; j++) {
+                        if (three == sums[len - 1] - sums[i]) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_633_平方数之和](https://leetcode-cn.com/problems/sum-of-square-numbers/)
+## 解法
+### 思路
+使用JDK内建函数sqrt
+- 遍历c的平方根范围内的所有整数
+- 依次计算判断
+- 使用long防止溢出
+### 代码
+```java
+class Solution {
+    public boolean judgeSquareSum(int c) {
+        for (long a = 0; a * a <= c; a++) {
+            double b = Math.sqrt(c - (a * a));
+            if (b == (long) b) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+双指针
+- 头指针代表a，初始化为0
+- 尾指针代表b，初始化为c的平方根
+- 如果相等就返回true
+- 如果小于c说明a小了，加1
+- 如果大于c说明b大了，减1
+### 代码
+```java
+class Solution {
+    public boolean judgeSquareSum(int c) {
+        int a = 0, b = (int) Math.sqrt(c);
+        while (a <= b) {
+            int x = (int)Math.pow(a, 2), y = (int)Math.pow(b, 2);
+            if (x + y == c) {
+                return true;
+            } else if (x + y < c) {
+                a++;
+            } else {
+                b--;
+            }
+        }
+        return false;
+    }
+}
+```
+## 解法三
+费马平方和定理
+> 一个非负整数 `c` 如果能够表示为两个整数的平方和，当且仅当 `c` 的所有形如 `4k + 3` 的质因子的幂均为偶数。
+- 遍历c所有可能的质因子
+- 先求出当前质因子的幂
+- 然后判断当前质因子是否是形为4k+3，且幂不是偶数的，如果是就说明不符合，返回false
+- 如果可能的质因子都符合定理，再判断c如果是质数，其是否形如4k+3，如果是，那么他的幂就不是偶数，就返回false，反之为true
