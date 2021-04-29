@@ -592,3 +592,55 @@ class Solution {
     }
 }
 ```
+# [LeetCode_549_二叉树中最长的连续序列](https://leetcode-cn.com/problems/binary-tree-longest-consecutive-sequence-ii/solution/)
+## 解法
+### 思路
+递归：
+- 过程中记录升序和降序的个数
+- 升序和降序通过判断左子节点和右子节点与当前节点值的关系来更新
+- 先左再右，更新外升序和降序的值以后，将2个值相加就是整个序列的长度
+    - 如果左小，右大，或者左大，右小，那就是左右相连，l + r - 1，减1是因为初始的时候的时候当前值被左右子树都计算进去了
+    - 如果左小，右小，或者左大，右大，那就是左右的值比较，去除最大的，然后仍然是l + r - 1
+### 代码
+```java
+class Solution {
+    private int ans = 0;
+    
+    public int longestConsecutive(TreeNode root) {
+        dfs(root);
+        return ans;
+    }
+    
+    private int[] dfs(TreeNode node) {
+        if (node == null) {
+            return new int[]{0, 0};
+        }
+
+        int inc = 1, dec = 1;
+        if (node.left != null) {
+            int[] result = dfs(node.left);
+            if (node.val == node.left.val - 1) {
+                inc = result[0] + 1;
+            }
+
+            if (node.val == node.left.val + 1) {
+                dec = result[1] + 1;
+            }
+        }
+
+        if (node.right != null) {
+            int[] result = dfs(node.right);
+            if (node.val == node.right.val - 1) {
+                inc = Math.max(inc, result[0] + 1);
+            }
+
+            if (node.val == node.right.val + 1) {
+                dec = Math.max(dec, result[1] + 1);
+            }
+        }
+
+        ans = Math.max(ans, inc + dec - 1);
+        return new int[]{inc, dec};
+    }
+}
+```
