@@ -548,3 +548,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_403_青蛙过河](https://leetcode-cn.com/problems/frog-jump/)
+## 解法
+### 思路
+- 生成一个map，key为所有的石头坐标，value是对应的跳到这个石头上时候经过的距离，有了这个距离就可以计算出从这个石头出发能够跳到的坐标
+- 然后根据题目，初始化坐标0的为止，也就是第1个石头。到这个石头的距离，因为题目说一开始就在这个石头上，所以是0
+- 然后遍历石头数组，从map中拿到到达当前石头时的那些距离，遍历3种到下个石头的距离，看看map里存不存在
+    - 如果存在，就说明，从当前石头出发，往后跳可能距离，可以到达另一个石头，过程可以继续
+- 整个数组遍历完以后，看一下最后一个石头对应的距离是不是空的
+    - 如果空的，说明没有可以跳到当前石头的位置
+    - 如果不是空的，说明能够跳到最后的石头上
+### 代码
+```java
+class Solution {
+    private int[] diffs = new int[]{-1, 0, 1};
+
+    public boolean canCross(int[] stones) {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int i = 0; i < stones.length; i++) {
+            map.put(stones[i], new HashSet<>());
+            if (i == 0) {
+                map.get(stones[i]).add(0);
+            }
+        }
+
+        for (int stone : stones) {
+            Set<Integer> distances = map.get(stone);
+            
+            for (Integer distance : distances) {
+                for (int diff : diffs) {
+                    if (distance + diff <= 0) {
+                        continue;
+                    }
+                    
+                    if (map.containsKey(stone + distance + diff)) {
+                        map.get(stone + distance + diff).add(distance + diff);
+                    }
+                }
+            }
+        }
+        
+        return !map.get(stones[stones.length - 1]).isEmpty();
+    }
+}
+```
