@@ -748,3 +748,144 @@ class Solution {
     }
 }
 ```
+# [LeetCode_555_分割连接字符串](https://leetcode-cn.com/problems/split-concatenated-strings/)
+## 失败解法
+### 原因
+超时
+### 思路
+- 回溯求出所有可能的字符串组合
+- 遍历所有字符串，依次尝试所有旋转，求出最大字符串
+### 代码
+```java
+class Solution {
+    public String splitLoopedString(String[] strs) {
+        if (strs == null || strs.length == 0) {
+            return null;
+        }
+
+        Set<String> set = new HashSet<>();
+        backTrack(strs, 0, new StringBuilder(), set);
+
+        String ans = null;
+        for (String str : set) {
+            for (int i = 0; i < str.length(); i++) {
+                int index = 0;
+                StringBuilder sb = new StringBuilder();
+                while (index < str.length()) {
+                    sb.append(str.charAt((i + index) % str.length()));
+                    index++;
+                }
+
+                ans = max(sb.toString(), ans);
+            }
+        }
+
+        return ans;
+    }
+
+    private void backTrack(String[] strs, int index, StringBuilder sb, Set<String> list) {
+        if (index == strs.length) {
+            list.add(sb.toString());
+            return;
+        }
+
+        int len = sb.length();
+        sb.append(strs[index]);
+        backTrack(strs, index + 1, sb, list);
+        sb.setLength(len);
+        sb.append(reverse(strs[index]));
+        backTrack(strs, index + 1, sb, list);
+        sb.setLength(len);
+    }
+
+    private String reverse(String str) {
+        char[] cs = str.toCharArray();
+        int len = cs.length;
+        for (int i = 0; i < len / 2; i++) {
+            char tmp = cs[i];
+            cs[i] = cs[len - i - 1];
+            cs[len - i - 1] = tmp;
+        }
+        return new String(cs);
+    }
+
+    private String max(String a, String b) {
+        if (a == null) {
+            return b;
+        }
+
+        if (b == null) {
+            return a;
+        }
+
+        return a.compareTo(b) > 0 ? a : b;
+    }
+}
+```
+## 解法
+### 思路
+- 如果不是包含起始字符的字符串，其他字符串只要保持本身位最大字符串即可组成最大字典序的字符串
+- 将所有字符串处理成最大字典序的字符串后，这些字符串作为可能结果中，非起始字符串的其他字符串拼接元素
+- 然后遍历原始字符串，将这个字符串作为起始字符串，生成以原始字符串和反转后的字符串，然后以他们为包含起始字符的字符串，依次模拟每一个字符，然后与其他字符串拼接后做字典序比较，保留较大的字符串作为结果
+### 代码
+```java
+class Solution {
+    public String splitLoopedString(String[] strs) {
+        String[] revs = new String[strs.length];
+        String[] origin = Arrays.copyOfRange(strs, 0, strs.length);
+
+        for (int i = 0; i < strs.length; i++) {
+            String str = strs[i], rev = reverse(str);
+            strs[i] = max(str, rev);
+            revs[i] = rev;
+        }
+
+        String ans = String.join("", strs);
+        for (int i = 0; i < strs.length; i++) {
+            String str = origin[i], rev = revs[i];
+            int index = 1;
+            StringBuilder sb = new StringBuilder();
+            while (index < strs.length) {
+                sb.append(strs[(i + index) % strs.length]);
+                index++;
+            }
+            String other = sb.toString();
+
+            for (int j = 0 ; j < str.length(); j++) {
+                String cur = str.substring(j) + other + str.substring(0, j);
+                ans = max(ans, cur);
+            }
+
+            for (int j = 0 ; j < rev.length(); j++) {
+                String cur = rev.substring(j) + other + rev.substring(0, j);
+                ans = max(ans, cur);
+            }
+        }
+
+        return ans;
+    }
+
+    private String reverse(String str) {
+        char[] cs = str.toCharArray();
+        int len = cs.length;
+        for (int i = 0; i < len / 2; i++) {
+            char tmp = cs[i];
+            cs[i] = cs[len - i - 1];
+            cs[len - i - 1] = tmp;
+        }
+        return new String(cs);
+    }
+
+    private String max(String a, String b) {
+        if (a == null) {
+            return b;
+        }
+
+        if (b == null) {
+            return a;
+        }
+
+        return a.compareTo(b) > 0 ? a : b;
+    }
+}
+```
