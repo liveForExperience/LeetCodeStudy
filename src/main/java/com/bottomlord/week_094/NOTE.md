@@ -715,3 +715,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_554_砖墙](https://leetcode-cn.com/problems/brick-wall/)
+## 解法
+### 思路
+- 求出每一行的前缀和元素
+- 对前缀和计数
+- 找到前缀和不是每一行总长度，且计数值最大的前缀和
+- 用墙的总行数与这个前缀和的个数做差，获得结果
+### 代码
+```java
+class Solution {
+    public int leastBricks(List<List<Integer>> wall) {
+        int rowLen = wall.get(0).stream().mapToInt(x -> x).sum();
+        
+        Map<Integer, Integer> map = new HashMap<>();
+        for (List<Integer> list : wall) {
+            int sum = 0;
+            for (Integer num : list) {
+                sum += num;
+                map.put(sum, map.getOrDefault(sum, 0) + 1);
+            }
+        }
+
+        int max = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() > max && entry.getKey() < rowLen) {
+                max = entry.getValue();
+            }
+        }
+
+        return wall.size() - max;
+    }
+}
+```
