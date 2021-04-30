@@ -659,5 +659,59 @@ class Solution {
 - 将dp求得L和P的情况的结果`dp[n]`和A的情况的结果累加，就是最终的结果
 ### 代码
 ```java
+class Solution {
+    public int checkRecord(int n) {
+        long mod = 1000000007;
+        long[] dp = new long[n <= 5 ? 6 : n + 1];
+        dp[0] = 1;
+        dp[1] = 2;
+        dp[2] = 4;
+        dp[3] = 7;
+        for (int i = 4; i <= n; i++) {
+            dp[i] = ((2 * dp[i - 1]) % mod + (mod - dp[i - 4])) % mod;
+        }
+        long sum = dp[n];
 
+        for (int i = 1; i <= n; i++) {
+            sum += (dp[i - 1] * dp[n - i]) % mod;
+        }
+
+        return (int) (sum % mod);
+    }
+}
+```
+# [LeetCode_137_只出现一次的数字II](https://leetcode-cn.com/problems/single-number-ii/)
+## 解法
+### 思路
+- 用map计数
+- 遍历map找到计数为1的key
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        return Arrays.stream(nums).boxed().collect(Collectors.toMap(k -> k, v -> 1, Integer::sum)).entrySet().stream().filter(entry -> entry.getValue() == 1).map(Map.Entry::getKey).findFirst().orElse(0);
+
+    }
+}
+```
+## 解法二
+### 思路
+- 因为都是int值，所以每一个元素都是32位，且只有一个数字是单个出现，其他都是3个的，那么每一位上，要么是3的倍数，要么被3除余1
+- 依次遍历每个数字的32个位，求出每一位上1出现的个数，然后与3取模，求出余数作为结果值当前位上的值
+### 代码
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            int total = 0;
+            for (int num : nums) {
+                total += ((num & (1 << i)) != 0) ? 1 : 0;
+            }
+
+            ans |= (total % 3) << i;
+        }
+        return ans;
+    }
+}
 ```
