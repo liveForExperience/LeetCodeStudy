@@ -889,3 +889,90 @@ class Solution {
     }
 }
 ```
+# [LeetCode_608_员工的重要性](https://leetcode-cn.com/problems/employee-importance/)
+## 解法
+### 思路
+dfs累加，用一个数组暂存累加值
+### 代码
+```java
+class Solution {
+    public int getImportance(List<Employee> employees, int id) {
+        if (employees == null || employees.size() == 0) {
+            return 0;
+        }
+
+        Map<Integer, Integer> importanceMap = employees.stream().collect(Collectors.toMap(e -> e.id, e -> e.importance, (x,y) -> y));
+        Map<Integer, List<Integer>> subOrdinatesMap = employees.stream().collect(Collectors.toMap(e -> e.id, e -> e.subordinates, (x,y) -> y));
+        int[] ans = new int[1];
+        dfs(id, subOrdinatesMap, importanceMap, ans);
+        return ans[0];
+    }
+    
+    private void dfs(Integer id, Map<Integer, List<Integer>> subOrdinatesMap, Map<Integer, Integer> importanceMap, int[] ans) {
+        ans[0] += importanceMap.get(id);
+        
+        List<Integer> sList = subOrdinatesMap.get(id);
+        if (sList == null) {
+            return;
+        }
+
+        for (Integer sId : sList) {
+            dfs(sId, subOrdinatesMap, importanceMap, ans);
+        }
+    }
+}
+```
+## 解法二
+### 思路
+省去解法一那个数组
+### 代码
+```java
+class Solution {
+    public int getImportance(List<Employee> employees, int id) {
+        if (employees == null || employees.size() == 0) {
+            return 0;
+        }
+        
+        return dfs(id,
+                employees.stream().collect(Collectors.toMap(e -> e.id, e -> e.importance, (x, y) -> y)),
+                employees.stream().collect(Collectors.toMap(e -> e.id, e -> e.subordinates, (x, y) -> y)));
+    }
+    
+    private int dfs(Integer id, Map<Integer, Integer> iMap, Map<Integer, List<Integer>> sMap) {
+        int sum = iMap.getOrDefault(id, 0);
+        
+        List<Integer> sList = sMap.getOrDefault(id, new ArrayList<>());
+        for (Integer sId : sList) {
+            sum += dfs(sId, iMap, sMap);
+        }
+        
+        return sum;
+    }
+}
+```
+## 解法三
+### 思路
+将前两个解法中的2个map合并成1个map
+### 代码
+```java
+class Solution {
+    public int getImportance(List<Employee> employees, int id) {
+        return dfs(id, employees.stream().collect(Collectors.toMap(e -> e.id, e -> e, (x, y) -> y)));
+    }
+    
+    private int dfs(Integer id, Map<Integer, Employee> map) {
+        Employee e = map.get(id);
+        
+        int sum = e.importance;
+        
+        if (e.subordinates == null) {
+            return sum;
+        }
+        
+        for (Integer sId : e.subordinates) {
+            sum += dfs(sId, map);
+        }
+        return sum;
+    }
+}
+```
