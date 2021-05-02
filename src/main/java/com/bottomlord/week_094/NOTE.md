@@ -976,3 +976,65 @@ class Solution {
     }
 }
 ```
+# [LeetCode_556_下一个更大元素III](https://leetcode-cn.com/problems/next-greater-element-iii/)
+## 解法
+### 思路
+- 将数字转换成字符数组
+- 从右侧开始遍历，找到第一个cs[i] > cs[i - 1]的字符组合
+- 如果没有找到就直接返回-1
+- 否则就重新从i坐标开始往右寻找比当前值大的最小值，如果有连续相等的数，就取最后的那个数，和当前值交换，并同时将i - 1到len-1元素进行颠倒
+- 这样处理后就相当于找到了第一个比可以通过转换字符获得的比当前值大的数
+- 这种处理就相当于进行最小的进位
+- 当转换完以后，还要和int的最大值进行比较，如果大于，则同样返回-1
+### 代码
+```java
+class Solution {
+    public int nextGreaterElement(int n) {
+        char[] cs = ("" + n).toCharArray();
+        boolean find = false;
+        for (int i = cs.length - 2; i >= 0; i--) {
+            if (cs[i] >= cs[i + 1]) {
+                continue;
+            }
+
+            int index = i + 1;
+            for (int j = i + 1; j < cs.length; j++) {
+                if (cs[j] < cs[i]) {
+                    break;
+                }
+                
+                if (cs[j] <= cs[index] && cs[j] > cs[i]) {
+                    index = j;
+                }
+            }
+            
+            swap(cs, i, index);
+            int count = (cs.length - 1- i) / 2;
+            
+            for (int j = 0; j < count; j++) {
+                swap(cs, i + 1 + j, cs.length - 1 - j);
+            }
+            
+            find = true;
+            break;
+        }
+
+        if (!find) {
+            return -1;
+        }
+
+        long sum = 0;
+        for (char c : cs) {
+            sum = sum * 10 + (c - '0');
+        }
+
+        return sum > Integer.MAX_VALUE ? -1 : (int) sum;
+    }
+    
+    private void swap(char[] cs, int x, int y) {
+        char c = cs[x];
+        cs[x] = cs[y];
+        cs[y] = c;
+    }
+}
+```
