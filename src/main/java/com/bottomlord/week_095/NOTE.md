@@ -6,5 +6,56 @@
 - 负数取模还是负数，所以不用处理负数的情况
 ### 代码
 ```java
+class Solution {
+    public int reverse(int x) {
+        int rev = 0;
+        while (x != 0) {
+            if (rev < Integer.MIN_VALUE / 10 || rev > Integer.MAX_VALUE / 10) {
+                return 0;
+            }
 
+            int digit = x % 10;
+            x /= 10;
+            rev = rev * 10 + digit;
+        }
+
+        return rev;
+    }
+}
+```
+# [LeetCode_562_矩阵中最长的连续1线段](https://leetcode-cn.com/problems/longest-line-of-consecutive-one-in-matrix/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public int longestLine(int[][] mat) {
+        int ans = 0;
+        for (int i = 0; i < mat.length; i++) {
+            for (int j = 0; j < mat[0].length; j++) {
+                if (mat[i][j] == 1) {
+                    ans = Math.max(ans, dfs(mat, i, j, 1, 0));
+                    ans = Math.max(ans, dfs(mat, i, j, 0, 1));
+                    ans = Math.max(ans, dfs(mat, i, j, 1, 1));
+                    ans = Math.max(ans, dfs(mat, i, j, 1, -1));
+                }
+            }
+        }
+        return ans;
+    }
+
+    private int dfs(int[][] mat, int r, int c, int dx, int dy) {
+        if (outOfBound(mat, r, c)) {
+            return 0;
+        }
+
+        return dfs(mat, r + dx, c + dy, dx, dy) + 1;
+    }
+
+    private boolean outOfBound(int[][] mat, int r, int c) {
+        int row = mat.length, col = mat[0].length;
+        return r < 0 || r >= row || c < 0 || c >= col || mat[r][c] == 0;
+    }
+}
 ```
