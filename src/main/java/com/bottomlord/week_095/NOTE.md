@@ -59,3 +59,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1473_粉刷房子III](https://leetcode-cn.com/problems/paint-house-iii/submissions/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_740_删除并获得点数](https://leetcode-cn.com/problems/delete-and-earn/)
+## 解法
+### 思路
+- 如果找到一个数值，就应该持续的累加相同的数，这样就能最小化被删除的不能几点数的数子，就可以做到最大化。所以可以通过一个数组将某一个数的点数进行累加并存储
+- 然后使用动态规划来计算
+    - dp[i]：0到i的范围内，能够获得的最大点数
+    - 状态转移方程：`dp[i] = max(dp[i - 2] + sums[i], dp[i-1])`
+    - 因为状态转移的时候只考虑前后3个数的关系，所以，可以使用2个变量来记录状态转移的过程，这样就省下了空间
+    - 返回`dp[max]`，max是nums中的最大值
+### 代码
+```java
+class Solution {
+    public int deleteAndEarn(int[] nums) {
+        int max = Arrays.stream(nums).max().orElse(0);
+        int[] sums = new int[max + 1];
+        for (int num : nums) {
+            sums[num] += num;
+        }
+        
+        int one = sums[0], two = sums[1];
+        for (int i = 2; i < sums.length; i++) {
+            int tmp = two;
+            two = Math.max(one + sums[i], two);
+            one = tmp;
+        }
+        
+        return two;
+    }
+}
+```
