@@ -97,3 +97,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1720_解码异或后的数组](https://leetcode-cn.com/problems/decode-xored-array/)
+## 解法
+### 思路
+- 根据encoded生成结果数组nums
+- 初始化`nums[0] = first`
+- 遍历nums数组，从给的first元素开始，依次和encode的对应元素进行异或，还原出原始元素
+- 遍历结束后返回
+### 代码
+```java
+class Solution {
+    public int[] decode(int[] encoded, int first) {
+        int len = encoded.length;
+        int[] nums = new int[len + 1];
+        nums[0] = first;
+        for (int i = 1; i < len + 1; i++) {
+            nums[i] = encoded[i - 1] ^ nums[i - 1];
+        }
+        return nums;
+    }
+}
+```
