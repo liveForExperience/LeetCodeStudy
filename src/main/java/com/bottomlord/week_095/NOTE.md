@@ -243,3 +243,150 @@ class Solution {
     }
 }
 ```
+# [LeetCode_604_迭代压缩字符串](https://leetcode-cn.com/problems/design-compressed-string-iterator/)
+## 失败解法
+### 原因
+超时
+### 思路
+- 初始化时候解压字符串
+- 初始化一个指针用于做next和hasNext操作
+### 代码
+```java
+class StringIterator {
+    private char[] cs;
+    private int index;
+    public StringIterator(String compressedString) {
+        char[] ccs = compressedString.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < ccs.length;) {
+            char c = ccs[i++];
+            StringBuilder numSb = new StringBuilder();
+            for (; i < ccs.length; i++) {
+                if (ccs[i] > '9' || ccs[i] < '0') {
+                    break;
+                }
+
+                numSb.append(ccs[i]);
+            }
+
+            for (int j = 0; j < Integer.parseInt(numSb.toString()); j++) {
+                sb.append(c);
+            }
+        }
+
+        cs = sb.toString().toCharArray();
+
+        index = 0;
+    }
+
+    public char next() {
+        return index >= cs.length ? ' ' : cs[index++];
+    }
+
+    public boolean hasNext() {
+        return index < cs.length;
+    }
+}
+```
+## 解法
+### 思路
+- 初始化2个数组，1个用于保存字符，一个用于保存字符剩余的数字，他们的坐标互相对应
+- 初始化一个坐标，用于记录当前处理到哪个字符
+### 代码
+```java
+class StringIterator {
+    private List<Character> cs;
+    private List<Integer> counts;
+    private int index;
+    public StringIterator(String compressedString) {
+        cs = new ArrayList<>();
+        counts = new ArrayList<>();
+        index = 0;
+        
+        for (int i = 0; i < compressedString.length();) {
+            char c = compressedString.charAt(i++);
+            StringBuilder sb = new StringBuilder();
+            while (i < compressedString.length()) {
+                char c1 = compressedString.charAt(i);
+                if (c1 < '0' || c1 > '9') {
+                    break;
+                }
+                i++;
+                sb.append(c1);
+            }
+            
+            cs.add(c);
+            counts.add(Integer.parseInt(sb.toString()));
+        }
+    }
+
+    public char next() {
+        if (index >= cs.size()) {
+            return ' ';
+        }
+        char c = cs.get(index);
+        counts.set(index, counts.get(index) - 1);
+        if (counts.get(index) == 0) {
+            index++;
+        }
+        
+        return c;
+    }
+
+    public boolean hasNext() {
+        return index < cs.size();
+    }
+}
+```
+## 解法二
+### 思路
+- 使用3个临时变量代替解法一的2个list
+- 一个int临时变量作为原字符串的指针游标
+- 一个int临时变量作为当前字符的剩余个数
+- 一个char临时变量用于保存当前使用到的字符
+- 无需再做初始化操作，只需要用一个str指针指向原字符串
+- 在next的时候根据num是否为0来判断是否要解析新的字符及其出现的次数
+### 代码
+```java
+class StringIterator {
+    private String str;
+    private int index, num;
+    Character c;
+    public StringIterator(String compressedString) {
+        str = compressedString;
+    }
+
+    public char next() {
+        if (!hasNext()) {
+            return ' ';
+        }
+        
+        if (num == 0) {
+            c = str.charAt(index++);
+            while (index < str.length()) {
+                char numc = str.charAt(index);
+                if (numc < '0' || numc > '9') {
+                    index--;
+                    break;
+                }
+                
+                num = num * 10 + (numc - '0');
+                index++;
+            }
+        }
+        
+        num--;
+        char ans = c;
+        if (num == 0) {
+            c = null;
+            index++;
+        }
+        
+        return ans;
+    }
+
+    public boolean hasNext() {
+        return index < str.length() || num != 0;
+    }
+}
+```
