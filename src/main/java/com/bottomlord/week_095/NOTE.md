@@ -60,12 +60,137 @@ class Solution {
 }
 ```
 # [LeetCode_1473_粉刷房子III](https://leetcode-cn.com/problems/paint-house-iii/submissions/)
-## 解法
+## 失败解法
+### 原因
+超时
 ### 思路
-
+dfs+剪枝
 ### 代码
 ```java
+class Solution {
+    private int m, target, minCost;
+    private int[] houses;
+    private int[][] costs;
 
+    public int minCost(int[] houses, int[][] cost, int m, int n, int target) {
+        this.houses = houses;
+        this.costs = cost;
+        this.m = m;
+        this.target = target;
+        this.minCost = Integer.MAX_VALUE;
+
+        dfs(0, -1, 0, 0);
+        return minCost == Integer.MAX_VALUE ? -1 : minCost;
+    }
+
+    private void dfs(int index, int preColorIndex, int sumCost, int blockCount) {
+        if (index > m || sumCost > minCost || blockCount > target) {
+            return;
+        }
+
+        if (index == m) {
+            if (target == blockCount) {
+                minCost = sumCost;
+            }
+            return;
+        }
+
+        if (houses[index] != 0) {
+            dfs(index + 1, houses[index] - 1, sumCost, preColorIndex == -1 ? 1 : preColorIndex + 1 == houses[index] ? blockCount : blockCount + 1);
+            return;
+        }
+        
+        int[] cost = costs[index];
+        for (int i = 0; i < cost.length; i++) {
+            if (i == preColorIndex) {
+                dfs(index + 1, i, sumCost + cost[i], blockCount);
+            } else {
+                dfs(index + 1, i, sumCost + cost[i], blockCount + 1);
+            }
+        }
+    }
+}
+```
+## 解法二
+### 思路
+- 根据解法一的逻辑可以找到状态转移的方程：
+    - 如果当前房子已经涂了颜色`house[index] != 0`：
+        - 如果当前遍历的颜色和已经涂的颜色不一致，就不要处理，这种情况不符合要求，直接设置成最大值
+        - 如果颜色一致，那么就判断一下当前坐标：
+            - 如果是第1幢房子，那就是0
+            - 如果不是第1幢房子：
+                - 如果和前1幢房子的颜色相同，那就和前1幢房子需要的cost相同
+                - 如果和前1幢房子的颜色不相同，那就需要用当前1幢房子状态的cost与前一种状态的cost作比较，取较小值
+    - 如果当前房子没有涂颜色
+        - 那么就要判断当前要涂的颜色和前1幢房子的颜色是否相等：
+            - 如果相等：那么就相当于在前一幢房子且街区相同情况的cost基础上再加上当前的cost
+            - 如果不相等：那么就相当于再前一幢房子且街区数-1的情况的cost基础上，加上当前的cost
+动态规划：
+- `dp[i][j][k]`：[0,i]区间的所有房子都已粉刷，且最后一个房子粉刷为j颜色，需要的最小花费
+- 状态转移方程：参照上面总结的前一种解法的逻辑
+- 初始化，将所有状态的cost都设置成int最大值
+- 结果，遍历所有dp[m - 1][j][k - 1]的状态，找到最小值
+### 代码
+```java
+class Solution {
+private static final int MAX = Integer.MAX_VALUE / 2;
+    
+    public int minCost(int[] houses, int[][] cost, int m, int n, int target) {
+        for (int i = 0; i < houses.length; i++) {
+            houses[i]--;
+        }
+        int[][][] dp = new int[m][n][target];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                Arrays.fill(dp[i][j], MAX);
+            }
+        }
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (houses[i] != -1 && houses[i] != j) {
+                    continue;
+                }
+
+                for (int k = 0; k <  target; k++) {
+                    for (int j1 = 0; j1 < n; j1++) {
+                        if (j == j1) {
+                            if (i == 0) {
+                                if (k == 0) {
+                                    if (houses[i] == -1) {
+                                        dp[i][j][k] = cost[i][j];
+                                    } else {
+                                        dp[i][j][k] = 0;
+                                    }
+                                }
+                            } else {
+                                if (houses[i] == -1) {
+                                    dp[i][j][k] = Math.min(dp[i][j][k], dp[i - 1][j][k] + cost[i][j]);
+                                } else {
+                                    dp[i][j][k] = Math.min(dp[i][j][k], dp[i - 1][j][k]);
+                                }
+                            }
+                        } else {
+                            if (i > 0 && k > 0) {
+                                if (houses[i] == -1) {
+                                    dp[i][j][k] = Math.min(dp[i][j][k], dp[i - 1][j1][k - 1] + cost[i][j]);
+                                } else {
+                                    dp[i][j][k] = Math.min(dp[i][j][k], dp[i - 1][j1][k - 1]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int ans = MAX;
+        for (int i = 0; i < n; i++) {
+            ans = Math.min(ans, dp[m - 1][i][target - 1]);
+        }
+        return ans == MAX ? -1 : ans;
+    }
+}
 ```
 # [LeetCode_740_删除并获得点数](https://leetcode-cn.com/problems/delete-and-earn/)
 ## 解法
