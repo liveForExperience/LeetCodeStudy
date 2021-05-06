@@ -390,3 +390,53 @@ class StringIterator {
     }
 }
 ```
+# [LeetCode_716_最大栈](https://leetcode-cn.com/problems/max-stack/)
+## 解法
+### 思路
+两个栈：
+- 一个栈用于支持栈的基本操作
+- 一个栈用于处理最大值
+### 代码
+```java
+class MaxStack {
+    private final Stack<Integer> basicStack, maxStack;
+    public MaxStack() {
+        basicStack = new Stack<>();
+        maxStack = new Stack<>();
+    }
+
+    public void push(int x) {
+        basicStack.push(x);
+        maxStack.push(maxStack.isEmpty() ? x : (x > maxStack.peek() ? x : maxStack.peek()));
+    }
+
+    public int pop() {
+        maxStack.pop();
+        return basicStack.pop();
+    }
+
+    public int top() {
+        return basicStack.peek();
+    }
+
+    public int peekMax() {
+        return maxStack.peek();
+    }
+
+    public int popMax() {
+        Stack<Integer> tmp = new Stack<>();
+        int x = maxStack.peek();
+        while (basicStack.peek() != x) {
+            tmp.push(pop());
+        }
+
+        pop();
+
+        while (!tmp.isEmpty()) {
+            push(tmp.pop());
+        }
+
+        return x;
+    }
+}
+```
