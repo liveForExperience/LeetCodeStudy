@@ -528,8 +528,127 @@ class Solution {
 # [LeetCode_751_IP到CIDR](https://leetcode-cn.com/problems/ip-to-cidr/)
 ## 解法
 ### 思路
-
+- 计算当前ip的低位有多少连续的0，有多少个，就可以生成多少个由缩写表示的ip
+- 过程中，先计算起始ip的数值，用10进制表示，然后通过jdk的api算出该值的低位有多少个0
+- 然后计算可以通过表达式表示多少个ip，也就是n个0等于2的n次幂，这个值还不能大于题目要求的n值，也就是简写表达式代表的IP值不能超过n个
+- 然后计算多少个0之后，就能求出当前表达式，放入结果列表中
+- 10进制值更新为表达式对应的最后的值，继续之前的步骤
+- 这里有个特殊情况，题目任务0.0.0.0代表0的个数是0，和jdk求出的32不同，需要做特别处理
 ### 代码
 ```java
+class Solution {
+    public List<String> ipToCIDR(String ip, int n) {
+        int start = toInt(ip);
+        List<String> ans = new ArrayList<>();
+        while (n > 0) {
+            int tailingZeros = start == 0 ? 0 : Integer.numberOfTrailingZeros(start);
+            int bitsInCidr = 1, mask = 0;
+            while (bitsInCidr < n && mask < tailingZeros) {
+                bitsInCidr <<= 1;
+                mask++;
+            }
 
+            if (bitsInCidr > n) {
+                bitsInCidr >>= 1;
+                mask--;
+            }
+
+            ans.add(toString(start, 32 - mask));
+            start += bitsInCidr;
+            n -= bitsInCidr;
+        }
+
+        return ans;
+    }
+
+    private String toString(int start, int range) {
+        int wordLen = 8;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 3; i >= 0; i--) {
+            sb.append((start >> (i * wordLen)) & 255);
+            sb.append(".");
+        }
+
+        sb.setLength(sb.length() - 1);
+        return sb.append("/").append(range).toString();
+    }
+
+    private int toInt(String str) {
+        String[] words = str.split("\\.");
+        int ans = 0;
+        for (String word : words) {
+            ans = ans * 256 + Integer.parseInt(word);
+        }
+        return ans;
+    }
+}
+```
+# [LeetCode_1723_完成所有工作的最短时间](https://leetcode-cn.com/problems/find-minimum-time-to-finish-all-jobs/)
+## 解法
+### 思路
+二分+回溯+剪枝
+- 枚举可能的最短时间，这个最短时间可以通过二分查找的方式确定
+    - 初始值右边界：可能只有一个工人，需要依次执行
+    - 初始值左边界：工人数量和工作数量相同，只需要花费工作时间最长的那个工作对应的时间即可
+- 回溯判定每一次界定的可能最短时间是否可行
+    - 如果在当前工作时间的可能状态下，回溯失败，当前工人没有被分配工作，那可以直接退出，确定失败
+        - 当前工人没有被分配工作，那么说明当前的上限无法实现。因为如果当前工人无法分配，那换一个工人也无法分配
+    - 如果在当前工作时间的可能状态下，回溯失败，当前工人达到了在花费当前工作时间的情况下达到了上限，也可以直接退出，确定失败
+        - 首先工作的耗时是降序排列的，也就是说当前的耗时比之后的都长，在当前符合，且之后耗时更短的情况下，回溯返回仍然是失败的，那么当前的耗时给之后的工人也肯定是失败的，因为当前的耗时更长
+### 代码
+```java
+class Solution {
+    public int minimumTimeRequired(int[] jobs, int k) {
+        Arrays.sort(jobs);
+        int sum = 0;
+        for (int i = 0; i < jobs.length / 2; i++) {
+            int tmp = jobs[i];
+            jobs[i] = jobs[jobs.length - 1 - i];
+            jobs[jobs.length - 1 - i] = tmp;
+
+            sum += jobs[i] + jobs[jobs.length - 1 - i];
+        }
+        
+        if (jobs.length % 2 == 1) {
+            sum += jobs[jobs.length / 2];
+        }
+        
+        int l = jobs[jobs.length - 1], r = sum;
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            
+            if (backTrack(jobs, new int[k], 0, mid)) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        
+        return r;
+    }
+    
+    private boolean backTrack(int[] jobs, int[] workloads, int index, int limit) {
+        if (index >= jobs.length) {
+            return true;
+        }
+        
+        int workload = jobs[index];
+        
+        for (int i = 0; i < workloads.length; i++) {
+            if (workloads[i] + jobs[index] <= limit) {
+                workloads[i] += workload;
+                if (backTrack(jobs, workloads, index + 1, limit)) {
+                    return true;
+                }
+                workloads[i] -= workload;
+            }
+            
+            if (workloads[i] == 0 || workloads[i] + workload == limit) {
+                break;
+            }
+        }
+        
+        return false;
+    }
+}
 ```
