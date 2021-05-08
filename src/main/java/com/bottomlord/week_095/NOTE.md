@@ -652,3 +652,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_758_字符串中的加粗单词](https://leetcode-cn.com/problems/bold-words-in-string/)
+## 解法
+### 思路
+- 使用一个布尔数组对应字符串中需要加粗的字符
+- 使用indexof找到字符串中的对应坐标，将对应的字符在布尔数组中标记为true
+- 遍历布尔数组，在连续的true坐标前和后增加标签
+### 代码
+```java
+class Solution {
+    public String boldWords(String[] words, String S) {
+        int len = S.length();
+        boolean[] bucket = new boolean[len];
+        for (String word : words) {
+            int index = 0;
+            while (index != -1) {
+                index = S.indexOf(word, index);
+                if (index != -1) {
+                    for (int i = 0; i < word.length(); i++) {
+                        bucket[index + i] = true;
+                    }
+                    index++;
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len;) {
+            if (bucket[i]) {
+                sb.append("<b>");
+                while (i < len) {
+                    if (bucket[i]) {
+                        sb.append(S.charAt(i));
+                        i++;
+                    } else {
+                        break;
+                    }
+                }
+                sb.append("</b>");
+            } else {
+                sb.append(S.charAt(i));
+                i++;
+            }
+        }
+
+        return sb.toString();
+    }
+}
+```

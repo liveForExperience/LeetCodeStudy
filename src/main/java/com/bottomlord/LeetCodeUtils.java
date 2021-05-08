@@ -65,10 +65,4 @@ public class LeetCodeUtils {
 
         return node;
     }
-
-
-    public static void main(String[] args) {
-        TreeNode root = getTreeFromStr("[2,1,3,null,null,4,5]");
-        bfsPrintTree(root);
-    }
 }
