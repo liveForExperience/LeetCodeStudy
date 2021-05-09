@@ -1129,3 +1129,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP33_蓄水]()
+## 解法
+### 思路
+- 根据题目提示定义倒水次数的范围，也就是水缸的最大值10000
+- 循环所有倒水的次数，计算操作的总和，与暂存的总和比较，保留较小值
+### 代码
+```java
+class Solution {
+    public int storeWater(int[] bucket, int[] vat) {
+        if (Arrays.stream(vat).sum() == 0) {
+            return 0;
+        }
+
+        System.out.println(bucket.length);
+
+        int ans = Integer.MAX_VALUE;
+        for (int i = 1; i <= 10000; i++) {
+            int sum = i;
+            for (int j = 0; j < bucket.length; j++) {
+                if (vat[j] == 0) {
+                    continue;
+                }
+                
+                int left = vat[j] - i * bucket[j];
+                if (left <= 0) {
+                    continue;
+                }
+                
+                sum += left % i == 0 ? left / i : left / i + 1;
+            }
+            ans = Math.min(ans, sum);
+        }
+        
+        return ans;
+    }
+}
+```
