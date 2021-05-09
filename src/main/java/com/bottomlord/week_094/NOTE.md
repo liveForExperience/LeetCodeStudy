@@ -1038,3 +1038,94 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1482_制作m束花所需的最少天数](https://leetcode-cn.com/problems/minimum-number-of-days-to-make-m-bouquets/)
+## 失败解法
+### 原因
+超时
+### 思路
+- 求出以每一个花的坐标作为一束花对应的子数组的起始坐标，求出这个子数组中的最大值，存储
+- 对存储的数组进行dfs，找到最小值
+### 代码
+```java
+class Solution {
+    private int ans = Integer.MAX_VALUE;
+
+    public int minDays(int[] bloomDay, int m, int k) {
+        int len = bloomDay.length;
+        if (len < m * k) {
+            return -1;
+        }
+
+        int[] bucket = new int[len - k + 1];
+        for (int i = 0; i < len - k + 1; i++) {
+            bucket[i] = Arrays.stream(Arrays.copyOfRange(bloomDay, i, i + k)).max().getAsInt();
+        }
+
+        dfs(bucket, 0, Integer.MIN_VALUE, 0, m, k);
+
+        return ans;
+    }
+
+    private void dfs(int[] bucket, int index, int max, int count, int m, int k) {
+        if (count == m) {
+            ans = Math.min(ans, max);
+            return;
+        }
+
+        if (max > ans) {
+            return;
+        }
+
+        if (index >= bucket.length) {
+            return;
+        }
+
+        for (int i = index; i < bucket.length; i++) {
+            dfs(bucket, i + k, Math.max(max, bucket[i]), count + 1, m, k);
+        }
+    }
+}
+```
+## 解法
+### 思路
+二分查找
+### 代码
+```java
+class Solution {
+    public int minDays(int[] bloomDay, int m, int k) {
+        int len = bloomDay.length;
+        if (m * k > len) {
+            return -1;
+        }
+        
+        int l = 0, r = Arrays.stream(bloomDay).max().getAsInt();
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            if (match(bloomDay, m, k, mid)) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return r;
+    }
+    
+    private boolean match(int[] bloomDay, int m, int k, int limit) {
+        int flowers = 0, branch = 0, len = bloomDay.length;
+
+        for (int i = 0; i < len && branch < m; i++) {
+            if (bloomDay[i] <= limit) {
+                flowers++;
+                if (flowers == k) {
+                    branch++;
+                    flowers = 0;
+                }
+            } else {
+                flowers = 0;
+            }
+        }
+
+        return branch >= m;
+    }
+}
+```
