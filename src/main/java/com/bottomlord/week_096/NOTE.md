@@ -37,3 +37,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_760_找出变位映射](https://leetcode-cn.com/problems/find-anagram-mappings/)
+## 解法
+### 思路
+2层循环找到对应坐标，存储到结果数组中
+### 代码
+```java
+class Solution {
+    public int[] anagramMappings(int[] A, int[] B) {
+        int[] ans = new int[A.length];
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < B.length; j++) {
+                if (A[i] == B[j]) {
+                    ans[i] = j;
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 将B数组的值与坐标生成对应的映射表
+- 遍历A数组，根据映射表找到B的坐标并放入结果数组
+### 代码
+```java
+class Solution {
+    public int[] anagramMappings(int[] A, int[] B) {
+        Map<Integer, Integer> mapping = new HashMap<>();
+        for (int i = 0; i < B.length; i++) {
+            mapping.put(B[i], i);
+        }
+
+        for (int i = 0; i < A.length; i++) {
+            A[i] = mapping.get(A[i]);
+        }
+        return A;
+    }
+}
+```
