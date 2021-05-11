@@ -77,3 +77,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1734_解码异或后的排序](https://leetcode-cn.com/problemset/all/)
+## 解法
+### 思路
+- 按照题目的描述，原数组是[1,n]这n个元素组成的，那么用total可以表示为他们累计异或的值
+- 根据题目意思，n是奇数，那么n-1就是偶数，且encoded的所有元素都是依次相邻元素的异或值，因此encoded[1] ^ encoded[3] ^ ... encoded[n - 2]，就是除原数组第一个元素外所有元素相异或的值
+- 将这两部分的值再相异或，就能得到第一个元素，然后依次遍历encoded数组，就能还原出原始数组了  
+### 代码
+```java
+class Solution {
+    public int[] decode(int[] encoded) {
+                int n = encoded.length + 1;
+        int[] ans = new int[n];
+
+        int total = 0;
+        for (int i = 1; i <= n; i++) {
+            total ^= i;
+        }
+
+        int xor = 0;
+        for (int i = 1; i < n - 1; i += 2) {
+            xor ^= encoded[i];
+        }
+        
+        int first = total ^ xor;
+
+        ans[0] = first;
+        for (int i = 0; i < encoded.length; i++) {
+            ans[i + 1] = ans[i] ^ encoded[i];
+        }
+
+        return ans;
+    }
+}
+```
