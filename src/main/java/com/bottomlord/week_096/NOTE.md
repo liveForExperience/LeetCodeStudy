@@ -150,3 +150,37 @@ class Solution {
     }
 }
 ```
+## 解法
+### 思路
+- 根据入参坐标确定在往内循环的第几层，方法是找到4个边与坐标距离最小的值
+- 根据层数，确定到达该层前一层时共累计了多少数值，然后根据坐标确定其在最后一圈累计的个数
+- 对最终的个数进行取模就获得最后的答案
+### 代码
+```java
+
+```
+# [LeetCode_1310_子数组异或查询](https://leetcode-cn.com/problems/xor-queries-of-a-subarray/)
+## 解法
+### 思路
+和前缀和类似
+### 代码
+```java
+class Solution {
+    public int[] xorQueries(int[] arr, int[][] queries) {
+        int len = arr.length, ansLen = queries.length;
+        int[] xors = new int[len];
+        xors[0] = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            xors[i] = xors[i - 1] ^ arr[i];
+        }
+
+        int[] ans = new int[ansLen];
+        for (int i = 0; i < queries.length; i++) {
+            int start = queries[i][0], end = queries[i][1];
+            ans[i] = (start == 0 ? 0 : xors[start - 1]) ^ xors[end];
+        }
+
+        return ans;
+    }
+}
+```
