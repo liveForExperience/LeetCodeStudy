@@ -184,3 +184,79 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1269_停在原地的方案数](https://leetcode-cn.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/)
+## 失败解法
+### 原因
+超时
+### 思路
+dfs+剪枝
+### 代码
+```java
+class Solution {
+    private int mod = 1000000007;
+    public int numWays(int steps, int arrLen) {
+        return dfs(steps, arrLen, 0, 0);
+    }
+
+    private int dfs(int steps, int arrLen, int index, int step) {
+        if (index < 0 || index >= arrLen) {
+            return 0;
+        }
+        
+        if (step == steps) {
+            return index == 0 ? 1 : 0;
+        }
+        
+        if (index > steps - step) {
+            return 0;
+        }
+        
+        int count = 0;
+        for (int i = -1; i < 2; i++) {
+            count += dfs(steps, arrLen, index + i, step + 1);
+            count %= mod;
+        }
+        return count % mod;
+    }
+}
+```
+## 解法
+### 思路
+dfs+剪枝+回溯
+### 代码
+```java
+class Solution {
+    private int mod = 1000000007;
+    public int numWays(int steps, int arrLen) {
+        return dfs(steps, arrLen, 0, 0, new HashMap<>());
+    }
+
+    private int dfs(int steps, int arrLen, int index, int step, Map<String, Integer> memo) {
+        if (index < 0 || index >= arrLen) {
+            return 0;
+        }
+        
+        String key = index + ":" + step;
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
+
+        if (step == steps) {
+            return index == 0 ? 1 : 0;
+        }
+
+        if (index > steps - step) {
+            return 0;
+        }
+
+        int count = 0;
+        for (int i = -1; i < 2; i++) {
+            count += dfs(steps, arrLen, index + i, step + 1, memo);
+            count %= mod;
+        }
+        
+        memo.put(key, count);
+        return count % mod;
+    }
+}
+```
