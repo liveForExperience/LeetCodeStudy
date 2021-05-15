@@ -383,3 +383,57 @@ class Solution {
     }
 }
 ```
+# [LeetCode_13_罗马数字转整数](https://leetcode-cn.com/problems/roman-to-integer/)
+## 解法
+### 思路
+- 使用linkedHashMap有序存储存储罗马字符和数值的映射关系
+- 将6个特殊字符放在map的前部
+- 通过遍历特殊字符，找到s中对应的位置，累加的同时也做好这些字符出现位置的标记工作
+- 最后再遍历一次字符串，跳过标记后的字符，再通过map找到非特殊字符，进行累加
+- 返回累加值
+### 代码
+```java
+class Solution {
+    public int romanToInt(String s) {
+        Map<String, Integer> map = new LinkedHashMap<>();
+        map.put("CM", 900);
+        map.put("CD", 400);
+        map.put("XC", 90);
+        map.put("XL", 40);
+        map.put("IX", 9);
+        map.put("IV", 4);
+        map.put("M", 1000);
+        map.put("D", 500);
+        map.put("C", 100);
+        map.put("L", 50);
+        map.put("X", 10);
+        map.put("V", 5);
+        map.put("I", 1);
+
+        boolean[] bucket = new boolean[s.length()];
+
+        int ans = 0;
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            String key = entry.getKey();
+            if (Objects.equals(key, "M")) {
+                break;    
+            }
+            
+            int index = s.indexOf(entry.getKey());
+            while (index != -1) {
+                bucket[index] = bucket[index + 1] = true;
+                ans += map.get(entry.getKey());
+                index = s.indexOf(entry.getKey(), index + 1);
+            }
+        }
+
+        for (int i = 0; i < s.length(); i++) {
+            if (!bucket[i]) {
+                ans += map.get("" + s.charAt(i));
+            }
+        }
+
+        return ans;
+    }
+}
+```
