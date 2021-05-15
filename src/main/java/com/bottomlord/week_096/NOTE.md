@@ -155,9 +155,38 @@ class Solution {
 - 根据入参坐标确定在往内循环的第几层，方法是找到4个边与坐标距离最小的值
 - 根据层数，确定到达该层前一层时共累计了多少数值，然后根据坐标确定其在最后一圈累计的个数
 - 对最终的个数进行取模就获得最后的答案
+- 所有变量使用long类型，防止溢出
 ### 代码
 ```java
-
+class Solution {
+    public int orchestraLayout(int num, int xPos, int yPos) {
+        if (num == 1) {
+            return 1;
+        }
+        
+        long layer = Math.min(xPos, Math.min(yPos, Math.min(num -  1 - xPos, num - 1 - yPos)));
+        
+        long count = num - 1;
+        long sum = 0;
+        for (int i = 0; i < layer; i++) {
+            sum += count * 4;
+            count -= 2;
+        }
+        
+        if (layer == xPos) {
+            sum += yPos - layer + 1;
+        } else if (layer == num - 1 - yPos) {
+            sum += count + xPos - layer + 1;
+        } else if (layer == num - 1 - xPos) {
+            sum += count * 2 + num - 1 - layer - yPos + 1;
+        } else {
+            sum += count * 3 + num - 1 - layer - xPos + 1;
+        }
+        
+        int mod = (int) (sum % 9);
+        return mod == 0 ? 9 : mod;
+    }
+}
 ```
 # [LeetCode_1310_子数组异或查询](https://leetcode-cn.com/problems/xor-queries-of-a-subarray/)
 ## 解法
