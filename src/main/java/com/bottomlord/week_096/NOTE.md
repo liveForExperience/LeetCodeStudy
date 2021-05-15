@@ -188,6 +188,78 @@ class Solution {
     }
 }
 ```
+## 失败解法二
+### 原因
+long溢出数值错误
+### 思路
+- 尝试将O(N)复杂度的部分用公式替换
+- 公式思路是整体面积-左边所在那层为最外层的整体面积
+### 代码
+```java
+class Solution {
+    public int orchestraLayout(int num, int xPos, int yPos) {
+        if (num == 1) {
+            return 1;
+        }
+
+        long layer = Math.min(xPos, Math.min(yPos, Math.min(num -  1 - xPos, num - 1 - yPos)));
+        long count = num - 1;
+        long sum = 0;
+        for (int i = 0; i < layer; i++) {
+            sum += count * 4;
+            count -= 2;
+        }
+
+        long newSum = (long) num * (long) num - ((long) num - layer - 1) * ((long) num - layer - 1);
+        long newCount = (num - 1) - 2 * layer;
+
+        if (layer == xPos) {
+            newSum += yPos - layer + 1;
+        } else if (layer == num - 1 - yPos) {
+            newSum += newCount + xPos - layer + 1;
+        } else if (layer == num - 1 - xPos) {
+            newSum += newCount * 2 + num - 1 - layer - yPos + 1;
+        } else {
+            newSum += newCount * 3 + num - 1 - layer - xPos + 1;
+        }
+
+        int mod = (int) (newSum % 9);
+        return mod == 0 ? 9 : mod;
+    }
+}
+```
+## 解法三
+### 思路
+- num为总长度，layer为层数，则`layer * (num - layer) * 4`就是外层的面积
+- 其他与解法二类似
+### 代码
+```java
+class Solution {
+    public int orchestraLayout(int num, int xPos, int yPos) {
+        if (num == 1) {
+            return 1;
+        }
+
+        long layer = Math.min(xPos, Math.min(yPos, Math.min(num -  1 - xPos, num - 1 - yPos)));
+
+        long sum = layer * (num - layer) * 4 % 9;
+        long count = (num - 1) - 2 * layer;
+
+        if (layer == xPos) {
+            sum += yPos - layer + 1;
+        } else if (layer == num - 1 - yPos) {
+            sum += count + xPos - layer + 1;
+        } else if (layer == num - 1 - xPos) {
+            sum += count * 2 + num - 1 - layer - yPos + 1;
+        } else {
+            sum += count * 3 + num - 1 - layer - xPos + 1;
+        }
+
+        int mod = (int) (sum % 9);
+        return mod == 0 ? 9 : mod;
+    }
+}
+```
 # [LeetCode_1310_子数组异或查询](https://leetcode-cn.com/problems/xor-queries-of-a-subarray/)
 ## 解法
 ### 思路
