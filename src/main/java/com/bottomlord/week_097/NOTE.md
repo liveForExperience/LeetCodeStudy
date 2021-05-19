@@ -137,3 +137,88 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1738_找出第K大的异或坐标值](https://leetcode-cn.com/problems/find-kth-largest-xor-coordinate-value/)
+## 解法
+### 思路
+- 初始化一个容量为k的大顶堆
+- 先求出每一行的异或前缀和数组
+- 再合并求出真正的二维数组的合并前缀和
+- 在第二步的时候也同时将求出的前缀和放入大顶堆
+- 遍历大顶堆，求出第k大的元素
+### 代码
+```java
+class Solution {
+    public int kthLargestValue(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[0].length;
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
+        int[][] xorMatrix = new int[row + 1][col + 1];
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                xorMatrix[i][j + 1] = xorMatrix[i][j] ^ matrix[i][j];
+            }
+        }
+
+        Arrays.stream(xorMatrix[0]).forEach(queue::offer);
+
+        for (int i = 1; i <= col; i++) {
+            for (int j = 1; j < row; j++) {
+                xorMatrix[j][i] ^= xorMatrix[j - 1][i];
+                queue.offer(xorMatrix[j][i]);
+            }
+        }
+
+        int index = 0, ans = -1;
+        while (index != k) {
+            ans = queue.poll();
+            index++;
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用数组的快排，取代大顶堆获取第K大的元素
+### 代码
+```java
+class Solution {
+    public int kthLargestValue(int[][] matrix, int k) {
+        int row = matrix.length, col = matrix[0].length;
+
+        if (row == 1 && col > 1) {
+            for (int i = 1; i < col; i++) {
+                matrix[0][i] ^= matrix[0][i - 1];
+            }
+        } else if (row > 1 && col == 1) {
+            for (int i = 1; i < row; i++) {
+                matrix[i][0] ^= matrix[i - 1][0];
+            }
+        } else {
+            for (int i = 0; i < row; i++) {
+                for (int j = 1; j < col; j++) {
+                    matrix[i][j] ^= matrix[i][j - 1];
+                }
+            }
+
+            for (int i = 0; i < col; i++) {
+                for (int j = 1; j < row; j++) {
+                    matrix[j][i] ^= matrix[j - 1][i];
+                }
+            }
+        }
+
+        int[] arr = new int[row * col];
+        int index = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                arr[index++] = matrix[i][j];
+            }
+        }
+
+        Arrays.sort(arr);
+        return arr[arr.length - k];
+    }
+}
+```
