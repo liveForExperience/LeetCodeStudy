@@ -258,3 +258,57 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 自己用数组模拟一个hash表keys，通过开放地址法解决hash冲突，在计算hash的时候，需要注意将计算出来的hash值的符号位都置成0，否则会导致hash值为负，无法映射到数组下标
+- 同时基于keys对应元素的下标，维护同一个values数组，用于保存出现的个数
+- 然后再用一个优先级队列数组counts，该数组的下标对应元素出现的个数，故values中的最大值 + 1就是这个数组的长度，然后将所有元素按照出现个数放入counts中
+- 最后从后向前遍历counts数组，将前K个最大的元素放入结果列表中
+- 遍历结束返回
+### 代码
+```java
+class Solution {
+    public List<String> topKFrequent(String[] words, int k) {
+        int len = words.length;
+        String[] keys = new String[len];
+        int[] values = new int[len];
+
+        for (String word : words) {
+            int hash = (word.hashCode() & 0x7FFFFFFF) % len;
+            while (!Objects.equals(keys[hash], word) && values[hash] > 0) {
+                hash = (hash + 1) % len;
+            }
+
+            keys[hash] = word;
+            values[hash]++;
+        }
+
+        PriorityQueue<String>[] counts = new PriorityQueue[len + 1];
+        for (int i = 0; i < values.length; i++) {
+            int value = values[i];
+            if (value > 0) {
+                if (counts[value] == null) {
+                    counts[value] = new PriorityQueue<>();
+                }
+                counts[value].add(keys[i]);
+            }
+        }
+
+        int count = 0;
+        List<String> ans = new ArrayList<>();
+        for (int i = counts.length - 1; i >= 0; i--) {
+            if (counts[i] == null) {
+                continue;
+            }
+
+            PriorityQueue<String> queue = counts[i];
+            while (count != k && !queue.isEmpty()) {
+                ans.add(queue.poll());
+                count++;
+            }
+        }
+
+        return ans;
+    }
+}
+```
