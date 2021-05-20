@@ -222,3 +222,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_692_前K个高频单词](https://leetcode-cn.com/problems/top-k-frequent-words/)
+## 解法
+### 思路
+map+优先级队列
+### 代码
+```java
+class Solution {
+    public List<String> topKFrequent(String[] words, int k) {
+        Map<String, Integer> map = new HashMap<>();
+        for (String word : words) {
+            map.put(word, map.getOrDefault(word, 0) + 1);
+        }
+        
+        Queue<Map.Entry<String, Integer>> queue = new PriorityQueue<>((o1, o2) -> {
+            if (!Objects.equals(o1.getValue(), o2.getValue())) {
+                return o2.getValue() - o1.getValue();
+            }
+            
+            return o1.getKey().compareTo(o2.getKey());
+        });
+        
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            queue.offer(entry);
+        }
+        
+        int index = 0;
+        List<String> ans = new ArrayList<>();
+        while (index != k && !queue.isEmpty()) {
+            ans.add(queue.poll().getKey());
+            index++;
+        }
+        
+        return ans;  
+    }
+}
+```
