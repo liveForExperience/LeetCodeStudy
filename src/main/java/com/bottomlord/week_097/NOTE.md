@@ -340,3 +340,76 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1035_不相交的线](https://leetcode-cn.com/problems/uncrossed-lines/)
+## 失败解法
+### 原因
+超时
+### 思路
+递归穷举
+### 代码
+```java
+class Solution {
+private int max = 0, len1 = 0, len2 = 0;
+    public int maxUncrossedLines(int[] nums1, int[] nums2) {
+        len1 = nums1.length;
+        len2 = nums2.length;
+        Map<Integer, List<Integer>> mapping = new HashMap<>();
+        for (int i = 0; i < nums2.length; i++) {
+            List<Integer> list = mapping.getOrDefault(nums2[i], new ArrayList<>());
+            list.add(i);
+            mapping.put(nums2[i], list);
+        }
+
+        recuse(nums1, mapping, 0, 0, 0);
+        return max;
+    }
+
+    private void recuse(int[] nums, Map<Integer, List<Integer>> mapping, int i1, int i2, int count) {
+        if (i1 >= len1 || i2 >= len2) {
+            max = Math.max(max, count);
+            return;
+        }
+
+        for (int i = i1; i < len1; i++) {
+            List<Integer> list = mapping.get(nums[i]);
+            if (list == null) {
+                continue;
+            }
+
+            for (int index : list) {
+                if (index < i2) {
+                    continue;
+                }
+
+                recuse(nums, mapping, i + 1, index + 1, count + 1);
+            }
+        }
+
+        max = Math.max(max, count);
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- 先不能相交，可以理解成每一个数组的下标对应元素被使用后，之前的元素就不能再被选择，所以可以理解成一个递推的状态转移
+- `dp[i][j]`：i和j代表两个数组被使用到元素下标，`dp[i][j]`可以理解成当坐标i和j的状态下可能连接的连线最大值
+- 状态转移方程：`dp[i + 1][j + 1] = nums1[i] == nums[j] ? dp[i][j] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1])`
+  - 此处dp[i + 1]的i + 1，等于nums1[i]的i，2个坐标之间差1
+### 代码
+```java
+class Solution {
+private int max = 0, len1 = 0, len2 = 0;
+    public int maxUncrossedLines(int[] nums1, int[] nums2) {
+        int len1 = nums1.length, len2 = nums2.length;
+        int[][] dp = new int[len1 + 1][len2 + 1];
+        for (int i = 0; i < len1; i++) {
+            for (int j = 0; j < len2; j++) {
+                dp[i + 1][j + 1] = nums1[i] == nums2[j] ? dp[i][j] + 1 : Math.max(dp[i][j + 1], dp[i + 1][j]);
+            }
+        }
+        
+        return dp[len1][len2];
+    }
+}
+```
