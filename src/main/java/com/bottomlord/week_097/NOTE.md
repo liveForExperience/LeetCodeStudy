@@ -312,3 +312,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1056_易混淆数](https://leetcode-cn.com/problems/confusing-number/)
+## 解法
+### 思路
+- 列出10个数字的180度反转的映射
+- 如果是反转后不能成为正确数字的，映射值就是-1
+- 然后对N进行10进制逐位的反转，从低位开始
+- 判断反转后的映射值，如果是-1，就直接返回false
+- 否则就设置成相对的高位
+### 代码
+```java
+class Solution {
+    public boolean confusingNumber(int N) {
+        int[] reverses = new int[]{0, 1, -1, -1, -1, -1, 9, -1, 8, 6};
+        int o = N;
+        int n = 0;
+        while (N != 0) {
+            int num = N % 10;
+            if (reverses[num] == -1) {
+                return false;
+            }
+            N /= 10;
+            n = n * 10 + reverses[num];
+        }
+
+        return n != o;
+    }
+}
+```
