@@ -439,3 +439,173 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1707_与数组中元素的最大异或值](https://leetcode-cn.com/problems/maximum-xor-with-an-element-from-array/)
+## 失败解法
+### 原因
+超时
+### 思路
+硬做：
+- 遍历queries二维数组
+- 然后根据queries中每一个数组元素的第一个元素，遍历nums，去取其中的最大值
+### 代码
+```java
+class Solution {
+    public int[] maximizeXor(int[] nums, int[][] queries) {
+        int len = queries.length;
+        int[] ans = new int[len];
+
+        for (int i = 0; i < queries.length; i++) {
+            int query = queries[i][0], target = queries[i][1];
+            int max = -1;
+            for (int num : nums) {
+                if (num <= target) {
+                    max = Math.max(max, num ^ query);
+                }
+            }
+            ans[i] = max;
+        }
+
+        return ans;
+    }
+}
+```
+## 失败解法二
+### 原因
+超时
+### 思路
+在失败解法一的基础上，对nums排序，从而能够在nums的元素大于target的时候提前终止
+### 代码
+```java
+class Solution {
+    public int[] maximizeXor(int[] nums, int[][] queries) {
+        int len = queries.length;
+        int[] ans = new int[len];
+        Arrays.sort(nums);
+
+        for (int i = 0; i < queries.length; i++) {
+            int query = queries[i][0], target = queries[i][1], max = -1;
+            for (int num : nums) {
+                if (num <= target) {
+                    max = Math.max(max, num ^ query);
+                } else {
+                    break;
+                }
+            }
+            ans[i] = max;
+        }
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+字典树
+- 将nums从小到大排序
+- 根据queries数组，初始化一个新的数组nQueries，这个数组比原来的queries数组多一个坐标为度，放在每一个元素的第三个子元素中
+- 然后根据nQueries数组的每个元素的第二个子元素m的大小，从小到大排序
+  - 这样排序是因为，要求结果的值，首要条件是nums中有元素比m要小，nums和nQueries都按照从小到大排列后，就只需要一次遍历就能判断出nums是否有符合要求的元素了
+- 初始化一个坐标i，用来标记nums数组的元素
+- 遍历nQueries，然后内层再循环，循环条件是，i不超过nums数组长度，且nums[i]元素比当前nQueries的元素的第二个子元素m要小
+    - 如果是，就将当前num元素插入到字典树中间，用于对当前query元素做判断
+    - 如果不是，就终止循环
+- 然后判断i的值是否为0，如果是0，说明nums中没有比当前m值小的元素，那么当前ans数组中对应坐标的值是-1，这个坐标是通过nQueries中的元素的第三个子元素获取的
+- 如果i不是0，那么就从当前的字典树中获取最大的那个异或值
+  - 从字典树的根开始判断，找到query值每一位的非相同值，如果有就选这个值，没有就选相同值，直到找到最后的那个元素，这个元素就是可选范围内最大的异或值
+### 代码
+```java
+class Solution {
+    public int[] maximizeXor(int[] nums, int[][] queries) {
+        Arrays.sort(nums);
+        int len = queries.length;
+        int[][] nQueries = new int[len][3];
+        for (int i = 0; i < queries.length; i++) {
+            nQueries[i][0] = queries[i][0];
+            nQueries[i][1] = queries[i][1];
+            nQueries[i][2] = i;
+        }
+
+        Arrays.sort(nQueries, Comparator.comparingInt(x -> x[1]));
+
+        int[] ans = new int[len];
+        TrieTree trieTree = new TrieTree();
+        int ni = 0;
+        for (int[] query : nQueries) {
+            int x = query[0], m = query[1], qi = query[2];
+            while (ni < nums.length && nums[ni] <= m) {
+                trieTree.add(nums[ni++]);
+            }
+
+            if (ni == 0) {
+                ans[qi] = -1;
+            } else {
+                ans[qi] = trieTree.getMaxXor(x) ^ x;
+            }
+        }
+
+        return ans;
+    }
+
+    private class TrieTree {
+        private TrieNode root;
+
+        public TrieTree() {
+            root = new TrieNode();
+        }
+
+        public void add(int num) {
+            doAdd(root, num, 30);
+        }
+
+        private void doAdd(TrieNode node, int num, int index) {
+            if (index < 0) {
+                node.val = num;
+                return;
+            }
+
+            int mask = 1;
+            if ((num & (mask << index)) == 0) {
+                if (node.zero == null) {
+                    node.zero = new TrieNode();
+                }
+                doAdd(node.zero, num, index - 1);
+            } else {
+                if (node.one == null) {
+                    node.one = new TrieNode();
+                }
+                doAdd(node.one, num, index - 1);
+            }
+        }
+
+        public int getMaxXor(int query) {
+            return doGetMaxXor(root, query, 30);
+        }
+
+        private int doGetMaxXor(TrieNode node, int num, int index) {
+            if (node.val != null) {
+                return node.val;
+            }
+
+            int mask = 1;
+            if ((num & (mask << index)) == 0) {
+                if (node.one != null) {
+                    return doGetMaxXor(node.one, num, index - 1);
+                } else {
+                    return doGetMaxXor(node.zero, num, index - 1);
+                }
+            } else {
+                if (node.zero != null) {
+                    return doGetMaxXor(node.zero, num, index - 1);
+                } else {
+                    return doGetMaxXor(node.one, num, index - 1);
+                }
+            }
+        }
+
+        private class TrieNode {
+            private Integer val;
+            private TrieNode zero;
+            private TrieNode one;
+        }
+    }
+}
+```
