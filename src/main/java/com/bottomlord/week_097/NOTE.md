@@ -413,3 +413,29 @@ private int max = 0, len1 = 0, len2 = 0;
     }
 }
 ```
+# [LeetCode_810_黑板异或游戏](https://leetcode-cn.com/problems/chalkboard-xor-game/)
+## 解法
+### 思路
+[题解](https://leetcode-cn.com/problems/chalkboard-xor-game/solution/jian-dan-de-bang-ni-li-jie-zhe-dao-ti-by-kaxa/)
+- 强调了偶数的重要性
+  - 当Alice选择的时候，数组为偶数的时候，会有两种情况
+    - 异或为0，那么Alice就直接获胜
+    - 异或不为0，那么剩下的偶数个数组中，至少会有2个元素是导致数组异或不为0的，那么Alice就选择其中一个
+      - 这种情况下，Bob得到的数组一定是异或不为0的，他如果选择第二个数，那Alice就赢了，所以他会选择另一个数，而如果如此，那Alice也不会选择那个数，这样的话，大价都不选择的情况下，因为Bob是奇数，那么最终一定为形成数组只剩1个元素，Bob必须选择的情况，而Bob选择后，数组为空，Alice就获胜了
+### 代码
+```java
+class Solution {
+    public boolean xorGame(int[] nums) {
+        if (nums.length % 2 == 0) {
+            return true;
+        }
+
+        int xor = 0;
+        for (int num : nums) {
+            xor ^= num;
+        }
+
+        return xor == 0;
+    }
+}
+```
