@@ -38,3 +38,20 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1064_不动点](https://leetcode-cn.com/problems/fixed-point/)
+## 解法
+### 思路
+遍历一次搞定
+### 代码
+```java
+class Solution {
+    public int fixedPoint(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            if (i == arr[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
+}
+```
