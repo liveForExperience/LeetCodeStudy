@@ -151,3 +151,49 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP28_采购方案](https://leetcode-cn.com/problems/4xy4Wx/)
+## 失败解法
+### 原因
+超时
+### 思路
+2层循环累加，同时取模
+### 代码
+```java
+class Solution {
+    public int purchasePlans(int[] nums, int target) {
+        int len = nums.length, count = 0;
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                if (nums[i] + nums[j] <= target) {
+                    count = (count + 1) % 1000000007;
+                }
+            }
+        }
+        return count;            
+    }
+}
+```
+## 解法
+### 思路
+排序+双指针
+### 代码
+```java
+class Solution {
+    public int purchasePlans(int[] nums, int target) {
+        int len = nums.length, head = 0, tail = len - 1, count = 0;
+        Arrays.sort(nums);
+        while (head < tail) {
+            if (nums[head] + nums[tail] > target) {
+                tail--;
+            } else {
+                count += tail - head;
+                head++;
+            }
+            
+            count %= 1000000007;
+        }
+        
+        return count;      
+    }
+}
+```
