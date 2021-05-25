@@ -91,3 +91,63 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1787_使所有区间的异或结果为零](https://leetcode-cn.com/problems/make-the-xor-of-all-segments-equal-to-zero/)
+## 解法
+### 思路
+- 通过观察可以发现题目的要求如下：
+  - `a[i] ^ a[i + 1] ^ a[i + 2] ^ a[i + 3] ... a[i + k - 1] == 0`
+  - `a[i + 1] ^ a[i + 2] ^ a[i + 3] ... a[i + k - 1] ^ a[i + k] == 0`
+  - 如上两个公式左右两边同时异或，就可以得到：`a[i] ^ a[i + k] = 0`
+  - 所以，要获得题目要求的结果，就是要获得一个在修改后，以k为周期的周期性数组，周期长度为k，且周期内元素的异或为0
+- 将数组分成k个组，每个组的元素应该是相等的，且k各组的元素值的异或和应该为0
+- 动态规划：
+  - `dp[i][j]`：表示处理了k中的i各组后，得到的异或值为j的情况下，最小的修改次数
+  - 状态转移方程：
+    - 假设需要将当前组的元素设置成x，那么这个x就可以通过题目设置的范围(1024)来进行枚举，而相对的前i-1个组处理完后得到的异或值就应该是`j ^ x`
+    - 那么求的状态转移方程就是，遍历0到1024，求最小的`dp[i][j]`：`dp[i][j] = dp[i - 1][j ^ x] + size(i) - count(i, x)`
+    - `size(i)`：代表第i组的元素个数
+    - `count(i, x)：代表第i组中x出现的个数
+    - 整个状态转移方程可以理解为：当修改完第i组后，得到的异或和为j的情况下，当前第i组的所有元素若是被修改成x，那么前i-1的所有组修改完后应该得到的是j ^ x这个数，然后得到这个状态的最小值，也就是`dp[i - 1][j ^ x]`与当前需要修改的个数的和
+  - 状态压缩，因为每次状态转移只依赖前一次的状态值，所以可以将二维转为一维
+  - 返回结果：`dp[0]`
+### 代码
+```java
+class Solution {
+    private final int max = 1 << 10;
+    private final int infinity = Integer.MAX_VALUE / 2;
+
+    public int minChanges(int[] nums, int k) {
+        int len = nums.length;
+        int[] dp = new int[max];
+        Arrays.fill(dp, infinity);
+        dp[0] = 0;
+
+        for (int i = 0; i < k; i++) {
+            Map<Integer, Integer> countMapping = new HashMap<>();
+            int size = 0;
+            for (int j = i; j < len; j += k) {
+                countMapping.put(nums[j], countMapping.getOrDefault(nums[j], 0) + 1);
+                size++;
+            }
+
+            int lastGroupMin = Arrays.stream(dp).min().getAsInt();
+            int[] tmpDp = new int[max];
+            Arrays.fill(tmpDp, lastGroupMin);
+
+            for (int xor = 0; xor < max; xor++) {
+                for (Integer x : countMapping.keySet()) {
+                    tmpDp[xor] = Math.min(tmpDp[xor], dp[xor ^ x] - countMapping.get(x));
+                }
+            }
+
+            for (int index = 0; index < tmpDp.length; index++) {
+                tmpDp[index] += size;
+            }
+
+            dp = tmpDp;
+        }
+
+        return dp[0];
+    }
+}
+```
