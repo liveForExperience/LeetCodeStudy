@@ -151,3 +151,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1190_反转每对括号间的子串](https://leetcode-cn.com/problems/reverse-substrings-between-each-pair-of-parentheses/)
+## 解法
+### 思路
+栈：
+- 遍历字符串，将字符依次入栈，直到遇到第一个右括号
+- 依次弹栈，直到遇到第一个左括号
+- 反转弹出的字符串
+- 再依次从头压入栈中
+- 继续如上流程操作，直到字符串遍历结束
+### 代码
+```java
+class Solution {
+    public String reverseParentheses(String s) {
+        char[] cs = s.toCharArray();
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < cs.length; i++) {
+            char c = cs[i];
+            if (c != ')') {
+                stack.push(c);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                while (!stack.isEmpty()) {
+                    char pushedC = stack.pop();
+                    if (pushedC != '(') {
+                        sb.append(pushedC);
+                    } else {
+                        break;
+                    }
+                }
+                
+                for (int j = 0; j < sb.length(); j++) {
+                    stack.push(sb.charAt(j)); 
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (Character c : stack) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+}
+```
