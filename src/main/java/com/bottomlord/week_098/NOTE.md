@@ -242,3 +242,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_461_汉明距离](https://leetcode-cn.com/problems/hamming-distance/)
+## 解法
+### 思路
+两数异或后求二进制位是1的个数
+### 代码
+```java
+class Solution {
+    public int hammingDistance(int x, int y) {
+        int xor = x ^ y;
+        int count = 0;
+        while (xor != 0) {
+            count++;
+            xor = xor & (xor - 1);
+        }
+        
+        return count;
+    }
+}
+```
