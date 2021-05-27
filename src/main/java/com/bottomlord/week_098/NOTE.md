@@ -362,3 +362,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1099_小于K的两数之和](https://leetcode-cn.com/problems/two-sum-less-than-k/)
+## 解法
+### 思路
+排序+双指针
+### 代码
+```java
+class Solution {
+  public int twoSumLessThanK(int[] nums, int k) {
+    Arrays.sort(nums);
+    int sum = -1, head = 0, tail = nums.length - 1;
+    while (head < tail) {
+      if (nums[head] + nums[tail] >= k) {
+        tail--;
+      } else {
+        sum = Math.max(nums[head++] + nums[tail], sum);
+      }
+    }
+    return sum;
+  }
+}
+```
