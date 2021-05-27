@@ -261,3 +261,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode1084_最小元素各数位之和](https://leetcode-cn.com/problems/sum-of-digits-in-the-minimum-number/)
+## 解法
+### 思路
+- 遍历求最小值
+- 求各数位之和
+- 奇数返回1，偶数返回0
+### 代码
+```java
+class Solution {
+    public int sumOfDigits(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+
+        int min = Arrays.stream(nums).min().getAsInt(), ans = 0;
+        while (min != 0) {
+            int num = min % 10;
+            min /= 10;
+            ans += num;
+        }
+        
+        return (ans & 1) == 0 ? 1 : 0;
+    }
+}
+```
