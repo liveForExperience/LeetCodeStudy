@@ -286,3 +286,79 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1086_前五科的均分](https://leetcode-cn.com/problems/high-five/)
+## 解法
+### 思路
+- 初始化hash表，key为id，value为大顶堆，用于存放相同id学生的分数
+- 遍历二维数组，填充hash表
+- 遍历hash表，求每个学生最高5项的最高分和的平均分
+### 代码
+```java
+class Solution {
+    public int[][] highFive(int[][] items) {
+        Map<Integer, PriorityQueue<Integer>> map = new HashMap<>();
+        for (int[] item : items) {
+            int id = item[0], score = item[1];
+            PriorityQueue<Integer> queue = map.getOrDefault(id, new PriorityQueue<>(Comparator.reverseOrder()));
+            queue.offer(score);
+            map.put(id, queue);
+        }
+        
+        int[][] ans = new int[map.size()][2];
+        int index = 0;
+        for (Map.Entry<Integer, PriorityQueue<Integer>> entry : map.entrySet()) {
+            int id = entry.getKey(), count = 5, sum = 0;
+            PriorityQueue<Integer> queue = entry.getValue();
+            while (count > 0 && !queue.isEmpty()) {
+                sum += queue.poll();
+                count--;
+            }
+            
+            ans[index][0] = id;
+            ans[index][1] = sum / 5;
+            index++;
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+使用桶替换大顶堆
+### 代码
+```java
+class Solution {
+    public int[][] highFive(int[][] items) {
+        Map<Integer, int[]> map = new HashMap<>();
+        for (int[] item : items) {
+            int id = item[0], score = item[1];
+            int[] scores = map.getOrDefault(id, new int[101]);
+            scores[score]++;
+            map.put(id, scores);
+        }
+
+        int[][] ans = new int[map.size()][2];
+        int index = 0;
+        for (Map.Entry<Integer, int[]> entry : map.entrySet()) {
+            int id = entry.getKey(), sum = 0;
+            int[] scores = entry.getValue();
+            for (int i = scores.length - 1, count = 5; i > 0 && count > 0; i--) {
+                if (scores[i] > 0) {
+                    while (scores[i] > 0 && count > 0) {
+                        scores[i]--;
+                        count--;
+                        sum += i;
+                    }
+                }
+            }
+
+            ans[index][0] = id;
+            ans[index][1] = sum / 5;
+            index++;
+        }
+
+        return ans;
+    }
+}
+```
