@@ -502,3 +502,27 @@ class Foo {
     }
 }
 ```
+# [LeetCode_1118_一月有多少天](https://leetcode-cn.com/problems/number-of-days-in-a-month/)
+## 解法
+### 思路
+- 构建月份对应的天数表，二月除外
+- 如果是二月，根据年份获知当年是否为闰年再返回
+### 代码
+```java
+class Solution {
+    public int numberOfDays(int Y, int M) {
+        Map<Integer, Function<Integer, Integer>> map = new HashMap<>();
+        int[] thirtyOneDaysMonths = new int[]{1, 3, 5, 7, 8, 10, 12};
+        int[] thirtyDaysMonths = new int[]{4, 6, 9, 11};
+        Arrays.stream(thirtyDaysMonths).forEach(x -> map.put(x, y -> 30));
+        Arrays.stream(thirtyOneDaysMonths).forEach(x -> map.put(x, y -> 31));
+        map.put(2, x -> {
+            if (x % 100 == 0) {
+                return x % 400 == 0 ? 29 : 28;
+            }
+            return x % 4 == 0 ? 29 : 28;
+        });
+        return map.get(M).apply(Y);
+    }
+}
+```
