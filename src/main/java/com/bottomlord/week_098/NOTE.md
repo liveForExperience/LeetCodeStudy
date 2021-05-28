@@ -383,3 +383,25 @@ class Solution {
   }
 }
 ```
+# [LeetCode_477_汉明距离总和](https://leetcode-cn.com/problems/total-hamming-distance/)
+## 解法
+### 思路
+- 所有数字之间的汉明距离总和可以理解为，每一位上的1和0出现的个数的乘积的总和
+- 求所有数字32位上的1和0的个数，乘积后求和
+### 代码
+```java
+class Solution {
+    public int totalHammingDistance(int[] nums) {
+        int sum = 0;
+        for (int i = 0; i < 32; i++) {
+            int count = 0;
+            for (int num : nums) {
+                count += (num >> i) & 1;
+            }
+            
+            sum += count * (nums.length - count);
+        }
+        return sum;
+    }
+}
+```
