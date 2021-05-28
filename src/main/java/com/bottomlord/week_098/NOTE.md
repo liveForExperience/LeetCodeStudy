@@ -405,3 +405,100 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1114_按序打印](https://leetcode-cn.com/problems/print-in-order/)
+## 解法
+### 思路
+2个线程间共享变量+自旋等待
+### 代码
+```java
+class Foo {
+    private volatile boolean twoCanRun;
+    private volatile boolean threeCanRun;
+    public Foo() {
+
+    }
+
+    public void first(Runnable printFirst) throws InterruptedException {
+        printFirst.run();
+        twoCanRun.set(true);
+    }
+
+    public void second(Runnable printSecond) throws InterruptedException {
+        while (!twoCanRun.get()) {}
+        printSecond.run();
+        threeCanRun.set(true);
+    }
+
+    public void third(Runnable printThird) throws InterruptedException {
+        while (!threeCanRun.get()) {}
+        printThird.run();
+    }
+}
+```
+## 解法二
+### 思路
+信号量
+### 代码
+```java
+class Foo {
+  private Semaphore s1 = new Semaphore(0), s2 = new Semaphore(0);
+  public Foo() {
+
+  }
+
+  public void first(Runnable printFirst) throws InterruptedException {
+    printFirst.run();
+    s1.release();
+  }
+
+  public void second(Runnable printSecond) throws InterruptedException {
+    s1.acquire();
+    printSecond.run();
+    s2.release();
+  }
+
+  public void third(Runnable printThird) throws InterruptedException {
+    s2.acquire();
+    printThird.run();
+  }
+}
+```
+## 解法三
+### 思路
+volatile + lock
+### 代码
+```java
+class Foo {
+    private volatile int n = 0;
+    private final Object lock = new Object();
+    public Foo() {}
+
+    public void first(Runnable printFirst) throws InterruptedException {
+        synchronized (lock) {
+            printFirst.run();
+            n++;
+            lock.notifyAll();
+        }
+    }
+
+    public void second(Runnable printSecond) throws InterruptedException {
+        synchronized (lock) {
+            while (n != 1) {
+                lock.wait();
+            }
+            printSecond.run();
+            n++;
+            lock.notifyAll();
+        }
+    }
+
+    public void third(Runnable printThird) throws InterruptedException {
+        synchronized (lock) {
+            while (n != 2) {
+                lock.wait();
+            }
+        }
+        printThird.run();
+    }
+}
+```
