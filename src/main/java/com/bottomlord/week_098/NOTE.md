@@ -596,3 +596,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1133_最大唯一数](https://leetcode-cn.com/problems/largest-unique-number/)
+## 解法
+### 思路
+- 利用TreeMap计数
+- 遍历找到count为1的最大值
+### 代码
+```java
+class Solution {
+  public int largestUniqueNumber(int[] A) {
+    TreeMap<Integer, Integer> map = new TreeMap<>(Comparator.reverseOrder());
+    for (int num : A) {
+      map.put(num, map.getOrDefault(num, 0) + 1);
+    }
+
+    for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+      if (entry.getValue() == 1) {
+        return entry.getKey();
+      }
+    }
+
+    return -1;
+  }
+}
+```
+## 解法二
+### 思路
+- 遍历数组，用桶计数
+- 从桶的最大值开始往回遍历，找到第一个元素为1的坐标返回 
+- 如果没有就返回-1
+### 代码
+```java
+class Solution {
+    public int largestUniqueNumber(int[] A) {
+        int[] bucket = new int[1001];
+        for (int num : A) {
+            bucket[num]++;
+        }
+
+        for (int i = bucket.length - 1; i >= 0; i--) {
+            if (bucket[i] == 1) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
