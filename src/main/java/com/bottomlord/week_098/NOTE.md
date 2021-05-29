@@ -526,3 +526,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1074_元素和为目标值的矩阵数量](https://leetcode-cn.com/problems/number-of-submatrices-that-sum-to-target/)
+## 解法
+### 思路
+hash表+前缀和
+- 两步走：
+  - 第一步：
+    - 三层循环用于确定要寻找的矩形范围的上边界和下边界，以及这这些矩形的列的前缀和
+    - 第一层用于确定上边界，第二层用于确定下边界，第三层用于求前缀和
+    - 前缀和数组在第一层的时候定义，因为确定好上边界后，以这个边界作为上边界的所有矩形，都可以从上往下的求出前缀和，然后依次通过下边界的下移来求出列的前缀和，并同时当前这几行组成的所有可能举行，有多少符合target要求的个数
+  - 第二步：
+    - 当确定好要判断的所有矩形集合，开始遍历这些前缀和，相当于再求一次前缀和`sum`
+    - 用一个变量来记录遍历时累加的前缀和
+    - 然后用当前求到的前缀和与target进行，也就是`sum - taget`，这样求出的值，如果map里存在，就说明可以通过这两个前缀和得到要求的矩形和，那么就累加map里的个数
+    - 再将当前前缀和用map来记录前缀和值和出现的个数
+    - 求个数和累加记录的步骤不能反，因为如果先累加记录，那么会导致如果当前的`sum - target`求得的值就是刚才累加的sum，那么就多记录了个数
+    - 遍历完成后就将累加的个数返回
+- 每一次第二步求出的值，都累加起来，累加出来的值就是结果
+### 代码
+```java
+class Solution {
+    public int numSubmatrixSumTarget(int[][] matrix, int target) {
+        int row = matrix.length, col = matrix[0].length, ans = 0;
+        for (int top = 0; top < row; top++) {
+            int[] sums = new int[col];
+            for (int bottom = top; bottom < row; bottom++) {
+                for (int c = 0; c < col; c++) {
+                    sums[c] += matrix[bottom][c];
+                }
+                ans += getTargetCount(sums, target);
+            }
+        }
+        return ans;
+    }
+
+    private int getTargetCount(int[] nums, int target) {
+        int sum = 0, ans = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        for (int num : nums) {
+            sum += num;
+            ans += map.getOrDefault(sum - target, 0);
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+        return ans;
+    }
+}
+```
