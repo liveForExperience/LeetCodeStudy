@@ -573,3 +573,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1119_删去字符串中的元音](https://leetcode-cn.com/problems/remove-vowels-from-a-string/)
+## 解法
+### 思路
+- 成生元音字符的set和StringBuilder
+- 遍历字符串，将不是元音的字符append到StringBuilder中
+- 返回StringBuilder的string
+### 代码
+```java
+class Solution {
+    public String removeVowels(String s) {
+        Character[] cs = new Character[]{'a', 'e', 'i', 'o', 'u'};
+        Set<Character> set = Arrays.stream(cs).collect(Collectors.toSet());
+        
+        StringBuilder sb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (!set.contains(c)) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+}
+```
