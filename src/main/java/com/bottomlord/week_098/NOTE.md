@@ -644,3 +644,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_231_2的幂](https://leetcode-cn.com/problems/power-of-two/)
+## 解法
+### 思路
+- 如果n小于等于0，直接返回false
+- 判断32位的二进制数值中有多少个1，如果只有1个就是2的n次，否则就不是
+- 用`n & (n - 1)`来找到并消除最低位的1来判断有多少个1
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        if (n <= 0) {
+            return false;
+        }
+        
+        int num = n, count = 0;
+        while (num != 0) {
+            num &= (num - 1);
+            count++;
+        }
+        return count == 1;
+    }
+}
+```
