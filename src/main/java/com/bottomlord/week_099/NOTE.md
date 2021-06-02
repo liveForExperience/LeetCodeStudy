@@ -245,3 +245,49 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1165_单行键盘](https://leetcode-cn.com/problems/single-row-keyboard/)
+## 解法
+### 思路
+- map存储字符与坐标的映射关系
+- 遍历要打印的字符串，通过map计算耗时并累加
+### 代码
+```java
+class Solution {
+    public int calculateTime(String keyboard, String word) {
+        Map<Character, Integer > map = new HashMap<>();
+        for (int i = 0; i < keyboard.length(); i++) {
+            map.put(keyboard.charAt(i), i);
+        }
+
+        int ans = map.get(word.charAt(0));
+        for (int i = 0; i < word.length() - 1; i++) {
+            ans += Math.abs(map.get(word.charAt(i)) - map.get(word.charAt(i + 1)));
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用数组代替解法1的map
+### 代码
+```java
+class Solution {
+    public int calculateTime(String keyboard, String word) {
+        int[] bucket = new int[26];
+        for (int i = 0; i < keyboard.length(); i++) {
+            bucket[keyboard.charAt(i) - 'a'] = i;
+        }
+        
+        int start = 0, ans = 0;
+        for (int i = 0; i < word.length(); i++) {
+            int index = bucket[word.charAt(i) - 'a'];
+            ans += Math.abs(index - start);
+            start = index;
+        }
+        
+        return ans;
+    }
+}
+```
