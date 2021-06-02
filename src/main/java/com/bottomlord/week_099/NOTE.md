@@ -184,3 +184,64 @@ class Solution {
     }
 }
 ```
+# [LeetCode_523_连续的子数组和](https://leetcode-cn.com/problems/continuous-subarray-sum/)
+## 错误解法
+### 原因
+超时
+### 思路
+前缀和+2层循环迭代
+### 代码
+```java
+class Solution {
+    public boolean checkSubarraySum(int[] nums, int k) {
+        int len = nums.length;
+        int[] sums = new int[len + 1];
+        for (int i = 1; i < len + 1; i++) {
+            sums[i] = sums[i - 1] + nums[i - 1];
+        }
+
+        for (int i = 0; i < len + 1; i++) {
+            for (int j = i + 2; j < len + 1; j++) {
+                if ((sums[j] - sums[i]) % k == 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+- 在失败解法基础上，通过map来降低时间复杂度
+- 失败解法中通过嵌套循环来计算前缀和数组中是否有2个元素的差是k的整数倍
+- 如果用map，将之前所有的前缀和与k取模后得到的余数以及该坐标的值记录下来，那么在遍历获取到一个新的前缀和时，就可以直接通过取余k，得到的余数到map中去找是否有重复的
+- 如果有重复的，那么这两个前缀和相减，就一定是能被k整除的，然后再看坐标之间的距离是否大于2：
+    - 如果是，就是对的 
+    - 如果不是，则因为当前遍历到的坐标比map中以存在的相同余数对应的坐标要大，而这种情况还不符合题目距离为2的要求，那么这个坐标就不用储存了，因为存下来覆盖了之前更小的坐标，会使得之后相同余数的坐标与当前坐标的差值变得更小
+- 如果没有重复，那就把余数存储下来
+- 务必还要将sum值为0的情况记录下来，这个代表从头开始累加的前缀和能够被整除的情况，它的坐标应该为-1，这样第二个元素坐标1的时候，就能够获取大于1的距离
+### 代码
+```java
+class Solution {
+    public boolean checkSubarraySum(int[] nums, int k) {
+        int sum = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
+        for (int i = 0; i < nums.length; i++) {
+            sum = (sum + nums[i]) % k;
+            
+            if (map.containsKey(sum)) {
+                if (i - map.get(sum) > 1) {
+                    return true;
+                }
+            } else {
+                map.put(sum, i);
+            }
+        }
+        
+        return false;
+    }
+}
+```
