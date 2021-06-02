@@ -291,3 +291,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1175_质数排列](https://leetcode-cn.com/problems/prime-arrangements/)
+## 解法
+### 思路
+- 求质数的个数
+    - `厄拉多塞筛法`求个数
+- 通过排列公式求得可能个数,假如n以内有m个素数，(n - m)个其他数，总共的排列组合总数目为 m! * (n-m)!种
+### 代码
+```java
+class Solution {
+    public int numPrimeArrangements(int n) {
+        boolean[] arr = new boolean[n + 1];
+        int count = 0;
+        for (int i = 2; i < arr.length; i++) {
+            if (!arr[i]) {
+                count++;
+                for (int j = 2; i * j <= n; j++) {
+                    arr[i * j] = true;
+                }
+            }
+        }
+
+        return (int)(calculate(count) * calculate(n - count) % 1000000007);
+    }
+
+    private long calculate(int count) {
+        long ans = 1;
+        for (int i = count; i >= 1; i--) {
+            ans *= i;
+            ans %= 1000000007;
+        }
+        return ans;
+    }
+}
+```
