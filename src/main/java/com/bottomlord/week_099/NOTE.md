@@ -325,3 +325,65 @@ class Solution {
     }
 }
 ```
+# [LeetCode_525_连续数组](https://leetcode-cn.com/problems/contiguous-array/)
+## 失败解法
+### 原因
+超时
+### 思路
+前缀和+2层循环
+### 代码
+```java
+class Solution {
+    public int findMaxLength(int[] nums) {
+        int[] sums = new int[nums.length + 1];
+        for (int i = 1; i < sums.length; i++) {
+            sums[i] = sums[i - 1] + nums[i - 1];
+        }
+
+        int ans = 0;
+        for (int i = 0; i < sums.length; i++) {
+            for (int j = i + 2; j < sums.length; j += 2) {
+                if ((j - i) / 2 == sums[j] - sums[i]) {
+                    ans = Math.max(ans, j - i);
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 初始化一个hash表
+    - key：当前前缀和数组中0和1的个数差值
+    - value：当前前缀和数组的长度
+- 初始化一个int变量sum用来存储前缀和
+- 遍历nums数组
+    - 更新sum变量
+    - 计算当前前缀和数组的0和1的个数差值，也就是当前前缀和数组长度与2倍的sum值的差，因为数组只包含0和1
+    - 然后查看map中是否有存在相同个数差值的key
+        - 如果有，求当前长度与记录长度的差值，更新最大长度
+        - 如果没有，记录当前差值和长度到map中
+- 遍历结束，返回结果，没找到就是0
+### 代码
+```java
+class Solution {
+    public int findMaxLength(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 0);
+        int sum = 0, ans = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            int len = i + 1, diff = len - 2 * sum;
+            if (map.containsKey(diff)) {
+                ans = Math.max(ans, len - map.get(diff));
+            } else {
+                map.put(diff, i + 1);
+            }
+        }
+
+        return ans;
+    }
+}
+```
