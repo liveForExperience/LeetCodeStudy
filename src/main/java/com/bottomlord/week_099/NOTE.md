@@ -387,3 +387,81 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1180_统计只含单一字母的子串](https://leetcode-cn.com/problems/count-substrings-with-only-one-distinct-letter/)
+## 解法
+### 思路
+- 遍历字符串，获取所有只有一个字符的子串集合
+- 遍历子串集合，再通过循环及配合indexOf的API获取到所有该字串的个数
+### 代码
+```java
+class Solution {
+    public int countLetters(String s) {
+                Set<String> set = new HashSet<>();
+        StringBuilder sb = new StringBuilder().append(s.charAt(0));
+        set.add(sb.toString());
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) != s.charAt(i - 1)) {
+                sb.setLength(0);
+            }
+            sb.append(s.charAt(i));
+            set.add(sb.toString());
+        }
+
+        int ans = 0;
+        for (String str : set) {
+            int index = -1;
+            do {
+                index = s.indexOf(str, index + 1);
+                if (index != -1) {
+                    ans++;
+                }
+            } while (index != -1);
+        }
+
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 找规律：
+    - 当只有1个元素的时候，组合的个数是1
+    - 当有2个元素的时候，组合的个数的（1+1+1），这里的3个1分别代表：
+        1. 长度1的时候的个数1
+        2. 新增的一个元素，导致的长度2减1的可能组合所增加的1个个数
+        3. 当前长度所产生的1个个数
+    - 当有3个元素的时候，组合的个数就是（3 + 1 + 1 + 1），和长度2类似，只是第二步又被切分为了相同的2步，多加了一个1，因为当前长度是3了，之前有2种可能需要都各自加1
+    - 那这样的话，规律就出来了：`n = sum(n - 1) + (n - 1) + 1 = sum(n - 1) + n`
+        - 这里的sum(n-1)就是前一个长度所获得的个数
+        - 那这里就是一个递推公式了，其实从贵了来看就是一个求前缀和的公式
+- 所以这里就可以先把这些所有可能的等差数列求出来，放在一个数组里
+- 然后遍历字符串，看连续的字符长度有多长，就套用计算好的等差数列的和，累加起来，就好了
+### 代码
+```java
+class Solution {
+    public int countLetters(String s) {
+        int len = s.length();
+        if (len == 1) {
+            return 1;
+        }
+
+        int[] sums = new int[len + 1];
+        for (int i = 1; i <= len; i++) {
+            sums[i] = sums[i - 1] + i;
+        }
+
+        int ans = 0;
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            int count = 1, oi = i;
+            while (i + 1< len && s.charAt(i +1) == c) {
+                count = sums[i + 1 - (oi - 1)];
+                i++;
+            }
+            ans += count;
+        }
+
+        return ans;
+    }
+}
+```
