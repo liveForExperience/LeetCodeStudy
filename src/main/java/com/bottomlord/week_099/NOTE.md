@@ -465,3 +465,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_160_相交链表](https://leetcode-cn.com/problems/intersection-of-two-linked-lists/)
+## 解法
+### 思路
+- 初始化两个指向两个链表头结点的指针
+- 然后分别循环遍历两个指针
+    - 退出条件是两个指针相等
+    - 如果某个指针到底了，就重新指向头结点继续跑
+    - 所以退出的可能只有两种，要么同时到底，要么找到相交点，同时到底也就代表在之前的过程中都没有找到相交点，那就是不想交
+### 代码
+```java
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode nodeA = headA, nodeB = headB;
+        while (nodeA != nodeB) {
+            nodeA = nodeA == null ? headA : nodeA.next;
+            nodeB = nodeB == null ? headB : nodeB.next;
+        }
+        
+        return nodeA;
+    }
+}
+```
+## 解法二
+### 思路
+- 如果链表A的不重合的长度是n，链表B不重合的长度是m
+- 那么两个链表的总长度就是m + n + 2 * len
+- 两个链表在相交后是共同走len的长度的
+    - A在相交前最多走的是n + len + m
+    - B在相交前做多走的是m + len + n
+    - 那很明显两者是相等的
+- 所以可以直接在A链表走完之后，让他从B链表的头继续走，而B则相反，那么他们如果有交点，就一定会在同一时刻相遇
+### 代码
+```java
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode nodeA = headA, nodeB = headB;
+        while (nodeA != nodeB) {
+            nodeA = nodeA == null ? headB : nodeA.next;
+            nodeB = nodeB == null ? headA : nodeB.next;
+        }
+        return nodeA;
+    }
+}
+```
