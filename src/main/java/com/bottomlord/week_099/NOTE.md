@@ -561,3 +561,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1184_公交车站的距离](https://leetcode-cn.com/problems/distance-between-bus-stops/)
+## 解法
+### 思路
+计算正向和反向的距离之和，求最小值
+### 代码
+```java
+class Solution {
+    public int distanceBetweenBusStops(int[] distance, int start, int destination) {
+        int index = start, r = 0, l = 0, n = distance.length;
+        while (index != destination) {
+            r += distance[index];
+            index = (index + 1) %  n;
+        }
+        
+        index = start;
+        while (index != destination) {
+            l += distance[(index - 1 + n) % n];
+            index = (index - 1 + n) % n;
+        }
+        
+        return Math.min(l, r);
+    }
+}
+```
