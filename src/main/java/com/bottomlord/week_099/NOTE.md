@@ -509,3 +509,31 @@ public class Solution {
     }
 }
 ```
+# [LeetCode_203_移除链表元素](https://leetcode-cn.com/problems/remove-linked-list-elements/)
+## 解法
+### 思路
+- 生成一个fake头节点，连接到原来链表的头部
+- 初始化指针指向原链表头部，一个指针用来指向当前遍历的前一个节点
+- 如果发现节点和值相同就做删除操作，否则就正常移动指针
+- 最后返回fake头的next指针指向的节点
+### 代码
+```java
+class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode fake = new ListNode(0);
+        fake.next = head;
+        ListNode pre = fake, node = head;
+        while (node != null) {
+            ListNode next = node.next;
+            if (node.val == val) {
+                pre.next = next;
+            } else {
+                pre = node;
+            }
+            node = next;
+        }
+        
+        return fake.next;
+    }
+}
+```
