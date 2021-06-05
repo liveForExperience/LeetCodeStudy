@@ -537,3 +537,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_203_计数质数](https://leetcode-cn.com/problems/count-primes/)
+## 解法
+### 思路
+`厄拉多塞筛法`
+### 代码
+```java
+class Solution {
+    public int countPrimes(int n) {
+        boolean[] arr = new boolean[n];
+        int count = 0;
+        for (int i = 2; i < n; i++) {
+            if (!arr[i]) {
+                count++;
+                
+                for (int j = 2; i * j < n; j++) {
+                    arr[i * j] = true;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+```
