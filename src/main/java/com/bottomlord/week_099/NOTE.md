@@ -775,3 +775,25 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1196_最多可以买到的苹果数量](https://leetcode-cn.com/problems/how-many-apples-can-you-put-into-the-basket/)
+## 解法
+### 思路
+排序后累加计算
+### 代码
+```java
+class Solution {
+    public int maxNumberOfApples(int[] arr) {
+        Arrays.sort(arr);
+        int count = 0, total = 0;
+        for (int num : arr) {
+            total += num;
+            if (total <= 5000) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+}
+```
