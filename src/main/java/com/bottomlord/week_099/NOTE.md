@@ -746,3 +746,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1189_气球的最大数量](https://leetcode-cn.com/problems/maximum-number-of-balloons/)
+## 解法
+### 思路
+- 统计气球中包含字符的个数
+- 对出现两次的o和l做除以2的处理后，返回这些统计值的最小值，这就是整个字符串balloon能够通过text组成的个数
+### 代码
+```java
+class Solution {
+    public int maxNumberOfBalloons(String text) {
+        int b = 0, a = 0, l = 0, o = 0, n = 0;
+        for (int i = 0; i < text.length(); i++) {
+            int c = text.charAt(i);
+            if (c == 'b') {
+                b++;
+            } else if (c == 'a') {
+                a++;
+            } else if (c == 'l') {
+                l++;
+            } else if (c == 'o') {
+                o++;
+            } else if (c == 'n') {
+                n++;
+            }
+        }
+        
+        return Math.min(b, Math.min(a, Math.min(l / 2, Math.min(o / 2, n))));
+    }
+}
+```
