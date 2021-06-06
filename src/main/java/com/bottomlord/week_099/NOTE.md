@@ -657,3 +657,92 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP18_早餐组合](https://leetcode-cn.com/problems/2vYnGI/)
+## 错误解法
+### 原因
+超时
+### 思路
+嵌套循环
+### 代码
+```java
+class Solution {
+    public int breakfastNumber(int[] staple, int[] drinks, int x) {
+        int count = 0;
+        for (int s : staple) {
+            for (int d : drinks) {
+                if (s + d <= x) {
+                    count = (count + 1) % 1000000007;
+                }
+            }
+        }
+        return count;
+    }
+}
+```
+## 失败解法
+### 原因
+超时
+### 思路
+- 排序后计数，正序遍历staple数组
+- 然后倒序遍历drinks，判断当前坐标是否越界或者两数和超过目标值x
+  - 内层倒序遍历结束后，就可以获得能够满足外层staple元素的最大drink值对应的坐标，也就意味着所有比当前坐标小的元素也都满足，就可以直接累加了，无需再继续遍历
+- 外层遍历结束后，返回累加结果，累加过程中不能忘记取模
+### 代码
+```java
+class Solution {
+    public int breakfastNumber(int[] staple, int[] drinks, int x) {
+        int mod = 1000000007;
+
+        Arrays.sort(staple);
+        Arrays.sort(drinks);
+
+        int ans = 0;
+        for (int s : staple) {
+            int j = drinks.length - 1;
+            while (j >= 0 && s + drinks[j] > x) {
+               j--;
+            }
+
+            if (j < 0) {
+                break;
+            }
+
+            ans = (ans + j + 1) % mod;
+        }
+
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 排序后累加，再第二个错误解法的基础上，其实可以进一步缩减内层循环的范围
+- 因为外层是升序的，所以外层的前一个元素与drinks数组中不能满足x要求的这些内层元素，也无法和当前外层元素达成满足x的情况，所以内层可以直接从上一次循环得到的内层坐标值开始判断，无需再从drinks的尾部开始
+### 代码
+```java
+class Solution {
+    public int breakfastNumber(int[] staple, int[] drinks, int x) {
+        int mod = 1000000007;
+
+        Arrays.sort(staple);
+        Arrays.sort(drinks);
+
+        int ans = 0;
+        int j = drinks.length - 1;
+        for (int s : staple) {
+            
+            while (j >= 0 && s + drinks[j] > x) {
+               j--;
+            }
+
+            if (j < 0) {
+                break;
+            }
+
+            ans = (ans + j + 1) % mod;
+        }
+
+        return ans;
+    }
+}
+```
