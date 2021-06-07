@@ -43,3 +43,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1200_最小绝对差](https://leetcode-cn.com/problems/minimum-absolute-difference/)
+## 解法
+### 思路
+- 排序
+- 遍历比较
+- 保存
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> minimumAbsDifference(int[] arr) {
+        int len = arr.length;
+
+        Arrays.sort(arr);
+        int min = arr[len - 1];
+        for (int i = 1; i < len; i++) {
+            min = Math.min(min, arr[i] - arr[i - 1]);
+        }
+
+        List<List<Integer>> ans = new ArrayList<>();
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] - arr[i - 1] == min) {
+                List<Integer> list = new ArrayList<>();
+                list.add(arr[i - 1]);
+                list.add(arr[i]);
+                ans.add(list);
+            }
+        }
+
+        return ans;
+    }
+}
+```
