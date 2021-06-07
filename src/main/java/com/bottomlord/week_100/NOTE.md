@@ -75,3 +75,16 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP17_速算机器人](https://leetcode-cn.com/problems/nGK0Fy/)
+## 解法
+### 思路
+- 每出现一个字符就代表将当前值*2
+- 所以结果就是2的len次方
+### 代码
+```java
+class Solution {
+    public int calculate(String s) {
+        return (int) Math.pow(2, s.length());
+    }
+}
+```
