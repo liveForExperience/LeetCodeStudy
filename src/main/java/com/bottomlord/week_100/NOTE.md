@@ -88,3 +88,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1049_最后一块石头的重量II](https://leetcode-cn.com/problems/last-stone-weight-ii/)
+## 解法
+### 思路
+- 要使最终剩下的石头的重量最小，可以理解成将石头分成2堆，各自的总重量的差值越小，就相当于剩下的石头的重量越小
+- 如果A代表一堆，B代表另一堆，那么如果`A<sum/2`，则A越大，B也就越接近`sum/2`，故问题变成：求`sum/2`范围内，求一堆石头的最大和，而最终结果的`sum - 2 * A`
+- 在特定范围内，求一堆书中的最值，可以用0/1背包的最值公式来解决：
+    - dp[i]：代表最大重量为i的范围内，能够得到的最大石头重量
+    - 状态转移方程：`dp[i] = max(dp[i], dp[i - stone] + stone)`
+        - 这个代表，在i的范围内，是否还要增加重量，并比较增加和不增加的大小
+    - 最终得到的最大值就是`dp[len - 1]`
+- 最终的结果就是`sum - 2 * dp[len - 1]`
+- [学习的题解](https://leetcode-cn.com/problems/last-stone-weight-ii/solution/yi-pian-wen-zhang-chi-tou-bei-bao-wen-ti-5lfv/)
+### 代码
+```java
+class Solution {
+    public int lastStoneWeightII(int[] stones) {
+        int sum = Arrays.stream(stones).sum(), len = stones.length, target = sum / 2;
+        int[] dp = new int[target + 1];
+        for (int stone : stones) {
+            for (int i = target; i >= stone; i--) {
+                dp[i] = Math.max(dp[i], dp[i - stone] + stone);
+            }
+        }
+
+        return sum - 2 * dp[target];
+    }
+}
+```
