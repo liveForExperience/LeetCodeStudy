@@ -116,3 +116,56 @@ class Solution {
     }
 }
 ```
+# [LeetCode_879_盈利计划](https://leetcode-cn.com/problems/profitable-schemes/)
+## 解法
+### 思路
+动态规划：
+1. 问题中的变量：
+    - 项目数量：
+        - 项目需要的人数
+        - 项目的利润
+    - 人数
+    - 利润
+2. 满足最小收益的方案数
+3. 在求解范式中，可以将与求解结果最直接相关的变量，作为dp数组的最后一维去求解，所以此处就是利润
+4. 项目数中包含了项目需要的人数和项目利润两个子变量，且项目所需人数与第二个变量人数有关系，所以可以将项目数作为dp的第一个维度，人数作为dp的后一个维度。又因为在状态转移过程中，每一次都只依赖前一个状态，所以第一维可以省略，从而减小空间消耗
+5. 遍历求解思路：
+    - 初始状态：`dp[0][0] = 1`，代表0个项目0个人0收益的方案数是1个
+    - 状态转移方程：`dp[i][j] += dp[i - ci][j - cj]`，当前项目，需要i个人的项目利润为j的情况下，有的方案数就是刨去当前项目要的人和产生利润的状态时所具有的方案数
+    - 三层循环：
+        - 最外层遍历所有的项目数，获取当前项目需要的人数和产生的利润
+        - 内部两层循环：
+            - 第一层遍历：以前的所有状态中，枚举，在总人数n及更少的情况下，可以抽调走当前项目需要的人后，还有执行方案的状态
+            - 第二层遍历：以前的所有状态中，刨去当前项目的利润，还能够正好达到当前最小利润，或者超出当前最小利润的所有状态的方案数。在计算的时候，从minProfit开始倒序遍历，减去当前利润后，这个剩余需要的利润值在以前的状态里能够找到的对应的方案，这个差值很可能是负数，这种状态就代表了超出了minProfit，此时就把他当做0来累加
+### 代码
+```java
+class Solution {
+    public int profitableSchemes(int n, int minProfit, int[] group, int[] profit) {
+        int g = group.length, mod = 1000000007;
+        int[][] dp = new int[n + 1][minProfit + 1];
+        dp[0][0] = 1;
+
+        for (int i = 0; i < g; i++) {
+            int gCost = group[i], pGet = profit[i];
+            for (int j = n; j >= gCost; j--) {
+                for (int k = minProfit; k >= 0; k--) {
+                    dp[j][k] += dp[j - gCost][Math.max(k - pGet, 0)];
+                    if (dp[j][k] > mod) {
+                        dp[j][k] -= mod;
+                    }
+                }
+            }
+        }
+
+        int sum = 0;
+        for (int i = 0; i <= n; i++) {
+                sum += dp[i][minProfit];
+                if (sum > mod) {
+                    sum -= mod;
+                }
+        }
+
+        return sum;
+    }
+}
+```
