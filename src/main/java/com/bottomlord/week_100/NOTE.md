@@ -169,3 +169,61 @@ class Solution {
     }
 }
 ```
+# [LeetCode_518_零钱兑换](https://leetcode-cn.com/problems/coin-change-2/)
+## 解法
+### 思路
+动态规划：
+- 状态转移公式：`dp[k][i] = dp[k - 1][i] + dp[k, i - k]`
+- 解释：前k种硬币凑成金额i的组合个数，等于两种情况的和：
+    - 不用当前硬币就凑齐金额i的个数
+    - 用当前这种硬币才能凑足金额i的个数，也就是用到k-1种硬币后能够凑齐`i - coins[k]`的个数
+- 细节：
+    - 初始化：
+        - k的长度为coins.length + 1，因为需要考虑到没有使用硬币的情况，在这个前提下，dp[0][0] = 1，就代表不选用硬币获得总金额为0的可能组合是1
+        - i的长度为amount + 1，同样是为了将dp[0][0]的状态记录在数组中
+        - 填充初始值：所有选择币种的情况下，在获取总金额为0的状态时，就有1种组合可能
+    - 内外层的循环分别为：
+        - 外层遍历币种，代表用到第几种硬币，因为此时考虑了不选用硬币的情况，所以坐标是从1开始的
+        - 内层遍历总金额，总金额遍历也是从1开始。内部判断时：
+            - 如果当前的总金额小于选择的币种值，那么就不用考虑选用当前硬币的情况，直接将当前状态等价为不选用当前币值就能获取到总金额的状态值
+            - 否则就要将两种情况考虑进去：不选当前币种就能获取总金额的组合数 + 选用当前币种正好达到总金额的组合数（也就是选用当前币种，能够达到j - coins[i]金额的组合数，为什么是当前币种，是因为当前币种可能用多次，且初始化的时候已经将金额值为0的时候考虑进去，且如果当前币种大于总金额，会将不选用当前币种的值等价过来，所以就用当前币种来处理状态转移）
+    - 因为数组长度是+1的，所以获取当前币种的金额时，坐标值要-1
+### 代码
+```java
+class Solution {
+    public int change(int amount, int[] coins) {
+        int[][] dp = new int[coins.length + 1][amount + 1];
+        for (int i = 0; i <= coins.length; i++) {
+            dp[i][0] = 1;
+        }
+
+        for (int i = 1; i <= coins.length; i++) {
+            for (int j = 1; j <= amount; j++) {
+                if (j < coins[i - 1]) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - coins[i - 1]];
+                }
+            }
+        }
+
+        return dp[coins.length][amount];
+    }
+}
+```
+# [LeetCode_279_完全平方数](https://leetcode-cn.com/problems/perfect-squares/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1449_数位成本和为目标值的最大数字](https://leetcode-cn.com/problems/form-largest-integer-with-digits-that-add-up-to-target/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
