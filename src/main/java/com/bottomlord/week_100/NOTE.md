@@ -211,19 +211,3 @@ class Solution {
     }
 }
 ```
-# [LeetCode_279_完全平方数](https://leetcode-cn.com/problems/perfect-squares/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
-# [LeetCode_1449_数位成本和为目标值的最大数字](https://leetcode-cn.com/problems/form-largest-integer-with-digits-that-add-up-to-target/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
