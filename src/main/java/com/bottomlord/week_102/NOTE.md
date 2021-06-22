@@ -32,3 +32,75 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offer38_1_字符串的排列](https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/)
+## 解法
+### 思路
+记忆化+回溯
+### 代码
+```java
+class Solution {
+    public String[] permutation(String s) {
+        Set<String> ans = new HashSet<>();
+        backTrack(s, new StringBuilder(), new HashSet<>(), ans);
+        return ans.toArray(new String[0]);
+    }
+
+    private void backTrack(String s, StringBuilder sb, Set<Integer> memo, Set<String> ans) {
+        if (memo.size() == s.length()) {
+            ans.add(sb.toString());
+            return;
+        }
+
+        for (int i = 0; i < s.length(); i++) {
+            if (memo.contains(i)) {
+                continue;
+            }
+
+            int len = sb.length();
+            sb.append(s.charAt(i));
+            memo.add(i);
+            backTrack(s, sb, memo, ans);
+            memo.remove(i);
+            sb.setLength(len);
+        }
+    }
+}
+```
+## 解法二
+### 思路
+在解法一回溯的基础上，使用旋转的方式替换追加的方式来记录当前枚举的字符串状态，同时在回溯的过程中，在每一层用一个布尔数组来记录当前层是否用过遍历到的字符，如果用到了就跳过，否则就用当前遍历到的字符作为当前层的字符
+### 代码
+```java
+class Solution {
+    public String[] permutation(String s) {
+        List<String> ans = new ArrayList<>();
+        backTrack(s.toCharArray(), 0, ans);
+        return ans.toArray(new String[0]);
+    }
+    
+    private void backTrack(char[] cs, int index, List<String> ans) {
+        if (index == cs.length - 1) {
+            ans.add(new String(cs));
+            return;
+        }
+        
+        boolean[] used = new boolean[256];
+        for (int i = index; i < cs.length; i++) {
+            if (used[cs[i]]) {
+                continue;
+            }
+            
+            used[cs[i]] = true;
+            swap(cs, index, i);
+            backTrack(cs, index + 1, ans);
+            swap(cs,index, i);
+        }
+    }
+    
+    private void swap(char[] cs, int x, int y) {
+        char c = cs[x];
+        cs[x] = cs[y];
+        cs[y] = c;
+    }
+}
+```
