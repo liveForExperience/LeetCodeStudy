@@ -104,3 +104,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1243_数组变换](https://leetcode-cn.com/problems/array-transformation/)
+## 解法
+### 思路
+模拟，2层循环：
+- 外层依据状态变量判断是否结束
+- 内层遍历数组，依据题目要求变更元素，每次只变更一次
+- 如果内层一次都没有变更，就结束外层循环
+- 注意需要复制原来的数组，每个元素的变化都是在遍历前的状态上做的变更，而不是边变化边变更。同时要注意每次外层循环的时候都要复制一次，否则会导致2个引用同时指向同一个数组，导致又变成边遍历边变化的情况
+### 代码
+```java
+class Solution {
+    public List<Integer> transformArray(int[] arr) {
+        boolean flag = true;
+        while (flag) {
+            int count = 0;
+            int[] copy = Arrays.copyOf(arr, arr.length);    
+            for (int i = 1; i < arr.length - 1; i++) {
+                if (arr[i] < arr[i - 1] && arr[i] < arr[i + 1]) {
+                    copy[i]++;
+                    count++;
+                }
+
+                if (arr[i] > arr[i - 1] && arr[i] > arr[i + 1]) {
+                    copy[i]--;
+                    count++;
+                }
+            }
+            
+            arr = copy;
+            flag = count != 0;
+        }
+
+        return Arrays.stream(arr).boxed().collect(Collectors.toList());
+    }
+}
+```
