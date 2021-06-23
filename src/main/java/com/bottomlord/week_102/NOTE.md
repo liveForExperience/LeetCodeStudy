@@ -140,3 +140,21 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offer15_二进制中1的个数](https://leetcode-cn.com/problems/er-jin-zhi-zhong-1de-ge-shu-lcof/submissions/)
+## 解法
+### 思路
+- 通过位运算消去最低位的1：`n & (n - 1)`
+- 循环转变n，直到n为0为止，过程中计数
+### 代码
+```java
+public class Solution {
+    public int hammingWeight(int n) {
+        int count = 0;
+        while (n != 0) {
+            n &= n -1;
+            count++;
+        }
+        return count;
+    }
+}
+```
