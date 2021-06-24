@@ -3,9 +3,6 @@ package com.bottomlord.week_101;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.bottomlord.week_101.LeetCode_65_1_有效数字.CharType.*;
-import static com.bottomlord.week_101.LeetCode_65_1_有效数字.State.*;
-
 /**
  * @author ChenYue
  * @date 2021/6/21 8:17

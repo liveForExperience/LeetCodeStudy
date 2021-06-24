@@ -158,3 +158,70 @@ public class Solution {
     }
 }
 ```
+# [LeetCode_1252_奇数值单元格的数目](https://leetcode-cn.com/problems/cells-with-odd-values-in-a-matrix/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int oddCells(int m, int n, int[][] indices) {
+        int[][] matrix = new int[m][n];
+        for (int[] indic : indices) {
+            for (int i = 0; i < m; i++) {
+                matrix[i][indic[1]]++;
+            }
+            
+            for (int i = 0; i < n; i++) {
+                matrix[indic[0]][i]++;
+            }
+        }
+        
+        int count = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] % 2 == 1) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+- 相较于解法一记录每一个元素，这里只记录哪些行和列被改变
+- 记录的时候也只做异或1的计算，只记录是否增加奇数次的状态
+- 最后行数为1的乘以行的个数，列数为1的乘以列的个数，两数相加就得到一个近似答案的值
+- 但是如上的相加，获得的个数中，有一部分是要减去的，那就是行列的交叉点。因为行列各加1次，等于没有增加
+- 那么就需要在行求出的总数和列求出的总数上减去这些点，那就相当于是统计的行数和统计的列数相乘组成的矩形面积，而这个面积分别在行和列的总数上减去，相当于减2次
+    - `row * m + col * n - 2 * row * col`，m是行上的元素个数，n是列上的元素个数
+### 代码
+```java
+class Solution {
+    public int oddCells(int m, int n, int[][] indices) {
+        int[] row = new int[m], col = new int[n];
+        for (int[] indic : indices) {
+            row[indic[0]] ^= 1;
+            col[indic[1]] ^= 1;
+        }
+        
+        int rowNum = 0, colNum = 0;
+        for (int num : row) {
+            if (num == 1) {
+                rowNum++;
+            }
+        }
+        
+        for (int num : col) {
+            if (num == 1) {
+                colNum++;
+            }
+        }
+        
+        return rowNum * n + colNum * m - 2 * rowNum * colNum;
+    }
+}
+```
