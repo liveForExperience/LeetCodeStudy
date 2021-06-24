@@ -225,3 +225,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_149_直线上最多的点数](https://leetcode-cn.com/problems/max-points-on-a-line/)
+## 解法
+### 思路
+- 如果两个点在同一直线上，那么这两个点一定符合`y = ax + b`的公式
+- 如果将2个y相减就得到了`y1 - y2 = a(x1 - x2)`，进而推得`a = (y1 - y2) / (x1 - x2)`，所以两个点的差的比值一定是相等的
+- 所以可以统计比值对应的个数，从而可以获得一条线上的最大值
+- 注意x或y相减为0的时候的特殊情况，double会保留正负值，需要做统一处理
+### 代码
+```java
+class Solution {
+    public int maxPoints(int[][] points) {
+        int len = points.length;
+        if (len < 3) {
+            return len;
+        }
+
+        int ans = 2;
+        for (int i = 0; i < len; i++) {
+            Map<Double, Integer> map = new HashMap<>();
+            int max = 0;
+            for (int j = i + 1; j < len; j++) {
+                int x = points[i][0] - points[j][0];
+                int y = points[i][1] - points[j][1];
+
+                Double num = y == 0 ? Double.POSITIVE_INFINITY : x == 0 ? 0 : 1D * x / y;
+                map.put(num, map.getOrDefault(num, 0) + 1);
+                max = Math.max(max, map.get(num));
+            }
+
+            ans = Math.max(max + 1, ans);
+        }
+
+        return ans;
+    }
+}
+```
