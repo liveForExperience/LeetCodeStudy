@@ -299,3 +299,26 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 新建新的数组
+- 依赖坐标模拟移动的动作
+  - 横坐标：判断移动了多少个row
+  - 纵坐标：判断移动了多少个单元格
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> shiftGrid(int[][] grid, int k) {
+        int row = grid.length, col = grid[0].length;
+        int[][] ans = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                ans[(i + (j + k) / col) % row][(j + k) % col] = grid[i][j];
+            }
+        }
+        
+        List list = Arrays.asList(ans);
+        return list;
+    }
+}
+```
