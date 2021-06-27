@@ -465,4 +465,62 @@ class Solution {
         cs[y] = c;
     }
 }
+```
+# [LeetCode_909_蛇梯棋](https://leetcode-cn.com/problems/snakes-and-ladders/)
+## 解法
+### 思路
+- 将二维数组降成一维
+- bfs获取结果
+  - 因为有穿梭的机制，所以不能直接通过获取size来搜索，而是通过map来记录坐标和步数的映射关系
+  - 每次搜索循环就是统计基于当前节点的后面6步分别是什么坐标，是否在映射关系中已经存在，如果存在就说明有穿梭的情况，直接跳过，不再搜索
+- 官方题目应该是机翻的，题目解释可以看这个[题解](https://leetcode-cn.com/problems/snakes-and-ladders/solution/java-bfskan-bu-dong-ti-xi-lie-by-quruiji-k21l/)
+### 代码
+```java
+class Solution {
+    public int snakesAndLadders(int[][] board) {
+        int n = board.length;
+        int[] nums = new int[n * n + 1];
+        boolean right = true;
+        int index = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = right ? 0 : n - 1;  right ? j < n : j >= 0; j += right ? 1 : -1) {
+                nums[index++] = board[i][j];
+            }
+            right = !right;
+        }
+
+        Queue<Integer> queue = new ArrayDeque<>();
+        queue.offer(1);
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1, 0);
+
+        while (!queue.isEmpty()) {
+            int num = queue.poll();
+            int step = map.get(num);
+            if (num == n * n) {
+                return step;
+            }
+            
+            for (int i = 1; i <= 6; i++) {
+                int nextNum = num + i;
+                if (nextNum <= 0 || nextNum > n * n) {
+                    continue;
+                }
+
+                if (nums[nextNum] != -1) {
+                    nextNum = nums[nextNum];
+                }
+                
+                if (map.containsKey(nextNum)) {
+                    continue;
+                }
+                
+                queue.offer(nextNum);
+                map.put(nextNum, step + 1);
+            }
+        }
+        
+        return -1;
+    }
+}
 ``` 
