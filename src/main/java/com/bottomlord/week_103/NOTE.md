@@ -247,3 +247,40 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+精简计算过程，每次都从目标值借1，这样取余获得的0-25的值就对应了A-Z的26个字母
+### 代码
+```java
+class Solution {
+    public String convertToTitle(int columnNumber) {
+        StringBuilder sb = new StringBuilder();
+        while (columnNumber != 0) {
+            columnNumber--;
+            sb.insert(0, (char)(columnNumber % 26 + 'A'));
+            columnNumber /= 26;
+        }
+        
+        return sb.toString();
+    }
+}
+```
+# [LeetCode_1271_十六进制魔术数字](https://leetcode-cn.com/problems/hexspeak/)
+## 解法
+### 思路
+这题和[168](https://leetcode-cn.com/problems/excel-sheet-column-title/)的区别是，168涉及Z的进位，这里的16进制，就是0-F，也就是0-15，所以不需要向上借1。
+### 代码
+```java
+class Solution {
+  public String convertToTitle(int columnNumber) {
+    StringBuilder sb = new StringBuilder();
+    while (columnNumber != 0) {
+      columnNumber--;
+      sb.insert(0, (char)(columnNumber % 26 + 'A'));
+      columnNumber /= 26;
+    }
+
+    return sb.toString();
+  }
+}
+```
