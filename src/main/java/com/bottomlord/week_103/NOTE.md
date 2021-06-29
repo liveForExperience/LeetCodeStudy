@@ -160,5 +160,90 @@ class Solution {
 - 最后，通过target从map中获取一个route的坐标集合，求这些集合中，不是-1且值最小的距离作为结果，如果都是-1，那就返回-1
 ### 代码
 ```java
+class Solution {
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        if (source == target) {
+            return 0;
+        }
 
+        int n = routes.length;
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        boolean[][] edges = new boolean[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int site : routes[i]) {
+                List<Integer> nums = map.getOrDefault(site, new ArrayList<>());
+                if (!nums.isEmpty()) {
+                    for (int num : nums) {
+                        edges[i][num] = edges[num][i] = true;
+                    }
+                }
+
+                nums.add(i);
+                map.put(site, nums);
+            }
+        }
+
+        int[] distance = new int[n];
+        Arrays.fill(distance, -1);
+
+        Queue<Integer> queue = new ArrayDeque<>();
+        for (int i : map.getOrDefault(source, new ArrayList<>())) {
+            distance[i] = 1;
+            queue.offer(i);
+        }
+
+        while (!queue.isEmpty()) {
+            int i = queue.poll();
+            for (int j = 0; j < n; j++) {
+                if (edges[i][j] && distance[j] == -1) {
+                    distance[j] = distance[i] + 1;
+                    queue.offer(j);
+                }
+            }
+        }
+
+        int ans = Integer.MAX_VALUE;
+        for (int i : map.getOrDefault(target, new ArrayList<>())) {
+            if (distance[i] != -1) {
+                ans = Math.min(ans, distance[i]);
+            }
+        }
+
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+}
+```
+# [LeetCode_168_Excel表列名称](https://leetcode-cn.com/problems/excel-sheet-column-title/)
+## 解法
+### 思路
+10进制转26进制
+- 字母按照ZABCD的顺序排列，放入数组中
+- 循环处理目标值，计算目标值与26的余数，求出的余数对应数组中的下标，从而从数组中获取字母，这个字母拼接在结果字符串的第一个位置，也就是说是从低位开始不断往高位累加字符
+- 需要注意，如果是整除的情况，也就是余数为0，那么字母肯定是Z，同时还要从高位借一个1，用来做进位，所以计算的时候就是得到整除情况，就从目标值上减去一个1
+- 循环过程就是不断用26去除目标值，使其不断缩小，直到为0为止
+### 代码
+```java
+class Solution {
+    public String convertToTitle(int columnNumber) {
+        char[] cs = new char[26];
+        cs[0] = 'Z';
+        cs[1] = 'A';
+        for (int i = 2; i < 26; i++) {
+            cs[i] = (char)(cs[i - 1] + 1);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (columnNumber != 0) {
+            int digit = columnNumber % 26;
+            if (digit == 0) {
+                columnNumber--;
+            }
+            sb.insert(0, cs[digit]);
+            columnNumber /= 26;
+        }
+
+        return sb.toString();
+    }
+}
 ```
