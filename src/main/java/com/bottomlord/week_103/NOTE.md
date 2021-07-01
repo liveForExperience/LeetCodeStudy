@@ -284,3 +284,143 @@ class Solution {
   }
 }
 ```
+# [LeetCode_offer37_序列化二叉树](https://leetcode-cn.com/problems/xu-lie-hua-er-cha-shu-lcof/)
+## 解法
+### 思路
+先序dfs
+### 代码
+```java
+public class Codec {
+    private static final String SPLIT_STR = "::";
+
+    public String serialize(TreeNode root) {
+        return doSerialize(root);
+    }
+
+    public TreeNode deserialize(String data) {
+        return doDeserialize(new LinkedList<>(Arrays.asList(data.split(","))));
+    }
+
+    private String doSerialize(TreeNode node) {
+        if (node == null) {
+            return "null";
+        }
+        
+        return node.val + "," + doSerialize(node.left) + "," + doSerialize(node.right);
+    }
+    
+    private TreeNode doDeserialize(LinkedList<String> list) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        
+        if (Objects.equals(list.getFirst(), "null")) {
+            list.removeFirst();
+            return null;
+        }
+        
+        TreeNode node = new TreeNode(Integer.parseInt(list.getFirst()));
+        list.removeFirst();
+        node.left = doDeserialize(list);
+        node.right = doDeserialize(list);
+        return node;
+    }
+}
+```
+## 解法二
+### 思路
+- 以`(T)num(T) | X`的方式序列化
+  - (T) 代表一棵子树
+  - num代表当前节点值
+  - X代表空树
+- 以中序遍历的方式序列化
+- 反序列化时如果遇到X，就代表当前子树到当前节点就不需要继续反序列化了
+### 代码
+```java
+public class Codec {
+    public String serialize(TreeNode root) {
+        if (root == null) {
+            return "X";
+        }
+        String left = "(" + serialize(root.left) + ")";
+        String right = "(" + serialize(root.right) + ")";
+        return left + root.val + right;
+    }
+
+    public TreeNode deserialize(String data) {
+        return parse(data, new int[]{0});
+    }
+
+    private TreeNode parse(String data, int[] index) {
+        if (data.charAt(index[0]) == 'X') {
+            index[0]++;
+            return null;
+        }
+
+        TreeNode node = new TreeNode(0);
+        node.left = subParse(data, index);
+        node.val = parseInt(data, index);
+        node.right = subParse(data, index);
+        return node;
+    }
+
+    private TreeNode subParse(String data, int[] index) {
+        index[0]++;
+        TreeNode node = parse(data, index);
+        index[0]++;
+        return node;
+    }
+
+    private int parseInt(String data, int[] index) {
+        int digit = 0;
+        boolean sign = true;
+        if (data.charAt(index[0]) == '-') {
+            index[0]++;
+            sign = false;
+        }
+        
+        while (Character.isDigit(data.charAt(index[0]))) {
+            digit = digit * 10 + (data.charAt(index[0]++) - '0');
+        }
+        return sign ? digit : -digit;
+    }
+}
+```
+# [LeetCode_lcp07_传递消息](https://leetcode-cn.com/problems/chuan-di-xin-xi/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public int numWays(int n, int[][] relation, int k) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int[] arr : relation) {
+            List<Integer> list = map.getOrDefault(arr[0], new ArrayList<>());
+            list.add(arr[1]);
+            map.put(arr[0], list);
+        }
+
+        return dfs(map, 0, n - 1, 0, k);
+    }
+
+    private int dfs(Map<Integer, List<Integer>> map, int cur, int target, int round, int targetRound) {
+        if (round > targetRound) {
+            return 0;
+        }
+
+        if (round == targetRound) {
+            return cur == target ? 1 : 0;
+        }
+
+        int count = 0;
+        List<Integer> list = map.getOrDefault(cur, new ArrayList<>());
+        for (int num : list) {
+
+            count += dfs(map, num, target, round + 1, targetRound);
+        }
+
+        return count;
+    }
+}
+```
