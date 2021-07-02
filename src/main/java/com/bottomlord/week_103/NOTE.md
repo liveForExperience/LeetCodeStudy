@@ -462,3 +462,118 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1833_雪糕的最大数量](https://leetcode-cn.com/problems/maximum-ice-cream-bars/)
+## 解法
+### 思路
+排序+累加判断
+### 代码
+```java
+class Solution {
+    public int maxIceCream(int[] costs, int coins) {
+        Arrays.sort(costs);
+        int count = 0;
+        for (int cost : costs) {
+            coins -= cost;
+            if (coins < 0) {
+                return count;
+            }
+            count++;
+        }
+        return count;
+    }
+}
+```
+## 失败解法
+### 原因
+超时
+### 思路
+自己实现快排
+### 代码
+```java
+class Solution {
+  public int maxIceCream(int[] costs, int coins) {
+    sort(costs);
+    int count = 0;
+    for (int cost : costs) {
+      coins -= cost;
+      if (coins < 0) {
+        return count;
+      }
+      count++;
+    }
+    return count;
+  }
+
+  private void sort(int[] arr) {
+    doSort(arr, 0, arr.length - 1);
+  }
+
+  private void doSort(int[] arr, int start, int end) {
+    if (start >= end) {
+      return;
+    }
+
+    int partition = partition(arr, start, end);
+    doSort(arr, start, partition - 1);
+    doSort(arr, partition + 1, end);
+  }
+
+  private int partition(int[] arr, int start, int end) {
+    while (start < end) {
+      while (start < end && arr[start] <= arr[end]) {
+        end--;
+      }
+      swap(arr, start, end);
+
+      while (start < end && arr[start] <= arr[end]) {
+        start++;
+      }
+      swap(arr, start, end);
+    }
+    return start;
+  }
+
+  private void swap(int[] arr, int x, int y) {
+    int tmp = arr[x];
+    arr[x] = arr[y];
+    arr[y] = tmp;
+  }
+}
+```
+## 解法二
+### 思路
+桶排序+迭代累加
+### 代码
+```java
+class Solution {
+    public int maxIceCream(int[] costs, int coins) {    
+        int max = 0;
+        for (int cost : costs) {
+            max = Math.max(max, cost);
+        }
+        int[] arr = new int[max + 1];
+        
+        for (int cost : costs) {
+            arr[cost]++;
+        }
+        
+        int count = 0, sum = 0;
+        for (int i = 0; i < arr.length; i++) {
+            int num = arr[i];
+            if (num == 0) {
+                continue;
+            }
+            
+            if (i * num + sum <= coins) {
+                sum += i * num;
+                count += num;
+            } else {
+                count += (coins - sum) / i;
+                return count;
+            }
+        }
+        
+        return count;
+    }
+}
+```
