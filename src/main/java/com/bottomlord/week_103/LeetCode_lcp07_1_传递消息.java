@@ -30,7 +30,6 @@ public class LeetCode_lcp07_1_传递消息 {
         int count = 0;
         List<Integer> list = map.getOrDefault(cur, new ArrayList<>());
         for (int num : list) {
-
             count += dfs(map, num, target, round + 1, targetRound);
         }
 

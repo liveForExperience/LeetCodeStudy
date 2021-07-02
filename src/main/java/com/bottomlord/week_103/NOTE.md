@@ -577,3 +577,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1279_红绿灯路口](https://leetcode-cn.com/problems/traffic-light-controlled-intersection/)
+## 解法
+### 思路
+加同步锁，每次判断的时候锁住，如果当前车子所在的路不是绿灯，就翻转为绿灯，并通过
+### 代码
+```java
+    class TrafficLight {
+  private boolean aIsGreen;
+  public TrafficLight() {
+    this.aIsGreen = true;
+  }
+
+  public void carArrived(
+          int carId,           // ID of the car
+          int roadId,          // ID of the road the car travels on. Can be 1 (road A) or 2 (road B)
+          int direction,       // Direction of the car
+          Runnable turnGreen,  // Use turnGreen.run() to turn light to green on current road
+          Runnable crossCar    // Use crossCar.run() to make car cross the intersection 
+  ) {
+    doCarArrived(roadId, turnGreen, crossCar);
+  }
+
+  private synchronized void doCarArrived(
+          int roadId,
+          Runnable turnGreen,
+          Runnable crossCar
+  ) {
+    if ((roadId != 1) == aIsGreen) {
+      turnGreen.run();
+      aIsGreen = !aIsGreen;
+    }
+    crossCar.run();
+  }
+}
+```
