@@ -612,3 +612,67 @@ class Solution {
   }
 }
 ```
+# [LeetCode_451_根据字符出现次数排序](https://leetcode-cn.com/problems/sort-characters-by-frequency/)
+## 解法
+### 思路
+- map统计字符出现次数
+- 放入entry数组中依照value大小降序排序
+- 遍历entry数组元素，依照key和value填充字符串
+### 代码
+```java
+class Solution {
+    public String frequencySort(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        char[] cs = s.toCharArray();
+        for (char c : cs) {
+            map.put(c, map.getOrDefault(c, 0) + 1);
+        }
+        
+        Map.Entry<Character, Integer>[] entries = new Map.Entry[map.size()];
+        int index = 0;
+        for (Map.Entry<Character, Integer> characterIntegerEntry : map.entrySet()) {
+            entries[index++] = characterIntegerEntry;
+        }
+        Arrays.sort(entries, (x,y) -> y.getValue() - x.getValue());
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Character, Integer> entry : entries) {
+            int time = entry.getValue();
+            while (time-- > 0) {
+                sb.append(entry.getKey());
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+``` 
+## 解法二
+### 思路
+使用数组替换map
+### 代码
+```java
+class Solution {
+    public String frequencySort(String s) {
+        int[][] bucket = new int[256][2];
+        char[] cs = s.toCharArray();
+        for (char c : cs) {
+            bucket[c][0] = c;
+            bucket[c][1]++;
+        }
+
+        Arrays.sort(bucket, (x, y) -> y[1] - x[1]);
+        StringBuilder sb = new StringBuilder();
+        for (int[] arr : bucket) {
+            if (arr[1] == 0) {
+                break;
+            }
+            
+            while (arr[1]-- > 0) {
+                sb.append((char) arr[0]);
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
