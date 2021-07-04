@@ -676,3 +676,33 @@ class Solution {
     }
 }
 ```
+# [LeetCode_645_错误的集合](https://leetcode-cn.com/problems/set-mismatch/)
+## 解法
+### 思路
+- 遍历并桶计数
+- 遍历桶找到元素
+### 代码
+```java
+class Solution {
+    public int[] findErrorNums(int[] nums) {
+        int n = nums.length;
+        int[] bucket = new int[n + 1];
+        for (int i = 0; i < n ; i++) {
+            bucket[nums[i]]++;
+        }
+
+        int[] ans = new int[2]; 
+        for (int i = 1; i < n + 1; i++) {
+            if (bucket[i] == 0) {
+                ans[1] = i;
+            }
+            
+            if (bucket[i] == 2) {
+                ans[0] = i;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
