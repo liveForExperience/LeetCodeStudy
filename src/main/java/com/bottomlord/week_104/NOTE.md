@@ -78,3 +78,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1418_点菜展示表](https://leetcode-cn.com/problems/display-table-of-food-orders-in-a-restaurant/)
+## 解法
+### 思路
+- 遍历orders，TreeSet集合存储菜名作为表头
+- 初始化一个TreeMap，用于存储桌子和菜名及数量的映射关系，value初始化为一个map，这个map的key就是TreeSet的值
+- 遍历TreeSet生成表头
+- 遍历TreeMap，内部遍历value位置的map，生成二维表的数据
+### 代码
+```java
+class Solution {
+    public List<List<String>> displayTable(List<List<String>> orders) {
+         TreeSet<String> set = new TreeSet<>();
+        TreeMap<String, TreeMap<String, Integer>> map = new TreeMap<>(Comparator.comparingInt(Integer::parseInt));
+        for (List<String> order : orders) {
+            set.add(order.get(2));
+            map.put(order.get(1), new TreeMap<>());
+        }
+
+        for (Map.Entry<String, TreeMap<String, Integer>> entry : map.entrySet()) {
+            TreeMap<String, Integer> treeMap = entry.getValue();
+            for (String str : set) {
+                treeMap.put(str, 0);
+            }
+        }
+
+        for (List<String> order : orders) {
+            TreeMap<String, Integer> treeMap = map.get(order.get(1));
+            treeMap.put(order.get(2), treeMap.getOrDefault(order.get(2), 0) + 1);
+        }
+
+        List<List<String>> ans = new ArrayList<>();
+        List<String> head = new ArrayList<>();
+        head.add("Table");
+        head.addAll(set);
+        ans.add(head);
+
+        for (Map.Entry<String, TreeMap<String, Integer>> entry : map.entrySet()) {
+            List<String> list = new ArrayList<>();
+            list.add(entry.getKey());
+            list.addAll(entry.getValue().values().stream().map(String::valueOf).collect(Collectors.toList()));
+            ans.add(list);
+        }
+
+        return ans;
+    }
+}
+```
