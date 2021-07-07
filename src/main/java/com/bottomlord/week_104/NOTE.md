@@ -179,3 +179,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1711_大餐计数](https://leetcode-cn.com/problems/count-good-meals/)
+## 解法
+### 思路
+- 遍历数组存储数值和出现的个数
+- 存储20个2的整数幂的值
+- 遍历数组，查找能够和当前值组成整数幂的数，并获取其个数，通过个数相乘得到组合数，并记录下处理过的两个值
+- 继续遍历并跳过处理过的值，将获得的值累加
+- 累加值先用long声明，防止溢出
+### 代码
+```java
+class Solution {
+    public int countPairs(int[] deliciousness) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int d : deliciousness) {
+            map.put(d, map.getOrDefault(d, 0) + 1);
+        }
+
+        int[] sum = new int[22];
+        sum[0] = 1;
+        for (int i = 1; i <= 21; i++) {
+            sum[i] = sum[i - 1] * 2;
+        }
+
+        Set<Integer> memo = new HashSet<>();
+        long count = 0;
+        for (Integer d : map.keySet()) {
+            for (int num : sum) {
+                if (memo.contains(num - d)) {
+                    continue;
+                }
+
+                if (map.containsKey(num - d)) {
+                    long c = map.get(num - d);
+
+                    if (num - d == d) {
+                        count += (c * (c - 1) / 2) % 1000000007;
+                    } else {
+                        count += (c * map.get(d)) % 1000000007;
+                    }
+
+                    memo.add(d);
+                }
+            }
+        }
+
+        return (int)count;
+    }
+}
+```
