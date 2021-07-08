@@ -228,3 +228,93 @@ class Solution {
     }
 }
 ```
+# [LeetCode_930_和相同的二元子数组](https://leetcode-cn.com/problems/binary-subarrays-with-sum/)
+## 失败解法
+### 原因
+超时
+### 思路
+前缀和
+### 代码
+```java
+class Solution {
+    public int numSubarraysWithSum(int[] nums, int goal) {
+        int n = nums.length;
+        int[] sum = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            sum[i] = sum[i - 1] + nums[i - 1];
+        }
+        
+        int count = 0;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (sum[i] - sum[j] == goal) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+}
+```
+## 解法
+### 思路
+- 前缀和为sums，区间范围(i,j]的和为goal，那么就可以得到`sums[j] - sums[i] = goal`的等式
+- 遍历nums数组求sum并记录
+  - 每一次循环时获得的sum就是等式中的sums[j]
+  - 用map存储当前的sum，并计数，这些统计的sum在以后的循环过程中就作为了等式中的`sums[i]`
+- 然后通过等式求出要获取的sums[i]的值，再通过这个值到map中去查个数，将这个个数累加就是题目要求的答案
+- map初始化的时候要加一个{0,1}的entry，方便统计初始就符合要求的情况
+### 代码
+```java
+class Solution {
+    public int numSubarraysWithSum(int[] nums, int goal) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int sum = 0, count = 0;
+        for (int num : nums) {
+            sum += num;
+            count += map.getOrDefault(sum - goal, 0);
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+        
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+滑动窗口，因为元素值为非负数
+- 使用三个指针：
+  - right：作为窗口的右边界
+  - left1：作为窗口的最小左边界
+  - left2：作为窗口的最大左边界
+- left1 <= left2 <= right + 1
+- 遍历数组，确定right指针的位置，累加sum值
+- 遍历left1指针，确定left1,right区间内值为goal的第一个元素的位置
+- 遍历left2指针，确定left2，right区间内值为goal的最后一个元素+1的位置
+- 然后left1和left2区间的距离就是right指针作为窗口右边界，能够获得的所有窗口可能个数
+### 代码
+```java
+class Solution {
+    public int numSubarraysWithSum(int[] nums, int goal) {
+        int left1 = 0, left2 = 0, n = nums.length, sum = 0, count = 0, sum1 = 0, sum2 = 0;
+        for (int right = 0; right < n; right++) {
+            sum += nums[right];
+            
+            while (left1 <= right && sum1 < sum - goal) {
+                sum1 += nums[left1];
+                left1++;
+            }
+            
+            while (left2 <= right && sum2 <= sum - goal) {
+                sum2 += nums[left2];
+                left2++;
+            }
+            
+            count += left2 - left1;
+        }
+        
+        return count;
+    }
+}
+```
