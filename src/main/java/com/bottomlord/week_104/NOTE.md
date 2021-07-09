@@ -359,3 +359,23 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1281_整数的各位积和之差](https://leetcode-cn.com/problems/subtract-the-product-and-sum-of-digits-of-an-integer/)
+## 解法
+### 思路
+模拟计算
+### 代码
+```java
+class Solution {
+    public int subtractProductAndSum(int n) {
+        int amass = 1, sum = 0;
+        while (n > 0) {
+            int digit = n % 10;
+            amass *= digit;
+            sum += digit;
+            n /= 10;
+        }
+
+        return amass - sum;
+    }
+}
+```
