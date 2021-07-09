@@ -379,3 +379,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_有序数组中出现次数超过25%的元素](https://leetcode-cn.com/problems/element-appearing-more-than-25-in-sorted-array/)
+## 解法
+### 思路
+桶计数
+### 代码
+```java
+class Solution {
+    public int findSpecialInteger(int[] arr) {
+        int max = Integer.MIN_VALUE;
+        for (int num : arr) {
+            max = Math.max(num, max);
+        }
+        
+        int[] bucket = new int[max + 1];
+        for (int num : arr) {
+            bucket[num]++;
+            if (bucket[num] > arr.length / 4) {
+                return num;
+            }
+        }
+        return -1;
+    }
+}
+```
+## 解法二
+### 思路
+因为是有序的，所以这个元素组成的子数组，其头尾子数组头尾元素差距一定大于数组长度的4分之1，所以相距4分之1的元素如果相等就一定是那个元素
+### 代码
+```java
+class Solution {
+    public int findSpecialInteger(int[] arr) {
+        for (int i = 0, len = arr.length / 4; i < arr.length - len; i++) {
+            if (arr[i] == arr[i + len]) {
+                return arr[i];
+            }
+        }
+        return -1;
+    }
+}
+```
