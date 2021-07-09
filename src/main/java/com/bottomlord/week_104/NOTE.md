@@ -318,3 +318,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_interview_1710_主要元素](https://leetcode-cn.com/problems/find-majority-element-lcci/)
+## 解法
+### 思路
+Boyer-Moore投票算法：
+- 因为主要元素超过数组的一半，所以如果非主要和主要元素一一抵消，那么最终会剩下主要元素
+- 依据如上的思路，在遍历过程中记录元素及元素的出现次数
+  - 初始化两个变量，candidate和count
+    - candidate：用来记录可能的主要元素
+    - count：用来记录可能主要元素的个数
+  - 如果发现count为0，那么就将当前遍历到的元素作为candidate，并count+1
+  - 如果遍历到的元素与candidate相同，就count+1，否则就count-1
+- 最后candidate的值就是可能的主要元素
+- 因为数组中可能不存在主要元素，所以还要再验证这个candidate值的出现次数是否超过半数
+### 代码
+```java
+class Solution {
+    public int majorityElement(int[] nums) {
+        int candidate = -1, count = 0;
+        for (int num : nums) {
+            if (count == 0) {
+                candidate = num;
+            }
+
+            if (candidate == num) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+
+        count = 0;
+        for (int num : nums) {
+            if (num == candidate) {
+                count++;
+            }
+        }
+
+        return count > nums.length / 2 ? candidate : -1;
+    }
+}
+```
