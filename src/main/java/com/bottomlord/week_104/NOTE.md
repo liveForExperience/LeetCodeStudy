@@ -419,3 +419,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_981_基于实践的键值存储](https://leetcode-cn.com/problems/time-based-key-value-store/)
+## 解法
+### 思路
+- 使用map：key为key，value为treemap，treemap的key为timestamp，value为value存储
+- 使用ceilingentry这个api来获取比目标timestamp小的最entry
+- 同时注意如果目标timestamp比已存在的key小，api会返回null，这种情况要处理并返回空字符串
+### 代码
+```java
+class TimeMap {
+    private Map<String, TreeMap<Integer, String>> map;
+    public TimeMap() {
+        this.map = new HashMap<>();
+    }
+
+    public void set(String key, String value, int timestamp) {
+        TreeMap<Integer, String> treeMap = map.getOrDefault(key, new TreeMap<>(Comparator.reverseOrder()));
+        treeMap.put(timestamp, value);
+        map.put(key, treeMap);
+    }
+
+    public String get(String key, int timestamp) {
+        TreeMap<Integer, String> treeMap = map.get(key);
+        if (treeMap == null) {
+            return "";
+        }
+
+        int floor = treeMap.lastKey();
+        if (timestamp < floor) {
+            return "";
+        }
+
+        return treeMap.ceilingEntry(timestamp).getValue();
+    }
+}
+```
