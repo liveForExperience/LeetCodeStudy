@@ -477,3 +477,53 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1239_串联字符串的最大长度](https://leetcode-cn.com/problems/maximum-length-of-a-concatenated-string-with-unique-characters/)
+## 解法
+### 思路
+- 使用数位来记录26个字符是否存在
+  - 位上0代表没有该字符，1代表有该字符
+  - 如果两个数相与得到0，就说明两个字符串没有重复的字符
+- 先处理一遍字符串列表，将有重复字符的字符串过滤掉，顺便计算出每个字符串对应的数
+- 然后回溯，回溯过程中：
+    - 使用坐标值对应数字列表的元素
+    - 使用数字num代表当前字符的使用情况
+### 代码
+```java
+class Solution {
+    public int maxLength(List<String> arr) {
+        List<Integer> masks = new ArrayList<>();
+        for (String s : arr) {
+            int mask = 0;
+            for (int i = 0; i < s.length(); i++) {
+                int ch = s.charAt(i) - 'a';
+                if (((mask >> ch) & 1) != 0) {
+                    mask = 0;
+                    break;
+                }
+
+                mask |= 1 << ch;
+            }
+
+            if (mask > 0) {
+                masks.add(mask);
+            }
+        }
+
+        return backTrack(masks, 0, 0);
+    }
+
+    private int backTrack(List<Integer> masks, int pos, int mask) {
+        if (pos == masks.size()) {
+            return Integer.bitCount(mask);
+        }
+
+        int ans = 0;
+
+        if ((mask & masks.get(pos)) == 0) {
+            ans = Math.max(ans, backTrack(masks, pos + 1, mask | masks.get(pos)));
+        }
+
+        return Math.max(ans, backTrack(masks, pos + 1, mask));
+    }
+}
+```
