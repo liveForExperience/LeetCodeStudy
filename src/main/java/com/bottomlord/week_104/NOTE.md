@@ -454,3 +454,26 @@ class TimeMap {
     }
 }
 ```
+# [LeetCode_274_H指数](https://leetcode-cn.com/problems/h-index/)
+## 解法
+### 思路
+- 对数组排序
+- 初始化一个变量h，用于记录可能的h值
+- 从最大值开始倒序遍历
+- 判断当前坐标的值是否大于h
+  - 如果是，h++，i--，因为是从大到小排列的，所以只要当前值大于h值，那之前的值肯定也是大于h的
+  - 如果不是，直接返回h
+### 代码
+```java
+class Solution {
+    public int hIndex(int[] citations) {
+        Arrays.sort(citations);
+        int h = 0, i = citations.length - 1;
+        while (i >= 0 && citations[i] > h) {
+            h++;
+            i--;
+        }
+        return h;
+    }
+}
+```
