@@ -527,3 +527,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1600_皇位继承顺序](https://leetcode-cn.com/problems/throne-inheritance/)
+## 解法
+### 思路
+- 继承顺序就是多叉树的前序遍历
+- 使用map记录父节点和子节点之间的关系
+- 使用set记录死亡的名字
+- 出生时就是往map里存储
+### 代码
+```java
+class ThroneInheritance {
+    private Map<String, List<String>> map;
+    private Set<String> set;
+    private String kingName;
+
+    public ThroneInheritance(String kingName) {
+        this.kingName = kingName;
+        map = new HashMap<>();
+        map.put(kingName, new ArrayList<>());
+        set = new HashSet<>();
+    }
+
+    public void birth(String parentName, String childName) {
+        List<String> list = map.getOrDefault(parentName, new ArrayList<>());
+        list.add(childName);
+        map.put(parentName, list);
+    }
+
+    public void death(String name) {
+        set.add(name);
+    }
+
+    public List<String> getInheritanceOrder() {
+        List<String> ans = new ArrayList<>();
+        preOrder(ans, kingName);
+        return ans;
+    }
+
+    private void preOrder(List<String> ans, String name) {
+        if (!set.contains(name)) {
+            ans.add(name);
+        }
+        
+        List<String> list = map.getOrDefault(name, new ArrayList<>());
+        for (String s : list) {
+            preOrder(ans, s);
+        }
+    }
+}
+```
