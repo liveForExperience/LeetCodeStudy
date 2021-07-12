@@ -77,3 +77,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1299_将每个元素替换为右侧最大元素](https://leetcode-cn.com/problems/replace-elements-with-greatest-element-on-right-side/)
+## 解法
+### 思路
+从数组右侧开始遍历，并统计最右到当前坐标（不包含）区间内的最大值，将这个最大值作为当前元素的右侧最大元素
+### 代码
+```java
+class Solution {
+    public int[] replaceElements(int[] arr) {
+        int max = Integer.MIN_VALUE, len = arr.length;
+        int[] ans = new int[len];
+        for (int i = len - 1; i >= 0; i--) {
+            if (i == len - 1) {
+                ans[i] = -1;
+                max = arr[i];
+                continue;
+            }
+            
+            ans[i] = max;
+            max = Math.max(max, arr[i]);
+        }
+        
+        return ans;
+    }
+}
+```
