@@ -33,3 +33,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_统计位数为偶数的数字](https://leetcode-cn.com/problems/find-numbers-with-even-number-of-digits/)
+## 解法
+### 思路
+转字符串后求字符串长度，如果是偶数就累加
+### 代码
+```java
+class Solution {
+    public int findNumbers(int[] nums) {
+        int ans = 0;
+        for (int num : nums) {
+            String str = Integer.toString(num);
+            ans += str.length() % 2 == 0 ? 1 : 0;
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+数学计算判断
+### 代码
+```java
+class Solution {
+    public int findNumbers(int[] nums) {
+        int ans = 0;
+        for (int num : nums) {
+            if (judge(num)) {
+                ans++;
+            }
+        }
+        return ans;
+    }
+    
+    private boolean judge(int num) {
+        int count = 0;
+        while (num > 0) {
+            count++;
+            num /= 10;
+        }
+        
+        return count % 2 == 0;
+    }
+}
+```
