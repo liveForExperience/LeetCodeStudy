@@ -245,3 +245,26 @@ public int minAbsoluteSumDiff(int[] nums1, int[] nums2) {
     }
 }
 ```
+# [LeetCode_1304_和为零的n个唯一整数](https://leetcode-cn.com/problems/find-n-unique-integers-sum-up-to-zero/)
+## 解法
+### 思路
+- 为了使所有元素和为0，最简单的就是放置互为相反数的元素
+- 判断n是否为奇数，如果是奇数就从数组的第2个坐标开始放置元素
+- 直到放满数组后返回数组即可
+### 代码
+```java
+class Solution {
+    public int[] sumZero(int n) {
+        int[] ans = new int[n];
+        boolean even = n % 2 == 0;
+        int index = even ? 0 : 1, num = 1;
+        while (index < n) {
+            ans[index++] = num;
+            ans[index++] = -num;
+            num++;
+        }
+        
+        return ans;
+    }
+}
+```
