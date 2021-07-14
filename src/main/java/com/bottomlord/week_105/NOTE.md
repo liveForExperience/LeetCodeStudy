@@ -189,3 +189,59 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1818_绝对差值和](https://leetcode-cn.com/problems/minimum-absolute-sum-difference/)
+## 解法
+### 思路
+- 遍历数组：
+- 累加差值的绝对值的和
+- 如果找到并替换一个元素，那么这个元素必须是与nums2遍历到的元素最接近的nums1的元素
+- 而为了使题目要求的差值和最小，如果替换的值是`nums1[j]`的话，那么`|nums1[i] - nums2[i]| - |nums1[j] - nums2[i]|`的差值就应该是最大
+- 所以遍历过程中，就是找到如上公式的最大值
+- 难点就是每次遍历的时候快速的找到`nums1[j]`，为了更快找到，可以通过对`nums1`数组排序，然后二分查找的方式来快速定位
+- 这里的二分查找可以设定为找到比目标值大的最小数，这样遍历过程中比较大小两个值哪个差值更小就可以了，但要注意如果求出来的是元素第一个数，则更小值的情况就可以不再考虑
+### 代码
+```java
+class Solution {
+public int minAbsoluteSumDiff(int[] nums1, int[] nums2) {
+        int[] sorted = Arrays.copyOfRange(nums1, 0, nums1.length);
+        Arrays.sort(sorted);
+        int n = nums1.length, sum = 0, maxDiff = 0, mod = 1000000007;
+        for (int i = 0; i < n; i++) {
+            int diff = Math.abs(nums1[i] - nums2[i]);
+            sum = (sum + diff) % mod;
+
+            int index = binarySearch(sorted, nums2[i]);
+            if (index < n) {
+                maxDiff = Math.max(maxDiff, diff - (sorted[index] - nums2[i]));
+            }
+
+            if (index > 0) {
+                maxDiff = Math.max(maxDiff, diff - (nums2[i] - sorted[index - 1]));
+            }
+        }
+
+        return (sum - maxDiff + mod) % mod;
+    }
+
+    private int binarySearch(int[] arr, int target) {
+        int head = 0, tail = arr.length - 1;
+        if (arr[tail] < target) {
+            return tail + 1;
+        }
+
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (arr[mid] < target) {
+                head = mid + 1;
+            } else if (arr[mid] > target){
+                tail = mid;
+            } else {
+                return mid;
+            }
+        }
+
+        return head;
+    }
+}
+```
