@@ -268,3 +268,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1846_减小和重新排列数组后的最大元素](https://leetcode-cn.com/problems/maximum-element-after-decreasing-and-rearranging/)
+## 解法
+### 思路
+- 对元素及个数计数，放入map
+- 将entry放入优先级队列
+- 初始化一个元素cur为0，用来暂存当前可能的最大值
+- 依次去除队列元素，再循环判断当前元素的个数是否大于0，如果当前元素值大于cur，那么cur累加，同时个数累减
+- 最终返回cur
+### 代码
+```java
+class Solution {
+    public int maximumElementAfterDecrementingAndRearranging(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : arr) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+
+        PriorityQueue<int[]> queue = new PriorityQueue<>(Comparator.comparingInt(o -> o[0]));
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            queue.offer(new int[]{entry.getKey(), entry.getValue()});
+        }
+
+        int cur = 0;
+        while (!queue.isEmpty()) {
+            int[] element = queue.poll();
+            while (element[1] > 0) {
+                if (element[0] > cur) {
+                    cur++;
+                }
+                element[1]--;
+            }
+        }
+
+        return cur;
+    }
+}
+```
