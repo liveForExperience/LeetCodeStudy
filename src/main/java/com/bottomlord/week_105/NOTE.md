@@ -305,3 +305,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offer53_在排序数组中查找数字I](https://leetcode-cn.com/problems/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-lcof/)
+## 解法
+### 思路
+- 遍历搜索累加
+- 遇到超过目标值就提前终止
+### 代码
+```java
+class Solution {
+    public int search(int[] nums, int target) {
+        int count = 0;
+        for (int num : nums) {
+            if (num > target) {
+                break;
+            }
+            
+            if (num == target) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+```
