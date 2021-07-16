@@ -329,3 +329,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1309_解码字母到整数映射](https://leetcode-cn.com/problems/decrypt-string-from-alphabet-to-integer-mapping/)
+## 解法
+### 思路
+- 从尾部开始遍历字符串
+- 如果是#号，就再遍历两个位置，然后通过数字找到对应字符
+- 如果不是#号，就直接通过数字找到对应字符
+- 遍历结束返回结果
+### 代码
+```java
+class Solution {
+    public String freqAlphabets(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = s.length() - 1; i >= 0;) {
+            if (s.charAt(i) == '#') {
+                int num = Integer.parseInt(String.valueOf(s.charAt(i - 2)) + s.charAt(i - 1));
+                sb.insert(0, (char) ('a' + num - 1));
+                i -= 3;
+            } else {
+                int num = Integer.parseInt(String.valueOf(s.charAt(i)));
+                sb.insert(0, (char) ('a' + num - 1));
+                i--;
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
+## 解法二
+### 思路
+- 不用Integer的api转char值后再做计算，直接在char值上-48获取到数字，然后计算出字母位数后再+96转为字母
+### 代码
+```java
+class Solution {
+    public String freqAlphabets(String s) {
+        StringBuilder sb = new StringBuilder();
+        char[] cs = s.toCharArray();
+        for (int i = cs.length - 1; i >= 0; i--) {
+            if (cs[i] == '#') {
+                sb.insert(0, (char) (cs[--i] - 48 + (cs[--i] - 48) * 10 + 96));
+            } else {
+                sb.insert(0, (char) (cs[i] + 48));
+            }
+        }
+
+        return sb.toString();
+    }
+}
+```
