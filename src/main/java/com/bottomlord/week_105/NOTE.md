@@ -423,3 +423,25 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1313_解压缩编码列表](https://leetcode-cn.com/problems/decompress-run-length-encoded-list/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] decompressRLElist(int[] nums) {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < nums.length; i += 2) {
+            for (int j = 0; j < nums[i]; j++) {
+                list.add(nums[i + 1]);
+            }
+        }
+        int[] ans = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            ans[i] = list.get(i);
+        }
+        return ans;
+    }
+}
+```
