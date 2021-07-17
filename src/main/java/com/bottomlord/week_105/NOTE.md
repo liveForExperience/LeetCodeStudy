@@ -445,3 +445,72 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1317_将整数转换为两个无零整数的和](https://leetcode-cn.com/problems/convert-integer-to-the-sum-of-two-no-zero-integers/)
+## 解法
+### 思路
+枚举
+### 代码
+```java
+class Solution {
+    public int[] getNoZeroIntegers(int n) {
+        for (int i = 1; i < n; i++) {
+            int a = i, b = n - i;
+            String as = Integer.toString(a),
+                   bs = Integer.toString(b);
+            
+            if (!as.contains("0") && !bs.contains("0")) {
+                return new int[]{a, b};
+            }
+        }
+        
+        return new int[0];
+    }
+}
+```
+## 解法二
+### 思路
+简化代码
+### 代码
+```java
+class Solution {
+    public int[] getNoZeroIntegers(int n) {
+        for (int a = 1; a < n; a++) {
+            int b = n - a;
+            if (!Integer.toString(a).contains("0") &&
+                !Integer.toString(b).contains("0")) {
+                return new int[]{a, b};
+            }
+        }
+        
+        return new int[0];
+    }
+}
+```
+## 解法三
+### 思路
+使用数学计算替代字符串转换
+### 代码
+```java
+class Solution {
+    public int[] getNoZeroIntegers(int n) {
+        for (int a = 1; a < n; a++) {
+            int b = n - a;
+            if (hasNoZero(a) && hasNoZero(b)) {
+                return new int[]{a, b};
+            }
+        }
+        return new int[0];
+    }
+
+    private boolean hasNoZero(int num) {
+        while (num > 0) {
+            if (num % 10 == 0) {
+                return false;
+            }
+
+            num /= 10;
+        }
+        return true;
+    }
+}
+```
