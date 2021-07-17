@@ -378,3 +378,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offer42_连续子数组的最大和](https://leetcode-cn.com/problems/lian-xu-zi-shu-zu-de-zui-da-he-lcof/)
+## 解法
+### 思路
+动态规划：
+- dp[i]：以nums[i]为结尾的连续子数组的最大和
+- 状态转移方程：
+  - `dp[i] = max(dp[i - 1] + nums[i], nums[i])`
+  - 以nums[i]为结尾的连续子数组有2种情况：
+        - 单独的元素为最大值 
+        - 和以前一个元素为结尾的连续子数组的最大值的和，形成更大值，则以这个值为当前子数组的最大值
+- 求出dp中的最大值
+### 代码
+```java
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int n = nums.length;
+        int[] dp = new int[n];
+        dp[0] = nums[0];
+        int max = dp[0];
+        
+        for (int i = 1; i < n; i++) {
+            dp[i] = Math.max(dp[i - 1] + nums[i], nums[i]);
+            max = Math.max(max, dp[i]);
+        }
+        
+        return max;
+    }
+}
+```
+## 解法二
+### 思路
+- 状态转移过程中只涉及和前一个元素的状态，所以可以用一个变量来替代dp数组
+### 代码
+```java
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int status = nums[0], max = status;
+        for (int i = 1; i < nums.length; i++) {
+            status = Math.max(status + nums[i], nums[i]);
+            max = Math.max(status, max);
+        }
+        return max;
+    }
+}
+```
