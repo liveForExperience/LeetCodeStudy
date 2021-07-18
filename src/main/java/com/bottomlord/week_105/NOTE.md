@@ -573,3 +573,73 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1331_数组序号转换](https://leetcode-cn.com/problems/rank-transform-of-an-array/)
+## 解法
+### 思路
+- 利用TreeMap来排序，key为数组元素，value为元素对应坐标值
+- 遍历TreeMap，根据value值在结果数组对应位置中放置元素在map的当前位置
+- 因为元素会重复，所以用treemap存储时防止覆盖，value需要修改为存储坐标list
+### 代码
+```java
+class Solution {
+    public int[] arrayRankTransform(int[] arr) {
+        TreeMap<Integer, List<Integer>> treeMap = new TreeMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            List<Integer> list = treeMap.getOrDefault(arr[i], new ArrayList<>());
+            list.add(i);
+            treeMap.put(arr[i], list);
+        }
+
+        int[] ans = new int[arr.length];
+        int index = 1;
+        for (Integer num : treeMap.keySet()) {
+            List<Integer> list = treeMap.get(num);
+            for (int i : list) {
+                ans[i] = index;
+            }
+            index++;
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用数组替换解法一的treemap
+- 计算arr的最大最小值，定义出统计数组bucket长度
+- 遍历arr，在bucket中统计对应元素出现的个数
+- 遍历bucket，如果bucket的元素不是0，就记录其排序后的坐标值
+- 此时bucket的坐标成为了arr的元素值（需要配合最小值进行计算），bucket的元素值是排序后的坐标
+- 遍历arr，通过arr的元素，到bucket对应坐标值中找到排序后的坐标，放在ans数组中
+### 代码
+```java
+class Solution {
+    public int[] arrayRankTransform(int[] arr) {
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int num : arr) {
+            min = Math.min(min, num);
+            max = Math.max(max, num);
+        }
+
+        int[] bucket = new int[max - min + 1];
+        for (int num : arr) {
+            bucket[num - min]++;
+        }
+
+        int index = 1;
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] != 0) {
+                bucket[i] = index++;
+            }
+        }
+
+        int[] ans = new int[arr.length];
+        index = 0;
+        for (int num : arr) {
+            ans[index++] = bucket[num - min];
+        }
+        return ans;
+    }
+}
+```
