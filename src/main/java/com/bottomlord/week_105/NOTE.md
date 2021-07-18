@@ -514,3 +514,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_interview1002_变位词组](https://leetcode-cn.com/problems/group-anagrams-lcci/)
+## 解法
+### 思路
+- 计算字符串字符的出现次数，并以字符串形式计数
+- 计算出来的字符串计数key存入map中
+### 代码
+
+```java
+class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            String key = cal(str);
+            List<String> list = map.getOrDefault(key, new ArrayList<>());
+            list.add(str);
+            map.put(key, list);
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    private String cal(String str) {
+        int[] bucket = new int[26];
+        char[] cs = str.toCharArray();
+        for (char c : cs) {
+            bucket[c - 'a']++;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] != 0) {
+                sb.append('a' + i).append(bucket[i]);
+            }
+        }
+        return sb.toString();
+    }
+}
+```
