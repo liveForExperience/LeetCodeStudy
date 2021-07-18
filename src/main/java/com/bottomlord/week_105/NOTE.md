@@ -668,3 +668,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1337_矩阵中战斗力最弱的K行](https://leetcode-cn.com/problems/the-k-weakest-rows-in-a-matrix/)
+## 解法
+### 思路
+- 初始化二维数组，元素个数与mat元素个数一致，每个元素初始化为长度为2的数组，数组的第一个元素放mat每一行的1的个数，第二个元素放mat行对应的坐标
+- 对二维数组基于数组第一个元素升序排序
+- 遍历二维数组，将前K个元素放入结果数组中，并返回
+### 代码
+```java
+class Solution {
+    public int[] kWeakestRows(int[][] mat, int k) {
+        int n = mat.length;
+        int[][] matrix = new int[n][2];
+        for (int row = 0; row < mat.length; row++) {
+            int count = 0;
+            for (int col = 0; col < mat[0].length; col++) {
+                if (mat[row][col] == 0) {
+                    break;
+                }
+                count++;
+            }
+
+            matrix[row][0] = count;
+            matrix[row][1] = row;
+        }
+
+        Arrays.sort(matrix, Comparator.comparingInt(o -> o[0]));
+
+        int[] ans = new int[k];
+        for (int i = 0; i < k; i++) {
+            ans[i] = matrix[i][1];
+        }
+        return ans;
+    }
+}
+```
