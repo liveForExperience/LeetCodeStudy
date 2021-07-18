@@ -643,3 +643,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1332_删除回文子序列](https://leetcode-cn.com/problems/remove-palindromic-subsequences/)
+## 解法
+### 思路
+- 因为字符串中只包含a和b两个字母，所以最多删除2次，一次删除a一次删除b
+- 头尾遍历字符串，如果两个字母相等就继续遍历，否则就返回2
+- 如果遍历结束就返回1
+- 如果字符串为空就返回0
+### 代码
+```java
+class Solution {
+    public int removePalindromeSub(String s) {
+        if (s.length() == 0) {
+            return 0;
+        }
+        
+        for (int start = 0, end = s.length() - 1; start < end; start++, end--) {
+            if (s.charAt(start) != s.charAt(end)) {
+                return 2;
+            }
+        }
+        
+        return 1;
+    }
+}
+```
