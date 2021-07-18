@@ -551,3 +551,25 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1323_6和9组成的最大数字](https://leetcode-cn.com/problems/maximum-69-number/)
+## 解法
+### 思路
+- 数字转成字符串找到高位第一个6，将其转为9
+- 再将字符串转为数字返回
+### 代码
+```java
+class Solution {
+    public int maximum69Number (int num) {
+        String str = Integer.toString(num);
+        char[] cs = str.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] == '6') {
+                cs[i] = '9';
+                break;
+            }
+        }
+        
+        return Integer.parseInt(new String(cs));
+    }
+}
+```
