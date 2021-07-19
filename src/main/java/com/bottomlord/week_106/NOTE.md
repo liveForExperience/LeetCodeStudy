@@ -31,3 +31,11 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1342_将数字变成0的操作次数](https://leetcode-cn.com/problems/number-of-steps-to-reduce-a-number-to-zero/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+
+```
