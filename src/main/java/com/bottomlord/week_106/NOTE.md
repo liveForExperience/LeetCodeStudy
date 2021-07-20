@@ -37,5 +37,37 @@ class Solution {
 模拟
 ### 代码
 ```java
+class Solution {
+  public int numberOfSteps(int num) {
+    int count = 0;
+    while (num > 0) {
+      if (num % 2 == 0) {
+        num /= 2;
+      } else {
+        num--;
+      }
 
+      count++;
+    }
+    return count;
+  }
+}
+```
+# [LeetCode_1877_数组中最大数对和的最小值](https://leetcode-cn.com/problems/minimize-maximum-pair-sum-in-array/)
+## 解法
+### 思路
+排序后头尾匹配，求最大值
+### 代码
+```java
+class Solution {
+  public int minPairSum(int[] nums) {
+    Arrays.sort(nums);
+    int head = 0, tail = nums.length - 1, max = Integer.MIN_VALUE;
+    while (head < tail) {
+      max = Math.max(nums[head++] + nums[tail--], max);
+    }
+
+    return max;
+  }
+}
 ```
