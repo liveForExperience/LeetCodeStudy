@@ -162,3 +162,65 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1351_统计有序矩阵中的负数](https://leetcode-cn.com/problems/count-negative-numbers-in-a-sorted-matrix/)
+## 解法
+### 思路
+- 遍历二维数组，按行遍历，从尾部开始遍历，直到找到第一个非负整数位置，计数累加
+- 一行行计算累加，最后返回
+### 代码
+```java
+class Solution {
+    public int countNegatives(int[][] grid) {
+                int col = grid[0].length;
+        int count = 0;
+        for (int[] rows : grid) {
+            for (int c = col - 1; c >= 0; c--) {
+                if (rows[c] >= 0) {
+                    break;
+                }
+                count++;
+            }
+        }
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+- 一行行遍历判断
+- 特殊情况：
+  - 第一个元素是负数，那么整行都是负数
+  - 最后一个元素是非负数，那么整行都不是负数
+- 通常情况：通过二分查找找到第一个负数，然后直接累加这个负数到尾部的长度
+### 代码
+```java
+class Solution {
+    public int countNegatives(int[][] grid) {
+        int col = grid[0].length, count = 0;
+        for (int[] row : grid) {
+            if (row[0] < 0) {
+                count += col;
+                continue;
+            }
+            
+            if (row[col - 1] >= 0) {
+                continue;
+            }
+            
+            int head = 0, tail = col - 1;
+            while (head <= tail) {
+                int mid = head + (tail - head) / 2;
+                if (row[mid] < 0) {
+                    tail = mid - 1;
+                } else {
+                    head = mid + 1;
+                }
+            }
+            
+            count += col - head;
+        }
+        
+        return count;
+    }
+}
+```
