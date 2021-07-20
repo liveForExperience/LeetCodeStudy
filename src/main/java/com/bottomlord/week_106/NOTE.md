@@ -71,3 +71,94 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1346_检查整数及其两倍数是否存在](https://leetcode-cn.com/problems/check-if-n-and-its-double-exist/)
+## 错误解法
+### 原因
+解法错误，0的2倍是本身，不能直接判断
+### 思路
+- 遍历数组，将元素存储在set中
+- 遍历set，查找是否存在是当前元素2倍的元素
+- 有就返回true，否则false
+### 代码
+```java
+class Solution {
+    public boolean checkIfExist(int[] arr) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : arr) {
+            set.add(num);
+        }
+        for (int num : set) {
+            if (set.contains(num * 2)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+在错误解法上增加一个变量记录0出现的个数，如果只出现1次，则遍历到0的时候，直接跳过，否则0出现多余1次，直接返回true
+### 代码
+```java
+class Solution {
+    public boolean checkIfExist(int[] arr) {
+        Set<Integer> set = new HashSet<>();
+        int zero = 0;
+        for (int num : arr) {
+            if (num == 0) {
+                zero++;
+                if (zero > 1) {
+                    return true;
+                }
+            }
+            
+            set.add(num);
+        }
+        
+        for (int num : set) {
+            if (num == 0) {
+                continue;
+            }
+            
+            if (set.contains(num * 2)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+数组代替set
+- 元素大小在-1000到1000之间，所以数组长度初始化为2001
+- 遍历数组，将当前元素*2+1000的值作为2倍后的值，将当前元素+1000的值作为当前值
+- 然后在数组中查找
+    - 当前值/2的元素是否已经计数，这里还有个前提，当前值必须是偶数，否则不可能是被*2得到的数
+    - 2倍值的元素是否已经计数，这里有个前提，如果求出的*2的数大于-1000到1000的范围，也就是0到2000的范围，那么这种元素根本不可能出现在数组中，就不需要考虑
+    - 如果如上有计数，就返回true
+### 代码
+```java
+class Solution {
+  public boolean checkIfExist(int[] arr) {
+    int[] count = new int[2001];
+    for (int num : arr) {
+      int d = num * 2 + 1000;
+      if (d >= 0 && d <= 2000 && count[d] > 0) {
+        return true;
+      }
+
+      if (num % 2 == 0 && count[num / 2 + 1000] > 0) {
+        return true;
+      }
+
+      count[num +1000]++;
+    }
+
+    return false;
+  }
+}
+```
