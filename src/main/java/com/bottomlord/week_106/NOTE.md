@@ -224,3 +224,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offer52_1_两个链表的第一个公共节点](https://leetcode-cn.com/problems/liang-ge-lian-biao-de-di-yi-ge-gong-gong-jie-dian-lcof/)
+## 解法
+### 思路
+- 初始化两个了链表的头结点
+- 然后同时以1的步长一起遍历两个链表
+- 任意一个链表走到头，就从另一个链表的头节点继续走
+- 如果同时是null，说明没有公共节点，否则，遍历到第一个相同的节点，就是公共节点
+- 注意特殊判断，任意一个链表为空的情况，直接返回null
+### 代码
+```java
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) {
+            return null;
+        }
+
+        ListNode a = headA, b = headB;
+        while (a != b) {
+            a = a.next;
+            b = b.next;
+            
+            if (a == null && b == null) {
+                return null;
+            }
+            
+            if (a == null) {
+                a = headB;
+            }
+            
+            if (b == null) {
+                b = headA;
+            }
+        }
+        
+        return a;
+    }
+}
+```
+## 解法二
+### 思路
+基于解法一的思路简化代码
+### 代码
+```java
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+                ListNode a = headA, b = headB;
+        while (a != b) {
+            a = a == null ? headB : a.next;
+            b = b == null ? headA : b.next;
+        }
+        
+        return a;
+    }
+}
+```
