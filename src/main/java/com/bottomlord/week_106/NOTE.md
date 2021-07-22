@@ -279,3 +279,37 @@ public class Solution {
     }
 }
 ```
+# [LeetCode_138_复制带随机指针的链表](https://leetcode-cn.com/problems/copy-list-with-random-pointer/)
+## 解法
+### 思路
+- 遍历原链表进行复制，将next指针指向新的节点，random指针指向原来的节点
+- 遍历过程中存储原节点和新节点的映射关系
+- 遍历新节点，通过映射表将原节点替换成新节点
+### 代码
+```java
+class Solution {
+  public Node copyRandomList(Node head) {
+    Node node = head;
+    Node newHead = new Node(0);
+    Node newNode = newHead;
+
+    Map<Node, Node> mapping = new HashMap<>();
+
+    while (node != null) {
+      newNode.next = new Node(node.val);
+      newNode = newNode.next;
+      newNode.random = node.random;
+      mapping.put(node, newNode);
+      node = node.next;
+    }
+
+    node = newHead.next;
+    while (node != null) {
+      node.random = mapping.get(node.random);
+      node = node.next;
+    }
+
+    return newHead.next;
+  }
+}
+```
