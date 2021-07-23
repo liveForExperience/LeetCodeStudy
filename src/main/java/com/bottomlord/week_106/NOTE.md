@@ -411,3 +411,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1385_两个数组间的距离值](https://leetcode-cn.com/problems/find-the-distance-value-between-two-arrays/)
+## 解法
+### 思路
+2层循环硬算
+### 代码
+```java
+class Solution {
+    public int findTheDistanceValue(int[] arr1, int[] arr2, int d) {
+        int count = 0;
+        for (int num1 : arr1) {
+            boolean miss = false;
+            int left = num1 - d, right = num1 + d;
+            for (int num2 : arr2) {
+                if (num2 >= left && num2 <= right) {
+                    miss = true;
+                    break;
+                }
+            }
+
+            count += miss ? 0 : 1;
+        }
+
+        return count;
+    }
+}
+```
