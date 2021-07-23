@@ -437,3 +437,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1389_按既定顺序创建目标数组](https://leetcode-cn.com/problems/create-target-array-in-the-given-order/)
+## 解法
+### 思路
+- 初始化链表
+- 将元素插入
+- 转成数组返回
+### 代码
+```java
+class Solution {
+    public int[] createTargetArray(int[] nums, int[] index) {
+        List<Integer> list = new LinkedList<>();
+        for (int i = 0; i < nums.length; i++) {
+            list.add(index[i], nums[i]);
+        }
+        
+        int[] ans = new int[list.size()];
+        int i = 0;
+        for (int num : list) {
+            ans[i++]= num;
+        }
+        
+        return ans;
+    }
+}
+```
