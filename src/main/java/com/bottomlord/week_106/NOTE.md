@@ -363,3 +363,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1893_检查是否区域内所有整数都被覆盖](https://leetcode-cn.com/problems/check-if-all-the-integers-in-a-range-are-covered/)
+## 解法
+### 思路
+- 遍历ranges，过滤掉所有不在left和right区间内的数组
+- 然后将第一个可能的数组初始化为可能窗口
+- 在如下的三种情况下更新窗口
+  - 左边界比窗口左边界小，同时右边界比窗口右边界大，更新窗口
+  - 左边界在窗口范围内，同时注意窗口的右边界判断时要+1，因为如果窗口是[2,4]，当前数组是[5,6]，那么同样可以组成一个[2,6]的窗口。那么左边界在窗口内，同时右边界比窗口右边界大，则更新窗口右边界
+  - 同理右边界在窗口范围内，窗口的左边界判断时要-1，同时左边界比窗口左边界小，那么就更新窗口左边界
+- 最后判断窗口是否能包含left和right组成的区间
+### 代码
+```java
+class Solution {
+    public boolean isCovered(int[][] ranges, int left, int right) {
+        int l = Integer.MAX_VALUE, r = Integer.MIN_VALUE;
+        boolean init = false;
+        for (int[] range : ranges) {
+            if (range[1] < left || range[0] > right) {
+                continue;
+            }
+            
+            if (!init) {
+                l = range[0];
+                r = range[1];
+                init = true;
+                continue;
+            }
+            
+            if (range[0] <= l && range[1] >= r) {
+                l = range[0];
+                r = range[1];
+                continue;
+            }
+            
+            if (range[0] >= l && range[0] <= r + 1 && range[1] > r) {
+                r = range[1];
+                continue;
+            }
+
+            if (range[1] <= r && range[1] >= l - 1 && range[0] < l) {
+                l = range[0];
+            }
+        }
+
+        return l <= left && r >= right;
+    }
+}
+```
