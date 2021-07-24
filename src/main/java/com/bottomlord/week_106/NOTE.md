@@ -611,3 +611,60 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1403_费递增序列的最小子序列](https://leetcode-cn.com/problems/minimum-subsequence-in-non-increasing-order/)
+## 解法
+### 思路
+- 降序排序原数组
+- 求出元素组的总和
+- 遍历降序数组并累加，当子序列大于总和一半的时候返回该子数组
+### 代码
+```java
+class Solution {
+    public List<Integer> minSubsequence(int[] nums) {
+        Arrays.sort(nums);
+        int sum = Arrays.stream(nums).sum();
+        int count = 0;
+        List<Integer> ans = new ArrayList<>();
+        for (int i = nums.length - 1; i >= 0; i--) {
+            count += nums[i];
+            ans.add(nums[i]);
+            if (count > sum / 2) {
+                break;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 遍历数组，使用桶计数，并计算元素总和
+- 遍历桶，跳过元素值为0的坐标
+- 累加元素值直到超过总数的一半，同时过程中将遍历到的元素放入list中
+- 超过总数一半后就终止遍历，返回list
+### 代码
+```java
+class Solution {
+    public List<Integer> minSubsequence(int[] nums) {
+        int[] arr = new int[101];
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+            arr[num]++;
+        }
+        
+        int count = 0;
+        List<Integer> ans = new ArrayList<>();
+        for (int i = arr.length - 1; i >= 0; i--) {
+            while (arr[i] > 0 && count * 2 <= sum) {
+                arr[i]--;
+                count += i;
+                ans.add(i);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
