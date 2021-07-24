@@ -568,3 +568,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1399_统计最大组的数目](https://leetcode-cn.com/problems/count-largest-group/)
+## 解法
+### 思路
+- 最大是四位数，所以初始化一个长度为37的数组arr
+- 然后遍历元素，统计数位和
+- 最后遍历arr，找到最大元素值并统计出现的个数
+### 代码
+```java
+class Solution {
+    public int countLargestGroup(int n) {
+        int[] arr = new int[37];
+        for (int i = 1; i <= n; i++) {
+            arr[cal(i)]++;
+        }
+        
+        int max = 0, count = 0;
+        for (int num : arr) {
+            if (num == 0) {
+                continue;
+            }
+            
+            if (num > max) {
+                max = num;
+                count = 1;
+            } else if (num == max) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+
+
+    private int cal(int n) {
+        int sum = 0;
+        while (n != 0) {
+            sum += n % 10;
+            n /= 10;
+        }
+        return sum;
+    }
+}
+```
