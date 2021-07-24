@@ -519,3 +519,52 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1349_找出数组中的幸运数](https://leetcode-cn.com/problems/find-lucky-integer-in-an-array/)
+## 解法
+### 思路
+- 遍历，map存储
+- 遍历map，找到符合的最大值
+### 代码
+```java
+class Solution {
+    public int findLucky(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : arr) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        
+        int max = Integer.MIN_VALUE;
+        for (int num : map.keySet()) {
+            if (num == map.get(num)) {
+                max = Math.max(max, num);
+            }
+        }
+        
+        return max == Integer.MIN_VALUE ? -1 : max;
+    }
+}
+```
+## 解法二
+### 思路
+- 初始化存储用的桶数组，用这个桶来计数
+- 从桶数组的最后开始向前遍历，找到第一个符合要求的数就返回，否则返回-1
+- 还要注意向前遍历桶的时候，值为0的元素位置要跳过
+### 代码
+```java
+class Solution {
+    public int findLucky(int[] arr) {
+        int[] bucket = new int[501];
+        for (int num : arr) {
+            bucket[num]++;
+        }
+        
+        for (int i = bucket.length - 1; i >= 1; i--) {
+            if (i == bucket[i]) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
