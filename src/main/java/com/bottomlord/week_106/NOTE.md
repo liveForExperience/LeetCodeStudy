@@ -668,3 +668,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1743_从相邻元素对还原数组](https://leetcode-cn.com/problems/restore-the-array-from-adjacent-pairs/)
+## 解法
+### 思路
+- 因为元素是不重复的，所以如果将元素放入map中存储，key为元素，value为其前后的元素，那么除了头尾元素，value都是长度为2的列表
+- 基于这个map，就能将数组组织出来
+- 遍历数组，将map组装出来
+- 遍历一次map，找到第一个value长度是1的元素，将其作为结果数组的第一个元素
+- 然后基于这第一个元素，到map中找到相连接的元素，在找的时候需要判断下，这个元素之前的元素是否多少，这样在value中就找另一个元素作为后继元素
+### 代码
+```java
+class Solution {
+    public int[] restoreArray(int[][] adjacentPairs) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int[] pair : adjacentPairs) {
+            map.putIfAbsent(pair[0], new ArrayList<>());
+            map.putIfAbsent(pair[1], new ArrayList<>());
+            map.get(pair[0]).add(pair[1]);
+            map.get(pair[1]).add(pair[0]);
+        }
+        
+        int[] ans = new int[adjacentPairs.length + 1];
+        for (Map.Entry<Integer, List<Integer>> entry : map.entrySet()) {
+            int key = entry.getKey();
+            List<Integer> list = entry.getValue();
+            
+            if (list.size() == 1) {
+                ans[0] = key;
+                break;
+            }
+        }
+        
+        ans[1] = map.get(ans[0]).get(0);
+        
+        for (int i = 2; i < ans.length; i++) {
+            List<Integer> list = map.get(ans[i - 1]);
+            int num = list.get(0) == ans[i - 2] ? list.get(1) : list.get(0);
+            ans[i] = num;
+        }
+        
+        return ans;
+    }
+}
+```
