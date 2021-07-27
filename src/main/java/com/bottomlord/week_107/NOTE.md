@@ -123,3 +123,89 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1408_数组中的字符串匹配](https://leetcode-cn.com/problems/string-matching-in-an-array/)
+## 解法
+### 思路
+- 2层循环，外层遍历可能长的字符串，内层遍历可能包含的字符串
+- set记录内层被暂存的字符串坐标，下次再遇到直接跳过
+- list记录答案要求的字符串内容
+- 内层逻辑就是判断外层字符串是否包含内层字符串，如果是就更新set和list
+### 代码
+```java
+class Solution {
+    public List<String> stringMatching(String[] words) {
+        Set<Integer> memo = new HashSet<>();
+        List<String> list = new ArrayList<>();
+
+        for (int i = 0; i < words.length; i++) {
+            for (int j = 0; j < words.length; j++) {
+                if (i == j || memo.contains(j)) {
+                    continue;
+                }
+                
+                if (words[i].contains(words[j])) {
+                    memo.add(j);
+                    list.add(words[j]);
+                }
+            }
+        }
+
+        return list;
+    }
+}
+```
+## 解法二
+### 思路
+- 用数组替代解法一中的set
+- 内层判断的时候，加入一个减枝条件，如果外层长度不长于内层，就跳过
+### 代码
+```java
+class Solution {
+  public List<String> stringMatching(String[] words) {
+    boolean[] memo = new boolean[words.length];
+    List<String> list = new ArrayList<>();
+
+    for (int i = 0; i < words.length; i++) {
+      for (int j = 0; j < words.length; j++) {
+        if (memo[j] || i == j || words[i].length() <= words[j].length()) {
+          continue;
+        }
+
+        if (words[i].contains(words[j])) {
+          memo[j] = true;
+          list.add(words[j]);
+        }
+      }
+    }
+
+    return list;
+  }
+}
+```
+## 解法三
+### 思路
+将内层判断的逻辑放在单独的函数中，增加运行效率
+### 代码
+```java
+class Solution {
+  public List<String> stringMatching(String[] words) {
+    List<String> list = new ArrayList<>();
+    for (String word : words) {
+      if (judge(word, words)) {
+        list.add(word);
+      }
+    }
+
+    return list;
+  }
+
+  private boolean judge(String target, String[] words) {
+    for (String str : words) {
+      if (str.length() > target.length() && str.contains(target)) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+```
