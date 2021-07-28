@@ -209,3 +209,79 @@ class Solution {
   }
 }
 ```
+# [LeetCode_863_二叉树中所有距离为K的结点](https://leetcode-cn.com/problems/all-nodes-distance-k-in-binary-tree/)
+## 解法
+### 思路
+- 节点间距离为K有多种情况：
+  - 距离为K的结点在target的子树中
+  - 距离为K的节点在祖先节点中，而这种情况又分为：
+    - 在祖先节点中
+    - 在祖先节点的某一侧子树中
+- 所以搜索过程要分成2个步骤：
+  1. 搜索找到target节点
+  2. 基于target节点找到其子树中符合距离要求的节点
+  3. 配合函数返回值，区分当前节点的左右子树，搜索后的状态：
+    - 如果找到了target节点，在进行第2步找到其子树中的节点后，返回0，代表当前这个路径找到了target
+    - 如果搜索到最后，找到的节点为null，代表没有找到target
+    - 然后在上层节点获取到搜索的返回值后，加一个1，这个1代表了当前节点的距离值
+    - 再做一个判断，就是如果左右子树返回值+1后，得到的值大于1了，那么就说明其子树中有target，那么就在另一侧的子树中进行寻找，同时带上返回值去找，从而判断距离是否符合要求
+    - 或者，如果左右子树的返回值+1直接就等于K了，那么就代表当前节点就是符合题目要求并在target祖先节点中的那个节点
+    - 在整个搜索过程中，所有找到的节点就直接放入list中暂存，这样搜索结束后，直接返回list即可
+### 代码
+```java
+class Solution {
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+        List<Integer> ans = new ArrayList<>();
+        if (k == 0) {
+            ans.add(target.val);
+        } else {
+            dfs(root, target, ans, k);
+        }
+        return ans;
+    }
+
+    private int dfs(TreeNode node, TreeNode target, List<Integer> ans, int k) {
+        if (node == null) {
+            return -1;
+        }
+
+        if (node == target) {
+            dfs2(node.left, 0, ans, k);
+            dfs2(node.right, 0, ans, k);
+            return 0;
+        }
+
+        int left = dfs(node.left, target, ans, k) + 1,
+            right = dfs(node.right, target, ans, k) + 1;
+
+        if (left > 0) {
+            if (left == k) {
+                ans.add(node.val);
+            }
+            dfs2(node.right, left, ans, k);
+            return left;
+        } else if (right > 0) {
+            if (right == k) {
+                ans.add(node.val);
+            }
+            dfs2(node.left, right, ans, k);
+            return right;
+        } else {
+            return -1;
+        }
+    }
+
+    private void dfs2(TreeNode node, int distance, List<Integer> ans, int k) {
+        if (node == null || distance + 1 > k) {
+            return;
+        }
+
+        if (distance + 1 == k) {
+            ans.add(node.val);
+        }
+
+        dfs2(node.left, distance + 1, ans, k);
+        dfs2(node.right, distance + 1, ans, k);
+    }
+}
+```
