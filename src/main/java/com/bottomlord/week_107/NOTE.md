@@ -429,3 +429,20 @@ class Solution {
     }
 }
 ```
+# [LeetCode_171_Excel表列序号](https://leetcode-cn.com/problems/excel-sheet-column-number/)
+## 解法
+### 思路
+26进制进位
+### 代码
+```java
+class Solution {
+    public int titleToNumber(String columnTitle) {
+        int sum = 0;
+        char[] cs = columnTitle.toCharArray();
+        for (char c : cs) {
+            sum = sum * 26 + (c - 'A' + 1);
+        }
+        return sum;
+    }
+}
+```
