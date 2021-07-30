@@ -446,3 +446,21 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1413_逐步求和得到正数的最小值](https://leetcode-cn.com/problems/minimum-value-to-get-positive-step-by-step-sum/)
+## 解法
+### 思路
+求前缀和最小值，返回(1-最小值)和1之间的最大值
+### 代码
+```java
+class Solution {
+  public int minStartValue(int[] nums) {
+    int sum = 0, min = Integer.MAX_VALUE;
+    for (int num : nums) {
+      sum += num;
+      min = Math.min(sum, min);
+    }
+
+    return Math.max(1 - min, 1);
+  }
+}
+```
