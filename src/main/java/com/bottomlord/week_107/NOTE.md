@@ -285,3 +285,147 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1104_二叉树寻路](https://leetcode-cn.com/problems/path-in-zigzag-labelled-binary-tree/)
+## 解法
+### 思路
+- bfs生成二叉树
+- dfs找节点生成路径
+### 代码
+```java
+class Solution {
+    private List<Integer> ans = new ArrayList<>();
+
+    public List<Integer> pathInZigZagTree(int label) {
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        TreeNode root = new TreeNode(1);
+        queue.offer(root);
+
+        boolean right = true;
+        while (!queue.isEmpty()) {
+            int curSize = queue.size();
+            int nextSize = curSize * 2;
+            Integer index = null;
+            while (curSize > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+
+                int val = node.val;
+                if (index == null) {
+                    index = right ? val + curSize + nextSize - 1 : val + 1;
+                }
+
+                if (right) {
+                    node.left = new TreeNode(index--);
+                    node.right = new TreeNode(index--);
+
+                    queue.offer(node.left);
+                    queue.offer(node.right);
+                } else {
+                    node.left = new TreeNode(index++);
+                    node.right = new TreeNode(index++);
+
+                    queue.offer(node.left);
+                    queue.offer(node.right);
+                }
+
+                curSize--;
+            }
+
+            index = right ? ++index : --index;
+            if (index >= label) {
+                break;
+            }
+
+            right = !right;
+        }
+
+        dfs(root, label, new LinkedList<>());
+        return ans;
+    }
+
+    private boolean dfs(TreeNode node, int target, LinkedList<Integer> list) {
+        if (node == null) {
+            return false;
+        }
+
+        if (node.val == target) {
+            list.add(node.val);
+            ans = list;
+            return true;
+        }
+
+        list.addLast(node.val);
+        boolean result = dfs(node.left, target, list);
+        if (result) {
+            return true;
+        }
+        list.removeLast();
+
+        list.addLast(node.val);
+        result = dfs(node.right, target, list);
+        if (result) {
+            return true;
+        }
+        list.removeLast();
+
+        return false;
+    }
+
+    class TreeNode {
+        private int val;
+        private TreeNode left, right;
+
+        public TreeNode(int val) {
+            this.val = val;
+        }
+    }
+}
+```
+## 解法二
+### 思路
+- 如果二叉树都是从左到右进行标记，那么二叉树满足的特性：
+  - 根节点位于第一行
+  - 第i行有2的i次方-1个节点，最左边的节点是2的i-1次方，最后右边的节点是2的i次方-1
+  - 对于标记为val的节点，其左子节点的标记是2*val，右子节点的标记是2*val + 1，当val大于1的时候，其父节点是val / 2
+- 当要求变成偶数行从右向左标记的时候，可以将其转换为如上从左到右的顺序进行标记
+- 先找到label节点所在的行和该节点从左到右数标记时候的编号
+  - 找到行，也就是label大于等于2的i-1次方，小于2的i次方，i就是行数
+  - 从左到右的标记的编号则依据i的奇偶性来判断
+    - 当i是奇数的时候，第i行从左到右顺序标记，所以其标记就是label
+    - 当i是偶数的时候，第i行从右到左顺序标记，反转前后的同一个节点的和是sum(`2的i-1次方`+`2的i次方-1`-1)，所以反转后的实际值就是sum - label
+### 代码
+```java
+class Solution {
+    public List<Integer> pathInZigZagTree(int label) {
+        int row = 1, rowStart = 1;
+        while (rowStart <= label) {
+            rowStart <<= 1;
+            row++;
+        }
+
+        row--;
+        LinkedList<Integer> ans = new LinkedList<>();
+        while (row >= 1) {
+            boolean even = row % 2 == 0;
+            ans.addFirst(label);
+            if (row == 1) {
+                break;
+            }
+
+            int sum = (int) (Math.pow(2, row - 1) + Math.pow(2, row) - 1);
+            if (even) {
+                label = (sum - label) / 2;
+            } else {
+                int pre = label / 2;
+                label = (int) (Math.pow(2, row - 2) + Math.pow(2, row - 1) - 1) - pre;
+            }
+
+            row--;
+        }
+
+        return ans;
+    }
+}
+```
