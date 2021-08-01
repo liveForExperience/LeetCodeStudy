@@ -552,3 +552,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1442_分割字符串的最大得分](https://leetcode-cn.com/problems/the-k-weakest-rows-in-a-matrix/)
+## 解法
+### 思路
+- 初始化数组zero，zero[i]表示从0开始到坐标i为止的0的数量
+- 初始化数组one，one[i]表示从len - 1开始到坐标i为止的1的数量
+- 从0开始遍历数组，计算zero[i - 1] + one[i]的所有总和中的最大值
+### 代码
+```java
+class Solution {
+    public int maxScore(String s) {
+        int n = s.length();
+        char[] cs = s.toCharArray();
+
+        int[] zero = new int[n], one = new int[n];
+        int max = Integer.MIN_VALUE;
+
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            if (cs[i] == '0') {
+                count++;
+            }
+            zero[i] = count;
+        }
+
+        count = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            if (cs[i] == '1') {
+                count++;
+            }
+            one[i] = count;
+        }
+
+        for (int i = 1; i < n; i++) {
+            max = Math.max(max, zero[i - 1] + one[i]);
+        }
+
+        return max;
+    }
+}
+```
