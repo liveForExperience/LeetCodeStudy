@@ -77,3 +77,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1426_数元素](https://leetcode-cn.com/problems/counting-elements/)
+## 解法
+### 思路
+- set统计后计数
+### 代码
+```java
+class Solution {
+    public int countElements(int[] arr) {
+        Set<Integer> set = new HashSet<>();
+
+        for (int num : arr) {
+            set.add(num);
+        }
+        
+        int ans = 0;
+        for (int num : arr) {
+            if (set.contains(num + 1)) {
+                ans++;
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用数组替换解法一的set
+### 代码
+```java
+class Solution {
+    public int countElements(int[] arr) {
+        boolean[] bucket = new boolean[1002];
+        for (int num : arr) {
+            bucket[num] = true;
+        }
+        
+        int ans = 0;
+        for (int num : arr) {
+            if (bucket[num + 1]) {
+                ans++;
+            }
+        }
+        return ans;
+    }
+}
+```
