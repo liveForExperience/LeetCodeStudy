@@ -39,3 +39,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_581_最短无序连续子数组](https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/)
+## 解法
+### 思路
+- 正向遍历数组，寻找最大值：
+  - 如果遍历过程是升序的（包含等于最大值的情况），那就不断更新最大值
+  - 如果遍历中发现小于最大值的元素，就将其坐标暂存，记为不符合升序规则的最右侧元素
+  - 如上过程一直到遍历结束
+- 反向遍历数组，寻找最小值，探索过程和寻找最大值一致，目的是找到不符合升序规则的最左侧元素
+- 最终返回最左和最右元素之间定义的区间的长度
+### 代码
+```java
+class Solution {
+    public int findUnsortedSubarray(int[] nums) {
+        int n = nums.length, end = -1, max = nums[0], start = -1, min = nums[n - 1];
+        for (int i = 1; i < n; i++) {
+            if (nums[i] >= max) {
+                max = nums[i];
+            } else {
+                end = i;
+            }
+        }
+        
+        if (end == -1) {
+            return 0;
+        }
+        
+        for (int i = n - 2; i >= 0; i--) {
+            if (nums[i] <= min) {
+                min = nums[i];
+            } else {
+                start = i;
+            }
+        }
+        
+        return end - start + 1;
+    }
+}
+```
