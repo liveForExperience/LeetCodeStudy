@@ -124,3 +124,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1427_字符串的左右移](https://leetcode-cn.com/problems/perform-string-shifts/)
+## 解法
+### 思路
+- 遍历shift，中和所有的操作，最后得出一个最终的移动结果
+- 根据移动要求移动字符串s得到结果
+### 代码
+```java
+class Solution {
+    public String stringShift(String s, int[][] shift) {
+        int l = 0, r = 0;
+        for (int[] sh : shift) {
+            if (sh[0] == 0) {
+                l += sh[1];
+            } else {
+                r += sh[1];
+            }
+        }
+
+        int direction = 0, move = Math.abs(l - r) % s.length();
+        if (l == r) {
+            return s;
+        } else if (r > l) {
+            direction = 1;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (direction == 0) {
+            for (int i = move; i < s.length(); i++) {
+                sb.append(s.charAt(i));
+            }
+
+            for (int i = 0; i < move; i++) {
+                sb.append(s.charAt(i));
+            }
+        } else {
+            for (int i = s.length() - move; i < s.length(); i++) {
+                sb.append(s.charAt(i));
+            }
+
+            for (int i = 0; i < s.length() - move; i++) {
+                sb.append(s.charAt(i));
+            }
+        }
+
+        return sb.toString();
+    }
+}
+```
