@@ -218,5 +218,37 @@ class Solution {
 - 循环结束，返回累加的结果
 ### 代码
 ```java
+class Solution {
+  public int triangleNumber(int[] nums) {
+    int n = nums.length, ans = 0;
+    Arrays.sort(nums);
+    for (int i = 0; i < n; i++) {
+      for (int j = i - 1, k = 0; j > 0; j--) {
+        while (k < j && nums[k] + nums[j] <= nums[i]) {
+          k++;
+        }
+
+        ans += j - k;
+      }
+    }
+
+    return ans;
+  }
+}
+```
+# [LeetCode_802_找到最终的安全状态](https://leetcode-cn.com/problems/find-eventual-safe-states/solution/)
+## 解法
+### 思路
+dfs+三色标记
+- 如果起始节点位于环内，或者能够到达一个环，就是不安全的
+- 使用dfs搜索图，同时使用三色标记法对节点进行标记：
+  - 0：未访问
+  - 1：在递归栈中，或者在环
+  - 2：搜索完毕是安全的
+- 如果第一次遍历到该节点，就标记为1，代表在递归中
+- 如果搜索过程中遇到标记为1的节点，说明有环，退出搜索，同时保留1的状态，使得下次从别的起始点开始搜索的时候能够直到这个节点是在环的
+- 如果搜索结束没有遇到1，则说明无环，则将当前节点标记为黑色再返回
+### 代码
+```java
 
 ```
