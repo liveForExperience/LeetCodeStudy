@@ -172,3 +172,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_611_有效三角形的个数](https://leetcode-cn.com/problems/valid-triangle-number/)
+## 解法
+### 思路
+- 排序
+- 嵌套遍历+二分
+### 代码
+```java
+class Solution {
+    public int triangleNumber(int[] nums) {
+        int n = nums.length;
+        if (n < 3) {
+            return 0;
+        }
+        Arrays.sort(nums);
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int head = j, tail = n - 1;
+                while (head <= tail) {
+                    int mid = head + (tail - head) / 2;
+                    if (nums[mid] >= nums[i] + nums[j]) {
+                        tail = mid - 1;
+                    } else {
+                        head = mid + 1;
+                    }
+                }
+                
+                if (head > j) {
+                    ans += head - j - 1;
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+排序+双指针
+- 对数组排序，使数组升序排列
+- 3层循环，最外层确定三角形边的较大边
+- 内层循环确定次大边，同时在确定次大边的同时，也确定最小边的值
+- 最小边的值一定是从0开始递增，直到小于次大边的最大值，在这个过程中，如果遇到不满足条件的就进行递增，直到第一个满足条件的最小边，然后计算次小边和最小边之间的距离，得到在当前较大边和次大边确定的条件下，有多少种可能
+- 循环结束，返回累加的结果
+### 代码
+```java
+
+```
