@@ -250,5 +250,79 @@ dfs+三色标记
 - 如果搜索结束没有遇到1，则说明无环，则将当前节点标记为黑色再返回
 ### 代码
 ```java
+class Solution {
+  public List<Integer> eventualSafeNodes(int[][] graph) {
+    int n = graph.length;
+    List<Integer> ans = new ArrayList<>();
+    int[] color = new int[n];
+    for (int i = 0; i < n; i++) {
+      if (safe(graph, color, i)) {
+        ans.add(i);
+      }
+    }
 
+    return ans;
+  }
+
+  private boolean safe(int[][] graph, int[] color, int x) {
+    if (color[x] > 0) {
+      return color[x] == 2;
+    }
+
+    color[x] = 1;
+    for (int a : graph[x]) {
+      if (!safe(graph, color, a)) {
+        return false;
+      }
+    }
+
+    color[x] = 2;
+    return true;
+  }
+}
+```
+# [LeetCode_847_访问所有节点的最短路径](https://leetcode-cn.com/problems/shortest-path-visiting-all-nodes/)
+## 解法
+### 思路
+bfs+记忆化搜索
+- 搜索过程中使用三元数组来记录：
+  - 当前节点的编号
+  - 二进制数组，对应所有节点被搜索的状态，全部搜索完成就是2的n次方-1
+  - 累加的路径总和
+- 在所有时候使用记忆化搜索的方式避免重复搜索，记录的内容就是当前节点和当前状态
+- 因为是bfs，所以第一个搜索到的全部搜索过的状态，就是题目要求的答案，直接返回即可
+### 代码
+```java
+class Solution {
+    public int shortestPathLength(int[][] graph) {
+        int n = graph.length, done = (1 << n) - 1, ans = 0;
+        Queue<int[]> queue = new ArrayDeque<>();
+        boolean[][] memo = new boolean[n][done + 1];
+        for (int i = 0; i < n; i++) {
+            queue.offer(new int[]{i, 1 << i, 0});
+            memo[i][1 << i] = true;
+        }
+
+        while (!queue.isEmpty()) {
+            int[] tuple = queue.poll();
+            int x = tuple[0], mask = tuple[1], dist = tuple[2];
+            
+            if (mask == done) {
+                ans = dist;
+                break;
+            }
+            
+            int[] next = graph[x];
+            for (int y : next) {
+                int maskY = mask | 1 << y;
+                if (!memo[y][maskY]) {
+                    queue.offer(new int[]{y, maskY, dist + 1});
+                    memo[y][maskY] = true;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
