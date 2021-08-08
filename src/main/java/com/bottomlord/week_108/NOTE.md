@@ -612,3 +612,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1441_用栈操作构建数组](https://leetcode-cn.com/problems/build-an-array-with-stack-operations/)
+## 解法
+### 思路
+模拟：
+- 初始化2个变量
+  - index对应target的坐标
+  - num对应list中要压入栈中的元素
+  - 记录结果的ops数组
+- 循环，退出条件是要么num不大于n，要么index没有越界
+  - 在循环内侧，如果num不等于target的index对应的元素，就往ops里放入压入和弹出的操作，同时累加num值
+  - 内侧循环结束后，就是num和target的元素相等的情况，这个时候就往ops里放入push操作，并且累加num和index
+### 代码
+```java
+class Solution {
+    public List<String> buildArray(int[] target, int n) {
+        int index = 0, num = 1;
+        List<String> ops = new ArrayList<>();
+        while (num <= n && index < target.length) {
+            while (num != target[index]) {
+                ops.add("Push");
+                ops.add("Pop");
+                num++;
+            }
+
+            ops.add("Push");
+            num++;
+            index++;
+        }
+        
+        return ops;
+    }
+}
+```
