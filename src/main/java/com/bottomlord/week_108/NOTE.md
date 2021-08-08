@@ -519,3 +519,57 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1436_旅行终点站](https://leetcode-cn.com/problems/destination-city/submissions/)
+## 解法
+### 思路
+- 遍历paths
+  - 将目的地放入set集合中，记录所有的城市
+  - 将起始点作为key放入map，目的地放入作为值的list中
+- 遍历set，找到map中不存在的city直接返回即可
+### 代码
+```java
+class Solution {
+    public String destCity(List<List<String>> paths) {
+        Map<String, List<String>> map = new HashMap<>();
+        Set<String> cities = new HashSet<>();
+        for (List<String> path : paths) {
+            cities.add(path.get(1));
+            map.computeIfAbsent(path.get(0), x -> new ArrayList<>()).add(path.get(1));
+        }
+        
+        for (String city : cities) {
+            if (!map.containsKey(city)) {
+                return city;
+            }
+        }
+        
+        return "";
+    }
+}
+```
+## 解法二
+### 思路
+- 不需要用map存目的地集合，直接一个set存起始地，一个set存目的地
+- 遍历目的地，找到起始地中没有的元素即可
+### 代码
+```java
+class Solution {
+    public String destCity(List<List<String>> paths) {
+        Set<String> depart = new HashSet<>(),
+                    dest = new HashSet<>();
+        
+        for (List<String> path : paths) {
+            depart.add(path.get(0));
+            dest.add(path.get(1));
+        }
+                
+        for (String city : dest) {
+            if (!depart.contains(city)) {
+                return city;
+            }
+        }
+        
+        return null;
+    }
+}
+```
