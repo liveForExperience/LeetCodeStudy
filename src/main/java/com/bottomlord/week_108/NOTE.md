@@ -326,3 +326,196 @@ class Solution {
     }
 }
 ```
+# [LeetCode_457_环形数组是否存在循环](https://leetcode-cn.com/problems/circular-array-loop/)
+## 解法
+### 思路
+- 理解题目
+  - 从任意一个元素开始移动，如果在移动过程中所有遇到的元素都是同样符号，而且能够最终回到起始的节点就说明有循环
+  - 在遍历过程中，如果遇到符号和起始的节点不同，或者遍历的元素个数超过了数组的长度，就说明循环不存在
+- 模拟
+  - 循环遍历所有元素节点，作为可能的循环的起始点
+  - 每一次判断时候，暂存起始的节点元素，起始节点的符号
+  - 移动的时候需要考虑收尾相连的情况，而且方向有正反，所以移动的方程是：`next = ((cur + num) % n + n) % n`
+  - 移动的时候需要判断
+    - 遍历次数是否超过数组长度，如果是，返回false
+    - 当前元素是否与起始元素符号相同，如果是，返回false
+    - 如果元素和起始元素相同，返回true
+### 代码
+```java
+class Solution {
+    public boolean circularArrayLoop(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            if (check(nums, i)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean check(int[] nums, int start) {
+        int cur = start, k = 0, n = nums.length;
+        boolean flag = nums[cur] > 0;
+
+        while (k < n) {
+            int next = ((cur + nums[cur]) % n + n) % n;
+            if (flag && nums[next] < 0) {
+                return false;
+            }
+
+            if (!flag && nums[next] > 0) {
+                return false;
+            }
+
+            if (next == start) {
+                return k > 0;
+            }
+
+            cur = next;
+            k++;
+        }
+
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+- 从解法一中可以发现，搜索判断的时候，很多路径是被重复检查的
+- 所以可以用一个记忆数组记录当前节点是否被访问过，记忆数组中记录是第几轮被搜索过的，这样如果当前节点在记忆数组中有值，而且值代表的轮数和当前轮数相同，那就是有循环了，如果不是，那就说明之前已经处理过直接返回false
+- 需要注意：和解法一不同，在判断k的退出条件时，要等k>n时才退出，因为在解法二时，需要通过memo来判断是否出现循环，所以可能需要n+1次遍历来判断，因为可能只在最后2个元素出现了循环
+### 代码
+```java
+class Solution {
+    public boolean circularArrayLoop(int[] nums) {
+        int n = nums.length;
+        int[] memo = new int[n + 1];
+        for (int i = 0, idx = 1; i < n; i++, idx++) {
+            if (memo[i] > 0) {
+                continue;
+            }
+
+            int k = 0, cur = i;
+            boolean flag = nums[cur] > 0;
+            while (k <= n) {
+                int next = ((cur + nums[cur]) %  n + n) % n;
+                if (cur == next) {
+                    break;
+                }
+
+                if (flag && nums[next] < 0) {
+                    break;
+                }
+
+                if (!flag && nums[next] > 0) {
+                    break;
+                }
+
+                if (memo[next] > 0) {
+                    if (memo[next] != idx) {
+                        break;
+                    }
+
+                    return true;
+                }
+
+                k++;
+                cur = next;
+                memo[next] = idx;
+            }
+        }
+
+        return false;
+    }
+}
+```
+# [LeetCode_1137_第N个泰波那契数](https://leetcode-cn.com/problems/n-th-tribonacci-number/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+  public int tribonacci(int n) {
+    if (n <= 1) {
+      return n;
+    }
+
+    if (n == 2) {
+      return 1;
+    }
+
+    int a1 = 0, a2 = 1, a3 = 1;
+    for (int i = 3; i<= n; i++) {
+      int a4= a1 + a2 + a3;
+      a1 = a2;
+      a2 = a3;
+      a3 = a4;
+    }
+
+    return a3;
+  }
+}
+```
+## 解法二
+### 思路
+状态转移方程
+### 代码
+```java
+class Solution {
+  public int tribonacci(int n) {
+    if (n <= 1) {
+      return n;
+    }
+
+    if (n == 2) {
+      return 1;
+    }
+
+    int[] dp = new int[n + 1];
+    dp[0] = 0;
+    dp[1] = 1;
+    dp[2] = 1;
+
+    for (int i = 3; i <= n; i++) {
+      dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3];
+    }
+
+    return dp[n];
+  }
+}
+```
+## 解法二
+### 思路
+记忆化递归
+### 代码
+```java
+class Solution {
+    public int tribonacci(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        
+        if (n == 2) {
+            return 1;
+        }
+
+        Map<Integer, Integer> memo = new HashMap<>();
+        memo.put(0, 0);
+        memo.put(1, 1);
+        memo.put(2, 1);
+        return doTri(n - 1, memo) + doTri(n - 2, memo) + doTri(n - 3, memo);
+    }
+
+    private int doTri(int n, Map<Integer, Integer> memo) {
+        if (memo.containsKey(n)) {
+            return memo.get(n);
+        }
+
+        int num = doTri(n - 1, memo) + doTri(n - 2, memo) + doTri(n - 3, memo);
+        memo.put(n, num);
+
+        return num;
+    }
+}
+```
