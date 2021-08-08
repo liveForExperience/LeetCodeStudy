@@ -573,3 +573,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1437_是否所有1都至少相隔k个元素](https://leetcode-cn.com/problems/check-if-all-1s-are-at-least-length-k-places-away/)
+## 解法
+### 思路
+模拟：
+- 初始化：
+  - 上一个1所在的坐标idx，初始值是数组长度，用于做第一个1的判断
+  - 2个1之间的间距dis
+- 遍历数组
+  - 如果是0，累加dis
+  - 如果是1：
+    - idx是数组长度，则将当前坐标设置为第一次碰到的坐标
+    - 判断k和dis之间的大小，如果dis小于k返回false
+    - 重置dis为0
+    - 这里的idx其实就是区分第一次遇到1的情况
+- 遍历结束，返回true，代表所有间距都符合要求
+### 代码
+```java
+class Solution {
+    public boolean kLengthApart(int[] nums, int k) {
+        int idx = nums.length, dis = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
+                dis++;
+            } else {
+                if (idx == nums.length) {
+                    idx = i;
+                } else {
+                    if (dis < k) {
+                        return false;
+                    }
+                }
+                dis = 0;
+            }
+        }
+        
+        return true;
+    }
+}
+```
