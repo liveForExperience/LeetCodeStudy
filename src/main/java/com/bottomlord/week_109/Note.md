@@ -71,3 +71,99 @@ class Solution {
   }
 }
 ```
+# [LeetCode_413_等差数列划分](https://leetcode-cn.com/problems/arithmetic-slices/)
+## 解法
+### 思路
+模拟：嵌套循环判断
+### 代码
+```java
+class Solution {
+    public int numberOfArithmeticSlices(int[] nums) {
+        int count = 0;
+        for (int i = 0; i < nums.length - 1; i++) {
+            int diff = nums[i + 1] - nums[i], 
+                pre = nums[i + 1];
+            for (int j = i + 2; j < nums.length; j++) {
+                if (nums[j] - pre == diff) {
+                    count++;
+                    pre = nums[j];
+                } else {
+                    break;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- dp[i]：代表0到i区间的数组能够获取的等差数列总数
+- base case：
+  - 公差：diff = nums[1] - nums[0]
+  - dp[0] = 0, dp[1] = 0, dp[2] = nums[2] - nums[1] == diff ? 1 : 0
+- 状态转移方程：
+  - nums[i] - nums[i - 1] == diff：dp[i] = dp[i - 1] + 1
+  - nums[i] - nums[i - 1] != diff：dp[i] = 0, diff = nums[i] - nums[i - 1];
+  - 如果当前值与前置的差与公差相等，那么就说明0到当前元素坐标所组成的数组中，一定能够组成和[0,i-1]区间一样个数的连续数组
+  - 假设原来[0,i-1]这个区间的[j,i-1]是最长的连续等差数组，这个区间能组成n个连续等差数组，那么[j +1,i]等于右移1位，也就能同样获得n个数组，同时再加上[j,i]这个数组
+  - 所以最后就是2 * n + 1个数组
+- 结果：累加dp中所有元素的和
+- 优化整个算法过程，累加值可以在循环时就处理，减少一个循环
+- 需要注意判断nums长度不足3的情况，此时结果是0
+### 代码
+```java
+class Solution {
+    public int numberOfArithmeticSlices(int[] nums) {
+        int n = nums.length;
+        if (n < 3) {
+            return 0;
+        }
+        
+        int diff = nums[1] - nums[0], sum = 0;
+        int[] dp = new int[n];
+        
+        dp[0] = dp[1] = 0;
+        for (int i = 2; i < n; i++) {
+            if (nums[i] - nums[i - 1] == diff) {
+                dp[i] = dp[i - 1] + 1;
+            } else {
+                diff = nums[i] - nums[i - 1];
+            }
+            sum += dp[i];
+        }
+        
+        return sum;
+    }
+}
+```
+## 解法三
+### 思路
+基于解法二可以发现，状态转移时只依赖前一个数字的状态，可以用一个变量来代替dp数组
+### 代码
+```java
+class Solution {
+    public int numberOfArithmeticSlices(int[] nums) {
+        int n = nums.length;
+        if (n < 3) {
+            return 0;
+        }
+        
+        int diff = nums[1] - nums[0], total = 0, ans = 0;
+        for (int i = 2; i < n; i++) {
+            if (nums[i] - nums[i - 1] == diff) {
+                total++;
+            } else {
+                diff = nums[i] - nums[i - 1];
+                total = 0;
+            }
+            
+            ans += total;
+        }
+        
+        return ans;
+    }
+}
+```
