@@ -167,3 +167,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_446_等差数列划分II_子序列](https://leetcode-cn.com/problems/arithmetic-slices-ii-subsequence/)
+## 解法
+### 思路
+动态规划+hash表
+- dp[i][d]：结尾是nums[i]，公差是d的等差数列的个数
+- 状态转移方程：dp[i] += dp[j] + 1
+  - dp[j]代表i结尾的等差数列的个数，其实就是累加所有以小于i的元素为结尾的等差数列的和
+  - 1是指增加的i到j的2个元素的数列，注意的一点是，两个数组成的数列不是等差数列，必须是3个，所以其实dp[j]的值才是nums[i]结尾的等差数列的一个有效值
+  - 那既然那个1是无效的，为什么还要累加呢，因为这个1在当前i这里是无效的，因为2个，但对于i后面的元素，又会成为有效的了，所以要累加起来
+- 最终返回的结果，是在状态转移过程中，累加的dp值，但这个dp值不包含最后一个元素为结尾的dp值集合
+- 需要注意越界的情况，用long代替int
+### 代码
+
+```java
+class Solution {
+  public int numberOfArithmeticSlices(int[] nums) {
+    int n = nums.length, ans = 0;
+    Map<Long, Integer>[] dp = new Map[n + 1];
+    for (int i = 0; i < dp.length; i++) {
+      dp[i] = new HashMap<>();
+    }
+
+    for (int i = 1; i < n; i++) {
+      for (int j = 0; j < i; j++) {
+        long d = (long) nums[i] - nums[j];
+        int jCount = dp[j].getOrDefault(d, 0);
+        Map<Long, Integer> iMap = dp[i];
+        ans += jCount;
+        iMap.put(d, iMap.getOrDefault(d, 0) + jCount + 1);
+      }
+    }
+
+    return ans;
+  }
+}
+```
