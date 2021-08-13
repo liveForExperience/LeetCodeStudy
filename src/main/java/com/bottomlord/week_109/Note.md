@@ -275,3 +275,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1446_连续字符](https://leetcode-cn.com/problems/consecutive-characters/)
+## 解法
+### 思路
+- 初始化字符x为字符串第一个字符
+- 初始化累加值acc为1，因为第一个字符应该被计数
+- 初始化最大值max为1，因为acc一开始最小是1
+- 遍历字符串，从第二个字符开始，判断是否和x相等
+  - 如果相等累计acc
+  - 如果不相等，判断max和acc的大小，暂存较大值为新的max，更新acc为1，更新x为新的字符
+- 遍历结束，再比较下acc和max的大小，返回较大值作为结果
+### 代码
+```java
+class Solution {
+    public int maxPower(String s) {
+        char x = s.charAt(0);
+        int acc = 1, max = 1;
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) == x) {
+                acc++;
+            } else {
+                max = Math.max(max, acc);
+                acc = 1;
+                x = s.charAt(i);
+            }
+        }
+        return Math.max(acc, max);
+    }
+}
+```
