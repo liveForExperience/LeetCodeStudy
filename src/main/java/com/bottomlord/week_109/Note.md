@@ -304,3 +304,79 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1583_统计不开心的朋友](https://leetcode-cn.com/problems/count-unhappy-friends/)
+## 解法
+### 思路
+- 二维数组统计每个人对其他人的好感度的得分
+- 遍历pairs，统计每组pair中不开心的人数
+  - 外层确定pair，并初始化pair中两个人是否不开心，初始都是false
+  - 内层遍历所有pair，如果和外层相同就跳过
+  - 根据题目要求确定pair中是否有符合不开心条件的，然后标记
+  - 如果内层遍历到所有2个都已经标记为不开心，就终止内层循环
+  - 内层判断的时候就利用二维数组来快速查找好感度
+### 代码
+```java
+class Solution {
+    public int unhappyFriends(int n, int[][] preferences, int[][] pairs) {
+        int[][] dict = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n - 1; j++) {
+                dict[i][preferences[i][j]] = n - 1 - j;
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < pairs.length; i++) {
+            boolean flag1 = false, flag2 = false;
+            
+            for (int j = 0; j < pairs.length; j++) {
+                if (i == j) {
+                    continue;
+                }
+
+                int[] pairA = pairs[i], pairB = pairs[j];
+
+                int a12 = dict[pairA[0]][pairA[1]],
+                    ab11 = dict[pairA[0]][pairB[0]],
+                    ab12 = dict[pairA[0]][pairB[1]],
+                    a21 = dict[pairA[1]][pairA[0]],
+                    ab21 = dict[pairA[1]][pairB[0]],
+                    ab22 = dict[pairA[1]][pairB[1]],
+                    b12 = dict[pairB[0]][pairB[1]],
+                    ba11 = dict[pairB[0]][pairA[0]],
+                    ba12 = dict[pairB[0]][pairA[1]],
+                    b21 = dict[pairB[1]][pairB[0]],
+                    ba21 = dict[pairB[1]][pairA[0]],
+                    ba22 = dict[pairB[1]][pairA[1]];
+                
+                if (!flag1 && a12 < ab11 && b12 < ba11) {
+                    flag1 = true;
+                    ans++;
+                }
+
+                if (!flag1 && a12 < ab12 && b21 < ba21) {
+                    flag1 = true;
+                    ans++;
+                }
+                
+                if (!flag2 && a21 < ab21 && b12 < ba12) {
+                    flag2 = true;
+                    ans++;
+                }
+
+                if (!flag2 && a21 < ab22 && b21 < ba22) {
+                    flag2 = true;
+                    ans++;
+                }
+
+                if (flag1 && flag2) {
+                    break;
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
