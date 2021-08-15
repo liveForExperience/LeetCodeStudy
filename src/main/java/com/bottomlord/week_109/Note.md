@@ -600,3 +600,40 @@ class Solution {
     }   
 }
 ```
+# [LeetCode_1464_数组中两元素的最大乘积](https://leetcode-cn.com/problems/maximum-product-of-two-elements-in-an-array/)
+## 解法
+### 思路
+- 遍历数组，找到最大的2个元素
+- 计算他们各自-1之后的乘积
+### 代码
+```java
+class Solution {
+    public int maxProduct(int[] nums) {
+        int max = Integer.MIN_VALUE, sec = Integer.MIN_VALUE;
+        for (int num : nums) {
+            if (sec == Integer.MIN_VALUE) {
+                sec = num;
+                continue;
+            }
+
+            if (max == Integer.MIN_VALUE) {
+                max = Math.max(sec, num);
+                sec = Math.min(sec, num);
+                continue;
+            }
+
+            if (num > max) {
+                sec = max;
+                max = num;
+                continue;
+            }
+
+            if (num > sec) {
+                sec = num;
+            }
+        }
+        
+        return (max - 1) * (sec - 1);
+    }
+}
+```
