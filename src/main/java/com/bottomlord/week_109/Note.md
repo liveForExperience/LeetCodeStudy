@@ -380,3 +380,125 @@ class Solution {
     }
 }
 ```
+# [LeetCode_576_出界的路径数](https://leetcode-cn.com/problems/out-of-boundary-paths/)
+## 失败解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    private int mod = 1000000007;
+
+    public int findPaths(int m, int n, int maxMove, int startRow, int startColumn) {
+        return dfs(m, n, maxMove, 0, startRow, startColumn) % mod;
+    }
+
+    private int dfs(int m, int n, int maxMove, int move, int row, int col) {
+        if (move > maxMove) {
+            return 0;
+        }
+
+        if (row < 0 || row >= m || col < 0 || col >= n) {
+            return 1;
+        }
+
+        return dfs(m, n, maxMove, move + 1, row + 1, col) %  mod+
+                dfs(m, n, maxMove, move + 1, row - 1, col) % mod +
+                dfs(m, n, maxMove, move + 1, row, col + 1) % mod +
+                dfs(m, n, maxMove, move + 1, row, col - 1) % mod;
+    }
+}
+```
+## 解法
+### 思路
+动态规划
+- dp[i][j][k]：移动i步，在j行k列有的路径数
+  - i：最大值maxMove + 1
+  - j：最大值m
+  - k：最大值n
+- 初始化一个方向二位数组，用于快速模拟在当前位置上的下一步的坐标
+- base case：dp[0][startRow][startCol] = 0
+- 状态转移方程：
+  - 如果j>=0&&j<m&&k>=0&&k<n，则dp[i + 1][j][k] = dp[i][j][k]
+  - 如果出界了，ans += dp[i][j][k]
+  - 状态转移的时候还需要判断，当前dp元素的值是不是大于0，不大于0代表当前节点没有被遍历到，是不能做状态转移的
+- 最终返回ans即可
+### 代码
+```java
+ class Solution {
+  private int mod = 1000000007;
+
+  public int findPaths(int m, int n, int maxMove, int startRow, int startColumn) {
+    int[][][] dp = new int[maxMove + 1][m][n];
+    int[][] directions = new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    int ans = 0;
+    dp[0][startRow][startColumn] = 1;
+    for (int i = 0; i < maxMove; i++) {
+      for (int j = 0; j < m; j++) {
+        for (int k = 0; k < n; k++) {
+          int path = dp[i][j][k];
+
+          if (path > 0) {
+            for (int[] direction : directions) {
+              int nextRow = j + direction[0], nextCol = k + direction[1];
+
+              if (nextRow >= 0 && nextRow < m && nextCol >= 0 && nextCol < n) {
+                dp[i + 1][nextRow][nextCol] = (dp[i + 1][nextRow][nextCol] + path) % mod;
+
+              } else {
+                ans = (ans + path) % mod;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return ans;
+  }
+}
+```
+## 解法二
+### 思路
+- 在解法一的基础上，发现状态转移过程中，当前状态只依赖前一个状态，所以不需要记录到底是第几步，所以可以省略一个维度
+- 但需要注意的是，在状态转移过程中，每一次的移动，其实只是生成了4个新的位置并从老的位置上继承其步数
+- 所以在最外层开始遍历的时候，先初始化一个新的dp二位数组，用于记录这一次要生成的新的位置
+- 在内部的2层遍历结束后，将整个dp数组更新成循环开始时候的数组
+### 代码
+```java
+class Solution {
+private static final int MOD = 1000000007;
+
+    public int findPaths(int m, int n, int maxMove, int startRow, int startColumn) {
+        int ans = 0;
+        int[][] dp = new int[m][n];
+        int[][] directions = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        dp[startRow][startColumn] = 1;
+
+        for (int i = 0; i < maxMove; i++) {
+            int[][] newDp = new int[m][n];
+            for (int j = 0; j < m; j++) {
+                for (int k = 0; k < n; k++) {
+                    int count = dp[j][k];
+
+                    if (count > 0) {
+                        for (int[] direction : directions) {
+                            int nextR = j + direction[0], nextC = k + direction[1];
+
+                            if (nextR >= 0 && nextR < m && nextC >= 0 && nextC < n) {
+                                newDp[nextR][nextC] = (newDp[nextR][nextC] + count) % MOD;
+                            } else {
+                                ans = (ans + count) % MOD;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            dp = newDp;
+        }
+
+        return ans;
+    }
+}
+```
