@@ -575,3 +575,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1460_通过翻转子数组使两个数组相等](https://leetcode-cn.com/problems/make-two-arrays-equal-by-reversing-sub-arrays/)
+## 解法
+### 思路
+- 只要两个数组的数值对应的个数都相等，就能翻转成功
+- 对2个数组的元素计数并统计，比较是否一致
+### 代码
+```java
+class Solution {
+    public boolean canBeEqual(int[] target, int[] arr) {
+        int[] bucket = new int[1001];
+        for (int i = 0; i < target.length; i++) {
+            bucket[target[i]]++;
+            bucket[arr[i]]--;
+        }
+        
+        for (int num : bucket) {
+            if (num != 0) {
+                return false;
+            }
+        }
+        
+        return true;
+    }   
+}
+```
