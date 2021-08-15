@@ -525,3 +525,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1450_在既定时间做作业的学生人数](https://leetcode-cn.com/problems/number-of-students-doing-homework-at-a-given-time/)
+## 解法
+### 思路
+- 遍历start数组，和queryTime进行比较，找到比queryTime小的所有坐标，记录下来
+- 遍历坐标列表，用遍历到的坐标到到end数组中找到元素，与queryTime进行比较，找到小于等于endTime数组元素的坐标并计数
+- 返回第二次遍历的计数值
+### 代码
+```java
+class Solution {
+    public int busyStudent(int[] startTime, int[] endTime, int queryTime) {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < startTime.length; i++) {
+            if (startTime[i] <= queryTime) {
+                list.add(i);
+            }
+        }
+        
+        int ans = 0;
+        for (int index : list) {
+            if (endTime[index] >= queryTime) {
+                ans++;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
