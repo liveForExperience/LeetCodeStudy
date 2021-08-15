@@ -553,3 +553,25 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1455_检查单词是否为句中其他单词的前缀](https://leetcode-cn.com/problems/check-if-a-word-occurs-as-a-prefix-of-any-word-in-a-sentence/)
+## 解法
+### 思路
+- 用空格分割字符串
+- 遍历分割后的单词，比较是否searchWord是否是该单词的前缀，如果是就返回坐标
+### 代码
+```java
+class Solution {
+    public int isPrefixOfWord(String sentence, String searchWord) {
+        String[] arr = sentence.split(" ");
+        int index = 1;
+        for (String word : arr) {
+            if (word.startsWith(searchWord)) {
+                return index;
+            }
+            index++;
+        }
+        
+        return -1;
+    }
+}
+```
