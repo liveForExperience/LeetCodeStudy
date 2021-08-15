@@ -637,3 +637,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1469_寻找所有独生节点](https://leetcode-cn.com/problems/find-all-the-lonely-nodes/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public List<Integer> getLonelyNodes(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list, false);
+        return list;
+    }
+
+    private void dfs(TreeNode node, List<Integer> list, boolean single) {
+        if (node == null) {
+            return;
+        }
+        
+        if (single) {
+            list.add(node.val);
+        }
+        
+        single = node.left == null || node.right == null;
+
+        dfs(node.left, list, single);
+        dfs(node.right, list, single);
+    } 
+}
+```
