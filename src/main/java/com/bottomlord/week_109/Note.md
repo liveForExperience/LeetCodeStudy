@@ -502,3 +502,26 @@ private static final int MOD = 1000000007;
     }
 }
 ```
+# [LeetCode_1480_一堆数组的动态和](https://leetcode-cn.com/problems/running-sum-of-1d-array/)
+## 解法
+### 思路
+前缀和
+### 代码
+```java
+class Solution {
+    public int[] runningSum(int[] nums) {
+        int n = nums.length;
+        if (n == 0) {
+            return new int[0];
+        }
+        
+        int[] sums = new int[n];
+        sums[0] = nums[0];
+        for (int i = 1; i < n; i++) {
+            sums[i] = sums[i - 1] + nums[i];
+        }
+        
+        return sums;
+    }
+}
+```
