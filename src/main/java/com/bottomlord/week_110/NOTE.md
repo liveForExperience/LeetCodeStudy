@@ -50,3 +50,29 @@ public int countArrangement(int n) {
     }
 }
 ```
+# [LeetCode_1470_1_重新排列数组](https://leetcode-cn.com/problems/shuffle-the-array/)
+## 解法
+### 思路
+- 初始化新的等长数组
+- 初始化2个坐标变量，分别对应x和y元素的序列，从0开始
+- 重新填充元素，填充的时候：
+  - x的新坐标等于，x序列 * 2
+  - y的新坐标等于，y序列 * 2 + 1
+### 代码
+```java
+class Solution {
+    public int[] shuffle(int[] nums, int n) { 
+        int[] arr = new int[nums.length];
+        int i1 = 0, i2 = 0;
+        for (int i = 0; i < 2 * n; i++) {
+            if (i < n) {
+                arr[i1++ * 2] = nums[i];
+            } else {
+                arr[i2++ * 2 + 1] = nums[i];
+            }
+        }
+
+        return arr;
+    }
+}
+```
