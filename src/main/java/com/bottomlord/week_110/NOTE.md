@@ -76,3 +76,73 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1474_删除链表M个节点后的N个节点](https://leetcode-cn.com/problems/delete-n-nodes-after-m-nodes-of-a-linked-list/)
+## 解法
+### 思路
+- 遍历链表，将保留的元素放入列表
+- 遍历列表重新生产链表
+- 返回链表头结点
+### 代码
+```java
+class Solution {
+  public ListNode deleteNodes(ListNode head, int m, int n) {
+    List<Integer> list = new ArrayList<>();
+    ListNode node = head;
+    int index = 0;
+    while (node != null) {
+      if (index < m) {
+        list.add(node.val);
+      }
+
+      if (index == m + n - 1) {
+        index = 0;
+      } else {
+        index++;
+      }
+
+      node = node.next;
+    }
+
+    ListNode fake = new ListNode(0),
+            pre = fake;
+    for (int num : list) {
+      pre.next = new ListNode(num);
+      pre = pre.next;
+    }
+
+    return fake.next;
+  }
+}
+```
+## 解法二
+### 思路
+- 使用index和前置指针及当前指针
+- 遍历链表的过程中通过指针来操作删除或者保留的动作
+- 注意index的重置
+### 代码
+```java
+class Solution {
+    public ListNode deleteNodes(ListNode head, int m, int n) {
+        int index = 0;
+        ListNode fake = new ListNode(0), pre = fake, node = head;
+        fake.next = head;
+        while (node != null) {
+            if (index < m) {
+                pre = node;
+                node = node.next;
+            } else if (index < m + n) {
+                node = node.next;
+                pre.next = node;
+            }
+            
+            index++;
+            
+            if (index == m + n) {
+                index = 0;
+            }
+        }
+        
+        return fake.next;
+    }
+}
+```
