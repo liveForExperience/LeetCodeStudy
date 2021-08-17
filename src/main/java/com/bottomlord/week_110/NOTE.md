@@ -233,3 +233,111 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1496_判断路径是否相交](https://leetcode-cn.com/problems/path-crossing/)
+## 解法
+### 思路
+- 模拟行走路程
+- 记录路过的路径
+- 判断当前路径是否在记录中存在
+- 注意需要将起始路径也记录进去
+### 代码
+```java
+class Solution {
+    public boolean isPathCrossing(String path) {
+        int row = 0, col = 0;
+        Set<String> set = new HashSet<>();
+        set.add(row + ":" + col);
+
+        char[] cs = path.toCharArray();
+        for (char c : cs) {
+            if (c == 'N') {
+                row--;
+            } else if (c == 'S') {
+                row++;
+            } else if (c == 'E') {
+                col++;
+            } else {
+                col--;
+            }
+            
+            String position = row + ":" + col;
+            if (set.contains(position)) {
+                return true;
+            }
+            
+            set.add(position);
+        }
+        
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+用二位数组代替set记录状态
+### 代码
+```java
+class Solution {
+    public boolean isPathCrossing(String path) {
+        boolean[][] memo = new boolean[2001][2001];
+        int row = 0, col = 0;
+        memo[row + 1000][col + 1000] = true;
+
+        char[] cs = path.toCharArray();
+        for (char c : cs) {
+            if (c == 'N') {
+                row--;
+            } else if (c == 'S') {
+                row++;
+            } else if (c == 'E') {
+                col++;
+            } else {
+                col--;
+            }
+
+            if (memo[row + 1000][col + 1000]) {
+                return true;
+            }
+
+            memo[row + 1000][col + 1000] = true;
+        }
+        
+        return false;
+    }
+}
+```
+## 解法三
+### 思路
+在解法一的基础上，不使用字符串而是数字来代替，row * 10000 + col
+### 代码
+```java
+class Solution {
+    public boolean isPathCrossing(String path) {
+        int row = 0, col = 0;
+        Set<Integer> set = new HashSet<>();
+        set.add(0);
+
+        char[] cs = path.toCharArray();
+        for (char c : cs) {
+            if (c == 'N') {
+                row--;
+            } else if (c == 'S') {
+                row++;
+            } else if (c == 'E') {
+                col++;
+            } else {
+                col--;
+            }
+
+            Integer position = row * 10000 + col;
+            if (set.contains(position)) {
+                return true;
+            }
+
+            set.add(position);
+        }
+
+        return false;
+    }
+}
+```
