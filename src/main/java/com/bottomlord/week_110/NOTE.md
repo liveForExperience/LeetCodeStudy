@@ -146,3 +146,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_551_学生出勤记录I](https://leetcode-cn.com/problems/student-attendance-record-i/)
+## 解法
+### 思路
+模拟：
+- 初始化ac和lc，分别对应缺勤和迟到的状态计数值
+- 遍历字符串，根据不同状态累加计数值
+  - 如果是A，累加ac，重置lc
+  - 如果是L，累加lc
+  - 如果是P，重置lc
+  - 然后判断ac和lc是否有满足题目要求的情况，如果有就返回false，否则直接返回true
+### 代码
+```java
+class Solution {
+    public boolean checkRecord(String s) {
+        int ac = 0, lc = 0;
+        char[] cs = s.toCharArray();
+
+        for (char c : cs) {
+            if (c == 'A') {
+                ac++;
+                lc = 0;
+            } else if (c == 'L') {
+                lc++;
+            } else {
+                lc = 0;
+            }
+
+            if (ac >= 2 || lc >= 3) {
+                return false;
+            }
+        }
+        
+        return true;
+    }   
+}
+```
