@@ -210,3 +210,26 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1491_去掉最低工资和最高工资后的平均工资](https://leetcode-cn.com/problems/average-salary-excluding-the-minimum-and-maximum-salary/)
+## 解法
+### 思路
+- 遍历数组，分别：
+  - 找到最大值
+  - 找到最小值
+  - 累加总和
+- 最后计算(总和-最大值-最小值) / (总数 - 2)
+### 代码
+```java
+class Solution {
+    public double average(int[] salary) {
+        double min = Integer.MAX_VALUE, max = Integer.MIN_VALUE, sum = 0;
+        for (int num : salary) {
+            min = Math.min(min, num);
+            max = Math.max(max, num);
+            sum += num;
+        }
+        
+        return (sum - max - min) / (salary.length - 2);
+    }
+}
+```
