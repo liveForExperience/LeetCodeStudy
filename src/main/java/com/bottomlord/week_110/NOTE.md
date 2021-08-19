@@ -341,3 +341,60 @@ class Solution {
     }
 }
 ```
+# [LeetCode_552_学生出勤记录II](https://leetcode-cn.com/problems/student-attendance-record-ii/)
+## 解法
+### 思路
+动态规划：
+- dp[i][j][k]：三个维度对应情况下有效的个数
+  - i：第i天
+  - j：连续迟到天数
+  - k：缺勤天数
+- 状态转移方程：枚举所有情况
+- base case：
+  - 枚举第一天有效天数的情况
+  - dp[1][0][0] = dp[1][1][0] = dp[1][0][1] = 1;
+- 最终返回：
+```bash
+dp[n][0][0] +
+dp[n][1][0] +
+dp[n][2][0] +
+dp[n][0][1] +
+dp[n][1][1] +
+dp[n][2][1
+```
+- 过程：从2开始循环，进行状态转移
+### 代码
+```java
+class Solution {
+    public int checkRecord(int n) {
+        int mod = 1000000007;
+        long[][][] dp = new long[n + 1][3][2];
+        dp[1][0][0] = dp[1][1][0] = dp[1][0][1] = 1;
+
+        for (int i = 2; i <= n; i++) {
+            dp[i][0][0] = (dp[i][0][0] + dp[i - 1][0][0]) % mod;
+            dp[i][0][0] = (dp[i][0][0] + dp[i - 1][1][0]) % mod;
+            dp[i][0][0] = (dp[i][0][0] + dp[i - 1][2][0]) % mod;
+            dp[i][0][1] = (dp[i][0][1] + dp[i - 1][0][1]) % mod;
+            dp[i][0][1] = (dp[i][0][1] + dp[i - 1][1][1]) % mod;
+            dp[i][0][1] = (dp[i][0][1] + dp[i - 1][2][1]) % mod;
+
+            dp[i][1][0] = (dp[i][1][0] + dp[i - 1][0][0]) % mod;
+            dp[i][2][0] = (dp[i][2][0] + dp[i - 1][1][0]) % mod;
+            dp[i][1][1] = (dp[i][1][1] + dp[i - 1][0][1]) % mod;
+            dp[i][2][1] = (dp[i][2][1] + dp[i - 1][1][1]) % mod;
+
+            dp[i][0][1] = (dp[i][0][1] + dp[i - 1][0][0]) % mod;
+            dp[i][0][1] = (dp[i][0][1] + dp[i - 1][1][0]) % mod;
+            dp[i][0][1] = (dp[i][0][1] + dp[i - 1][2][0]) % mod;
+        }
+
+        return (int) ((dp[n][0][0] +
+                dp[n][1][0] +
+                dp[n][2][0] +
+                dp[n][0][1] +
+                dp[n][1][1] +
+                dp[n][2][1]) % mod);
+    }
+}
+```
