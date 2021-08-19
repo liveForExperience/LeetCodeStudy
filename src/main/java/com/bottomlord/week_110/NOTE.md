@@ -398,3 +398,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_345_翻转字符串中的元音字母](https://leetcode-cn.com/problems/reverse-vowels-of-a-string/)
+## 解法
+### 思路
+- 头尾指针同时向内部移动，找到元音字母后进行换位
+- 直到头尾指针相遇
+### 代码
+```java
+class Solution {
+    public String reverseVowels(String s) {
+        Set<Character> set = new HashSet<>();
+        set.add('a');
+        set.add('A');
+        set.add('e');
+        set.add('E');
+        set.add('i');
+        set.add('I');
+        set.add('o');
+        set.add('O');
+        set.add('u');
+        set.add('U');
+        char[] cs = s.toCharArray();
+        int head = 0, tail = s.length() - 1;
+        while (head < tail) {
+            while (!set.contains(cs[head]) && head < tail) {
+                head++;
+            }
+
+            while (!set.contains(cs[tail]) && head < tail) {
+                tail--;
+            }
+            
+            char tmp = cs[head];
+            cs[head] = cs[tail];
+            cs[tail] = tmp;
+
+            head++;
+            tail--;
+        }
+        
+        return new String(cs);
+    }
+}
+```
