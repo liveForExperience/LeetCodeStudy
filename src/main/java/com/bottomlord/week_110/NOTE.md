@@ -495,3 +495,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1507_转变日期格式](https://leetcode-cn.com/problems/reformat-date/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    private Map<String, String> map = new HashMap<>();
+    private String[] months = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    {
+        for (int i = 0; i < months.length; i++) {
+            map.put(months[i], i < 9 ? "0" + (i + 1) : "" + (i + 1));
+        }
+    }
+    
+    public String reformatDate(String date) {
+        String[] factors = date.split(" ");
+
+        String dayStr = factors[0], monthStr = factors[1], yearStr = factors[2];
+
+        return yearStr + "-" + map.get(monthStr) + "-" + getDay(dayStr);
+    }
+    
+    private String getDay(String dayStr) {
+        return dayStr.length() == 3 ? "0" + dayStr.charAt(0) : dayStr.substring(0, 2);
+    }
+}
+```
