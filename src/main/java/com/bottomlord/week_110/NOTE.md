@@ -462,3 +462,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_541_翻转字符串II](https://leetcode-cn.com/problems/reverse-string-ii/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public String reverseStr(String s, int k) {
+        char[] cs = s.toCharArray();
+        int index = 0, n = s.length();
+        while (index < n) {
+            int head = index, tail = index + k - 1;
+            
+            if (tail >= n) {
+                tail = n - 1;
+            }
+
+            while (head < tail) {
+                char c = cs[head];
+                cs[head] = cs[tail];
+                cs[tail] = c;
+
+                head++;
+                tail--;
+            }
+
+            index += 2 * k;
+        }
+
+        return new String(cs);
+    }
+}
+```
