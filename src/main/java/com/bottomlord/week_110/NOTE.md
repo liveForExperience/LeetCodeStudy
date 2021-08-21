@@ -523,3 +523,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_443_压缩字符串](https://leetcode-cn.com/problems/string-compression/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+  public int compress(char[] chars) {
+    int i1 = 0, n = chars.length, count = 0;
+    char c = chars[0];
+    for (int i = 0; i < n; i++) {
+      if (c == chars[i]) {
+        count++;
+      } else {
+        i1++;
+        c = chars[i];
+        if (count != 1) {
+          char[] ccs = Integer.toString(count).toCharArray();
+          for (char cc : ccs) {
+            chars[i1++] = cc;
+          }
+          count = 1;
+        }
+        chars[i1] = c;
+      }
+    }
+
+    i1++;
+    if (count == 1) {
+      return i1;
+    }
+
+    char[] ccs = Integer.toString(count).toCharArray();
+    for (char cc : ccs) {
+      chars[i1++] = cc;
+    }
+
+    return i1;
+  }
+}
+```
