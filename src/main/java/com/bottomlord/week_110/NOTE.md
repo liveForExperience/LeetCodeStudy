@@ -564,3 +564,27 @@ class Solution {
   }
 }
 ```
+# [LeetCode_789_逃脱阻碍者](https://leetcode-cn.com/problems/escape-the-ghosts/)
+## 解法
+### 思路
+- 如果阻碍者离终点的距离超过逃脱者，那么就是false，否则就是true
+- 这里的距离就用曼哈顿距离来计算：|x1 - x2| + |y1 - y2|
+### 代码
+```java
+class Solution {
+    public boolean escapeGhosts(int[][] ghosts, int[] target) {
+        int distance = getManhattanDistance(0, 0, target[0], target[1]);
+        for (int[] ghost : ghosts) {
+            if (getManhattanDistance(ghost[0], ghost[1], target[0], target[1]) - distance <= 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private int getManhattanDistance(int x1, int y1, int x2, int y2) {
+        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+}
+```
