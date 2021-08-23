@@ -138,3 +138,21 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1528_1_重新排列字符串](https://leetcode-cn.com/problems/shuffle-string/)
+## 解法
+### 思路
+- 初始化一个字符数组，用于暂存新的字符串
+- 遍历字符串，根据indices数组指示，组成新的字符串
+- 返回字符串
+### 代码
+```java
+class Solution {
+    public String restoreString(String s, int[] indices) {
+        char[] cs = new char[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            cs[indices[i]] = s.charAt(i);
+        }
+        return new String(cs);
+    }
+}
+```
