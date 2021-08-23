@@ -40,3 +40,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1646_获取生成数组中的最大值](https://leetcode-cn.com/problems/get-maximum-in-generated-array/)
+## 解法
+### 思路
+- 遍历数组，判断当前坐标的奇偶性
+  - 偶数，当前坐标元素等于坐标除以2的元素
+  - 奇数，当前坐标元素等于坐标处以2以及坐标除2+1的元素的和
+- 遍历过程中，同时统计最大值
+- 遍历结束后，返回最大值
+### 代码
+```java
+class Solution {
+    public int getMaximumGenerated(int n) {
+        if (n <= 1) {
+            return n;
+        }
+
+        int[] nums = new int[n + 1];
+        nums[0] = 0;
+        nums[1] = 1;
+        
+        int max = 1;
+        for (int i = 2; i <= n; i++) {
+            if (i % 2 == 0) {
+                nums[i] = nums[i / 2];
+            } else {
+                nums[i] = nums[i / 2] + nums[i / 2 + 1];
+            }
+            
+            max = Math.max(max, nums[i]);
+        }
+        
+        return max;
+    }
+}
+```
