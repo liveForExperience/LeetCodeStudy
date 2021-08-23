@@ -104,3 +104,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1523_在区间范围内统计奇数数目](https://leetcode-cn.com/problems/count-odd-numbers-in-an-interval-range/)
+## 失败解法
+### 原因
+超时
+### 思路
+- 遍历统计
+### 代码
+```java
+class Solution {
+  public int countOdds(int low, int high) {
+    int odd = 0;
+    for (int i = low; i <= high; i++) {
+      odd += i % 2 == 1 ? 1 : 0;
+    }
+    return odd;
+  }
+}
+```
+## 解法
+### 思路
+- `num = high - low + 1`算出包含的元素个数
+  - 如果个数是奇数：
+    - low是奇数，奇数个数是`num / 2 + 1`
+    - log是偶数，奇数个数是`num / 2`
+  - 如果个数是偶数，奇数个数是`num / 2`
+### 代码
+```java
+class Solution {
+    public int countOdds(int low, int high) {
+        int num = high - low + 1;
+        return num % 2 == 0 ? num / 2 : low % 2 == 1 ? num / 2 + 1 : num / 2;
+    }
+}
+```
