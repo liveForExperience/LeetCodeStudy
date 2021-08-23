@@ -75,3 +75,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1518_换酒问题](https://leetcode-cn.com/problems/water-bottles/)
+## 解法
+### 思路
+- 初始化变量：
+  - drink：统计喝了多少瓶酒，初始为numBottle
+  - emptyBottle：统计目前有的空瓶数量
+- 设置循环
+  - 退出条件，空瓶比`numExchange`的数字小，代表不能再兑换新酒了
+  - 过程中：
+    - drink累加当前兑换的新酒
+    - emptyBottle累加兑换的新酒数，作为增加的酒瓶数，
+    - 同时累减兑换时用掉的空瓶数
+- 循环退出后，返回drink值
+### 代码
+```java
+class Solution {
+    public int numWaterBottles(int numBottles, int numExchange) {
+        int drink = numBottles, emptyBottles = numBottles;
+        
+        while (emptyBottles >= numExchange) {
+            int newDrink = emptyBottles / numExchange;
+            drink += newDrink;
+            emptyBottles = emptyBottles + newDrink - newDrink * numExchange;
+        }
+        
+        return drink;
+    }
+}
+```
