@@ -269,3 +269,71 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1534_统计好三元组](https://leetcode-cn.com/problems/count-good-triplets/)
+## 解法
+### 思路
+模拟，三重循环
+### 代码
+```java
+class Solution {
+    public int countGoodTriplets(int[] arr, int a, int b, int c) {
+        int n = arr.length, ans = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    if (Math.abs(arr[i] - arr[j]) <= a &&
+                        Math.abs(arr[j] - arr[k]) <= b &&
+                        Math.abs(arr[i] - arr[k]) <= c) {
+                        ans++;
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 通过2层循环，确定j和k的坐标
+- 然后因为`|arr[i] - arr[j]| <= a` 和 `|arr[i] - arr[k]| <= c|`这两个条件，可以推出i的范围就是`[arr[j] - a，arr[j] + a]`和`[arr[k] - c, arr[k] + c]`两个范围的交集
+- 所以在第二层循环内部，主要的逻辑就是找到这个交集，然后求出这个交集所代表的数值，在当前的范围内出现的次数
+- 次数可以通过频次前缀和来求出，这里的前缀和的坐标对应的就是所有可能出现的数字，值对应的就是出现的频次的累加和
+- 求这个前缀和，就是在每次外层循环确定好j之后，且确定k的循环结束后，将j作为下次循环i可能用到的数累加次数1到前缀和数组对应的下表位置中，同时在之后的坐标元素上同样累加1，代表的就是不比当前值大的数出现的次数
+- 而内层循环时候，就是先求出两个范围之间的交集，然后通过前缀和数组直接求出出现的频次，进行累加
+- 循环结束后，返回累加值即可
+### 代码
+```java
+class Solution {
+    public int countGoodTriplets(int[] arr, int a, int b, int c) {
+        int n = arr.length, ans = 0;
+        int[] sum = new int[1001];
+        for (int j = 0; j < n; j++) {
+            for (int k = j + 1; k < n; k++) {
+                if (Math.abs(arr[j] - arr[k]) > b) {
+                    continue;
+                }
+                
+                int lj = arr[j] - a, rj = arr[j] + a,
+                    lk = arr[k] - c, rk = arr[k] + c;
+
+                int l = Math.max(0, Math.max(lj, lk)), r = Math.min(1000, Math.min(rj, rk));
+
+                if (l <= r) {
+                    if (l == 0) {
+                        ans += sum[r];
+                    } else {
+                        ans += sum[r] - sum[l - 1];
+                    }
+                }
+            }
+
+            for (int t = arr[j]; t <= 1000; t++) {
+                sum[t]++;
+            }
+        }
+
+        return ans;
+    }
+}
+```
