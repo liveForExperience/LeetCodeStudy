@@ -156,3 +156,88 @@ class Solution {
     }
 }
 ```
+# [LeetCode_787_K站中转内最便宜的航班](https://leetcode-cn.com/problems/cheapest-flights-within-k-stops/)
+## 失败解法
+### 原因
+超时
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+private int min = Integer.MAX_VALUE;
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        Map<Integer, List<int[]>> mapping = new HashMap<>();
+        for (int[] flight : flights) {
+            mapping.computeIfAbsent(flight[0], x -> new ArrayList<>()).add(new int[]{flight[1], flight[2]});
+        }
+
+        dfs(src, dst, -1, k, 0, mapping);
+        return min == Integer.MAX_VALUE ? -1 : min;
+    }
+    
+    private void dfs(int cur, int dst, int count, int k, int cost, Map<Integer, List<int[]>> mapping) {
+        if (count > k) {
+            return;
+        }
+        
+        if (cur == dst) {
+            min = Math.min(cost, min);
+            return;
+        }
+        
+        List<int[]> nexts = mapping.getOrDefault(cur, new ArrayList<>());
+        
+        for (int[] next : nexts) {
+            dfs(next[0], dst, count + 1, k, cost + next[1], mapping);
+        }
+    }
+}
+```
+## 解法
+### 思路
+动态规划：
+- dp[t][i]：代表乘坐t次航班后到达城市i的最小花费
+  - 题目中t的最大值应该是k+1，因为中转次数+1=乘坐航班数
+  - dp数组的默认值设置为`INF = 10000 * 101 + 1`，代表无法到达的情况
+  - INF的计算是基于最大的k值 + 1和最大的票价值的乘积 + 1获得
+- base case：dp[0][src] = 0
+  - 代表不坐航班，到达起始城市的花费就是0，因为不用坐航班
+- 状态转移方程：
+  - dp[t][i] = min(dp[t][i], dp[t - 1][j] + cost)
+    - j是从可选航班中找到的能够到达城市i的起始城市
+    - cost是从j到i的花费
+- 过程：2层循环，分别确定t和i
+  - 外层循环k+1次，确定t
+  - 内层循环可选航班数组，确定第t次的时候，所有的状态
+- 最终结果：遍历所有i = dst的情况，找到最小值
+  - 如果最小值是INF，说明没法到达dst，返回-1
+- 注意：这里不用int最大值来代表无法到达是因为，如果使用int最大值，会出现溢出状况
+### 代码
+```java
+class Solution {
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        int INF = 10000 * 101 + 1;
+        int[][] dp = new int[k + 2][n];
+        for (int[] arr : dp) {
+            Arrays.fill(arr, INF);
+        }
+        
+        dp[0][src] = 0;
+        
+        for (int t = 1; t <= k + 1; t++) {
+            for (int[] flight : flights) {
+                int j = flight[0], i = flight[1], cost = flight[2];
+                dp[t][i] = Math.min(dp[t][i], dp[t - 1][j] + cost);
+            }
+        }
+        
+        int min = INF;
+        for (int i = 1; i <= k + 1; i++) {
+            min = Math.min(min, dp[i][dst]);
+        }
+        
+        return min == INF ? -1 : min;
+    }
+}
+```
