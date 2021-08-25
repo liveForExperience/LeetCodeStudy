@@ -241,3 +241,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_797_所有可能的路径](https://leetcode-cn.com/problems/all-paths-from-source-to-target/)
+## 解法
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
+        List<List<Integer>> ans = new ArrayList<>();
+        backTrack(0, graph, new LinkedList<Integer>(){{this.add(0);}}, ans);
+        return ans;
+    }
+    
+    private void backTrack(int index, int[][] graph, LinkedList<Integer> list, List<List<Integer>> ans) {
+        if (index == graph.length - 1) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        
+        int[] arr = graph[index];
+        for (Integer num : arr) {
+            list.addLast(num);
+            backTrack(num, graph, list, ans);
+            list.removeLast();
+        }
+    }
+}
+```
