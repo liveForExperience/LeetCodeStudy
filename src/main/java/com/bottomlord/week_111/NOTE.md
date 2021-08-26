@@ -420,5 +420,92 @@ class Solution {
   - 如果退出的时候头尾指针不相遇，那么在数组中最后一次有频次的那个循环，处理完以后，还会再做一次循环，且会count一次，所以要将这次count减掉
 ### 代码
 ```java
+class solution {
+  public int numRescueBoats(int[] people, int limit) {
+    int[] bucket = new int[limit + 1];
+    int head = 1, tail = limit, count = 0;
 
+    for (int weight : people) {
+      bucket[weight]++;
+    }
+
+    while (head < tail) {
+      while (head < tail && bucket[head] == 0) {
+        head++;
+      }
+
+      while (head < tail && bucket[tail] == 0) {
+        tail--;
+      }
+
+      if (head + tail <= limit) {
+        bucket[head]--;
+      }
+
+      bucket[tail]--;
+      count++;
+    }
+
+    if (head == tail) {
+      if (2 * head <= limit) {
+        count += bucket[head] % 2 == 0 ? bucket[head] / 2 : (bucket[head] + 1) / 2;
+      } else {
+        count += bucket[head];
+      }
+    } else {
+      count--;
+    }
+
+    return count;
+  }
+}
+```
+# [LeetCode_1539_第k个缺失的正整数](https://leetcode-cn.com/problems/kth-missing-positive-number/)
+## 解法
+### 思路
+- 初始化一个变量index作为数组指针
+- 从1开始遍历，直到1000为止
+- 遍历过程中，如果i对应的元素和当前遍历到的元素不一致，就累加值
+- 如果累加的值等于k就返回该值
+- 如果遍历到的值和index一样就右移index
+- 如果i来到数组最后位置，就直接累加值
+### 代码
+```java
+class Solution {
+    public int findKthPositive(int[] arr, int k) {
+        int index = 0, n = arr.length, count = 0;
+        for (int i = 1; i <= 2000; i++) {
+            if (index < n && i == arr[index]) {
+                index++;
+            } else {
+                count++;
+            }
+
+            if (count == k) {
+                return i;
+            }
+        }
+        
+        return 2000;
+    }
+}
+```
+## 解法二
+### 思路
+- arr数组里的值减掉arr数组里已经遍历过得元素个数
+- 如果大于k，说明第k个缺失的元素就在这个值的范围里，那么这个值就一定是k+遍历过的元素个数-1
+- 如果遍历完所有元素，都没有一个元素符合要求，那么这个元素就一定是k+数组长度
+### 代码
+```java
+class Solution {
+    public int findKthPositive(int[] arr, int k) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] - i - 1 >= k) {
+                return k + i;
+            }
+        }
+        
+        return k + arr.length;
+    }
+}
 ```
