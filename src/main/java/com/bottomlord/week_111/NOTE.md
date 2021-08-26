@@ -337,3 +337,88 @@ class Solution {
     }
 }
 ```
+# [LeetCode_881_救生艇](https://leetcode-cn.com/problems/boats-to-save-people/
+## 解法
+### 思路
+- 初始化一个数组arr，下标对应体重，值对应该体重的人数
+- 遍历数组，填充arr
+- 从尾部开始遍历arr，如果是0就跳过，否则，处理该体重的所有人
+- 处理过程是：
+  - 通过limit找到最大能够容纳的另一个人的体重值，然后基于这个值到arr中找尽可能大的，但这个值最大等于当前坐标对应的体重值
+  - 如果找到了，就同时在arr的值上-1，并处理下一个
+  - 如果没找到，就只在当前arr上处理
+- 一直处理到数组遍历结束
+### 代码
+```java
+class Solution {
+  public int numRescueBoats(int[] people, int limit) {
+    int[] bucket = new int[30001];
+    for (int weight : people) {
+      bucket[weight]++;
+    }
+
+    int count = 0;
+
+    for (int i = bucket.length - 1; i >= 1; i--) {
+      if (bucket[i] == 0) {
+        continue;
+      }
+
+      while (bucket[i] > 0) {
+        int target = Math.min(limit - i, i);
+        bucket[i]--;
+        for (int j = target; j >= 1; j--) {
+          if (bucket[j] > 0) {
+            bucket[j]--;
+            break;
+          }
+        }
+
+        count++;
+      }
+    }
+
+    return count;
+  }
+}
+```
+## 解法二
+### 思路
+- 排序数组
+- 头尾指针遍历数组
+  - 如果头尾指针对应的元素相加不大于limit，就同时移动指针，移动方向为相向移动
+  - 如果头尾指针对应的元素相加大于limit，就只移动尾指针，移动方向尾向头部移动
+### 代码
+```java
+class Solution {
+  public int numRescueBoats(int[] people, int limit) {
+    Arrays.sort(people);
+    int n = people.length, head = 0, tail = n - 1, count = 0;
+    while (head < tail) {
+      if (people[head] + people[tail] <= limit) {
+        head++;
+      }
+      tail--;
+      count++;
+    }
+
+    return head == tail ? count + 1 : count;
+  }
+}
+```
+## 解法三
+### 思路
+- 结合解法一和解法二，用桶对元素频次计数，处理的时候则通过头尾指针的方式来统计
+- 过程：
+  - 退出条件，头尾指针相遇
+  - 内层2个循环，将频次为零的头尾指针移动掉
+  - 然后判断头尾指针对应的坐标值相加是否大于limit，判断是否同时移动头尾指针，然后再在这个循环中累加1
+- 麻烦的地方在头尾指针的退出状态，循环的退出条件是2个指针不相遇
+  - 如果退出时候头尾指针相遇，那么可能指针对应的坐标还有一些频次没有统计
+    - 如果2个坐标值相加不大于limit，那么就根据奇偶来判断是加多少count
+    - 如果2个坐标值相加大于limit，那就直接累加剩余频次即可
+  - 如果退出的时候头尾指针不相遇，那么在数组中最后一次有频次的那个循环，处理完以后，还会再做一次循环，且会count一次，所以要将这次count减掉
+### 代码
+```java
+
+```
