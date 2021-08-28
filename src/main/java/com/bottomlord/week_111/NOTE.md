@@ -643,3 +643,30 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1556_千位分隔数](https://leetcode-cn.com/problems/thousand-separator/)
+## 解法
+### 思路
+- 数字转字符串
+- 从尾部遍历并按要求增加点，增加动作依赖计数值
+- 遍历结束返回字符串
+- 要注意增加点的位置在遍历的最后一个元素，则不能增加
+### 代码
+```java
+class Solution {
+    public String thousandSeparator(int n) {
+        String s = Integer.toString(n);
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            sb.insert(0, s.charAt(i));
+            index++;
+            if (index == 3 && i != 0) {
+                index = 0;
+                sb.insert(0,  '.');
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
