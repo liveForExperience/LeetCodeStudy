@@ -569,3 +569,11 @@ class MedianFinder {
     }
 }
 ```
+# [LeetCode_1480_一堆数组的动态和](https://leetcode-cn.com/problems/running-sum-of-1d-array/)
+## 解法
+### 思路
+前缀和
+### 代码
+```java
+
+```
