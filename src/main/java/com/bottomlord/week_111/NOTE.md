@@ -575,5 +575,46 @@ class MedianFinder {
 前缀和
 ### 代码
 ```java
+class Solution {
+  public int[] runningSum(int[] nums) {
+    int n = nums.length;
+    if (n == 0) {
+      return new int[0];
+    }
 
+    int[] sum = new int[n];
+    sum[0] = nums[0];
+    for (int i = 1; i < n; i++) {
+      sum[i] = sum[i - 1] + nums[i];
+    }
+    return sum;
+  }
+}
+```
+# [LeetCode_1544_整理字符串](https://leetcode-cn.com/problems/make-the-string-great/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public String makeGood(String s) {
+        while (s.length() > 0) {
+            boolean flag = true;
+            for (int i = 0; i < s.length() - 1; i++) {
+                if (Math.abs(s.charAt(i) - s.charAt(i + 1)) == 32) {
+                    s = s.substring(0, i) + s.substring(i + 2);
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if (flag) {
+                break;
+            }
+        }
+        
+        return s;
+    }
+}
 ```
