@@ -509,3 +509,63 @@ class Solution {
     }
 }
 ```
+# [LeetCode_295_数据流的中位数](https://leetcode-cn.com/problems/find-median-from-data-stream/)
+## 解法
+### 思路
+- 2个优先级队列对倒
+  - 小顶堆存放较大的值
+  - 大顶堆存放较小的值
+- 默认大顶堆的个数不会小于小顶堆，且两个顶堆的数量差不大于1
+- 存放数值的时候
+  - 如果小顶堆空，就直接塞给小顶堆，返回
+  - 如果值比小顶堆的小，先塞入大顶堆，否则塞入大顶堆
+  - 判断大顶堆的个数是不是超过小顶堆了，如果是，就把大顶堆堆顶元素塞给小顶堆
+  - 如果大顶堆的个数+1小于小顶堆了，那么也把小顶堆的堆顶元素塞回给大顶堆
+- 取中间值的时候，就判断
+  - 如果都是空，就返回0
+  - 如果大小顶堆长度不一致，说明中间值在小顶堆，返回小顶堆堆顶元素
+  - 如果大小顶堆长度一致，返回两个堆顶的平均值
+### 代码
+```java
+class MedianFinder {
+    private PriorityQueue<Integer> bigger, smaller;
+    public MedianFinder() {
+        bigger = new PriorityQueue<>();
+        smaller = new PriorityQueue<>(Comparator.reverseOrder());
+    }
+
+    public void addNum(int num) {
+        if (bigger.isEmpty()) {
+            bigger.offer(num);
+            return;
+        }
+        
+        if (num < bigger.peek()) {
+            smaller.offer(num);
+        } else {
+            bigger.offer(num);
+        }
+
+        if (smaller.size() > bigger.size()) {
+            bigger.offer(smaller.poll());
+            return;
+        }
+        
+        if (smaller.size() + 1 < bigger.size()) {
+            smaller.offer(bigger.poll());
+        }
+    }
+
+    public double findMedian() {
+        if (bigger.isEmpty() && smaller.isEmpty()) {
+            return 0;
+        }
+        
+        if (bigger.size() == smaller.size()) {
+            return (1D * bigger.peek() + smaller.peek()) / 2;
+        }
+        
+        return (double) bigger.peek();
+    }
+}
+```
