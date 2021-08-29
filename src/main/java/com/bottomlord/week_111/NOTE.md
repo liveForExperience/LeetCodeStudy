@@ -670,3 +670,59 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1588_所有奇数长度子数组的和](https://leetcode-cn.com/problems/sum-of-all-odd-length-subarrays/)
+## 解法
+### 思路
+- 求前缀和
+- 2层循环，外层定义子数组起始坐标，内层定义长度，累加和并在循环结束后返回
+### 代码
+```java
+class Solution {
+    public int sumOddLengthSubarrays(int[] arr) {
+        int n = arr.length;
+        if (n == 0) {
+            return 0;
+        }
+        
+        int[] sums = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            sums[i] = sums[i - 1] + arr[i - 1];
+        }
+        
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            for (int l = 1; i + l <= n; l += 2) {
+                ans += sums[i + l] - sums[i];
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 如果可以计算出数组中一个元素在奇数长度的数组中出现的个数，也能累加出总数和
+- 如果一个元素的左侧元素个数是leftCount，右侧元素个数是rightCount
+- 在leftCount和rightCount同为奇数个或同为偶数个的时候，这个元素就一定是在奇数长度的数组里面的
+- 奇数个的个数，相当于`(count + 1) / 2`
+- 偶数个的个数，相当于`count / 2 + 1`
+- 分别求出左右奇数和偶数个的个数，然后奇数的左右相乘，偶数的左右相乘，就得到了各自能够组成奇数个数组的个数，然后累加以后再乘以当前元素值，就是当前这个元素在总数中能够提供的总数
+### 代码
+```java
+class Solution {
+  public int sumOddLengthSubarrays(int[] arr) {
+    int ans = 0, n = arr.length;
+    for (int i = 0; i < n; i++) {
+      int rightCount = n - i - 1;
+      int leftOdd = (i + 1) / 2,
+              rightOdd = (rightCount + 1) / 2,
+              leftEven = i / 2 + 1,
+              rightEven = rightCount / 2 + 1;
+
+      ans += arr[i] * (leftOdd * rightOdd + leftEven * rightEven);
+    }
+    return ans;
+  }
+}
+```
