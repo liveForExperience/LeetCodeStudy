@@ -160,3 +160,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1109_航班预订统计](https://leetcode-cn.com/problems/corporate-flight-bookings/)
+## 解法
+### 思路
+- 差分数组
+- 当某个区间[l,r]的元素要增加，那么差分数组中arr[l]的值相应增加, arr[r + 1]的值相应减少
+- 然后从数组的起始位置开始，根据差分的值，推出整个数组的值，和求前缀和数组的计算方式相同
+### 代码
+```java
+class Solution {
+    public int[] corpFlightBookings(int[][] bookings, int n) {
+        int[] nums = new int[n];
+        for (int[] booking : bookings) {
+            nums[booking[0] - 1] += booking[2];
+            if (booking[1] < n) {
+                nums[booking[1]] -= booking[2];
+            }
+        }
+        
+        for (int i = 1; i < n; i++) {
+            nums[i] += nums[i - 1];
+        }
+        
+        return nums;
+    }
+}
+```
