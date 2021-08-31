@@ -93,3 +93,70 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1560_圆形赛道上经过次数最多的扇区](https://leetcode-cn.com/problems/most-visited-sector-in-a-circular-track/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public List<Integer> mostVisited(int n, int[] rounds) {
+        int[] bucket = new int[n + 1];
+        bucket[rounds[0]]++;
+        for (int i = 0; i < rounds.length - 1; i++) {
+            int index = rounds[i], target = rounds[i + 1];
+            index++;
+            if (index > n) {
+                index = 1;
+            }
+            while (index != target) {
+                bucket[index++]++;
+                if (index > n) {
+                    index = 1;
+                }
+            }
+            bucket[target]++;
+        }
+        
+        int max = Arrays.stream(bucket).max().getAsInt();
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == max) {
+                list.add(i);
+            }
+        }
+        return list;
+    }
+}
+```
+## 解法二
+### 思路
+- 无论中间途径了圈，最终都不影响多跑的那几个扇区，也就是路径起始和结尾中间途径的扇区
+- 如果起点小于等于终点，就直接遍历起点到终点，返回list
+- 如果大于终点，那么因为要返回升序序列，所以就是先算1到终点，再算起点到n，加到list里返回
+### 代码
+```java
+class Solution {
+    public List<Integer> mostVisited(int n, int[] rounds) {
+        int left = rounds[0], right = rounds[rounds.length - 1];
+
+        List<Integer> ans = new ArrayList<>();
+        if (left <= right) {
+            for (int i = left; i <= right; i++) {
+                ans.add(i);
+            }
+            return ans;
+        }
+        
+        for (int i = 1; i <= right; i++) {
+            ans.add(i);
+        }
+
+        for (int i = left; i <= n; i++) {
+            ans.add(i);
+        }
+        
+        return ans;
+    }
+}
+```
