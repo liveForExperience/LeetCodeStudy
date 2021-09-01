@@ -186,3 +186,33 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1566_重复至少K次且长度为M的模式](https://leetcode-cn.com/problems/detect-pattern-of-length-m-repeated-k-or-more-times/)
+## 解法
+### 思路
+暴力模拟
+- 外层循环确定k个m长度的模式串的起始坐标，所以截止位置就是i + m * k <= n
+- 内部确定整个模式串中其他k-1个m长度模式子串，截止位置就是i + m * k的位置
+- 在内层循环的时候，判断j对应j-m元素是否相等，如果相等继续循环，直到返回循环结束，否则返回false
+### 代码
+```java
+class Solution {
+    public boolean containsPattern(int[] arr, int m, int k) {
+        int n = arr.length;
+        for (int i = 0; i + m * k <= n; i++) {
+            boolean flag = true;
+            for (int j = i + m; j < i + m * k; j++) {
+                if (arr[j] != arr[j - m]) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```
