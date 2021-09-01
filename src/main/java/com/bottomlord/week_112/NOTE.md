@@ -216,3 +216,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_165_比较版本号](https://leetcode-cn.com/problems/compare-version-numbers/)
+## 解法
+### 思路
+- 切分字符串生成2个字符串数组
+- 按照最长的那个字符串数组的长度进行循环遍历
+- 将循环下标对应的数组字符串转换成数字
+- 如果下标超过了数组应有的最大坐标，则这个转换值定为0
+- 循环过程中，2个转换后的值，如果有大小，就返回对应的1或-1
+- 循环正常结束，则说明2个版本号大小一致，返回0
+### 代码
+```java
+class Solution {
+    public int compareVersion(String version1, String version2) {
+        String[] vs1 = version1.split("\\."), vs2 = version2.split("\\.");
+        int len = Math.max(vs1.length, vs2.length);
+        
+        for (int i = 0; i < len; i++) {
+            int num1 = i >= vs1.length ? 0 : Integer.parseInt(vs1[i]),
+                num2 = i >= vs2.length ? 0 : Integer.parseInt(vs2[i]);
+            
+            if (num1 < num2) {
+                return -1;
+            } else if (num1 > num2) {
+                return 1;
+            }
+        }
+        
+        return 0;
+    }
+}
+```
