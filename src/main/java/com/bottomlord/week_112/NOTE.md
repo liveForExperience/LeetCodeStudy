@@ -247,3 +247,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1572_矩阵对角线元素的和](https://leetcode-cn.com/problems/matrix-diagonal-sum/)
+## 解法
+### 思路
+模拟：遍历二维数组，累加对应的值，需要注意交叉点的特判
+### 代码
+```java
+class Solution {
+    public int diagonalSum(int[][] mat) {
+        int n = mat.length, sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += mat[i][i] + mat[i][n - i - 1];
+            
+            if (i == n - i - 1) {
+                sum -= mat[i][i];
+            }
+        }
+        
+        return sum;    
+    }
+}
+```
