@@ -268,3 +268,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1576_替换所有的问号](https://leetcode-cn.com/problems/replace-all-s-to-avoid-consecutive-repeating-characters/)
+## 解法
+### 思路
+模拟：遍历字符串和前后字符比较，然后循环26个字母，看哪一个同时与前后不同，就替换为该字母，直到循环结束，需要特判头尾时候的情况
+### 代码
+```java
+class Solution {
+    public String modifyString(String s) {
+        int n = s.length();
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < n; i++) {
+            if (cs[i] != '?') {
+                continue;
+            }
+
+            char pre = i - 1 >= 0 ? cs[i - 1] : ' ';
+            char next = i + 1 < n ? cs[i + 1] : ' ';
+            
+            for (int j = 0; j < 26; j++) {
+                char c = (char) ('a' + j);
+                if (c != pre && c != next) {
+                    cs[i] = c;
+                    break;
+                }
+            }
+        }
+        
+        return new String(cs);
+    }
+}
+```
