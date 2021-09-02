@@ -299,3 +299,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offer22_链表中倒数第K个节点](https://leetcode-cn.com/problems/lian-biao-zhong-dao-shu-di-kge-jie-dian-lcof/
+## 解法
+### 思路
+- 遍历计算链表长度
+- 计算倒数第K个的正数表达，遍历找到该节点返回
+### 代码
+```java
+class Solution {
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        ListNode node = head;
+        int n = 0;
+        while (node != null) {
+            n++;
+            node = node.next;
+        }
+
+        int index = n - k;
+        node = head;
+        while (index-- > 0) {
+            node = node.next;
+        }
+        
+        return node;
+    }
+}
+```
