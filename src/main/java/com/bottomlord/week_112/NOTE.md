@@ -325,3 +325,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_582_二进制矩阵中的特殊位置](https://leetcode-cn.com/problems/special-positions-in-a-binary-matrix/)
+## 解法
+### 思路
+- 遍历二维数组，分别统计行和列的元素总和，并分别放入2个一维数组中
+- 遍历二维数组，依赖2个一维数组判断是否有符合情况的单元格，即行和列的总和是1，且当前是元素也是1，如果有就累加
+### 代码
+```java
+class Solution {
+    public int numSpecial(int[][] mat) {
+        int r = mat.length, c = mat[0].length;
+        int[] row = new int[r], col = new int[c];
+
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (mat[i][j] == 1) {
+                    row[i]++;
+                    col[j]++;
+                }
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (row[i] == 1 && col[j] == 1 && mat[i][j] == 1) {
+                    ans++;
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
