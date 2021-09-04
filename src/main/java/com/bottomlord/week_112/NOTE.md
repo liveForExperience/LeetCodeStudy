@@ -359,3 +359,166 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1592_重新排列单词间的空格](https://leetcode-cn.com/problems/rearrange-spaces-between-words/)
+## 解法
+### 思路
+- 计算text长度，计算text中单词的个数，通过这两个值获取到空格的个数
+- 基于单词个数，获得间隔个数，然后找到最大乘数作为间隔的空格个数，将余数作为结尾的空格个数
+### 代码
+```java
+class Solution {
+    public String reorderSpaces(String text) {
+        String[] splits = text.split(" ");
+        List<String> list = Arrays.stream(splits)
+                .filter(str -> !Objects.equals(str, " ") && !Objects.equals("", str))
+                .collect(Collectors.toList());
+        
+        if (list.isEmpty()) {
+            return text;
+        }
+        
+        int len = list.stream().map(String::length).reduce(0, Integer::sum);
+        int blankTotalLen = text.length() - len;
+        
+        int blankLen = list.size() == 1 ? 0 : blankTotalLen / (list.size() - 1);
+        StringBuilder sb = new StringBuilder();
+        for (String str : list) {
+            sb.append(str);
+            for (int i = 0; i < blankLen && blankTotalLen > 0; i++) {
+                sb.append(" ");
+                blankTotalLen--;
+            }
+        }
+        
+        for (int i = 0; i < blankTotalLen; i++) {
+            sb.append(" ");
+        }
+        
+        return sb.toString();
+    }
+}
+```
+## 解法二
+### 思路
+- 不使用split等String的Api，而是通过遍历字符串的方式获取到空格总数和单词
+- 再基于单词和空格总数，计算出间隔的空格长度已经剩下需要添加的空格数
+- 基于计算出来的长度重新拼接字符串
+### 代码
+```java
+class Solution {
+    public String reorderSpaces(String text) {
+        int blankNum = 0;
+        List<String> words = new ArrayList<>();
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == ' ') {
+                blankNum++;
+                continue;
+            }
+
+            int start = i;
+            while (i < text.length() && text.charAt(i) != ' ') {
+                i++;
+            }
+            words.add(text.substring(start, i--));
+        }
+
+        if (words.isEmpty()) {
+            return text;
+        }
+        
+        int blankGapLen = words.size() == 1 ? 0 : blankNum / (words.size() - 1);
+
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            sb.append(word);
+            if (blankNum >= blankGapLen) {
+                for (int j = 0; j < blankGapLen; j++) {
+                    sb.append(" ");
+                    blankNum--;
+                }
+            }
+        }
+
+        while (blankNum-- > 0) {
+            sb.append(" ");
+        }
+
+        return sb.toString();
+    }
+}
+```
+# [LeetCode_interview_1714_最小k个数](https://leetcode-cn.com/problems/smallest-k-lcci/)
+## 解法
+### 思路
+优先级队列
+### 代码
+```java
+class Solution {
+    public int[] smallestK(int[] arr, int k) {
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+        for (int num : arr) {
+            queue.offer(num);
+        }
+
+        k = Math.min(k, arr.length);
+        int[] ans = new int[k];
+        for (int i = 0; i < k; i++) {
+            ans[i] =  queue.poll();
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+快排
+### 代码
+```java
+class Solution {
+    public int[] smallestK(int[] arr, int k) {
+        sort(arr);
+        k = Math.min(k, arr.length);
+        int[] ans = new int[k];
+        System.arraycopy(arr, 0, ans, 0, k);
+        return ans;
+    }
+
+    private void sort(int[] arr) {
+        doSort(arr, 0, arr.length - 1);
+    }
+
+    private void doSort(int[] arr, int head, int tail) {
+        if (head >= tail) {
+            return;
+        }
+
+        int piovt = partition(arr, head, tail);
+
+        doSort(arr, head, piovt - 1);
+        doSort(arr, piovt + 1, tail);
+    }
+
+    private int partition(int[] arr, int head, int tail) {
+        while (head < tail) {
+            while (head < tail && arr[head] <= arr[tail]) {
+                tail--;
+            }
+            swap(arr, head, tail);
+            
+            while (head < tail && arr[head] <= arr[tail]) {
+                head++;
+            }
+            swap(arr, head, tail);
+        }
+        
+        return head;
+    }
+    
+    private void swap(int[] arr, int x, int y) {
+        int tmp = arr[x];
+        arr[x] = arr[y];
+        arr[y] = tmp;
+    }
+}
+```
