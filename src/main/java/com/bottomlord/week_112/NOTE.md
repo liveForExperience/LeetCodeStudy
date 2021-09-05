@@ -522,3 +522,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offer10-I_斐波那契数列](https://leetcode-cn.com/problems/fei-bo-na-qi-shu-lie-lcof/)
+## 解法
+### 思路
+递归+减枝
+### 代码
+```java
+class Solution {
+    public int fib(int n) {
+        Map<Integer, Integer> memo = new HashMap<>();
+        memo.put(0, 0);
+        memo.put(1, 1);
+        memo.put(2, 1);
+        return doFib(n, memo);
+    }
+
+    private int doFib(int n, Map<Integer, Integer> memo) {
+        if (memo.containsKey(n)) {
+            return memo.get(n);
+        }
+
+        memo.put(n - 1, doFib(n - 1, memo));
+        memo.put(n - 2, doFib(n - 2, memo));
+        return (memo.get(n - 1) + memo.get(n - 2)) % 1000000007;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划
+### 代码
+```java
+
+```
