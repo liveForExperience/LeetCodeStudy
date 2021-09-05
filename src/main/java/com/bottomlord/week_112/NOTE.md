@@ -555,3 +555,20 @@ class Solution {
 ```java
 
 ```
+# [LeetCode_470_用rand7()实现rand10()]()
+## 解法
+### 思路
+- (randX() - 1)*Y + randY() 可以等概率的生成[1, X * Y]范围的随机数
+### 代码
+```java
+class Solution extends SolBase {
+public int rand10() {
+        int num;
+        do {
+            num = (rand7()  - 1) * 7 + rand7();
+        } while (num > 40);
+        
+        return 1 + num % 10;
+    }
+}
+```
