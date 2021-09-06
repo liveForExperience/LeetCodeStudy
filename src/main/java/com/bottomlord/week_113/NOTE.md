@@ -121,3 +121,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1619_删除某些元素后的数组均值](https://leetcode-cn.com/problems/mean-of-array-after-removing-some-elements/)
+## 解法
+### 思路
+- 排序数组
+- 计算出要排除的元素个数
+- 算出剩下元素的总和以及个数
+- 基于算出的总和和个数算出平均值
+### 代码
+```java
+class Solution {
+  public double trimMean(int[] arr) {
+    Arrays.sort(arr);
+    int len = arr.length, skip = len / 20, sum = 0, count = 0;
+
+    for (int i = skip; i < len - skip; i++) {
+      sum += arr[i];
+      count++;
+    }
+
+    return 1D * sum / count;
+  }
+}
+```
