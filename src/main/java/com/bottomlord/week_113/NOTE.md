@@ -144,3 +144,73 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1624_两个相同字符之间的最长子字符串](https://leetcode-cn.com/problems/largest-substring-between-two-equal-characters/)
+## 解法
+### 思路
+- 遍历字符串，统计相同字符的坐标列表，用map存储
+- 遍历map，找到列表长度大于1的列表中，最大最小值的差最大的那个值
+### 代码
+```java
+class Solution {
+    public int maxLengthBetweenEqualCharacters(String s) {
+        Map<Character, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            map.computeIfAbsent(s.charAt(i), x -> new ArrayList<>()).add(i);
+        }
+        
+        int ans = -1;
+        for (Character c : map.keySet()) {
+            List<Integer> list = map.get(c);
+            
+            if (list.size() <= 1) {
+                continue;
+            }
+            
+            int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+            for (int num : list) {
+                min = Math.min(num, min);
+                max = Math.max(num, max);
+            }
+            
+            ans = Math.max(ans, max - min - 1);
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 遍历字符串找到某个字符出现的最左和最右的坐标
+- 遍历最左和最右的坐标数组，计算相同字符对应的左右差值的最大值
+### 代码
+```java
+class Solution {
+    public int maxLengthBetweenEqualCharacters(String s) {
+        int[] lefts = new int[26], rights = new int[26];
+        Arrays.fill(lefts, -1);
+        Arrays.fill(rights, -1);
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            if (lefts[c - 'a'] == -1) {
+                lefts[c - 'a'] = i;
+            }
+
+            rights[c - 'a'] = i;
+        }
+
+        int ans = -1;
+        for (int i = 0; i < 26; i++) {
+            if (lefts[i] == rights[i]) {
+                continue;
+            }
+
+            ans = Math.max(ans, rights[i] - lefts[i] - 1);
+        }
+
+        return ans;
+    }
+}
+```
