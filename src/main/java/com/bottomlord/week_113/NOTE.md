@@ -51,3 +51,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1608_特殊数组的特征值](https://leetcode-cn.com/problems/special-array-with-x-elements-greater-than-or-equal-x/)
+## 解法
+### 思路
+- 排序数组
+- 遍历数组元素
+  - 如果是第一个元素，则初始化num为0
+  - 如果不是第一个元素，则初始化num为nums[i] + 1
+  - 内层循环累加num，直到num大于nums[i]
+  - 在内层循环判断的过程中，如果num值和数组长度减去当前坐标值的差相等，就累加一个count值，作为x的一种情况，同时记录当前num，作为可能的x值
+  - 判断结束后，再判断count是否大于1，如果是则不符合题目要求，直接返回-1，否则累加num，直到内层循环退出
+- 如果外层循环退出，则判断count是否等于1，如果是就返回之前记录的num，否则就返回-1
+### 代码
+```java
+class Solution {
+    public int specialArray(int[] nums) {
+        Arrays.sort(nums);
+        int len = nums.length, count = 0, n = -1;
+        for (int i = 0; i < len; i++) {
+            int num;
+            if (i == 0) {
+                num = 0;
+            } else {
+                num = nums[i - 1] + 1; 
+            }
+            
+            while (num <= nums[i]) {
+                if (num == len - i) {
+                    count++;
+                    n = num;
+                }
+                
+                if (count > 1) {
+                    return -1;
+                }
+                
+                num++;
+            }
+        }
+
+        return count == 1 ? n : -1;
+    }
+}
+```
