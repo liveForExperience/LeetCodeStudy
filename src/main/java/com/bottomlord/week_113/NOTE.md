@@ -266,3 +266,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1636_按照频率将数组升序排序](https://leetcode-cn.com/problems/sort-array-by-increasing-frequency/)
+## 解法
+### 思路
+使用Arrays.sort()排序，排序前还需要生成包装类数组
+### 代码
+```java
+class Solution {
+    public int[] frequencySort(int[] nums) {
+        int len = nums.length;
+        Integer[] arr = new Integer[len],
+                  feqs = new Integer[201];
+        
+        Arrays.fill(feqs, 0);
+
+        for (int i = 0; i < len; i++) {
+            arr[i] = nums[i];
+            feqs[nums[i] + 100]++;
+        }
+        
+        Arrays.sort(arr, (x, y) -> {
+            if (Objects.equals(feqs[x + 100], feqs[y + 100])) {
+                return y - x;
+            }
+            
+            return feqs[x + 100] - feqs[y + 100];
+        });
+        
+        for (int i = 0; i < len ; i++) {
+            nums[i] = arr[i];
+        }
+        
+        return nums;
+    }
+}
+```
