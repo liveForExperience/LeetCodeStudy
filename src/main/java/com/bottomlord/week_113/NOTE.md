@@ -241,3 +241,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1629_按键持续时间最长的键](https://leetcode-cn.com/problems/slowest-key/)
+## 解法
+### 思路
+- 初始化最大值max为-1，字符为空
+- 遍历字符串：
+  - 判断按键的时间是否大于max，如果是就更新max和结果字符
+  - 如果按键时间与max相等，则判断当前字符是否比结果字符的字典序更大，如果是就更新字符为当前字符
+### 代码
+```java
+class Solution {
+    public char slowestKey(int[] releaseTimes, String keysPressed) {
+        int max = -1; char ans = ' ';
+        for (int i = 0; i < keysPressed.length(); i++) {
+            int time = i == 0 ? releaseTimes[i] : releaseTimes[i] - releaseTimes[i - 1];
+            if (time > max) {
+                max = time;
+                ans = keysPressed.charAt(i);
+            } else if (time == max && keysPressed.charAt(i) > ans) {
+                ans = keysPressed.charAt(i);
+            }
+        }
+        return ans;
+    }
+}
+```
