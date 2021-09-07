@@ -214,3 +214,30 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1221_分割平衡字符串](https://leetcode-cn.com/problems/split-a-string-in-balanced-strings/)
+## 解法
+### 思路
+- 遍历字符串，对L和R进行计数，当相等时就统计一次，然后重置并继续统计
+### 代码
+```java
+class Solution {
+    public int balancedStringSplit(String s) {
+        int l = 0, r = 0, ans = 0;
+        for (char c : s.toCharArray()) {
+            if (c == 'L') {
+                l++;
+            } else if (c == 'R') {
+                r++;
+            }
+            
+            if (l == r) {
+                ans++;
+                l = 0;
+                r = 0;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
