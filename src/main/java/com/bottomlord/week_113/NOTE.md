@@ -301,3 +301,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_502_IPO](https://leetcode-cn.com/problems/ipo/)
+## 解法
+### 思路
+- 先判断当前所有项目需要的资本是否都小于等于w，如果是的话，就累加当前值中最大的k个利润值就是答案
+- 如果有大于w的情况，那么就需要遍历k和profit长度之间的最小值，相当于获取前k个最大利润的可以投资的项目的利润和
+- 在循环的内部，就要找到当前w资本情况下能找到的最大利润的项目，然后将其累加到w上，并将成本设置为int最大值，从而代表当前项目绝对不能再做
+### 代码
+```java
+class Solution {
+    public int findMaximizedCapital(int k, int w, int[] profits, int[] capital) {
+        boolean speedUp = true;
+        for (int cost : capital) {
+            if (cost > w) {
+                speedUp = false;
+                break;
+            }
+        }
+
+        if (speedUp) {
+            Arrays.sort(profits);
+            int sum = 0;
+            for (int i = profits.length - 1; i >= profits.length - Math.min(k, profits.length); i--) {
+                sum += profits[i];
+            }
+            return sum + w;
+        }
+
+        for (int i = 0; i < Math.min(k, profits.length); i++) {
+            int index = -1;
+            for (int j = 0; j < profits.length; j++) {
+                if (w >= capital[j]) {
+                    if (index == -1 || profits[j] > profits[index]) {
+                        index = j;
+                    }
+                }
+            }
+
+            if (index == -1) {
+                break;
+            }
+
+            w += profits[index];
+            capital[index] = Integer.MAX_VALUE;
+        }
+
+        return w;
+    }
+}
+```
