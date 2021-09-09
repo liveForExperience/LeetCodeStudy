@@ -350,3 +350,124 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1640_能否连接形成数组](https://leetcode-cn.com/problems/check-array-formation-through-concatenation/)
+## 解法
+### 思路
+- 使用map存储pieces数组元素的首个元素值及在pieces中的对应坐标关联关系
+- 遍历arr数组：
+  - 如果在map中找不到当前元素的坐标值，说明pieces中没有arr中需要的元素，返回false
+  - 通过map中存储的坐标index，获取piece数组，然后遍历piece数组，以此判断arr和piece数组中的元素是否相等，如果不相等就返回false
+- arr遍历结束，说明pieces可以按照题目要求组成arr，返回true
+### 代码
+```java
+class Solution {
+    public boolean canFormArray(int[] arr, int[][] pieces) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < pieces.length; i++) {
+            map.put(pieces[i][0], i);
+        }
+        
+        for (int i = 0; i < arr.length;) {
+            Integer index = map.get(arr[i]);
+            if (index == null) {
+                return false;
+            }
+            
+            int[] piece = pieces[index];
+            for (int j = 0; j < piece.length;) {
+                if (arr[i++] != piece[j++]) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+}
+```
+# [LeetCode_68_文本左右对齐](https://leetcode-cn.com/problems/text-justification/)
+## 解法
+### 思路
+- 初始化一个list用于存放当前行能够放入的最大的单词个数
+- 初始化rowLen用于记录当前行还能放入的字符长度，初始值为maxWidth+1，+1的原因是，因为在判断当前行能放入多少单词的时候，都需要默认增加一个空格，所以为了方便判断，所以加1，否则在判断最后一个单词的时候就会比较麻烦，因为最后一个单词可以不加空格
+- 遍历words数组：
+  - 区分两种情况，当前行是否是最后一行
+    - 如果是，就按照最后一行的生成规则，基于list，生成最后一行的字符串
+    - 如果不是，那么如果当前行已经不能再加入新的单词，就需要再判断两种情况：
+      - 如果只有1个word，那就和最后一行的字符串生成规则保持一致
+      - 如果超过1个word，就按照普通的字符串生成规则生成
+    - 生成字符串的规则
+      - 如果是最后一行或者这一行只有1个单词，那么就直接一个单词一个空格的累加，并计算还剩多上长度，单词用完后就直接加空格
+      - 如果是普通行，就需要算出单词之间平均还需要多的空格数，以及左边的那些空格中需要多增加的空格数
+### 代码
+```java
+class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        int wordNum = words.length, rowLen = maxWidth + 1, curRowLen = rowLen;
+        List<String> curRowWords = new ArrayList<>(), ans = new ArrayList<>();
+        for (int i = 0; i < wordNum; i++) {
+            String word = words[i];
+
+            if (curRowLen - word.length() - 1 >= 0) {
+                curRowWords.add(word);
+                if (i == wordNum - 1) {
+                    ans.add(fillSpecialRow(curRowWords, maxWidth));
+                }
+                curRowLen -= (word.length() + 1);
+            } else {
+                if (curRowWords.size() == 1) {
+                    ans.add(fillSpecialRow(curRowWords, maxWidth));
+                } else {
+                    ans.add(fillRow(curRowWords, maxWidth, curRowLen));
+                }
+
+                curRowWords.clear();
+                curRowLen = rowLen;
+                i--;
+            }
+        }
+
+        return ans;
+    }
+
+    private String fillRow(List<String> words, int len, int leftLen) {
+        int wordNum = words.size(), gaps = wordNum - 1,
+            extraGapLen = leftLen / gaps, extraLen = leftLen % gaps;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < wordNum; i++) {
+            sb.append(words.get(i));
+            if (i != wordNum - 1) {
+                sb.append(" ");
+
+                for (int j = 0; j < extraGapLen; j++) {
+                    sb.append(" ");
+                }
+            }
+
+            if (extraLen > 0) {
+                sb.append(" ");
+                extraLen--;
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private String fillSpecialRow(List<String> words, int len) {
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            sb.append(word);
+            if (sb.length() < len) {
+                sb.append(" ");
+            }
+        }
+
+        while (sb.length() < len) {
+            sb.append(" ");
+        }
+
+        return sb.toString();
+    }
+}
+```
