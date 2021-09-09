@@ -385,6 +385,38 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+因为元素的取值范围是[1,100]，所以可以使用数组替换解法一中的map
+### 代码
+```java
+class Solution {
+  public boolean canFormArray(int[] arr, int[][] pieces) {
+    Integer[] bucket = new Integer[101];
+    for (int i = 0; i < pieces.length; i++) {
+      bucket[pieces[i][0]] = i;
+    }
+
+    for (int i = 0; i < arr.length;) {
+      Integer index = bucket[arr[i]];
+      if (index == null) {
+        return false;
+      }
+
+      int[] piece = pieces[index];
+      for (int num : piece) {
+        if (arr[i] != num) {
+          return false;
+        }
+
+        i++;
+      }
+    }
+
+    return true;
+  }
+}
+```
 # [LeetCode_68_文本左右对齐](https://leetcode-cn.com/problems/text-justification/)
 ## 解法
 ### 思路
