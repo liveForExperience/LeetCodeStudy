@@ -503,3 +503,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1894_找到需要补充粉笔的学生编号](https://leetcode-cn.com/problems/find-the-student-that-will-replace-the-chalk/)
+## 解法
+### 思路
+- 求前缀和，在求的过程中，如果有前缀和大于k，就直接返回当前坐标
+- 用k对所有学生消耗的总量做取余数的操作，获得余数作为新的k，代表处理了若干轮后，剩下的粉笔数一定会在当前轮被用完
+- 遍历前缀和，查找第一个大于k的坐标，返回
+### 代码
+```java
+class Solution {
+    public int chalkReplacer(int[] chalk, int k) {
+        int len = chalk.length;
+        int[] sums = new int[len];
+        sums[0] = chalk[0];
+        if (sums[0] > k) {
+            return 0;
+        }
+        
+        for (int i = 1; i < len; i++) {
+            sums[i] = sums[i - 1] + chalk[i];
+            
+            if (sums[i] > k) {
+                return i;
+            }
+        }
+        
+        k %= sums[len - 1];
+        
+        for (int i = 0; i < len; i++) {
+            if (sums[i] > k) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
