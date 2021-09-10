@@ -540,3 +540,79 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1652_拆炸弹](https://leetcode-cn.com/problems/defuse-the-bomb/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] decrypt(int[] code, int k) {
+        int len = code.length;
+        int[] ans = new int[len];
+        if (k == 0) {
+            Arrays.fill(ans, 0);
+            return ans;
+        }
+
+        boolean positive = k > 0;
+        for (int i = 0; i < len; i++) {
+            if (positive) {
+                for (int j = 1; j <= k; j++) {
+                    ans[i] += code[(i + j) % len];
+                }
+            } else {
+                for (int j = -1; j >= k; j--) {
+                    ans[i] += code[(i + j + len) % len];
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+前缀和
+### 代码
+```java
+class Solution {
+    public int[] decrypt(int[] code, int k) {
+        int len = code.length;
+        int[] ans = new int[len];
+
+        if (k == 0) {
+            return ans;
+        }
+        
+        int[] sums = new int[len];
+        for (int i = 0; i < len; i++) {
+            int pre = i == 0 ? 0 : sums[i - 1];
+            sums[i] = pre + code[i];
+        }
+        
+        boolean positive = k > 0;
+        for (int i = 0; i < len; i++) {
+            if (positive) {
+                if (k <= len - i - 1) {
+                    ans[i] = sums[i + k] - sums[i];
+                } else {
+                    ans[i] += sums[len - 1] - sums[i] + sums[k - len + i];
+                }
+            } else {
+                int dis = Math.abs(k);
+                if (i + 1 > dis) {
+                    ans[i] = sums[i - 1] - ((i - dis > 0) ? sums[i - dis - 1] : 0);
+                } else if (i == 0) {
+                    ans[i] = sums[len - 1] - sums[len - dis - 1];
+                } else {
+                    ans[i] = sums[i - 1] + sums[len - 1] - sums[len - dis + i - 1];
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
