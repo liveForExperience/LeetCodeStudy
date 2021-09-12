@@ -616,3 +616,228 @@ class Solution {
     }
 }
 ```
+# [LeetCode_600_不含连续1的非负整数](https://leetcode-cn.com/problems/non-negative-integers-without-consecutive-ones/)
+## 解法
+### 思路
+[动态规划](https://leetcode-cn.com/problems/non-negative-integers-without-consecutive-ones/solution/suan-fa-xiao-ai-wo-lai-gei-ni-jie-shi-qi-4nh4/)
+- dp[0]在解法中是一个无意义的值，但因为dp[1]是1，也就是为0的情况，dp[2]是2，因为01,00
+### 代码
+```java
+class Solution {
+  public int findIntegers(int n) {
+    int[] dp = new int[31];
+    dp[0] = dp[1] = 1;
+    for (int i = 2; i < 31; i++) {
+      dp[i] = dp[i - 1] + dp[i - 2];
+    }
+
+    int ans = 0, pre = 0;
+    for (int i = 29; i >= 0; i--) {
+      int val = 1 << i;
+      if ((n & val) != 0) {
+        n -= val;
+        ans += dp[i + 1];
+
+        if (pre == 1) {
+          break;
+        }
+
+        pre = 1;
+      } else {
+        pre = 0;
+      }
+
+      if (i == 0) {
+        ans++;
+      }
+    }
+
+    return ans;
+  }
+}
+```
+# [LeetCode_678_有效的括号字符串](https://leetcode-cn.com/problems/valid-parenthesis-string/)
+## 失败解法
+### 原因
+超时
+### 思路
+dfs搜索
+### 代码
+```java
+class Solution {
+  public boolean checkValidString(String s) {
+    return dfs(0, 0, s);
+  }
+
+  private boolean dfs(int index, int count, String s) {
+    if (index == s.length()) {
+      return count == 0;
+    }
+
+    if (count < 0) {
+      return false;
+    }
+
+    char c = s.charAt(index);
+    boolean flag = false;
+    if (c == '(') {
+      flag = dfs(index + 1, count + 1, s);
+    } else if (c == ')') {
+      flag = dfs(index + 1, count - 1, s);
+    } else {
+      flag = dfs(index + 1, count + 1, s) ||
+              dfs(index + 1, count - 1, s) ||
+              dfs(index + 1, count, s);
+    }
+
+    return flag;
+  }
+}
+```
+## 解法
+### 思路
+动态规划：
+- `dp[i][j]`：i和j区间内是否能够组成有效字符串
+- 状态转移方程：
+  - 如果区间长度是1，那么当前字符是`*`，则dp[i][j]是true
+  - 如果区间长度是2，那么前1个字符是`(`或`*`，且后一个字符是`)`或`*`，那么dp[i][j]是true，否则是false
+  - 从字符串尾部3个字符开始
+    - 外层循环确定区间的第一个字符
+    - 内层循环确定区间的最后一个字符
+    - 如果头尾字符能像第二条一样在外围组成一个有效字符串外壳，那么`dp[i][j] = dp[i + 1][j - 1]`
+    - 然后第三层从第一个字符开始，使用转移方程`dp[i][j] = dp[i][k] && dp[k + 1][j]`，这么做的目的就是，看i和j的区间里面是否存在2个子区间组成一个有效字符串区间，如果存在，那么就不需要再判断了。
+### 代码
+```java
+class Solution {
+    public boolean checkValidString(String s) {
+        int n = s.length();
+        boolean[][] dp = new boolean[n][n];
+        for (int i = 0; i < n; i++) {
+            dp[i][i] = s.charAt(i) == '*';
+        }
+
+        for (int i = 1; i < n; i++) {
+            char c1 = s.charAt(i - 1), c2 = s.charAt(i);
+            dp[i - 1][i] = (c1 == '(' || c1 == '*') && (c2 == ')' || c2 == '*');
+        }
+
+        for (int i = n - 3; i >= 0; i--) {
+            char c1 = s.charAt(i);
+            for (int j = i + 2; j < n; j++) {
+                char c2 = s.charAt(j);
+                if ((c1 == '(' || c1 == '*') && (c2 == ')' || c2 == '*')) {
+                    dp[i][j] = dp[i + 1][j - 1];
+                }
+
+                for (int k = i; k < j && !dp[i][j]; k++) {
+                    dp[i][j] = dp[i][k] && dp[k + 1][j];
+                }
+            }
+        }
+
+        return dp[0][n - 1];
+    }
+}
+```
+## 解法二
+### 思路
+栈：
+- 初始化2个栈
+  - 一个栈用于存储遍历到的左括号的坐标
+  - 一个栈用于存储遍历到的星的坐标
+- 遍历过程中，如果遇到右括号：
+  - 判断左括号栈是否为空，如果不为空，优先弹出左括号的元素
+  - 如果左括号为空，弹出星号的元素
+  - 如果两个栈都为空，那么返回false
+- 遍历完以后，查看左括号栈和星的栈
+  - 如果左括号为空，直接返回true
+  - 如果左括号不为空，星为空，返回false
+  - 如果左括号和星都不为空
+    - 左括号的个数大于星，返回false
+    - 依次弹出左括号和星元素坐标各一个
+      - 如果左括号坐标小于星，符合
+      - 如果左括号坐标大于星，返回false，因为不再存在比左括号坐标更右侧的星
+### 代码
+```java
+class Solution {
+    public boolean checkValidString(String s) {
+        Stack<Integer> lefts = new Stack<>(), stars = new Stack<>();
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            char c = cs[i];
+            if (c == ')') {
+                if (!lefts.isEmpty()) {
+                    lefts.pop();
+                } else if (!stars.isEmpty()) {
+                    stars.pop();
+                } else {
+                    return false;
+                }
+            } else if (c == '(') {
+                lefts.push(i);
+            } else if (c == '*') {
+                stars.push(i);
+            }
+        }
+        
+        if (lefts.isEmpty()) {
+            return true;
+        }
+        
+        if (lefts.size() > stars.size()) {
+            return false;
+        }
+        
+        while (!lefts.isEmpty()) {
+            int li = lefts.pop(), si = stars.pop();
+            if (li > si) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法三
+### 思路
+贪心：
+- 维护2个临时变量：
+  - 最大值
+  - 最小值
+- 在遍历过程中
+  - 遇到左括号，最小值和最大值都+1
+  - 遇到右括号，最大值-1，如果最小值大于0，则最小值-1，否则就不减了
+  - 遇到star，如果最小值是0，就+0，否则就-1，而最大值则+1
+- 遍历过程中，如果最大值是负数，则直接返回false，代表有右括号多了
+- 遍历结束后，如果最小值是0，就说明是有效字符串
+### 代码
+```java
+class Solution {
+    public boolean checkValidString(String s) {
+        int min = 0, max = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(') {
+                min++;
+                max++;
+            } else if (c == ')') {
+                if (min > 0) {
+                    min--;
+                }
+                max--;
+            } else if (c == '*') {
+                if (min > 0) {
+                    min--;
+                }
+                max++;
+            }
+
+            if (max < 0) {
+                return false;
+            }
+        }
+
+        return min == 0;
+    }
+}
+```
