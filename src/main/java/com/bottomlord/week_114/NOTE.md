@@ -31,3 +31,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1656_设计有序流](https://leetcode-cn.com/problems/design-an-ordered-stream/)
+## 解法
+### 思路
+- 初始化一个变量用于记录坐标，一个数组用于存储插入的元素
+- 根据insert的idKey来判断是直接插入，还是返回连续的字符串列表
+### 代码
+```java
+class OrderedStream {
+    private String[] strs;
+    private int cur;
+    public OrderedStream(int n) {
+        this.strs = new String[n + 1];
+        this.cur = 1;
+    }
+
+    public List<String> insert(int idKey, String value) {
+        if (idKey != cur) {
+            strs[idKey] = value;
+            return Collections.emptyList();
+        } else {
+            strs[idKey] = value;
+            List<String> ans = new ArrayList<>();
+            for (int i = cur; i < strs.length; i++, cur++) {
+                if (strs[i] != null) {
+                    ans.add(strs[i]);
+                } else {
+                    break;
+                }
+            }
+            return ans;
+        }
+    }
+}
+```
