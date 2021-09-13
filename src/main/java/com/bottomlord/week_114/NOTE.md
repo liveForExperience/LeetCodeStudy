@@ -86,3 +86,61 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1668_最大重复子字符串](https://leetcode-cn.com/problems/maximum-repeating-substring/)
+## 解法
+### 思路
+2层循环：
+- 外层确定起始坐标
+- 内层确定从该位置开始能够找到的最大的连续字符串个数
+- 更新最大值
+- 遍历结束后返回
+### 代码
+```java
+class Solution {
+    public int maxRepeating(String sequence, String word) {
+int wordLen = word.length(), max = 0;
+        for (int i = 0; i < sequence.length(); i++) {
+            int count = 0;
+            for (int j = i; j < sequence.length() && j + wordLen <= sequence.length();) {
+                String sub = sequence.substring(j, j + wordLen);
+                if (Objects.equals(sub, word)) {
+                    count++;
+                    j += wordLen;
+                } else {
+                    max = Math.max(max, count);
+                    count = 0;
+                    j++;
+                }
+            }
+
+            max = Math.max(max, count);
+        }
+        return max;
+    }
+}
+```
+## 解法二
+### 思路
+使用字符数组遍历计数来代替String API
+### 代码
+```java
+class Solution {
+    public int maxRepeating(String sequence, String word) {
+        int max = 0, len = sequence.length(), wlen = word.length();
+        char[] wcs = word.toCharArray(), scs = sequence.toCharArray();
+        for (int i = 0; i < len; i++) {
+            if (wcs[0] == scs[i]) {
+                int w = 0, k = i;
+                while (k < len && wcs[w % wlen] == scs[k]) {
+                    k++;
+                    w++;
+                }
+
+                max = Math.max(max, w / wlen);
+            }
+        }
+        
+        return max;
+    }
+}
+```
