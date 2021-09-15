@@ -144,3 +144,111 @@ class Solution {
     }
 }
 ```
+# [LeetCode_524_通过删除字母匹配到字典里最长单词](https://leetcode-cn.com/problems/longest-word-in-dictionary-through-deleting/)
+## 解法
+### 思路
+- map+treemap：
+  - map用于存储字母和出现的坐标之间的映射关系
+  - treemap用于快速找到下一个可能存在的坐标
+- 先生成map+treemap的嵌套数据结构
+- 对字典字符串数组排序
+- 依次遍历找到第一个符合的字符串返回，否则返回空字符串
+### 代码
+```java
+class Solution {
+    public String findLongestWord(String s, List<String> dictionary) {
+        Map<Character, TreeSet<Integer>> map = new HashMap<>();
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            map.computeIfAbsent(cs[i], x -> new TreeSet<>()).add(i);
+        }
+
+        dictionary.sort((x, y) -> {
+            if (x.length() == y.length()) {
+                return x.compareTo(y);
+            }
+
+            return y.length() - x.length();
+        });
+
+        for (String word : dictionary) {
+            boolean flag = true;
+            int index = -1;
+            for (char c : word.toCharArray()) {
+                if (!map.containsKey(c)) {
+                    flag = false;
+                    break;
+                }
+
+                TreeSet<Integer> set = map.get(c);
+                Integer nextKey = set.ceiling(index);
+
+                if (nextKey == null) {
+                    flag = false;
+                    break;
+                }
+
+                index = nextKey + 1;
+            }
+
+            if (flag) {
+                return word;
+            }
+        }
+
+        return "";
+    }
+}
+```
+## 解法二
+### 思路
+- 用数组替代treemap存储下一个有效坐标
+- 初始化一个比字符串长1的二维数组
+  - 第一维对应要比较的字符串的字符坐标
+  - 第二维代表第一维坐标情况下，以第一维坐标为起始，往后的所有字母中，第一个和要比较字母相同的字符坐标
+  - 要比字符串长1的原因是，每次要比较的字符串，找到它这个字母的在字符串中能匹配的位置，就需要右移1位，代表这个字母已经不能再使用了，需要在这个字母之后找到下一个匹配的坐标，那么当使用掉字符串最后一个字母之后，坐标就会因为右移而越界，所以多出的1就是为了处理这种情况
+- 二维数组的第二维，用的是一个长度26的int数组，用来对应26个英文字母以及在字符串中的坐标，初始化为-1，目的是用-1来判断是否有效，如果找不到有效的坐标，就会返回-1
+- 从字符串尾部开始向前遍历，将当前遍历到的字母及字符串中的坐标，放入到长度26的数组中，然后放入二维数组里
+- 每遍历一次，那个长度26的数组都复制后一个字母产生的数组，因为之后判断的时候是正向的，所以之后的字母对应的坐标可能在正向判断的过程中是可以被使用到的，而复制过来以后，只更改当前字母对应的坐标，也就意味着如果之后有和当前字符一样的字母，那么当前遍历过程中就会对这个字母的坐标进行更新，从而使正向遍历过程中先找到这个靠前的坐标
+- 生成二维数组后，开始依次遍历字典中的单词：
+  - 如果当前单词比字符串长，那直接跳过，因为肯定不符合题目要求
+  - 正向遍历单词的每一个字符，从二维数组中找到对应的坐标，判断是否是-1，如果是，那这个单词也不符合要求
+  - 然后在下个字符开始判断前，将坐标+1，使得下次判断前跳过现在已经使用过的字母位置
+```java
+class Solution {
+    public String findLongestWord(String s, List<String> dictionary) {
+        int length = s.length();
+        int[][] next = new int[length + 1][];
+
+        int[] lastArr = new int[26];
+        Arrays.fill(lastArr,-1);
+        next[length] = lastArr;
+
+        for (int i = length - 1; i >= 0; i--) {
+            int[] currentArr = new int[26];
+            System.arraycopy(lastArr, 0, currentArr, 0, 26);
+            currentArr[s.charAt(i) - 'a'] = i;
+            next[i] = lastArr = currentArr;
+        }
+
+        String result = "";
+        for (String word : dictionary) {
+            if (isSubsequence(word, next)) {
+                if (word.length() > result.length()) result = word;
+                else if (word.length() == result.length() && word.compareTo(result) < 0) result = word;
+            }
+        }
+        return result;
+    }
+
+    private boolean isSubsequence(String word, int[][] next) {
+        int p = 0;
+        for (int i = 0; i < word.length(); i++) {
+            p = next[p][word.charAt(i) - 'a'];
+            if (p == -1) return false;
+            p++;
+        }
+        return true;
+    }
+}
+```
