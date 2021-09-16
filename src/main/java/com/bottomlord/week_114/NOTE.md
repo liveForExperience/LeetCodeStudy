@@ -252,3 +252,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_162_寻找峰值](https://leetcode-cn.com/problems/find-peak-element/)
+## 解法
+### 思路
+- 二分查找
+- 查找时依赖mid值和相邻的mid+1的值进行比较，判断窗口缩小的区间
+  - 如果mid < mid + 1指向的元素，那么说明右边有更大的元素，就选择右边这块区间
+  - 否则就选择左边这块区间
+### 代码
+```java
+class Solution {
+    public int findPeakElement(int[] nums) {
+        return binarySearch(0, nums.length - 1, nums);
+    }
+
+    private int binarySearch(int head, int tail, int[] nums) {
+        if (head == tail) {
+            return head;
+        }
+        
+        int mid = head + (tail - head) / 2;
+        return  (nums[mid] < nums[mid + 1]) ? binarySearch(mid + 1, tail, nums) : binarySearch(head, mid, nums);
+    }
+}
+```
