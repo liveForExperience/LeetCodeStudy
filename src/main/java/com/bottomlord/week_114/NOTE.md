@@ -276,3 +276,186 @@ class Solution {
     }
 }
 ```
+# [LeetCode_212_单词搜索](https://leetcode-cn.com/problems/word-search-ii/)
+## 解法
+### 思路
+遍历+回溯+记忆化
+### 代码
+```java
+class Solution {
+    private int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+    public List<String> findWords(char[][] board, String[] words) {
+        int row = board.length, col = board[0].length;
+        Map<Character, List<int[]>> mapping = new HashMap<>();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                mapping.computeIfAbsent(board[i][j], x -> new ArrayList<>()).add(new int[]{i, j});
+            }
+        }
+
+        List<String> ans = new ArrayList<>();
+        for (String word : words) {
+            if (word == null || word.length() == 0) {
+                continue;
+            }
+
+            List<int[]> indexes = mapping.get(word.charAt(0));
+            if (indexes == null) {
+                continue;
+            }
+            
+            for (int[] index : indexes) {
+                if (backTrack(index[0], index[1], row, col, 0, word, board, new boolean[row][col])) {
+                    ans.add(word);
+                    break;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean backTrack(int x, int y, int row, int col, int index, String word, char[][] board, boolean[][] memo) {
+        if (index == word.length()) {
+            return true;
+        }
+
+        if (x < 0 || x >= row || y < 0 || y >= col || memo[x][y] || board[x][y] != word.charAt(index)) {
+            return false;
+        }
+
+        memo[x][y] = true;
+        for (int[] direction : directions) {
+            if (backTrack(x + direction[0], y + direction[1], row, col, index + 1, word, board, memo)) {
+                return true;
+            }
+        }
+        return memo[x][y] = false;
+    }
+}
+```
+## 解法二
+### 思路
+- 解法一中的每个单词都会导致搜索一遍整个board数组，这个过程中有许多步骤是重复的
+- 可以先将所有单词放入字典树中进行存储
+- 然后就回溯查找一次board，在查找的过程中：
+  - 如果当前途径的字符串在字典树中存在，就累加到结果里
+  - 如果当前途径的字符串，在字典树中没有相应的路径，就及时终止
+  - 本身回溯过程中的记忆化搜索
+- 回溯查找完所有可能的路径后，将累加到的结果按字典序排列后返回即可
+### 代码
+```java
+class Solution {
+    private int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+    public List<String> findWords(char[][] board, String[] words) {
+        int row = board.length, col = board[0].length;
+
+        Trie trie = new Trie();
+        for (String word : words) {
+            trie.insert(word);
+        }
+
+        Set<String> set = new HashSet<>();
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                backTrack(i, j, row, col, trie, board, new StringBuilder(), set);
+            }
+        }
+
+        return new ArrayList<>(set);
+    }
+
+    private void backTrack(int x, int y, int row, int col, Trie trie, char[][] board, StringBuilder sb, Set<String> set) {
+        if (x < 0 || x >= row || y < 0 || y >= col || board[x][y] == '#') {
+            return;
+        }
+
+        char c = board[x][y];
+        int len = sb.length();
+        sb.append(c);
+        String str = sb.toString();
+        board[x][y] = '#';
+        
+        if (!trie.search(str)) {
+            sb.setLength(len);
+            board[x][y] = c;
+            return;
+        }
+
+        if (trie.isWord(str)) {
+            set.add(str);
+        }
+
+        for (int[] direction : directions) {
+            backTrack(x + direction[0], y + direction[1], row, col, trie, board, sb, set);
+        }
+        
+        sb.setLength(len);
+        board[x][y] = c;
+    }
+
+    private class Trie {
+        private final TireNode root;
+
+        public Trie() {
+            this.root = new TireNode();
+        }
+
+        public void insert(String word) {
+            TireNode node = root;
+
+            char[] cs = word.toCharArray();
+            for (char c : cs) {
+                int index = c - 'a';
+
+                if (node.children[index] == null) {
+                    node.children[index] = new TireNode();
+                }
+
+                node = node.children[index];
+            }
+
+            node.isWord = true;
+        }
+
+        public boolean search(String word) {
+            return doSearch(word) != null;
+        }
+
+        public boolean isWord(String word) {
+            TireNode node = doSearch(word);
+            return node != null && node.isWord;
+        }
+
+        private TireNode doSearch(String word) {
+            TireNode node = root;
+
+            char[] cs = word.toCharArray();
+            for (char c : cs) {
+                int index = c - 'a';
+
+                TireNode childNode = node.children[index];
+                if (childNode == null) {
+                    return null;
+                }
+
+                node = childNode;
+            }
+
+            return node;
+        }
+
+        private class TireNode {
+            private final TireNode[] children;
+            private boolean isWord;
+
+            public TireNode() {
+                this.children = new TireNode[26];
+            }
+        }
+    }
+} 
+```
