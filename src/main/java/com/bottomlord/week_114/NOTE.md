@@ -607,3 +607,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1672_最富有客户的资产总量](https://leetcode-cn.com/problems/richest-customer-wealth/)
+## 解法
+### 思路
+- 初始化一维数组
+- 遍历累加和更新最大值
+- 遍历结束返回最大值
+### 代码
+```java
+class Solution {
+  public int maximumWealth(int[][] accounts) {
+    int len = accounts.length, max = 0;
+    int[] sums=  new int[len];
+
+    for (int i = 0; i < accounts.length; i++) {
+      for (int j = 0; j < accounts[i].length; j++) {
+        sums[i] += accounts[i][j];
+      }
+
+      max = Math.max(max, sums[i]);
+    }
+
+    return max;
+  }
+}
+```
