@@ -459,3 +459,82 @@ class Solution {
     }
 } 
 ```
+# [LeetCode_36_有效的数独](https://leetcode-cn.com/problems/valid-sudoku/)
+## 解法
+### 思路
+- 横、竖、区块分别建立一个数据结构用来存储出现的数字
+- 如果这个部分对应的数字有重复就说明不符合题目要求
+- 横竖用二维数组存储，区块用map存储
+- 遍历二维数组然后做判断
+### 代码
+```java
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        Map<String, Set<Character>> mapping = new HashMap<>();
+        boolean[][] rows = new boolean[9][9], cols = new boolean[9][9];
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                char c = board[i][j];
+                if (c == '.') {
+                    continue;
+                }
+
+                if (rows[i][c - '1']) {
+                    return false;
+                }
+                rows[i][c - '1'] = true;
+                
+                if (cols[j][c - '1']) {
+                    return false;
+                }
+                cols[j][c - '1'] = true;
+                
+                String key = i / 3 + ":" + (j / 3);
+                boolean add = mapping.computeIfAbsent(key, x -> new HashSet<>()).add(c);
+                if (!add) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+- 其实区块也可以用数字来表示，因为坐标的值范围是0-8，除以3之后，就是0-2，那么横坐标就可以用 r * 3来代表，每一个横坐标的区间就空出了3个位置，把纵坐标/3之后加上去，这样9个区间的就可以通过这个公式计算出来`(r / 3) * 3 + c / 3`
+- 而计算是否有重复其实也只需要用一个32位的数字就可以表示，通过位上是1还是0来表示当前值是否有重复
+- 所以可以通过3个一维数组来记录，判断的时候就通过数位移动来处理
+### 代码
+```java
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        int[] row = new int[9], col = new int[9], block = new int[9];
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                char c = board[i][j];
+                if (c == '.') {
+                    continue;
+                }
+                
+                int index = c - '0';
+                int shift = 1 << index;
+                int blockIndex = i / 3 * 3 + j / 3;
+                
+                if ((row[i] & shift) > 0 || (col[j] & shift) > 0 || (block[blockIndex] & shift) > 0) {
+                    return false;
+                }
+                
+                row[i] |= shift;
+                col[j] |= shift;
+                block[blockIndex] |= shift;
+            }
+        }
+        
+        return true;
+    }
+}
+```
