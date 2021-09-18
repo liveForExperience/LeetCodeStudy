@@ -538,3 +538,72 @@ class Solution {
     }
 }
 ```
+# [LeetCode_292_Nim游戏](https://leetcode-cn.com/problems/nim-game/)
+## 失败解法
+### 原因
+超出内存限制
+### 思路
+动态规划，当前状态依赖前三次可能选择上是否有无法成功的状态，如果有的话，当前这轮操作就可以成功
+- dp[i]：i个石头的情况下，是否能拿到最后一块石头
+- base case：
+  - `dp[0] = dp[1] = dp[2] = dp[3] = true`
+- 状态转移方程：`dp[i] = !dp[i - 1] || !dp[i - 2] || !dp[i - 3]`
+### 代码
+```java
+class Solution {
+  public boolean canWinNim(int n) {
+    if (n <= 3) {
+      return true;
+    }
+
+    boolean[] dp = new boolean[n + 1];
+    dp[0] = dp[1] = dp[2] = dp[3] = true;
+    for (int i = 4; i <= n; i++) {
+      dp[i] = !dp[i - 1] || !dp[i - 2] || !dp[i - 3];
+    }
+
+    return dp[n];
+  }
+}
+```
+## 失败解法
+### 原因
+超时
+### 思路
+从失败一解法中看出，状态只依赖前三个值得状态，所以可以不存储一个数组，而是只存储3个变量即可，转移过程中不断更新
+### 代码
+```java
+class Solution {
+    public boolean canWinNim(int n) {
+        if (n <= 3) {
+            return true;
+        }
+
+        boolean x = true, y = true, z = true;
+        for (int i = 4; i <= n; i++) {
+            boolean flag = !x | !y | !z;
+            x = y;
+            y = z;
+            z = flag;
+        }
+        
+        return z;
+    }
+}
+```
+## 解法
+### 思路
+- 推导状态的变化
+```bash
+111011101110 
+```
+- 发现1110这样的规律，也就是每三次一定能拿到最后一个，之后就跟一个不能，这也是因为之前推导出的状态转移的含义，就是之前3个里面只要有1个是不行的，当前就一定行
+- 所以值是否能被4整除就可以用来判断是否是能拿到最后的石块，整除就不能，不整除就能
+### 代码
+```java
+class Solution {
+    public boolean canWinNim(int n) {
+        return n % 4 != 0;
+    }
+}
+```
