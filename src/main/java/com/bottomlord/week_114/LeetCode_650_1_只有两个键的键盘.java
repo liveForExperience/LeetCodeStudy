@@ -1,4 +1,4 @@
-package com.bottomlord.week_108;
+package com.bottomlord.week_114;
 
 public class LeetCode_650_1_只有两个键的键盘 {
     public int minSteps(int n) {

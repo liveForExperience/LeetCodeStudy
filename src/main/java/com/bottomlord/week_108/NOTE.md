@@ -326,34 +326,322 @@ class Solution {
     }
 }
 ```
-# [LeetCode_650_只有两个键的键盘](https://leetcode-cn.com/problems/2-keys-keyboard/)
+# [LeetCode_457_环形数组是否存在循环](https://leetcode-cn.com/problems/circular-array-loop/)
 ## 解法
 ### 思路
-动态规划：
-- `dp[i]`：能够生成i个字符需要的最少次数
-- base case：`dp[1] = 0`
-- 状态转移方程：
-  - 外层循环遍历从2到n的字符串数，从而进行状态转移
-  - 内层循环确定所有能够转移到当前i个字符的可能字符数j，这个j一定能够整除i，这样就能通过翻i / j倍来生成i个字符
-  - 为了减少内层转移的次数，可以同时处理j倍的i/j个字符的情况，也就是如下两种方程：
-    - `dp[i] = min(dp[i], dp[j] + i / j)`
-    - `dp[i] = min(dp[i], dp[i / j] + j)`
+- 理解题目
+  - 从任意一个元素开始移动，如果在移动过程中所有遇到的元素都是同样符号，而且能够最终回到起始的节点就说明有循环
+  - 在遍历过程中，如果遇到符号和起始的节点不同，或者遍历的元素个数超过了数组的长度，就说明循环不存在
+- 模拟
+  - 循环遍历所有元素节点，作为可能的循环的起始点
+  - 每一次判断时候，暂存起始的节点元素，起始节点的符号
+  - 移动的时候需要考虑收尾相连的情况，而且方向有正反，所以移动的方程是：`next = ((cur + num) % n + n) % n`
+  - 移动的时候需要判断
+    - 遍历次数是否超过数组长度，如果是，返回false
+    - 当前元素是否与起始元素符号相同，如果是，返回false
+    - 如果元素和起始元素相同，返回true
 ### 代码
 ```java
 class Solution {
-    public int minSteps(int n) {
-        int[] dp = new int[n + 1];
-        for (int i = 2; i <= n; i++) {
-            dp[i] = Integer.MAX_VALUE;
-            for (int j = 1; j * j <= n; j++) {
-                if (i % j == 0) {
-                    dp[i] = Math.min(dp[i], dp[j] + i / j);
-                    dp[i] = Math.min(dp[i], dp[i / j] + j);
+    public boolean circularArrayLoop(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            if (check(nums, i)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean check(int[] nums, int start) {
+        int cur = start, k = 0, n = nums.length;
+        boolean flag = nums[cur] > 0;
+
+        while (k < n) {
+            int next = ((cur + nums[cur]) % n + n) % n;
+            if (flag && nums[next] < 0) {
+                return false;
+            }
+
+            if (!flag && nums[next] > 0) {
+                return false;
+            }
+
+            if (next == start) {
+                return k > 0;
+            }
+
+            cur = next;
+            k++;
+        }
+
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+- 从解法一中可以发现，搜索判断的时候，很多路径是被重复检查的
+- 所以可以用一个记忆数组记录当前节点是否被访问过，记忆数组中记录是第几轮被搜索过的，这样如果当前节点在记忆数组中有值，而且值代表的轮数和当前轮数相同，那就是有循环了，如果不是，那就说明之前已经处理过直接返回false
+- 需要注意：和解法一不同，在判断k的退出条件时，要等k>n时才退出，因为在解法二时，需要通过memo来判断是否出现循环，所以可能需要n+1次遍历来判断，因为可能只在最后2个元素出现了循环
+### 代码
+```java
+class Solution {
+    public boolean circularArrayLoop(int[] nums) {
+        int n = nums.length;
+        int[] memo = new int[n + 1];
+        for (int i = 0, idx = 1; i < n; i++, idx++) {
+            if (memo[i] > 0) {
+                continue;
+            }
+
+            int k = 0, cur = i;
+            boolean flag = nums[cur] > 0;
+            while (k <= n) {
+                int next = ((cur + nums[cur]) %  n + n) % n;
+                if (cur == next) {
+                    break;
                 }
+
+                if (flag && nums[next] < 0) {
+                    break;
+                }
+
+                if (!flag && nums[next] > 0) {
+                    break;
+                }
+
+                if (memo[next] > 0) {
+                    if (memo[next] != idx) {
+                        break;
+                    }
+
+                    return true;
+                }
+
+                k++;
+                cur = next;
+                memo[next] = idx;
+            }
+        }
+
+        return false;
+    }
+}
+```
+# [LeetCode_1137_第N个泰波那契数](https://leetcode-cn.com/problems/n-th-tribonacci-number/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+  public int tribonacci(int n) {
+    if (n <= 1) {
+      return n;
+    }
+
+    if (n == 2) {
+      return 1;
+    }
+
+    int a1 = 0, a2 = 1, a3 = 1;
+    for (int i = 3; i<= n; i++) {
+      int a4= a1 + a2 + a3;
+      a1 = a2;
+      a2 = a3;
+      a3 = a4;
+    }
+
+    return a3;
+  }
+}
+```
+## 解法二
+### 思路
+状态转移方程
+### 代码
+```java
+class Solution {
+  public int tribonacci(int n) {
+    if (n <= 1) {
+      return n;
+    }
+
+    if (n == 2) {
+      return 1;
+    }
+
+    int[] dp = new int[n + 1];
+    dp[0] = 0;
+    dp[1] = 1;
+    dp[2] = 1;
+
+    for (int i = 3; i <= n; i++) {
+      dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3];
+    }
+
+    return dp[n];
+  }
+}
+```
+## 解法二
+### 思路
+记忆化递归
+### 代码
+```java
+class Solution {
+    public int tribonacci(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        
+        if (n == 2) {
+            return 1;
+        }
+
+        Map<Integer, Integer> memo = new HashMap<>();
+        memo.put(0, 0);
+        memo.put(1, 1);
+        memo.put(2, 1);
+        return doTri(n - 1, memo) + doTri(n - 2, memo) + doTri(n - 3, memo);
+    }
+
+    private int doTri(int n, Map<Integer, Integer> memo) {
+        if (memo.containsKey(n)) {
+            return memo.get(n);
+        }
+
+        int num = doTri(n - 1, memo) + doTri(n - 2, memo) + doTri(n - 3, memo);
+        memo.put(n, num);
+
+        return num;
+    }
+}
+```
+# [LeetCode_1436_旅行终点站](https://leetcode-cn.com/problems/destination-city/submissions/)
+## 解法
+### 思路
+- 遍历paths
+  - 将目的地放入set集合中，记录所有的城市
+  - 将起始点作为key放入map，目的地放入作为值的list中
+- 遍历set，找到map中不存在的city直接返回即可
+### 代码
+```java
+class Solution {
+    public String destCity(List<List<String>> paths) {
+        Map<String, List<String>> map = new HashMap<>();
+        Set<String> cities = new HashSet<>();
+        for (List<String> path : paths) {
+            cities.add(path.get(1));
+            map.computeIfAbsent(path.get(0), x -> new ArrayList<>()).add(path.get(1));
+        }
+        
+        for (String city : cities) {
+            if (!map.containsKey(city)) {
+                return city;
             }
         }
         
-        return dp[n];
+        return "";
+    }
+}
+```
+## 解法二
+### 思路
+- 不需要用map存目的地集合，直接一个set存起始地，一个set存目的地
+- 遍历目的地，找到起始地中没有的元素即可
+### 代码
+```java
+class Solution {
+    public String destCity(List<List<String>> paths) {
+        Set<String> depart = new HashSet<>(),
+                    dest = new HashSet<>();
+        
+        for (List<String> path : paths) {
+            depart.add(path.get(0));
+            dest.add(path.get(1));
+        }
+                
+        for (String city : dest) {
+            if (!depart.contains(city)) {
+                return city;
+            }
+        }
+        
+        return null;
+    }
+}
+```
+# [LeetCode_1437_是否所有1都至少相隔k个元素](https://leetcode-cn.com/problems/check-if-all-1s-are-at-least-length-k-places-away/)
+## 解法
+### 思路
+模拟：
+- 初始化：
+  - 上一个1所在的坐标idx，初始值是数组长度，用于做第一个1的判断
+  - 2个1之间的间距dis
+- 遍历数组
+  - 如果是0，累加dis
+  - 如果是1：
+    - idx是数组长度，则将当前坐标设置为第一次碰到的坐标
+    - 判断k和dis之间的大小，如果dis小于k返回false
+    - 重置dis为0
+    - 这里的idx其实就是区分第一次遇到1的情况
+- 遍历结束，返回true，代表所有间距都符合要求
+### 代码
+```java
+class Solution {
+    public boolean kLengthApart(int[] nums, int k) {
+        int idx = nums.length, dis = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {
+                dis++;
+            } else {
+                if (idx == nums.length) {
+                    idx = i;
+                } else {
+                    if (dis < k) {
+                        return false;
+                    }
+                }
+                dis = 0;
+            }
+        }
+        
+        return true;
+    }
+}
+```
+# [LeetCode_1441_用栈操作构建数组](https://leetcode-cn.com/problems/build-an-array-with-stack-operations/)
+## 解法
+### 思路
+模拟：
+- 初始化2个变量
+  - index对应target的坐标
+  - num对应list中要压入栈中的元素
+  - 记录结果的ops数组
+- 循环，退出条件是要么num不大于n，要么index没有越界
+  - 在循环内侧，如果num不等于target的index对应的元素，就往ops里放入压入和弹出的操作，同时累加num值
+  - 内侧循环结束后，就是num和target的元素相等的情况，这个时候就往ops里放入push操作，并且累加num和index
+### 代码
+```java
+class Solution {
+    public List<String> buildArray(int[] target, int n) {
+        int index = 0, num = 1;
+        List<String> ops = new ArrayList<>();
+        while (num <= n && index < target.length) {
+            while (num != target[index]) {
+                ops.add("Push");
+                ops.add("Pop");
+                num++;
+            }
+
+            ops.add("Push");
+            num++;
+            index++;
+        }
+        
+        return ops;
     }
 }
 ```
