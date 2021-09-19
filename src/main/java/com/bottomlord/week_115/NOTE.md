@@ -41,4 +41,71 @@ class Solution {
         return command.replaceAll("\\(\\)", "o").replaceAll("\\(al\\)", "al");
     }
 }
-```                                                                                                     
+```        
+# [LeetCode_1684_统计一致字符串的数目](https://leetcode-cn.com/problems/count-the-number-of-consistent-strings/)
+## 解法
+### 思路
+- 用set存储所有的allowed字符
+- 遍历字符串和字符串的字符，查看是否有字符在set中不存在，如果没有就记录下来
+- 遍历结束，返回存储的个数结果
+### 代码
+```java
+class Solution {
+    public int countConsistentStrings(String allowed, String[] words) {
+        Set<Character> set = new HashSet<>();
+        for (char c : allowed.toCharArray()) {
+            set.add(c);
+        }
+
+        int count = 0;
+        for (String word : words) {
+            boolean flag = true;
+            for (char c : word.toCharArray()) {
+                if (!set.contains(c)) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+使用32位的数字代替set来存储allowed的字母
+### 代码
+```java
+class Solution {
+    public int countConsistentStrings(String allowed, String[] words) {
+        int mask = 0;
+        for (char c : allowed.toCharArray()) {
+            int bit = c - '0';
+            mask |= 1 << bit;
+        }
+        
+        int count = 0;
+        for (String word : words) {
+            boolean flag = true;
+            for (char c : word.toCharArray()) {
+                int bit = c - '0';
+                if (((1 << bit) | mask) != mask) {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if (flag) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+```
