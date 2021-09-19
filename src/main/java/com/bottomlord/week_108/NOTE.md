@@ -326,3 +326,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_650_只有两个键的键盘](https://leetcode-cn.com/problems/2-keys-keyboard/)
+## 解法
+### 思路
+动态规划：
+- `dp[i]`：能够生成i个字符需要的最少次数
+- base case：`dp[1] = 0`
+- 状态转移方程：
+  - 外层循环遍历从2到n的字符串数，从而进行状态转移
+  - 内层循环确定所有能够转移到当前i个字符的可能字符数j，这个j一定能够整除i，这样就能通过翻i / j倍来生成i个字符
+  - 为了减少内层转移的次数，可以同时处理j倍的i/j个字符的情况，也就是如下两种方程：
+    - `dp[i] = min(dp[i], dp[j] + i / j)`
+    - `dp[i] = min(dp[i], dp[i / j] + j)`
+### 代码
+```java
+class Solution {
+    public int minSteps(int n) {
+        int[] dp = new int[n + 1];
+        for (int i = 2; i <= n; i++) {
+            dp[i] = Integer.MAX_VALUE;
+            for (int j = 1; j * j <= n; j++) {
+                if (i % j == 0) {
+                    dp[i] = Math.min(dp[i], dp[j] + i / j);
+                    dp[i] = Math.min(dp[i], dp[i / j] + j);
+                }
+            }
+        }
+        
+        return dp[n];
+    }
+}
+```
