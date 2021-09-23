@@ -268,3 +268,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1688_比赛中的配对次数](https://leetcode-cn.com/problems/count-of-matches-in-tournament/)
+## 解法
+### 思路
+模拟，循环中判断n的奇偶，然后对应变更n，直到n为1为止
+### 代码
+```java
+class Solution {
+    public int numberOfMatches(int n) {
+        int count = 0;
+        while (n != 1) {
+            if(n % 2 == 0) {
+                count += (n /= 2);
+            } else {
+                count += ((n /= 2) + 1);
+            }
+        }
+        
+        return count;
+    }
+}
+```
