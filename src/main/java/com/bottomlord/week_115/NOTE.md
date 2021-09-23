@@ -248,3 +248,23 @@ class Solution {
     }
 }
 ```
+# [LeetCode_326_3的幂](https://leetcode-cn.com/problems/power-of-three/)
+## 解法
+### 思路
+判断n是否能被3整除，如果可以就除以3继续判断，否则就判断当前值是否为1，如果不是就返回false，否则为true
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfThree(int n) {
+        if (n == 0) {
+            return false;
+        }
+
+        while (n % 3 == 0) {
+            n /= 3;
+        }
+
+        return n == 1;
+    }
+}
+```
