@@ -341,3 +341,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1700_无法吃午餐的学生数量](https://leetcode-cn.com/problems/number-of-students-unable-to-eat-lunch/)
+## 解法
+### 思路
+- 遍历学生数组，计算出1和0的个数
+- 遍历三明治数组，根据当前元素的值来累减1或0的个数
+- 如果当前三明治元素的值对应的个数为0，则返回剩下的2个统计值的和
+### 代码
+```java
+class Solution {
+    public int countStudents(int[] students, int[] sandwiches) {
+        int one = 0, zero = 0;
+        for (int student : students) {
+            if (student == 0) {
+                zero++;
+            } else {
+                one++;
+            }
+        }
+        
+        for (int sandwich : sandwiches) {
+            if (sandwich == 0) {
+                if (zero == 0) {
+                    return one;
+                }
+                
+                zero--;
+            } else {
+                if (one == 0) {
+                    return zero;
+                }
+                
+                one--;
+            }
+        }
+        
+        return 0;
+    }
+}
+```
