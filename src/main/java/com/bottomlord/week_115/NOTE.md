@@ -419,5 +419,36 @@ class Solution {
 使用数组替换解法一的set
 ### 代码
 ```java
+class Solution {
+    public boolean halvesAreAlike(String s) {
+        int[] memo = new int['z' + 1];
+        for (char c : new char[]{'a', 'e', 'i', 'o', 'u'}) {
+            memo[c] = memo[c - 32] = 1;
+        }
+
+        return count(0, s.length() / 2, s, memo) ==
+                count(s.length() / 2, s.length(), s, memo);
+    }
+
+    private int count(int start, int end, String str, int[] memo) {
+        int count = 0;
+        for (int i = start; i < end; i++) {
+            if (memo[str.charAt(i)] == 1) {
+                count++;
+            }
+        }
+        return count;
+    }
+}
+```
+# [LeetCode_430_扁平化多级双向链表](https://leetcode-cn.com/problems/flatten-a-multilevel-doubly-linked-list/)
+## 解法
+### 思路
+- 扁平化的目的是，有child优先child，child连完之后再连next
+- dfs搜索，过程中将前后节点做绑定，并断开child指针，并按照如上策略进行连接
+- 过程中入参应是2个参数，一个是pre指针，一个是cur指针，通过2个指针的关系来进行绑定
+- 初始搜索的时候需要设置一个fake head
+### 代码
+```java
 
 ```
