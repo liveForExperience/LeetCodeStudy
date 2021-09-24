@@ -380,3 +380,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1704_判断字符串的两半是否相等]()
+## 解法
+### 思路
+- 生成原因字符的set
+- 将字符串拆分成2部分
+- 遍历2个字符串，统计各个部分的原因字母个数
+- 遍历结束判断两部分的个数是否相等
+### 代码
+```java
+class Solution {
+    public boolean halvesAreAlike(String s) {
+        Set<Character> set = new HashSet<>();
+        char[] cs = new char[]{'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'};
+        for (char c : cs) {
+            set.add(c);
+        }
+
+        int half = s.length() / 2;
+        String first = s.substring(0, half), second = s.substring(half, s.length());
+        int count = 0;
+        for (int i = 0; i < half; i++) {
+            if (set.contains(first.charAt(i))) {
+                count++;
+            }
+            
+            if (set.contains(second.charAt(i))) {
+                count--;
+            }
+        }
+        
+        return count == 0;
+    }
+}
+```
