@@ -450,5 +450,119 @@ class Solution {
 - 初始搜索的时候需要设置一个fake head
 ### 代码
 ```java
+class Solution {
+    public Node flatten(Node head) {
+        if (head == null) {
+            return null;
+        }
 
+        Node start = new Node();
+        dfs(start, head);
+        start.next.prev = null;
+        return start.next;
+    }
+
+    private Node dfs(Node pre, Node cur) {
+        if (cur == null) {
+            return pre;
+        }
+
+        Node next = cur.next;
+        pre.next = cur;
+        cur.prev = pre;
+
+        Node child = dfs(cur, cur.child);
+
+        cur.child = null;
+
+        return dfs(child, next);
+    }
+
+    private static class Node {
+        public int val;
+        public Node prev;
+        public Node next;
+        public Node child;
+    }
+}
+```
+# [LeetCode_1708_长度为K](https://leetcode-cn.com/problems/largest-subarray-length-k/)
+## 解法
+### 思路
+模拟
+- 遍历所有子数组可能，记录起始坐标，依次比较，哪个数组大就记录该起始坐标
+### 代码
+```java
+class Solution {
+    public int[] largestSubarray(int[] nums, int k) {
+        int n = nums.length, start = 0;
+        for (int i = 1; i < n - k + 1; i++) {
+            for (int j = 0; j < k; j++) {
+                if (nums[start + j] > nums[i + j]) {
+                    break;
+                } else if (nums[start + j] < nums[i + j]) {
+                    start = i;
+                    break;
+                }
+            }
+        }
+        
+        int[] ans = new int[k];
+        System.arraycopy(nums, start, ans, 0, k);
+        return ans;
+    }
+}
+```
+# [LeetCode_583_两个字符串的删除操作](https://leetcode-cn.com/problems/delete-operation-for-two-strings/)
+## 解法
+### 思路
+求出最长公共子序列后计算
+### 代码
+```java
+class Solution {
+  public int minDistance(String word1, String word2) {
+    int len1 = word1.length(), len2 = word2.length();
+    int[][] dp = new int[len1 + 1][len2 + 1];
+    for (int i = 1; i <= len1; i++) {
+      for (int j = 1; j <= len2; j++) {
+        if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+          dp[i][j] = dp[i - 1][j - 1] + 1;
+        } else {
+          dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
+      }
+    }
+
+    return len1 + len2 - 2 * dp[len1][len2];
+  }
+}
+```
+# [LeetCode_1143_最长公共子序列](https://leetcode-cn.com/problems/longest-common-subsequence/)
+## 解法
+### 思路
+二维动态规划：
+- dp[i][j]：两个字符串长度i和j前缀情况下，最长的公共子序列
+- base case：如果某个字符串的长度为0，那么他们的公共子序列长度也一定是0
+- 状态转移方程：
+  - s[i] == s[j]：dp[i - 1][j - 1] + 1
+  - s[i] != s[j]：max(dp[i - 1][j], dp[i][j - 1])
+### 代码
+```java
+class Solution {
+    public int longestCommonSubsequence(String text1, String text2) {
+        int len1 = text1.length(), len2 = text2.length();
+        int[][] dp = new int[len1 + 1][len2 + 1];
+        for (int i = 1; i <= len1; i++) {
+            for (int j = 1; j <= len2; j++) {
+                if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        
+        return dp[len1][len2];
+    }
+}
 ```
