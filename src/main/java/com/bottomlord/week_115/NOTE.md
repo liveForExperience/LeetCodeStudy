@@ -609,3 +609,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1725_可以形成最大正方形的矩形数目](https://leetcode-cn.com/problems/number-of-rectangles-that-can-form-the-largest-square/)
+## 解法
+### 思路
+- 求出二维数组中每个1维数组中的最小值之间的最大值的个数
+### 代码
+```java
+class Solution {
+    public int countGoodRectangles(int[][] rectangles) {
+        int max = Integer.MIN_VALUE, count = 0;
+        for (int[] arr : rectangles) {
+            int min = Math.min(arr[0], arr[1]);
+            
+            if (min > max) {
+                count = 1;
+                max = min;
+            } else if (min == max) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+```
