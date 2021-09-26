@@ -585,3 +585,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_371_两整数之和](https://leetcode-cn.com/problems/sum-of-two-integers/)
+## 解法
+### 思路
+- 抑或：得到不进位的相加结果
+- 与：得到需要进位的位，也就是是1的位
+- 只要与的结果不是0，就不断的处理进位相加的过程
+- 一开始是a和b的相加，之后就是xor和and的相加
+### 代码
+```java
+class Solution {
+    public int getSum(int a, int b) {
+        int xor = a ^ b, and = a & b, tmp;
+
+        while (and != 0) {
+            and <<= 1;
+            tmp = xor;
+            xor ^= and;
+            and &= tmp;
+        }
+
+        return xor;
+    }
+}
+```
