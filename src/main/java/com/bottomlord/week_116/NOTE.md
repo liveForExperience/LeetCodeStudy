@@ -102,3 +102,81 @@ class Solution {
     }
 }
 ```
+# [LeetCode_437_路径总和III](https://leetcode-cn.com/problems/path-sum-iii/)
+## 解法
+### 思路
+嵌套dfs
+- 第一层dfs确定计算路径和的起始节点
+- 第二层dfs用来计算路径和
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    public int pathSum(TreeNode root, int targetSum) {
+        dfs(root, targetSum);
+        return count;
+    }
+
+    private void dfs(TreeNode node, int sum) {
+        if (node == null) {
+            return;
+        }
+        
+        if (node.val == sum) {
+            count++;
+        }
+        
+        doDfs(node.left, node.val, sum);
+        doDfs(node.right, node.val, sum);
+        
+        dfs(node.left, sum);
+        dfs(node.right, sum);
+    }
+    
+    private void doDfs(TreeNode node, int val, int sum) {
+        if (node == null) {
+            return;
+        }
+        
+        val += node.val;
+        
+        if (val == sum) {
+            count++;
+        }
+        
+        doDfs(node.left, val, sum);
+        doDfs(node.right, val, sum);
+    }
+}
+```
+## 解法
+### 思路
+dfs+前缀和
+- 一层dfs
+- 初始化一个map，用于存储当前遍历路径上的所有前缀和，默认key为0，value为1，这个默认值用于从根节点开始累加的累加值正好等于sum的情况，方便计数
+- dfs搜索过程中，查找当前前缀和和已有前缀和之间是否存在差值为sum的情况，有的话，就累加这个值，然后继续向下搜索
+- 在搜索过程中还需要做回溯时候的状态清除，因为求的是路径上的和，所以过去搜索到的其他路径上的和需要被清理掉
+### 代码
+```java
+class Solution {
+  public int pathSum(TreeNode root, int targetSum) {
+    Map<Integer, Integer> map = new HashMap<>();
+    map.put(0, 1);
+    return dfs(root, targetSum, 0, map);
+  }
+
+  private int dfs(TreeNode node, int sum, int curSum, Map<Integer, Integer> map) {
+    if (node == null) {
+      return 0;
+    }
+
+    curSum += node.val;
+
+    int count = map.getOrDefault(curSum - sum, 0);
+    map.put(curSum, map.getOrDefault(curSum, 0) + 1);
+    count += dfs(node.left, sum, curSum, map) + dfs(node.right, sum, curSum, map);
+    map.put(curSum, map.get(curSum) - 1);
+    return count;
+  }
+}
+```
