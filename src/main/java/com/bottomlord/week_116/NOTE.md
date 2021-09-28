@@ -180,3 +180,23 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1732_找到最高海拔](https://leetcode-cn.com/problems/find-the-highest-altitude/)
+## 解法
+### 思路
+- 遍历数组并累加元素
+- 累加值不断跟最大值比较，暂存较大值
+- 遍历结束返回最大值
+### 代码
+```java
+class Solution {
+    public int largestAltitude(int[] gain) {
+        int cur = 0, max = 0;
+        for (int num : gain) {
+            cur += num;
+            max = Math.max(cur, max);
+        }
+        
+        return max;
+    }
+}
+```
