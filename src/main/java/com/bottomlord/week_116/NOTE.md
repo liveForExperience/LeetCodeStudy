@@ -200,3 +200,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1742_盒子中小球的最大数量](https://leetcode-cn.com/problems/maximum-number-of-balls-in-a-box/)
+## 解法
+### 思路
+- 从low到high遍历数字
+- 根据数字计算每一位上数字的和，得到盒子的编号
+- map存储编号和球个数的映射关系
+### 代码
+```java
+class Solution {
+    public int countBalls(int lowLimit, int highLimit) {
+        int max = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = lowLimit; i <= highLimit; i++) {
+            int n = i, sum = 0;
+            while (n > 0) {
+                int num = n % 10;
+                sum += num;
+                n /= 10;
+            }
+            
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+            max = Math.max(max, map.get(sum));
+        }
+        
+        return max;
+    }
+}
+```
