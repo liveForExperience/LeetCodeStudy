@@ -228,3 +228,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_517_超级洗衣机](https://leetcode-cn.com/problems/super-washing-machines/)
+## 解法
+### 思路
+- 首先确定-1的情况，也就是衣服总和无法被洗衣机数量总和整除的情况
+- 其次，因为可以任意选取任意数量的洗衣机，所以最小移动次数就应该是所有机器的最小移动次数中的最大值
+- 那么移动的次数其实就可以这么理解：
+  - 当前洗衣机及左边所有的衣服的总和与平均时所有衣服的总和的差值，就是经过当前洗衣机的衣服数量
+  - 另外还有一个是当前洗衣机本身要生成平均值的差值
+  - 如上两个差值之间的最大值，就是经过当前洗衣机的最小值，也就是至少需要的操作数
+  - 遍历所有洗衣机，计算这些最小值中的最大值，就是答案要求的最小值
+### 代码
+```java
+class Solution {
+    public int findMinMoves(int[] machines) {
+        int sum = 0, n = machines.length;
+        for (int machine : machines) {
+            sum += machine;
+        }
+
+        if (sum % n != 0) {
+            return -1;
+        }
+
+        int average = sum / n;
+        for (int i = 0; i < n; i++) {
+            machines[i] = machines[i] - average;
+        }
+
+        int ans = 0, leftSum = 0;
+        for (int machine : machines) {
+            leftSum += machine;
+            int cur = Math.max(Math.abs(leftSum), machine);
+            ans = Math.max(cur, ans);
+        }
+        
+        return ans;
+    }
+}
+```
