@@ -267,3 +267,33 @@ class Solution {
     }
 }
 ```
+# [LeetCode_223_矩形面积](https://leetcode-cn.com/problems/rectangle-area/)
+## 解法
+### 思路
+- 如果两个矩形的某一个矩形的一个横或一个竖在另一个矩形的两个边之间，且同时存在横和竖都有这种情况的场景，则表示两个矩形相交
+- 先计算出两个矩形的面积并相加
+- 然后判断是否有相交，如果有，就算出重合面积，然后减去重合面积即可
+- 重合面积为，左边取最大值，右边取最小值，上边取最小值，下标取最大值
+### 代码
+```java
+class Solution {
+    public int computeArea(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2) {
+        int x1 = Math.max(ax1, bx1),
+            x2 = Math.min(ax2, bx2),
+            y1 = Math.max(ay1, by1),
+            y2 = Math.min(ay2, by2);
+
+        boolean isCross = isCross(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2);
+        return area(ax1, ay1, ax2, ay2) + area(bx1, by1, bx2, by2) - (isCross ? area(x1, y1, x2, y2) : 0);
+    }
+
+    private boolean isCross(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2) {
+        return (ax1 >= bx1 && ax1 <= bx2 || ax2 >= bx1 && ax2 <= bx2 || bx1 >= ax1 && bx1 <= ax2 || bx2 >= ax1 && bx2 <= ax2) &&
+                (ay1 >= by1 && ay1 <= by2 || ay2 >= by1 && ay2 <= by2 || by1 >= ay1 && by1 <= ay2 || by2 >= ay1 && by2 <= ay2);
+    }
+
+    private int area(int x1, int y1, int x2, int y2) {
+        return Math.abs((x1 - x2) * (y1 - y2));
+    }
+}
+```
