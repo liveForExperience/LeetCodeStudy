@@ -297,3 +297,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1436_旅行终点站](https://leetcode-cn.com/problems/destination-city/)
+## 解法
+### 思路
+- 两个set分别存储始发地和目的地
+- 遍历list后分别存储始发地和目的地
+- 遍历目的地set，如果在始发地里没有则返回该城市
+### 代码
+```java
+class Solution {
+  public String destCity(List<List<String>> paths) {
+    Set<String> departs = new HashSet<>(),
+            dests = new HashSet<>();
+
+    for (List<String> path : paths) {
+      departs.add(path.get(0));
+      dests.add(path.get(1));
+    }
+
+    for (String dest : dests) {
+      if (!departs.contains(dest)) {
+        return dest;
+      }
+    }
+
+    return null;
+  }
+}
+```
