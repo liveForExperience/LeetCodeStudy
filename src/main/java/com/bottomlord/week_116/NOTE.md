@@ -409,3 +409,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1748_唯一元素的和](https://leetcode-cn.com/problems/sum-of-unique-elements/)
+## 解法
+### 思路
+桶计数之后，遍历值为1的桶，对坐标进行累加，最后返回
+### 代码
+```java
+class Solution {
+    public int sumOfUnique(int[] nums) {
+        int[] bucket = new int[101];
+        for (int num : nums) {
+            bucket[num]++;
+        }
+
+        int sum = 0;
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == 1) {
+                sum += i;
+            }
+        }
+        
+        return sum;
+    }
+}
+```
