@@ -433,3 +433,33 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1752_检查数组是否经旋转和轮转得到](https://leetcode-cn.com/problems/check-if-array-is-sorted-and-rotated/)
+## 解法
+### 思路
+- 找到数组中最小值及坐标
+- 从该坐标开始循环直到再次到最小值位置，如果一直是升序就是true，否则就是false
+### 代码
+```java
+class Solution {
+    public boolean check(int[] nums) {
+        int n = nums.length, min = Integer.MAX_VALUE, index = -1;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] < min) {
+                min = nums[i];
+                index = i;
+            }
+        }
+        
+        int pre = min;
+        for (int i = (index + 1) % n; i != index; i = (i + 1) % n) {
+            if (nums[i] < pre && (nums[i] != min || nums[(i + 1) % n] != min)) {
+                return false;
+            }
+            
+            pre = nums[i];
+        }
+        
+        return true;
+    }
+}
+```
