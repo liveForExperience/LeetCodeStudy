@@ -381,3 +381,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_405_数字转换为十六进制数](https://leetcode-cn.com/submissions/detail/25953989/)
+## 解法
+### 思路
+- 十六进制对应4位的二进制
+- 所以可以每四位生成一个字符串
+- 初始化0到25对应的16进制值
+- 如果num为0，返回0
+- 否则开始循环，直到num为0为止
+- 每次将最低4位转换为字符串，然后右移4位，处理接下来的4位直到循环结束
+### 代码
+```java
+class Solution {
+    public String toHex(int num) {
+        if (num == 0) {
+            return "0";
+        }
+        
+        char[] dict = new char[] {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+        StringBuilder sb = new StringBuilder();
+        while (num != 0) {
+            sb.insert(0, dict[num & 15]);
+            num >>>= 4;
+        }
+        
+        return sb.toString();
+    }
+}
+```
