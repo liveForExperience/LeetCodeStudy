@@ -325,3 +325,59 @@ class Solution {
   }
 }
 ```
+# [LeetCode_166_分数到小数](https://leetcode-cn.com/problems/fraction-to-recurring-decimal/)
+## 解法
+### 思路
+- 结果可以分为3种情况
+  - 整数
+  - 有限小数
+  - 无线循环小数
+- 计算是否整除，如果整除直接返回
+- 如果不能整除，则开始处理是小数的情况
+  - 判断被除数和除数是否有且只有一个为负数，如果是的话先添加负号
+  - 计算整数部分
+  - 初始化一个map，key为小数部分的被除数，value为起始的index，这样存储的原因是，如果出现无线循环小数，key可以用来判断是否有循环，value用来确定左括号的位置
+  - 每次取余后，判断余数是否为0或者在map中是否已存在，如果有任意情况符合，则退出求小数部分的循环
+  - 最后判断余数是否为0来确定退出循环时候是有限的情况还是无限的情况
+  - 如果是无限的情况，就根据map中存储的value值插入左括号，在最后插入右括号
+### 代码
+```java
+class Solution {
+    public String fractionToDecimal(int numerator, int denominator) {
+        long num = numerator, de = denominator;
+        if (num % de == 0) {
+            return String.valueOf(num / de);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (num < 0 ^ de < 0) {
+            sb.append("-");
+        }
+
+        num = Math.abs(num);
+        de = Math.abs(de);
+
+        sb.append(num / de).append(".");
+
+        StringBuilder sb1 = new StringBuilder();
+        long reminder = num % de;
+        int index = 0;
+        Map<Long, Integer> mapping = new HashMap<>();
+
+        while (reminder != 0 && !mapping.containsKey(reminder)) {
+            mapping.put(reminder, index);
+            reminder *= 10;
+            sb1.append(reminder / de);
+            reminder %= de;
+            index++;
+        }
+        
+        if (reminder != 0) {
+            sb1.insert(mapping.get(reminder), "(");
+            sb1.append(")");
+        }
+        
+        return sb.append(sb1).toString();
+    }
+}
+```
