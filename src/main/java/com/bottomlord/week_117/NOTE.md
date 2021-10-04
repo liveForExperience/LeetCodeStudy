@@ -70,3 +70,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1763_最长的美好子字符串](https://leetcode-cn.com/problems/longest-nice-substring/)
+## 解法
+### 思路
+嵌套遍历
+- 外层确定可能结果的起始坐标
+- 内层遍历确定字符串的结尾坐标
+- 2层循环确定的字符串，判断其是否是符合题目要求的，然后更新最大长度
+- 循环次数基于更新的最大长度动态变化，从而减少循环次数
+### 代码
+```java
+class Solution {
+  public String longestNiceSubstring(String s) {
+    int n = s.length(), max = 1;
+    String ans = "";
+    for (int i = 0; i < n - max; i++) {
+      for (int j = i + max; j < n; j++) {
+        if (isNice(s.substring(i, j + 1))) {
+          if (j + 1 - i > max) {
+            max = j + 1 - i;
+            ans = s.substring(i, j + 1);
+          }
+        }
+      }
+    }
+
+    return ans;
+  }
+
+  private boolean isNice(String s) {
+    Set<String> set = new HashSet<>();
+    for (int i = 0; i < s.length(); i++) {
+      set.add("" + s.charAt(i));
+    }
+
+    for (int i = 0; i < s.length(); i++) {
+      if (!set.contains(("" + s.charAt(i)).toUpperCase()) ||
+              !set.contains(("" + s.charAt(i)).toLowerCase())) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+}
+```
