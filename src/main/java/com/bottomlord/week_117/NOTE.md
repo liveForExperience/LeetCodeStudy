@@ -42,3 +42,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1758_生成交替二进制字符串的最少操作数](https://leetcode-cn.com/problems/minimum-changes-to-make-alternating-binary-string/)
+## 解法
+### 思路
+- 分别以0和1为起始，遍历字符串，并计算需要转换的次数，最后取最小值
+### 代码
+```java
+class Solution {
+    public int minOperations(String s) {
+        char[] cs = s.toCharArray();
+        boolean zero = true, one = true;
+        int a = 0, b = 0;
+        for (char c : cs) {
+            if (c == '0') {
+                a += zero ? 0 : 1;
+                b += one ? 1 : 0;
+            } else {
+                a += zero ? 1 : 0;
+                b += one ? 0 :  1;
+            }
+            
+            zero = !zero;
+            one = !one;
+        }
+        
+        return Math.min(a, b);
+    }
+}
+```
