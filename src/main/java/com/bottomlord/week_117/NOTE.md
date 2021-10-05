@@ -115,3 +115,56 @@ class Solution {
   }
 }
 ```
+# [LeetCode_284_顶端迭代器](https://leetcode-cn.com/problems/peeking-iterator/)
+## 解法
+### 思路
+- 使用一个peek来暂存顶部元素
+- 在hasNext和next函数时，先判断peek是否不为空，如果不为空
+  - hasNext将peek置为null，然后返回true
+  - next将peek置为null，并返回之前peek的值
+### 代码
+```java
+class PeekingIterator implements Iterator<Integer> {
+    private Integer peek;
+    private Iterator<Integer> iterator;
+    public PeekingIterator(Iterator<Integer> iterator) {
+        this.iterator = iterator;
+    }
+
+    public Integer peek() {
+        if (!hasNext()) {
+            return null;
+        }
+        
+        if (peek == null) {
+            peek = next();
+            return peek;
+        }
+        
+        return peek;
+    }
+
+    @Override
+    public Integer next() {
+        if (peek != null) {
+            Integer ans = peek;
+            peek = null;
+            return ans;
+        }
+
+        if (!hasNext()) {
+            return null;
+        }
+
+        return iterator.next();
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (peek != null) {
+            return true;
+        }
+        return iterator.hasNext();
+    }
+}
+```
