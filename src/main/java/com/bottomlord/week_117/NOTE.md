@@ -248,3 +248,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1768_交替合并字符串]https://leetcode-cn.com/problems/merge-strings-alternately/)
+## 解法
+### 思路
+- 循环交替追加字母
+- 循环退出条件为坐标超过了2个字符串
+- 在循环过程中判断是否有超过某个单词的情况，有的话就不处理这个字符串
+### 代码
+```java
+class Solution {
+    public String mergeAlternately(String word1, String word2) {
+        int index = 0;
+        StringBuilder sb = new StringBuilder();
+        while (index < word1.length() || index < word2.length()) {
+            if (index < word1.length()) {
+                sb.append(word1.charAt(index));
+            }
+            
+            if (index < word2.length()) {
+                sb.append(word2.charAt(index));
+            }
+            
+            index++;
+        }
+        
+        return sb.toString();
+    }
+}
+```
+## 解法二
+### 思路
+使用字符数组替换StringBuilder进行累加处理
+### 代码
+```java
+class Solution {
+    public String mergeAlternately(String word1, String word2) {
+        int len1 = word1.length(), len2 = word2.length();
+        char[] cs = new char[len1 + len2];
+        int i = 0, c = 0;
+        
+        while (i < len1 || i < len2) {
+            if (i < len1) {
+                cs[c++] = word1.charAt(i);
+            }
+            
+            if (i < len2) {
+                cs[c++] = word2.charAt(i);
+            }
+            
+            i++;
+        }
+        
+        return new String(cs);
+    }
+}
+```
