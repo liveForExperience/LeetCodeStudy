@@ -248,7 +248,7 @@ class Solution {
     }
 }
 ```
-# [LeetCode_1768_交替合并字符串]https://leetcode-cn.com/problems/merge-strings-alternately/)
+# [LeetCode_1768_交替合并字符串](https://leetcode-cn.com/problems/merge-strings-alternately/)
 ## 解法
 ### 思路
 - 循环交替追加字母
@@ -300,6 +300,56 @@ class Solution {
         }
         
         return new String(cs);
+    }
+}
+```
+# [LeetCode_1773_统计匹配检索规则的物品数量](https://leetcode-cn.com/problems/count-items-matching-a-rule/)
+## 解法
+### 思路
+循环items并逐个判断key和value并计数
+### 代码
+```java
+class Solution {
+    public int countMatches(List<List<String>> items, String ruleKey, String ruleValue) {
+        int count = 0;
+        for (List<String> item : items) {
+            if (Objects.equals(ruleKey, "type")) {
+                count += Objects.equals(ruleValue, item.get(0)) ? 1 : 0;
+            } else if (Objects.equals(ruleKey, "color")) {
+                count += Objects.equals(ruleValue, item.get(1)) ? 1 : 0;
+            } else if (Objects.equals(ruleKey, "name")) {
+                count += Objects.equals(ruleValue, item.get(2)) ? 1 : 0;
+            }
+        }
+        
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+- 提前通过typeKey获取到item对应元素的坐标，从而使得后续循环时候能够减少if判断，充分利用cpu的分支预测优化
+### 代码
+```java
+class Solution {
+    public int countMatches(List<List<String>> items, String ruleKey, String ruleValue) {
+        int index;
+        if (Objects.equals(ruleKey, "type")) {
+            index = 0;
+        } else if (Objects.equals(ruleKey, "color")) {
+            index = 1;
+        } else {
+            index = 2;
+        }
+        
+        int count = 0;
+        for (List<String> item : items) {
+            if (Objects.equals(ruleValue, item.get(index))) {
+                count++;
+            }
+        }
+        
+        return count;
     }
 }
 ```
