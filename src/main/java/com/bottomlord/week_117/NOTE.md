@@ -168,3 +168,83 @@ class PeekingIterator implements Iterator<Integer> {
     }
 }
 ```
+# [LeetCode_414_第三大的数](https://leetcode-cn.com/problems/third-maximum-number/)
+## 解法
+### 思路
+使用3个变量记录和更新，使用set集合辅助，将遍历过得数字过滤掉
+### 代码
+```java
+class Solution {
+    public int thirdMax(int[] nums) {
+        int a = nums[0];
+        Integer b = null, c = null;
+        Set<Integer> set = new HashSet<>();
+        set.add(a);
+        for (int i = 1; i < nums.length; i++) {
+            int num = nums[i];
+            if (!set.add(num)) {
+                continue;
+            }
+            
+            if (num > a) {
+                c = b;
+                b = a;
+                a = num;
+            } else if (b == null) {
+                b = num;
+            } else if (num > b) {
+                c = b;
+                b = num;
+            } else if (c == null) {
+                c = num;
+            } else if (num > c) {
+                c = num;
+            }
+        }
+
+        return c == null ? a : c;
+    }
+}
+```
+## 解法二
+### 思路
+- 使用int最小值代替null做循环过程中的更新和判断，从而减小处理null值时候拆包空指针引起的复杂问题，也就不需要引入set过滤重复数据。
+- 因为测试用来中会使用int最小值，所以在int最小值的判断上要做特殊处理
+  - 如果测试用例中存在最小值，则用一个布尔值做标记
+  - 在最后返回值的时候，根据是否有遇到int最小值来判断
+### 代码
+```java
+class Solution {
+    public int thirdMax(int[] nums) {
+        int a = nums[0], b = Integer.MIN_VALUE, c = b;
+        boolean meet = a == Integer.MIN_VALUE;
+        for (int i = 1; i < nums.length; i++) {
+            int num = nums[i];
+            if (num == Integer.MIN_VALUE) {
+                meet = true;
+            }
+            
+            if (num > a) {
+                c = b;
+                b = a;
+                a = num;
+            } else if (a > num && num > b) {
+                c = b;
+                b = num;
+            } else if (b > num && num > c) {
+                c = num;
+            }
+        }
+
+        if (meet) {
+            if (b == c && c == Integer.MIN_VALUE) {
+                return a;
+            } else {
+                return c;
+            }
+        } else {
+            return c == Integer.MIN_VALUE ? a : c;
+        }
+    }
+}
+```
