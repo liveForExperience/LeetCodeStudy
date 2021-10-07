@@ -379,3 +379,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1779_找到最近的有相同X或Y坐标的点](https://leetcode-cn.com/problems/find-nearest-point-that-has-the-same-x-or-y-coordinate/)
+## 解法
+### 思路
+- 初始化一个数组，初始值为-1，在指定坐标上存储当前坐标有效坐标算出来的曼哈顿距离
+- 遍历数组，找到有效坐标，算出距离，更新最小值
+- 遍历list，找到第一个和最小值一样的坐标并返回，没有的话就返回-1
+### 代码
+```java
+class Solution {
+    public int nearestValidPoint(int x, int y, int[][] points) {
+        int min = Integer.MAX_VALUE, n = points.length;
+        int[] arr = new int[n];
+        Arrays.fill(arr, -1);
+        for (int i = 0; i < points.length; i++) {
+            int[] point = points[i];
+            if (point[0] == x || point[1] == y) {
+                arr[i] = Math.abs(x - point[0]) + Math.abs(y - point[1]);
+                min = Math.min(min, arr[i]);
+            }
+        }
+        
+        if (min == Integer.MIN_VALUE) {
+            return -1;
+        }
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == min) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
