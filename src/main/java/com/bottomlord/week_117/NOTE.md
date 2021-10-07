@@ -353,3 +353,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_434_字符串中的单词数](https://leetcode-cn.com/problems/number-of-segments-in-a-string/)
+## 解法
+### 思路
+双层循环，外层确定可能的单词起始，内层继续移动坐标，通过坐标是否与起始有差异，来计数，遍历结束就返回计数值
+### 代码
+```java
+class Solution {
+    public int countSegments(String s) {
+        int n = s.length(), count = 0;
+        char[] cs = s.toCharArray();
+
+        for (int i = 0; i < n; i++) {
+            int start = i;
+            while (i < n && cs[i] != ' ') {
+                i++;
+            }
+            
+            if (i != start) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+```
