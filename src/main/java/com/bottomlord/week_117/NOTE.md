@@ -414,3 +414,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1784_检查二进制字符串字段](https://leetcode-cn.com/problems/find-nearest-point-that-has-the-same-x-or-y-coordinate/)
+## 解法
+### 思路
+题目的意思是所有1必须连在一起，循环判断并计数即可
+### 代码
+```java
+class Solution {
+    public boolean checkOnesSegment(String s) {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '1') {
+                count++;
+            }
+            
+            while (i < s.length() && s.charAt(i) == '1') {
+                i++;
+            }
+        }
+        
+        return count == 1;
+    }
+}
+```
