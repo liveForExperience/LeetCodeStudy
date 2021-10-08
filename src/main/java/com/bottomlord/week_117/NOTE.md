@@ -437,3 +437,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_187_重复的DNA序列](https://leetcode-cn.com/problems/repeated-dna-sequences/)
+## 解法
+### 思路
+- 遍历字符串，用map存储长度为10的子串，并计数
+- 最后返回长度大于1的子串即可
+### 代码
+```java
+class Solution {
+    public List<String> findRepeatedDnaSequences(String s) {
+        int n = s.length();
+        List<String> ans = new ArrayList<>();
+        Map<String, Integer> mapping = new HashMap<>();
+        for (int i = 0; i <= n - 10; i++) {
+            String sub = s.substring(i, i + 10);
+            mapping.put(sub, mapping.getOrDefault(sub, 0) + 1);
+            
+            if (mapping.get(sub) == 2) {
+                ans.add(sub);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
