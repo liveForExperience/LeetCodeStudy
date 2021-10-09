@@ -462,3 +462,154 @@ class Solution {
     }
 }
 ```
+# [LeetCode_352_将数据流变为多个不相交的区间](https://leetcode-cn.com/problems/data-stream-as-disjoint-intervals/)
+## 解法
+### 思路
+- 使用TreeSet存储数据，使其在存储是就具有顺序性
+- 获取区间的时候，遍历TreeSet，根据当前元素在set中是否存在前后元素来判断是否生成数组元素，且是否为元素的某一个值
+  - 当前元素前后没有相邻元素，生成数组元素，头尾都是当前元素
+  - 当前元素前后都有相邻元素，不生成数据元素
+  - 当前元素之前没有元素，之后有元素，生成数组元素，且当前元素为该数组元素的第一个元素
+  - 当前元素之前有元素，但之后没有元素，当前元素为数组元素的第二个元素
+- 遍历结束后返回结果
+### 代码
+```java
+class SummaryRanges {
+    private TreeSet<Integer> set;
+    public SummaryRanges() {
+        this.set = new TreeSet<>();
+    }
+
+    public void addNum(int val) {
+        this.set.add(val);
+    }
+
+    public int[][] getIntervals() {
+        Iterator<Integer> iterator = set.iterator();
+        List<int[]> list = new ArrayList<>();
+        int[] arr = new int[2];
+        while (iterator.hasNext()) {
+            int num = iterator.next();
+            
+            if (!set.contains(num - 1) && !set.contains(num + 1)) {
+                list.add(new int[]{num, num});
+                continue;
+            }
+            
+            if (set.contains(num - 1) && set.contains(num + 1)) {
+                continue;
+            }
+            
+            if (!set.contains(num - 1) && set.contains(num + 1)) {
+                arr[0] = num;
+                continue;
+            }
+            
+            if (set.contains(num - 1) && !set.contains(num + 1)) {
+                arr[1] = num;
+                list.add(arr);
+                arr = new int[2];
+            }
+        }
+
+        int[][] ans = new int[list.size()][2];
+        for (int i = 0; i < list.size(); i++) {
+            ans[i][0] = list.get(i)[0];
+            ans[i][1] = list.get(i)[1];
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 解法一是在get的时候对区间进行整理和生成
+- 也可以在add的时候对区间数组做维护
+- 维护的时候，根据add的val在原有数组中做二分查找，找到区间起始元素与val最接近的数组cur，然后根据不同的情况来处理原有的区间列表
+  - 如果`cur[0] > val`（只有在add的元素是当前数组中最小的时候，会出现这种情况，所以不需要去考虑cur之前的数组，因为没有）
+    - `cur[0] - 1 == val`，那么和cur数组做整合，val作为cur的起始元素
+    - 否则就在cur之前插入一个新的数组元素
+  - 如果`cur[0] <= val && cur[1] >= val`，不做处理
+  - 剩下的情况就是val在cur数组的右边，这个时候就需要配合下一个数组进行配合，但此时还需要做一个判断，就是如果cur是最后一个数组，那么就不能获取下一个数组，否则越界
+    - 如果是最后一个数组
+      - `cur[1] + 1 == val`，与cur进行整合，val作为结尾元素
+      - 否则，直接在列表后追加数组元素
+    - 如果不是最后一个数组
+      - 先获取下一个数组next
+      - 判断是否能将cur和next连接，如果可以，就将两个数组整合，并删去其中一个
+      - 然后在判断是否只能和其中一个整合
+      - 最后就只能单独新增一个数组
+- get的时候，就在现有的list的基础上进行转换并返回
+### 代码
+```java
+    class SummaryRanges {
+        private List<int[]> list;
+
+        public SummaryRanges() {
+            this.list = new ArrayList<>();
+        }
+
+        public void addNum(int val) {
+            if (list.size() == 0) {
+                list.add(new int[]{val, val});
+                return;
+            }
+
+            int l = 0, r = list.size() - 1;
+            while (l < r) {
+                int mid = l + r + 1 >> 1;
+                if (val >= list.get(mid)[0]) {
+                    l = mid;
+                } else {
+                    r = mid - 1;
+                }
+            }
+
+            int[] cur = list.get(r);
+
+            if (val >= cur[0] && val <= cur[1]) {
+                return;
+            }
+
+            if (val < cur[0]) {
+                if (val + 1 == cur[0]) {
+                    cur[0] = val;
+                } else {
+                    list.add(r, new int[]{val, val});
+                }
+
+                return;
+            }
+
+            if (r == list.size() - 1) {
+                if (cur[1] + 1 == val) {
+                    cur[1] = val;
+                } else {
+                    list.add(new int[]{val, val});
+                }
+                return;
+            }
+            
+            int[] next = list.get(r + 1);
+            if (cur[1] + 1 == val && val == next[0] - 1) {
+                cur[1] = next[1];
+                list.remove(r + 1);
+            } else if (cur[1] + 1 == val) {
+                cur[1] = val;
+            } else if (next[0] - 1 == val) {
+                next[0] = val;
+            } else {
+                list.add(r + 1, new int[]{val, val});
+            }
+            
+        }
+
+        public int[][] getIntervals() {
+            int[][] ans = new int[list.size()][2];
+            for (int i = 0; i < list.size(); i++) {
+                ans[i] = list.get(i);
+            }
+            return ans;
+        }
+    }
+```
