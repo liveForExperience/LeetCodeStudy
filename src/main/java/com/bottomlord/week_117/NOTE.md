@@ -542,74 +542,116 @@ class SummaryRanges {
 - get的时候，就在现有的list的基础上进行转换并返回
 ### 代码
 ```java
-    class SummaryRanges {
-        private List<int[]> list;
+class SummaryRanges {
+    private List<int[]> list;
 
-        public SummaryRanges() {
-            this.list = new ArrayList<>();
-        }
-
-        public void addNum(int val) {
-            if (list.size() == 0) {
-                list.add(new int[]{val, val});
-                return;
-            }
-
-            int l = 0, r = list.size() - 1;
-            while (l < r) {
-                int mid = l + r + 1 >> 1;
-                if (val >= list.get(mid)[0]) {
-                    l = mid;
-                } else {
-                    r = mid - 1;
-                }
-            }
-
-            int[] cur = list.get(r);
-
-            if (val >= cur[0] && val <= cur[1]) {
-                return;
-            }
-
-            if (val < cur[0]) {
-                if (val + 1 == cur[0]) {
-                    cur[0] = val;
-                } else {
-                    list.add(r, new int[]{val, val});
-                }
-
-                return;
-            }
-
-            if (r == list.size() - 1) {
-                if (cur[1] + 1 == val) {
-                    cur[1] = val;
-                } else {
-                    list.add(new int[]{val, val});
-                }
-                return;
-            }
-            
-            int[] next = list.get(r + 1);
-            if (cur[1] + 1 == val && val == next[0] - 1) {
-                cur[1] = next[1];
-                list.remove(r + 1);
-            } else if (cur[1] + 1 == val) {
-                cur[1] = val;
-            } else if (next[0] - 1 == val) {
-                next[0] = val;
-            } else {
-                list.add(r + 1, new int[]{val, val});
-            }
-            
-        }
-
-        public int[][] getIntervals() {
-            int[][] ans = new int[list.size()][2];
-            for (int i = 0; i < list.size(); i++) {
-                ans[i] = list.get(i);
-            }
-            return ans;
-        }
+    public SummaryRanges() {
+        this.list = new ArrayList<>();
     }
+
+    public void addNum(int val) {
+        if (list.size() == 0) {
+            list.add(new int[]{val, val});
+            return;
+        }
+
+        int l = 0, r = list.size() - 1;
+        while (l < r) {
+            int mid = l + r + 1 >> 1;
+            if (val >= list.get(mid)[0]) {
+                l = mid;
+            } else {
+                r = mid - 1;
+            }
+        }
+
+        int[] cur = list.get(r);
+
+        if (val >= cur[0] && val <= cur[1]) {
+            return;
+        }
+
+        if (val < cur[0]) {
+            if (val + 1 == cur[0]) {
+                cur[0] = val;
+            } else {
+                list.add(r, new int[]{val, val});
+            }
+
+            return;
+        }
+
+        if (r == list.size() - 1) {
+            if (cur[1] + 1 == val) {
+                cur[1] = val;
+            } else {
+                list.add(new int[]{val, val});
+            }
+            return;
+        }
+        
+        int[] next = list.get(r + 1);
+        if (cur[1] + 1 == val && val == next[0] - 1) {
+            cur[1] = next[1];
+            list.remove(r + 1);
+        } else if (cur[1] + 1 == val) {
+            cur[1] = val;
+        } else if (next[0] - 1 == val) {
+            next[0] = val;
+        } else {
+            list.add(r + 1, new int[]{val, val});
+        }
+        
+    }
+
+    public int[][] getIntervals() {
+        int[][] ans = new int[list.size()][2];
+        for (int i = 0; i < list.size(); i++) {
+            ans[i] = list.get(i);
+        }
+        return ans;
+    }
+}
+```
+# [LeetCode_441_排列硬币](https://leetcode-cn.com/problems/arranging-coins/)
+## 解法
+### 思路
+模拟循环，注意int越界，记录值要用long
+### 代码
+```java
+class Solution {
+    public int arrangeCoins(int n) {
+        long index = 1;
+        int count = 1;
+        while (index <= n) {
+            index += ++count;
+        }
+        return count - 1;
+    }
+}
+```
+## 解法二
+### 思路
+二分查找
+### 代码
+```java
+class Solution {
+    public int arrangeCoins(int n) {
+        long l = 1, r = n;
+        while (l <= r) {
+            long mid = l + (r - l) / 2,
+                cost = (1 + mid) * mid >> 1;
+
+            if (cost == n) {
+                return (int) mid;
+            } else if (cost < n) {
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+        
+        return (int) r;
+    }
+}
 ```
