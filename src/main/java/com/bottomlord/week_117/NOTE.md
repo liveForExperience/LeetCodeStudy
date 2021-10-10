@@ -655,3 +655,71 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1790_仅执行一次字符串交换能否使两个字符串相等](https://leetcode-cn.com/problems/check-if-one-string-swap-can-make-strings-equal/)
+## 解法
+### 思路
+- 统计两个字符串的字母数量是否相等，如果不相等直接返回false
+- 依次比较两个字符串的对应位置字符是否一样，如果有0或2个不同则true
+### 代码
+```java
+class Solution {
+    public boolean areAlmostEqual(String s1, String s2) {
+        int[] bucket = new int[26];
+        for (int i = 0; i < s1.length(); i++) {
+            bucket[s1.charAt(i) - 'a']++;
+            bucket[s2.charAt(i) - 'a']--;
+        }
+        
+        for (int i = 0; i < 26; i++) {
+            if (bucket[i] != 0) {
+                return false;
+            }
+        }
+        
+        int count = 0;
+        for (int i = 0; i < s1.length(); i++) {
+            if (s1.charAt(i) != s2.charAt(i)) {
+                count++;
+            }
+        }
+        
+        return count == 0 || count == 2;
+    }
+}
+```
+## 解法二
+### 思路
+- 不用统计字母个数，只需要比较差异个数就可以了，统计统计差异的坐标
+- 如果差异为2，就看下差异的两个坐标对应的值是否正好相反
+### 代码
+
+```java
+class Solution {
+  public boolean areAlmostEqual(String s1, String s2) {
+    int x1 = -1, x2 = -1, count = 0;
+    for (int i = 0; i < s1.length(); i++) {
+      if (s1.charAt(i) != s2.charAt(i)) {
+        count++;
+
+        if (count == 1) {
+          x1 = i;
+        }
+
+        if (count == 2) {
+          x2 = i;
+        }
+      }
+    }
+
+    if (count != 0 && count != 2) {
+      return false;
+    }
+
+    if (count == 0) {
+      return true;
+    }
+
+    return s1.charAt(x1) == s2.charAt(x2) && s1.charAt(x2) == s2.charAt(x1);
+  }
+}
+```
