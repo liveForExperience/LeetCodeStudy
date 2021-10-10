@@ -718,8 +718,31 @@ class Solution {
     if (count == 0) {
       return true;
     }
-
-    return s1.charAt(x1) == s2.charAt(x2) && s1.charAt(x2) == s2.charAt(x1);
   }
+}
+```
+# [LeetCode_1791_找出星型图的中心节点](https://leetcode-cn.com/problems/find-center-of-star-graph/)
+## 解法
+### 思路
+- 初始化一个set
+- 遍历数组，将元素放入set中
+- 任意一个元素在set中存在就返回该元素
+### 代码
+```java
+class Solution {
+    public int findCenter(int[][] edges) {
+        Set<Integer> set = new HashSet<>();
+        for (int[] edge : edges) {
+            if (!set.add(edge[0])) {
+                return edge[0];
+            }
+            
+            if (!set.add(edge[1])) {
+                return edge[1];
+            }
+        }
+        
+        return 0;
+    }
 }
 ```
