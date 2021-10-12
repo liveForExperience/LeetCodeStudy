@@ -85,3 +85,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_29_两数相除](https://leetcode-cn.com/problems/divide-two-integers/)
+## 解法
+### 思路
+- 因为不用考虑小数部分，所以使用减法来实现
+- 特殊情况：
+  - 被除数为0，直接返回0
+  - 被除数是int最小值且除数是-1，那么商就是int最大值
+- 判断正负号
+- 被除数通过除数累减的方式，会超时，所以加速累减的过程
+- 可以通过左移的方式，将除数*2，然后和被除数比较，只要不大于被除数就一直左移，超过了就累减，然后这个过程不断循环
+- 需要注意int最大最小值，所以需要将除数和被除数先转换成long值进行操作，除了int最小值除以-1的特殊情况
+### 代码
+```java
+class Solution {
+    public int divide(int dividend, int divisor) {
+        if (dividend == 0) {
+            return 0;
+        }
+
+        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+            return Integer.MAX_VALUE;
+        }
+
+        boolean negative = dividend < 0 ^ divisor < 0;
+        long d = dividend, r = divisor;
+        d = Math.abs(d);
+        r = Math.abs(r);
+
+        int result = 0;
+        while (d >= r) {
+            long num = r, count = 1;
+
+            while (d - num >= num) {
+                num <<= 1;
+                count <<= 1;
+            }
+
+            d -= num;
+            result += count;
+        }
+
+        return negative ? -result : result;
+    }
+}
+```
