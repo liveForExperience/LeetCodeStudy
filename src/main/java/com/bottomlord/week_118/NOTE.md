@@ -130,3 +130,56 @@ class Solution {
     }
 }
 ```
+# [LeetCode_412_FizzBuzz](https://leetcode-cn.com/problems/fizz-buzz/)
+## 解法
+### 思路
+遍历，计算，存储
+### 代码
+```java
+class Solution {
+    public List<String> fizzBuzz(int n) {
+        List<String> list = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            StringBuilder sb = new StringBuilder();
+            if (i % 3 == 0) {
+                sb.append("Fizz");
+            }
+
+            if (i % 5 == 0) {
+                sb.append("Buzz");
+            }
+
+            list.add(sb.length() == 0 ? "" + i : sb.toString());
+        }
+
+        return list; 
+    }
+}
+```
+## 解法二
+### 思路
+不new新的StringBuilder对象，直接add字符串常量
+### 代码
+```java
+class Solution {
+  public List<String> fizzBuzz(int n) {
+    List<String> ans = new ArrayList<>();
+    for (int i = 1; i <= n; i++) {
+      ans.add(get(i));
+    }
+    return ans;
+  }
+
+  private String get(int i) {
+    if (i % 3 == 0 && i % 5 == 0) {
+      return "FizzBuzz";
+    } else if (i % 3 == 0) {
+      return "Fizz";
+    } else if (i % 5 == 0) {
+      return "Buzz";
+    } else {
+      return "" + i;
+    }
+  }
+}
+```
