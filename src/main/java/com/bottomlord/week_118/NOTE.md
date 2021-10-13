@@ -183,3 +183,70 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1796_字符串中第二大的数字](https://leetcode-cn.com/problems/second-largest-digit-in-a-string/)
+## 解法
+### 思路
+循环模拟
+### 代码
+```java
+class Solution {
+  public int secondHighest(String s) {
+    char[] cs = s.toCharArray();
+    Integer one = null, two = null;
+    for (char c : cs) {
+      if (!Character.isDigit(c)) {
+        continue;
+      }
+
+      int num = c - '0';
+
+      if (one == null) {
+        one = num;
+        continue;
+      }
+
+      if (num > one) {
+        two = one;
+        one = num;
+        continue;
+      }
+
+      if (num < one && (two == null || num > two)) {
+        two = num;
+      }
+    }
+
+    return two == null ? -1 : two;
+  }
+}
+```
+## 解法二
+### 思路
+- 遍历字符串，使用布尔数组记录遍历到的数字，下标对应值
+- 遍历布尔数组，找到第二大的值返回，否则返回-1
+### 代码
+```java
+class Solution {
+    public int secondHighest(String s) {
+        boolean[] bucket = new boolean[10];
+        for (int i = 0; i < s.length(); i++) {
+            if (Character.isDigit(s.charAt(i))) {
+                bucket[s.charAt(i) - '0'] = true;
+            }
+        }
+        
+        int count = 0;
+        for (int i = 9; i >= 0; i--) {
+            if (bucket[i]) {
+                count++;
+            }
+            
+            if (count == 2) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
