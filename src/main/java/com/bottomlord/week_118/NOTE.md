@@ -250,3 +250,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1800_最大升序子数组和](https://leetcode-cn.com/problems/maximum-ascending-subarray-sum/)
+## 解法
+### 思路
+- 因为都是正数，所以只要正向遍历即可
+- 初始化三个变量
+  - pre：用于记录前值元素的值，判断是否升序，初始为-1
+  - sum：用于暂存累加值
+  - max：用于暂存最大值
+- 遍历数组，用当前元素和pre比较，判断是否升序
+  - 是，就累加sum值，并更新pre
+  - 否，就比较并更新max，并更新sum和pre
+- 遍历结束还需要将max和sum比较，因为更新max的动作是在非升序的时候触发，如果最终升序子数组持续到数组结尾，那么就需要在遍历结束的时候再更新一次
+- 最终返回max值
+### 代码
+```java
+class Solution {
+    public int maxAscendingSum(int[] nums) {
+        int max = 0, pre = -1, sum = 0;
+        for (int num : nums) {
+            if (num > pre) {
+                sum += num;
+            } else {
+                max = Math.max(max, sum);
+                sum = num;
+            }
+            
+            pre = num;
+        }
+        
+        return Math.max(max, sum);
+    }
+}
+```
