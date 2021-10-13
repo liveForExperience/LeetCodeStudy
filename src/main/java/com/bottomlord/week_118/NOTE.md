@@ -283,3 +283,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1805_字符串中不同整数的数量](https://leetcode-cn.com/problems/number-of-different-integers-in-a-string/)
+## 解法
+### 思路
+- 遍历字符串，跳过字符
+- 然后在遇到数字的时候，如果第一次遇到的是0，也跳过，直到遇到第一个不是0的字符
+- 将这串可能连续的数字拼接计算，得到对应的值
+- 将值放入set中去重
+- 最后返回set的长度
+- 补充：
+  - 还需要考虑数字为0的情况
+  - 需要考虑数字过大越界的情况，索性用字符串存储去重
+### 代码
+```java
+class Solution {
+    public int numDifferentIntegers(String word) {
+        char[] cs = word.toCharArray();
+        Set<String> set = new HashSet<>();
+        for (int i = 0; i < cs.length; i++) {
+            char c = cs[i];
+            if (!Character.isDigit(c)) {
+                continue;
+            }
+
+            if (c - '0' == 0) {
+                if (i == cs.length - 1 || !Character.isDigit(cs[i + 1])) {
+                    set.add("0");
+                }
+                continue;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            while (i < cs.length && Character.isDigit(cs[i])) {
+                sb.insert(0, cs[i]);
+                i++;
+            }
+
+            set.add(sb.toString());
+        }
+
+        return set.size();
+    }
+}
+```
