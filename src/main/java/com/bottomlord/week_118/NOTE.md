@@ -345,3 +345,19 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1812_判断国际象棋棋盘中一个格子的颜色](https://leetcode-cn.com/problems/determine-color-of-a-chessboard-square/)
+## 解法
+### 思路
+- 将字符串代表横和纵的元素都转换成棋盘的坐标元素
+- 根据观察可以看出，撇或捺对应的格子的颜色都是一样的，而撇和捺的坐标通过横竖坐标可以计算，所以计算出比如撇的第几个，就能知道是白还是黑
+### 代码
+```java
+class Solution {
+    public boolean squareIsWhite(String coordinates) {
+        int row = coordinates.charAt(0) - 'a',
+            col = coordinates.charAt(1) - '0' - 1;
+
+        return (row + col) % 2 != 0; 
+    }
+}
+```
