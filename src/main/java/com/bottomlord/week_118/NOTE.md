@@ -326,3 +326,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII69_山峰数组的顶部](https://leetcode-cn.com/problems/B1IidL/submissions/)
+## 解法
+### 思路
+- 遍历并判断是否同时大于左右元素的坐标元素，有的话就返回
+- 如果完成遍历，说明峰值在头或尾，返回头尾较大的那个元素坐标
+### 代码
+```java
+class Solution {
+    public int peakIndexInMountainArray(int[] arr) {
+        for (int i = 1; i < arr.length - 1; i++) {
+            if (arr[i] > arr[i - 1] && arr[i] > arr[i + 1]) {
+                return i;
+            }
+        }
+        
+        return arr[0] > arr[arr.length - 1] ? 0 : arr.length - 1;
+    }
+}
+```
