@@ -361,3 +361,74 @@ class Solution {
     }
 }
 ```
+# [LeetCode_38_外观数列](https://leetcode-cn.com/problems/count-and-say/)
+## 解法
+### 思路
+模拟
+- 2层循环
+  - 外层根据n循环执行次数
+  - 内层生成当前次的描述字符串
+### 代码
+```java
+class Solution {
+    public String countAndSay(int n) {
+        StringBuilder ans = new StringBuilder("1");
+        for (int i = 2; i <= n; i++) {
+            StringBuilder sb = new StringBuilder();
+            int len = ans.length(), count = 0;
+            char start = ans.charAt(0);
+            for (int j = 0; j < len; j++) {
+                if (ans.charAt(j) == start) {
+                    count++;
+                } else {
+                    sb.append(count).append(start);
+                    start = ans.charAt(j);
+                    count = 1;
+                }
+            }
+
+            sb.append(count).append(start);
+            ans = sb;
+        }
+
+        return ans.toString();
+    }
+}
+```
+## 解法二
+### 思路
+因为只有30种情况，基于解法一打表缓存后，直接获取结果
+### 代码
+```java
+class Solution {
+private static String[] bucket = new String[30];
+    static {
+        for (int k = 1; k <= 30; k++) {
+            StringBuilder ans = new StringBuilder("1");
+            for (int i = 2; i <= k; i++) {
+                StringBuilder sb = new StringBuilder();
+                int len = ans.length(), count = 0;
+                char start = ans.charAt(0);
+                for (int j = 0; j < len; j++) {
+                    if (ans.charAt(j) == start) {
+                        count++;
+                    } else {
+                        sb.append(count).append(start);
+                        start = ans.charAt(j);
+                        count = 1;
+                    }
+                }
+
+                sb.append(count).append(start);
+                ans = sb;
+            }
+            
+            bucket[k - 1] = ans.toString();
+        }
+    }
+
+    public String countAndSay(int n) {
+        return bucket[n - 1];
+    }
+}
+```
