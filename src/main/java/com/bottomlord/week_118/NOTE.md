@@ -432,3 +432,57 @@ private static String[] bucket = new String[30];
     }
 }
 ```
+# [LeetCode_230_二叉树中第K小的元素](https://leetcode-cn.com/problems/kth-smallest-element-in-a-bst/)
+## 解法
+### 思路
+二叉搜索树的中序遍历得到的列表是升序的，所以第k小就是列表中第k个元素
+### 代码
+```java
+class Solution {
+    public int kthSmallest(TreeNode root, int k) {
+        List<Integer> list = new ArrayList<>();
+        dfs(root, list);
+        return list.get(k - 1);
+    }
+
+    private void dfs(TreeNode node, List<Integer> list) {
+        if (node == null) {
+            return;
+        }
+
+        dfs(node.left, list);
+        list.add(node.val);
+        dfs(node.right, list);
+    }
+}
+```
+## 解法二
+### 思路
+解法一需要把整棵树都搜索出来，在解法一的基础上只搜索要搜索的k个节点
+### 代码
+```java
+class Solution {
+    private int count = 0;
+    
+    public int kthSmallest(TreeNode root, int k) {
+        return dfs(root, k);
+    }
+    
+    private Integer dfs(TreeNode node, int k) {
+        if (node == null) {
+            return null;
+        }
+        
+        Integer val = dfs(node.left, k);
+        if (val != null) {
+            return val;
+        }
+        
+        if (++count == k) {
+            return node.val;
+        }
+        
+        return dfs(node.right, k);
+    }
+}
+```
