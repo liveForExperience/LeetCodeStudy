@@ -103,8 +103,15 @@ class WordDictionary {
         }
     }
 }
+```
+# [LeetCode_453_最小操作次数使数组元素相等](https://leetcode-cn.com/problems/minimum-moves-to-equal-array-elements/)
+## 解法
+### 思路
+- 题目可以理解成使n-1个元素加1，反过来也可以理解成使1个元素-1
+- 如果是每次都-1的话，那么只需要找出数组中的最小值，然后计算每个元素与最小值的差，再求和就可以了
+### 代码
+```java
 
-    
 ```
 # [LeetCode_282_给表达式添加运算符](https://leetcode-cn.com/problems/expression-add-operators/)
 ## 解法
