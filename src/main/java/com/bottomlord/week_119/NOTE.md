@@ -111,7 +111,50 @@ class WordDictionary {
 - 如果是每次都-1的话，那么只需要找出数组中的最小值，然后计算每个元素与最小值的差，再求和就可以了
 ### 代码
 ```java
+class Solution {
+    public int minMoves(int[] nums) {
+        int min = Integer.MAX_VALUE;
+        for (int num : nums) {
+            min = Math.min(num, min);
+        }
 
+        int sum = 0;
+        for (int num : nums) {
+            sum += num - min;
+        }
+
+        return sum;
+    }
+}
+```
+# [LeetCode_66_加一](https://leetcode-cn.com/problems/plus-one/)
+## 解法
+### 思路
+从数组尾部开始遍历，并进行计算，考虑是否需要进位，如果不需要就结束遍历
+### 代码
+```java
+class Solution {
+    public int[] plusOne(int[] digits) {
+        int n = digits.length, carry = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            int num = digits[i] + carry;
+            digits[i] = num % 10;
+            if (num / 10 == 0) {
+                carry = 0;
+                break;
+            }
+        }
+
+        if (carry == 1) {
+            int[] arr = new int[n + 1];
+            arr[0] = 1;
+            System.arraycopy(digits, 0, arr, 1, n);
+            return arr;
+        }
+
+        return digits;
+    }
+}
 ```
 # [LeetCode_282_给表达式添加运算符](https://leetcode-cn.com/problems/expression-add-operators/)
 ## 解法
