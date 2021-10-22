@@ -156,6 +156,101 @@ class Solution {
     }
 }
 ```
+# [LeetCode_229_求众数II](https://leetcode-cn.com/problems/majority-element-ii/)
+## 解法
+### 思路
+遍历+hash表计数
+### 代码
+```java
+class Solution {
+    public List<Integer> majorityElement(int[] nums) {
+        int maj = nums.length / 3;
+        Set<Integer> ans = new HashSet<>();
+        Map<Integer, Integer> mapping = new HashMap<>();
+        for (int num : nums) {
+            mapping.put(num, mapping.getOrDefault(num, 0) + 1);
+            if (mapping.get(num) > maj) {
+                ans.add(num);
+            }
+        }
+
+        return new ArrayList<>(ans);
+    }
+}
+```
+## 解法二
+### 思路
+- 众数需要的是超过3分之1的个数，所以一个数组中最多有2个元素
+- 初始化4个变量，分为2组，每组的2个变量分别记录值和个数
+- 遍历过程中
+  - 如果2组中任意个数为零，就初始化对应的候选值变量
+  - 如果个数不为零，且值与候选值相等，就累加相应的计数值
+  - 否则就依次将计数值减1
+  - 这么做的原因是，因为如果数组中存在众数，那么按照如上的算法，一定可以在遍历结束以后，成为最后剩下的值，因为其个数超过了3分之1
+- 遍历结束以后，再验证2个候选值，看其个数是否超过3分之1，这是为了剔除那种只有一个众数，另一个候选值是最后阶段个数较多，从而幸存下来的情况
+### 代码
+```java
+class Solution {
+    public List<Integer> majorityElement(int[] nums) {
+        int candidate1 = 0, count1 = 0,
+            candidate2 = 0, count2 = 0;
+        
+        for (int num : nums) {  
+
+            if (num == candidate1) {
+                count1++;
+                continue;
+            }
+            
+            if (num == candidate2) {
+                count2++;
+                continue;
+            }
+
+            if (count1 == 0) {
+                candidate1 = num;
+                count1++;
+                continue;
+            }
+            
+            if (count2 == 0) {
+                candidate2 = num;
+                count2++;
+                continue;
+            }
+            
+            count1--;
+            count2--;
+        }
+        
+        if (candidate1 == candidate2) {
+            return Collections.singletonList(candidate1);
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        count1 = count2 = 0;
+        for (int num : nums) {
+            if (num == candidate1) {
+                count1++;
+            }
+            
+            if (num == candidate2) {
+                count2++;
+            }
+        }
+        
+        if (count1 > nums.length / 3) {
+            ans.add(candidate1);
+        }
+        
+        if (count2 > nums.length / 3) {
+            ans.add(candidate2);
+        }
+        
+        return ans;
+    }
+}
+```
 # [LeetCode_282_给表达式添加运算符](https://leetcode-cn.com/problems/expression-add-operators/)
 ## 解法
 ### 思路
