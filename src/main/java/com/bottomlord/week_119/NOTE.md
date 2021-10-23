@@ -251,6 +251,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_492_构造矩形](https://leetcode-cn.com/problems/construct-the-rectangle/)
+## 解法
+### 思路
+双指针
+### 代码
+```java
+class Solution {
+    public int[] constructRectangle(int area) {
+        int head = 1, tail = area;
+        int[] ans = new int[2];
+        while (head <= tail) {
+            int product = head * tail;
+
+            if (product == area) {
+                ans[1] = head;
+                ans[0] = tail;
+                head++;
+                tail--;
+            } else if (product > area) {
+                tail--;
+            } else {
+                head++;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 因为是乘积，所以其实只要求出其中一个乘数就可以了
+- 通过jdk提供的api直接求出平方根的下限整数，他要么是其中一个乘数，且一定是宽，要么就是过大的宽值
+- 不断累减这个值，然后和area做取模的运算，遇到第一个可以整除的数，就找到了最大的宽，因为最大的宽只能是平方数的平方根
+- 和解法一相比，解法一是从最小的可能开始判断，其实这样就额外做了一些判断，而当前算法就可以直接从可能的最大值开始判断，减少了判断的次数
+### 代码
+```java
+
+```
 # [LeetCode_282_给表达式添加运算符](https://leetcode-cn.com/problems/expression-add-operators/)
 ## 解法
 ### 思路
