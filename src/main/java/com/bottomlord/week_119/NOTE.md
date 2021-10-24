@@ -288,13 +288,64 @@ class Solution {
 - 和解法一相比，解法一是从最小的可能开始判断，其实这样就额外做了一些判断，而当前算法就可以直接从可能的最大值开始判断，减少了判断的次数
 ### 代码
 ```java
+class Solution {
+  public int[] constructRectangle(int area) {
+    int num = (int) Math.sqrt(area);
 
+    while (area % num != 0) {
+      num--;
+    }
+
+    return new int[]{area / num, num};
+  }
+}
 ```
-# [LeetCode_282_给表达式添加运算符](https://leetcode-cn.com/problems/expression-add-operators/)
+# [LeetCode_638_大礼包](https://leetcode-cn.com/problems/shopping-offers/)
 ## 解法
 ### 思路
-
+回溯：
+- 先算出不使用大礼包的总金额
+- 然后遍历大礼包集合，将不符合要求的礼包跳过
+- 然后将need的个数减去礼包的中的个数，递归求使用当前大礼包后，剩下的need需要的最小值
+- 递归结束返回后，和当前的最小值作比较，取较小的那个
+- 然后回溯当前的变化，遍历到下一个礼包继续递归
 ### 代码
 ```java
+class Solution {
+    public int shoppingOffers(List<Integer> price, List<List<Integer>> special, List<Integer> needs) {
+        int ans = 0;
 
+        for (int i = 0; i < price.size(); i++) {
+            ans += price.get(i) * needs.get(i);
+        }
+
+        for (int i = 0; i < special.size(); i++) {
+            List<Integer> bag = special.get(i);
+
+            boolean flag = false;
+            for (int j = 0; j < bag.size() - 1; j++) {
+                if (bag.get(j) > needs.get(j)) {
+                    flag = true;
+                    break;
+                }
+            }
+
+            if (flag) {
+                continue;
+            }
+
+            for (int j = 0; j < needs.size(); j++) {
+                needs.set(j, needs.get(j) - bag.get(j));
+            }
+            
+            ans = Math.min(ans, shoppingOffers(price, special, needs) + bag.get(bag.size() - 1));
+            
+            for (int j = 0; j < needs.size(); j++) {
+                needs.set(j, needs.get(j) + bag.get(j));
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
