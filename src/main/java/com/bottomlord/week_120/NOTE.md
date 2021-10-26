@@ -88,5 +88,39 @@ class Solution {
         return false;
     }
 }
+```
+# [LeetCode_496_下一个更大元素I](https://leetcode-cn.com/problems/next-greater-element-i/)
+## 解法
+### 思路
+单调栈：
+- 遇到求某个数之后最大值的情况，第一反应就是单调栈
+- 准备一个map，用来记录答案
+- 准备一个stack，用来做单调栈运算的容器
+- 从数组结尾开始向前遍历，如果栈中不为空，且栈顶元素比当前元素大，则弹出栈顶元素，并做循环判断，直到不符合情况为止
+- 出栈操作结束后，记录当前元素和栈顶元素的映射关系，如果栈为空，就记录-1，同时将当前遍历到的元素压入栈中
+- 遍历结束后，一次遍历nums1中的元素，并放入一个结果数组中返回
+### 代码
+```java
+class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        Map<Integer, Integer> mapping = new HashMap<>();
+        Stack<Integer> stack = new Stack<>();
+        for (int i = nums2.length - 1; i >= 0; i--) {
+            int num = nums2[i];
+            while (!stack.isEmpty() && num > stack.peek()) {
+                stack.pop();
+            }
 
+            mapping.put(num, stack.isEmpty() ? -1 : stack.peek());
+            stack.push(num);
+        }
+
+        int[] ans = new int[nums1.length];
+        for (int i = 0; i < nums1.length; i++) {
+            ans[i] = mapping.get(nums1[i]);
+        }
+
+        return ans;
+    }
+}
 ```
