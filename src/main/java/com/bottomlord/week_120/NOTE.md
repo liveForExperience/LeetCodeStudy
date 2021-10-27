@@ -124,3 +124,121 @@ class Solution {
     }
 }
 ```
+# [LeetCode_301_删除无效的括号](https://leetcode-cn.com/problems/remove-invalid-parentheses/)
+## 解法
+### 思路
+dfs+减枝
+- 首先确定有效括号的含义，其含义就是整个字符串的左、右括号数量相等，且任何时刻从左到右计算，左括号都不少于右括号
+- 然后遍历字符串，计算计算出左右括号需要删除的最少括号数
+- 最后进行dfs深度搜索
+  - 搜索过程中在每个字符出现时，有2种情况
+    - 删除当前字符
+    - 不删除当前字符
+  - 选择删除的时候，又要对应记录是删除了那种字符，是左还是右括号
+  - 在遍历同时需要注意需要减枝的几种情况
+    - 如果选择不删除当前字符，而该字符已不是有效括号，则终止之后的遍历
+    - 如果当前剩余的字符数小于需要删除的最小字符数，那么终止之后的遍历
+    - 如果当前字符和之前的字符相同，那么就不用再做删减的动作了，因为当前的删减和前一个相同字符的删减，得到的字符都是一样的，所以无需再多做一次删减的动作，直接跳过删减操作即可，但还是要记录当前字符保留的情况，所以需要对当前字符的进行计数，并判断是否已经不符合规则要求
+### 代码
+```java
+class Solution {
+public List<String> removeInvalidParentheses(String s) {
+        int lr = 0, rr = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                lr++;
+            } else if (s.charAt(i) == ')'){
+                if (lr == 0) {
+                    rr++;
+                } else {
+                    lr--;
+                }
+            }
+        }
+
+        List<String> ans = new ArrayList<>();
+        dfs(s, 0, 0, 0, lr, rr, ans);
+        return ans;
+    }
+
+    private void dfs(String s, int index, int lc, int rc, int lr, int rr, List<String> ans) {
+        if (lr == 0 && rr == 0) {
+            if (isValid(s)) {
+                ans.add(s);
+            }
+
+            return;
+        }
+
+        for (int i = index; i < s.length(); i++) {
+            if (i != index && s.charAt(i) == s.charAt(i - 1)) {
+                if (s.charAt(i) == '(') {
+                    lc++;
+                }
+
+                if (s.charAt(i) == ')') {
+                    rc++;
+                }
+
+
+
+                if (lc < rc) {
+                  return;
+                }
+
+                continue;
+            }
+
+            if (lr + rr > s.length() - i) {
+                return;
+            }
+
+            if (lr > 0 && s.charAt(i) == '(') {
+                dfs(s.substring(0, i) + s.substring(i + 1), i, lc, rc, lr - 1, rr, ans);
+            }
+
+            if (rr > 0 && s.charAt(i) == ')') {
+                dfs(s.substring(0, i) + s.substring(i + 1), i, lc, rc, lr, rr - 1, ans);
+            }
+
+            if (s.charAt(i) == '(') {
+                lc++;
+            }
+
+            if (s.charAt(i) == ')') {
+                rc++;
+            }
+
+            if (lc < rc) {
+                return;
+            }
+        }
+    }
+
+    private boolean isValid(String s) {
+        int lc = 0, rc = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                lc++;
+            } else if (s.charAt(i) == ')'){
+                rc++;
+            }
+
+            if (lc < rc) {
+                return false;
+            }
+        }
+
+        return lc == rc;
+    }
+}
+```
+# [LeetCode_282_给表达式添加运算符]()
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
