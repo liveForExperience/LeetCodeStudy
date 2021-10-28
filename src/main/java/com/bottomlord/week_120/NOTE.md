@@ -234,6 +234,130 @@ public List<String> removeInvalidParentheses(String s) {
     }
 }
 ```
+# [LeetCode_231_2的幂](https://leetcode-cn.com/problems/power-of-two/)
+## 解法
+### 思路
+- 循环判断是否能被2整除，并缩小2倍，直到为1
+- 需要特判为0的情况
+### 代码
+```java
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        if (n == 0) {
+            return false;
+        }
+
+        while (n != 1) {
+            if (n % 2 == 0) {
+                n /= 2;
+            } else {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
+# [LeetCode_46_全排列](https://leetcode-cn.com/problems/permutations-ii/solution/)
+## 解法
+### 思路
+回溯
+- 使用布尔数组记录当前元素是否已经使用
+- 回溯也是基于布尔数组进行的更新
+- 防重复的策略则是：
+  - 首先将数组进行排序，保证相同的数字放在一起
+  - 然后在回溯的过程中，保证相同元素的获取顺序是从左到右依次拿取的，这样就能保证这些相同数字只能组成通过一种方式获取到
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        Arrays.sort(nums);
+        backTrack(nums, new boolean[nums.length], new LinkedList<>(), ans);
+        return ans;
+    }
+
+    private void backTrack(int[] nums, boolean[] memo, LinkedList<Integer> arr, List<List<Integer>> ans) {
+        if (arr.size() == nums.length) {
+            ans.add(new ArrayList<>(arr));
+            return;
+        }
+        
+        for (int i = 0; i < nums.length; i++) {
+            if (memo[i] || (i > 0 && nums[i] == nums[i - 1] && !memo[i - 1])) {
+                continue;
+            }
+            
+            arr.addLast(nums[i]);
+            memo[i] = true;
+            backTrack(nums, memo, arr, ans);
+            memo[i] = false;
+            arr.removeLast();
+        }
+    }
+}
+```
+# [LeetCode_869_重新排序得到2的幂](https://leetcode-cn.com/problems/reordered-power-of-2/)
+## 解法
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+public boolean reorderedPowerOf2(int n) {
+        List<Integer> nums = new ArrayList<>();
+        while (n != 0) {
+            nums.add(n % 10);
+            n /= 10;
+        }
+        return dfs(nums, 0, 0, new boolean[nums.size()]);
+    }
+    
+    private boolean dfs(List<Integer> nums, int count, int num, boolean[] memo) {
+        if (count == nums.size()) {
+            return isValid(num);
+        }
+        
+        for (int i = 0; i < nums.size(); i++) {
+            if (memo[i]) {
+                continue;
+            }
+
+            if (num == 0 && nums.get(i) == 0) {
+                continue;
+            }
+            
+            num = num * 10 + nums.get(i);
+            memo[i] = true;
+            boolean result = dfs(nums, count + 1, num, memo);
+            if (result) {
+                return true;
+            }
+            num /= 10;
+            memo[i] = false;
+        }
+        
+        return false;
+    }
+
+    private boolean isValid(int num) {
+        if (num == 0) {
+            return false;
+        }
+
+        while (num != 1) {
+            if (num % 2 != 0) {
+                return false;
+            }
+
+            num /= 2;
+        }
+
+        return true;
+    }
+}
+```
 # [LeetCode_282_给表达式添加运算符]()
 ## 解法
 ### 思路
