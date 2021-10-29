@@ -358,6 +358,43 @@ public boolean reorderedPowerOf2(int n) {
     }
 }
 ```
+## 解法二
+### 思路
+- 因为是2的整数次幂，且范围是10的9次方，所以在该范围里，就有32个数的可能
+- 通过对这32个数的拆分，并对每一个位上的数字做计数统计，就知道了这32个数的统计数组
+- 然后拿者32个数组与当前n所组成的计数数组作比较，如果有相等的，就是2的整数次幂
+### 代码
+```java
+class Solution {
+    public boolean reorderedPowerOf2(int n) {
+        int[] arr = initArr(n);
+        for (int i = 0; i < 31; i++) {
+            if (Arrays.equals(arr, initArr(1 << i))) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private int[] initArr(int n) {
+        int[] arr = new int[10];
+        while (n != 0) {
+            arr[n % 10]++;
+            n /= 10;
+        }
+        return arr;
+    }
+}
+```
+# [LeetCode_335_路径交叉](https://leetcode-cn.com/problems/self-crossing/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
 # [LeetCode_282_给表达式添加运算符]()
 ## 解法
 ### 思路
