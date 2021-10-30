@@ -390,10 +390,70 @@ class Solution {
 # [LeetCode_335_路径交叉](https://leetcode-cn.com/problems/self-crossing/)
 ## 解法
 ### 思路
-
+- 如果路径数小于4个，则永远不会相遇
+- 如果路径大于等于4个，那么d[i]和d[i-3]相交的情况就是：
+  - d[i] >= d[i - 2] && d[i - 1] <= d[i - 3]
+- 如果路径大于等于5个，那么d[i]和d[i - 4]相交的情况就是：
+  - d[i - 1] == d[i - 3] && d[i] + d[i - 4] == d[i - 2]
+- 如果路径大于等于5个，那么d[i]和d[i - 5]相交的情况就是：
+  - d[i - 1] <= d[i - 3] && d[i - 2] > d[i - 4] && d[i - 1] + d[i - 5] >= d[i - 3] && d[i] + d[i - 4] >= d[i - 2]
 ### 代码
 ```java
+class Solution {
+    public boolean isSelfCrossing(int[] distance) {
+        int n = distance.length;
+        if (n < 4) {
+            return false;
+        }
 
+        for (int i = 3; i < n; i++) {
+            if (distance[i] >= distance[i - 2] && distance[i - 1] <= distance[i - 3]) {
+                return true;
+            }
+
+            if (i >= 4 && distance[i - 1] == distance[i - 3] && distance[i] + distance[i - 4] == distance[i - 2]) {
+                return true;
+            }
+
+            if (i >= 5 && distance[i - 1] <= distance[i - 3] && distance[i - 2] > distance[i - 4] && distance[i - 1] + distance[i - 5] >= distance[i - 3] && distance[i] + distance[i - 4] >= distance[i - 2]) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
+# [LeetCode_260_只出现一次的数字III](https://leetcode-cn.com/problems/single-number-iii/)
+## 解法
+### 思路
+- 先循环异或，获取到出现一次的两个数的抑或和
+- 然后通过num &(-num)的位运算，获取到两个数中最低位的1，也就是32位上只有1个位是1的数
+- 然后循环数组，将与最低位为1的数与之后为0的分为一组进行异或，不会为0的分成另一组
+- 这样两组异或出来的值就是两个出现一次的数
+- 为了防止取最低位1的时候因为异或出来的值是int最小值导致溢出，需要做特殊处理：`lsb = xor == Integre.MIN_VALUE ? xor : xor & (-xor)`
+### 代码
+```java
+class Solution {
+    public int[] singleNumber(int[] nums) {
+        int xor = 0;
+        for (int num : nums) {
+            xor ^= num;
+        }
+
+        int lsb = xor == Integer.MIN_VALUE ? xor : xor & (-xor);
+        int one = 0, two = 0;
+        for (int num : nums) {
+            if ((lsb & num) == 0) {
+                one ^= num;
+            } else {
+                two ^= num;
+            }
+        }
+
+        return new int[]{one, two};
+    }
+}
 ```
 # [LeetCode_282_给表达式添加运算符]()
 ## 解法
