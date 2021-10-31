@@ -455,6 +455,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_500_键盘行](https://leetcode-cn.com/problems/keyboard-row/submissions/)
+## 解法
+### 思路
+- 将键盘中字母对应的行数记录在字符串中
+- 遍历单词数组，基于第一个字母来确定这个单词的行数，然后判断剩余的单词是否符合同一行
+- 如果单词在同一行，放入list中
+- 遍历结束，list转换为数组返回
+### 代码
+```java
+class Solution {
+    public String[] findWords(String[] words) {
+        List<String> list = new ArrayList<>();
+        String idxs = "12210111011122000010020202";
+        for (String word : words) {
+            char idx = idxs.charAt(word.toLowerCase().charAt(0) - 'a');
+            boolean flag = true;
+            for (int i = 1; i < word.length(); i++) {
+                if (idxs.charAt(word.toLowerCase().charAt(i) - 'a') != idx) {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if (flag) {
+                list.add(word);
+            }
+        }
+        
+        String[] arr = new String[list.size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
+}
+```
 # [LeetCode_282_给表达式添加运算符]()
 ## 解法
 ### 思路
