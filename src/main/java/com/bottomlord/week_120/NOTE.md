@@ -491,6 +491,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1816_截断句子](https://leetcode-cn.com/problems/truncate-sentence/)
+## 解法
+### 思路
+将字符串split后获取前k个字符串并用空格关联
+### 代码
+```java
+class Solution {
+    public String truncateSentence(String s, int k) {
+        String[] ss = s.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < k; i++) {
+            sb.append(ss[i]);
+            if (i != k - 1) {
+                sb.append(" ");
+            }
+        }
+        return sb.toString();
+    }
+}
+```
+## 解法二
+### 思路
+直接遍历字符串，记录空格，如果空格数和k相等，就中断循环，返回以当前坐标为长度的截断字符串
+### 代码
+```java
+class Solution {
+    public String truncateSentence(String s, int k) {
+        int count = 0, i = 0;
+        for (; i < s.length(); i++) {
+            if (s.charAt(i) == ' ') {
+                count++;
+            }
+            
+            if (count == k) {
+                break;
+            }
+        }
+        
+        return s.substring(0, i);
+    }
+}
+```
 # [LeetCode_282_给表达式添加运算符]()
 ## 解法
 ### 思路
