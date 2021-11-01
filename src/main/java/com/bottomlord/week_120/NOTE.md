@@ -552,5 +552,36 @@ dfs
   - 结果list，用来记录最终结果
 ### 代码
 ```java
+class Solution {
+    public List<String> addOperators(String num, int target) {
+        List<String> ans = new ArrayList<>();
+        dfs(num, 0, 0, 0, target, "", ans);
+        return ans;
+    }
+    
+    private void dfs(String s, int index, long pre, long cur, int target, String str, List<String> ans) {
+        if (index == s.length()) {
+            if (cur == target) {
+                ans.add(str);
+                return;
+            }
+        }
 
+        for (int i = index; i < s.length(); i++) {
+            if (i != index && s.charAt(index) == '0') {
+                continue;
+            }
+
+            long num = Long.parseLong(s.substring(index, i + 1));
+            if (index == 0) {
+                dfs(s, i + 1, num, num, target, str + num, ans);
+            } else {
+                dfs(s, i + 1, num, cur + num, target, str + "+" + num, ans);
+                dfs(s, i + 1, -num, cur - num, target, str + "-" + num, ans);
+                long x = pre * num;
+                dfs(s, i + 1, x, cur - pre + x, target, str + "*" + num, ans);
+            }
+        }
+    }
+}
 ```
