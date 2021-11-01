@@ -32,3 +32,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1822](https://leetcode-cn.com/problems/sign-of-the-product-of-an-array/)
+## 解法
+### 思路
+- 遍历数组
+- 找到0就返回0
+- 统计数组中负号的个数，如果是奇数就返回-1，否则返回1
+### 代码
+```java
+class Solution {
+    public int arraySign(int[] nums) {
+        boolean flag = true;
+        for (int num : nums) {
+            if (num == 0) {
+                return 0;
+            }
+            
+            if (num < 0) {
+                flag = !flag;
+            }
+        }
+        
+        return flag ? 1 : -1;
+    }
+}
+```
