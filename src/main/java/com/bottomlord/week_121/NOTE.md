@@ -57,3 +57,12 @@ class Solution {
     }
 }
 ```
+# [LeetCode_237_删除链表中的节点](https://leetcode-cn.com/problems/delete-node-in-a-linked-list/)
+## 解法
+### 思路
+- 将当前节点的值设置为下一个节点的值
+- 将当前节点的next指向下一个节点的next
+### 代码
+```java
+
+```
