@@ -64,5 +64,53 @@ class Solution {
 - 将当前节点的next指向下一个节点的next
 ### 代码
 ```java
+class Solution {
+    public void deleteNode(ListNode node) {
+        node.val = node.next.val;
+        node.next = node.next.next;
+    }
+}
+```
+# [LeetCode_1826_有缺陷的传感器](https://leetcode-cn.com/problems/faulty-sensor/)
+## 解法
+### 思路
+- 模拟两个数组各自掉落时候是否符合题目要求
+- 如果不是同时符合，那么哪一个符合，就返回对应的值
+- 否则返回-1
+### 代码
+```java
+class Solution {
+    public int badSensor(int[] sensor1, int[] sensor2) {
+        int i = 0, n = sensor1.length;
+        while (i < n && sensor1[i] == sensor2[i]) {
+            i++;
+        }
 
+        if (i >= n - 1) {
+            return -1;
+        }
+
+        int index = i;
+        while (index < n - 1 && sensor1[index] == sensor2[index + 1]) {
+            index++;
+        }
+        
+        int index2 = i;
+        while (index2 < n - 1 && sensor2[index2] == sensor1[index2 + 1]) {
+            index2++;
+        }
+        
+        if (index != index2) {
+            if (index == n - 1) {
+                return 1;
+            }
+
+            if (index2 == n - 1) {
+                return 2;
+            }
+        }
+
+        return -1;
+    }
+}
 ```
