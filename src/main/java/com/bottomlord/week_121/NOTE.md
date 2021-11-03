@@ -114,3 +114,86 @@ class Solution {
     }
 }
 ```
+# [LeetCode_42_接雨水](https://leetcode-cn.com/problems/trapping-rain-water-ii/solution/jie-yu-shui-ii-by-leetcode-solution-vlj3/)
+## 解法
+### 思路
+- 如果遍历每个坐标，那么当前坐标能承接多少水，取决于其左边最高的坐标和右边最高的坐标之间的最小值(此处的最高包含自身)，与当前坐标的差值
+- 一种方法是边遍历边计算，但这样的话，很多坐标都重复搜索了
+- 另一种方法就是先将每个坐标的左右最高值求出来，存储在数组中，然后再遍历数组，通过公式`min(lmax[i], rmax[i]) - height[i]`求出当前坐标能承接的水量，累加后就是最终要求的值
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        int n = height.length;
+        int[] lmax = new int[n], rmax = new int[n];
+        lmax[0] = height[0];
+        rmax[n - 1] = height[n - 1];
+        
+        for (int i = 1; i < n; i++) {
+            lmax[i] = Math.max(lmax[i - 1], height[i]);
+        }
+        
+        for (int i = n - 2; i >= 0; i--) {
+            rmax[i] = Math.max(rmax[i + 1], height[i]);
+        }
+        
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            ans += Math.min(lmax[i], rmax[i]) - height[i];
+        }
+        
+        return ans;
+    }
+}
+```
+# [LeetCode_407_接雨水II](https://leetcode-cn.com/problems/trapping-rain-water-ii/)
+## 解法
+### 思路
+- 先确定在三维的情况下，怎样能够承接到水：四周一圈扩展出去，所有最高点中的最低点就是当前点能够盛水的高度，再减去当前点的高度，就是承接水的容量
+- 那么为了获得四周的最高点，以及最高点间的最低点，就需要通过优先级队列来实现，算法如下：
+  - 优先级队列中先把矩阵边缘的所有坐标存储下来，作为最外围的一圈，对这些坐标的高度通过优先级队列进行排序，这样队列顶部就是最矮的那个坐标了
+  - 然后做bfs，分别循环4个方向的节点，当坐标符合要求且没有搜索过，就看当前高度是不是比队列顶部要低，是的话，说明形成了洼地，当前这个高度差的水也肯定能承接住
+  - 然后将当前节点作为新的周边节点，取新旧节点之间的最大值
+### 代码
+```java
+class Solution {
+    public int trapRainWater(int[][] heightMap) {
+        int row = heightMap.length, col = heightMap[0].length;
+        boolean[][] memo = new boolean[row][col];
+        PriorityQueue<int[]> queue = new PriorityQueue<>(Comparator.comparingInt(x -> x[2]));
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (i == 0 || i == row - 1 || j == 0 || j == col - 1) {
+                    queue.offer(new int[]{i, j, heightMap[i][j]});
+                    memo[i][j] = true;
+                }
+            }
+        }
+
+        int[][] dirs = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int ans = 0;
+        while (!queue.isEmpty()) {
+            int[] arr = queue.poll();
+
+            int r = arr[0], c = arr[1], h = arr[2];
+            for (int [] dir : dirs) {
+                int newR = r + dir[0], newC = c + dir[1];
+                if (newR < 0 || newR >= row || newC < 0 || newC >= col || memo[newR][newC]) {
+                    continue;
+                }
+
+                int newH = heightMap[newR][newC];
+                if (newH < h) {
+                    ans += h - newH;
+                }
+
+                queue.offer(new int[]{newR, newC, Math.max(newH, h)});
+                memo[newR][newC] = true;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
