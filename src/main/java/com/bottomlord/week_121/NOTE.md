@@ -146,6 +146,43 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+单调栈：
+- 初始化一个单调栈，该栈应保存高度单调递减的元素的坐标
+- 遍历数组，与栈顶元素比较，如果比栈顶元素大，那么说明两者形成了洼地，当前元素，与栈顶元素及所有栈中的元素，都有几率组成一个能够承接水的结构
+- 然后发现如上的洼地以后，就不断的将栈中元素出栈，然后生成当前元素与栈中元素坐标之间的区间距离*两个坐标元素高度最小值与栈顶元素的差乘积
+- 一直到当前元素比栈中元素小为止，从而在下一个元素遍历到的时候，栈中仍然是单调递减的状态
+- 遍历结束，返回累加的结果
+### 代码
+```java
+class Solution {
+    public int trap(int[] height) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(0);
+
+        int ans = 0;
+        for (int i = 1; i < height.length; i++) {
+            while (height[i] > height[stack.peek()]) {
+                int top = stack.pop();
+                
+                if (stack.isEmpty()) {
+                    break;
+                }
+                
+                int dis = i - stack.peek() - 1,
+                    h = Math.min(height[i], height[stack.peek()]) - height[top];
+                
+                ans += dis * h;
+            }
+            
+            stack.push(i);
+        }
+
+        return ans;
+    }
+}
+```
 # [LeetCode_407_接雨水II](https://leetcode-cn.com/problems/trapping-rain-water-ii/)
 ## 解法
 ### 思路
