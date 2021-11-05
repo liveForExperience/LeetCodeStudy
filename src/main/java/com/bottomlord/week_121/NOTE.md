@@ -317,3 +317,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1827_最少操作使数组递增](https://leetcode-cn.com/problems/minimum-operations-to-make-the-array-increasing/)
+## 解法
+### 思路
+正向遍历模拟
+### 代码
+```java
+class Solution {
+    public int minOperations(int[] nums) {
+        int pre = nums[0], ans = 0;
+        for (int i = 1; i < nums.length; i++) {
+            ans += Math.max(0, pre + 1 - nums[i]);
+            pre = Math.max(pre + 1, nums[i]);
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用判断减少math操作
+### 代码
+```java
+class Solution {
+    public int minOperations(int[] nums) {
+        int ans = 0, pre = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > pre) {
+                pre = nums[i];
+            } else {
+                pre++;
+                ans += pre - nums[i];
+            }
+        }
+        return ans;
+    }
+}
+```
