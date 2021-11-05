@@ -291,3 +291,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1218_最长定差子序列](https://leetcode-cn.com/problems/longest-arithmetic-subsequence-of-given-difference/)
+## 解法
+### 思路
+动态规划：
+- dp[i]：存储以数字i为结尾的子序列，在等差值为n的情况下的最大长度
+- 状态转移方程：dp[i] = d[i - n] + 1
+- 过程：遍历数组，判断当前值减去等差值后，在dp数组中是否存在
+  - 如果不存在，就在dp中记录当前值所在坐标的值为1
+  - 如果存在，就在dp中记录，目标值所在坐标的值+1，将这个值放置在当前值所在的坐标位置
+- 一边遍历一边记录最大值
+- 数组直接初始化为40000长度，然后计算值默认+20000，防止负数或数值过大，数组越界
+### 代码
+```java
+class Solution {
+    public int longestSubsequence(int[] arr, int difference) {
+        int[] dp = new int[40001];
+        int ans = 1;
+        for (int num : arr) {
+            dp[num + 20000] = dp[num - difference + 20000] + 1;
+            ans = Math.max(ans, dp[num + 20000]);
+        }
+        
+        return ans;
+    }
+}
+```
