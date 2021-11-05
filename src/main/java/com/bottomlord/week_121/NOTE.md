@@ -234,3 +234,60 @@ class Solution {
     }
 }
 ```
+# [LeetCode_367_有效的完全平方数](https://leetcode-cn.com/problems/valid-perfect-square/)
+## 解法
+### 思路
+- 暴力模拟
+### 代码
+```java
+class Solution {
+    public boolean isPerfectSquare(int num) {
+        if (num == Integer.MAX_VALUE) {
+            return false;
+        }
+
+        for (int i = 1; i <= num; i++) {
+            if (i * i > num) {
+                break;
+            }
+            
+            if (i * i == num) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+二分查找+bigDecimal
+### 代码
+```java
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+class Solution {
+    public boolean isPerfectSquare(int num) {
+        BigDecimal l = new BigDecimal(1), r = new BigDecimal(num), n = new BigDecimal(num);
+        while (l.compareTo(r) <= 0) {
+            BigDecimal mid = r.subtract(l);
+            mid = mid.divide(BigDecimal.valueOf(2), RoundingMode.DOWN);
+            mid = mid.add(l);
+
+            BigDecimal target = mid.multiply(mid);
+
+            if (target.equals(n)) {
+                return true;
+            } else if (target.compareTo(n) < 0) {
+                l = mid.add(new BigDecimal(1));
+            } else {
+                r = mid.subtract(new BigDecimal(1));
+            }
+        }
+
+        return false;
+    }
+}
+```
