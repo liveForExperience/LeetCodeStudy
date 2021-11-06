@@ -354,3 +354,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_268_丢失的数字](https://leetcode-cn.com/problems/missing-number/)
+## 解法
+### 思路
+- 等差数列求和公式求得应该有的总和
+- 遍历数组求和，得到实际总和
+- 求差值找到丢失的数
+### 代码
+```java
+class Solution {
+    public int missingNumber(int[] nums) {
+        int n = nums.length;
+        return n * (n + 1) / 2 - Arrays.stream(nums).sum();
+    }
+}
+```
+## 解法
+### 思路
+桶计数，找到没有计数的那个坐标返回
+### 代码
+```java
+class Solution {
+    public int missingNumber(int[] nums) {
+        int n = nums.length;
+        int[] bucket = new int[n + 1];
+        for (int j : nums) {
+            bucket[j]++;
+        }
+        
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == 0) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
