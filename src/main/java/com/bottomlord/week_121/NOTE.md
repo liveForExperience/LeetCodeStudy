@@ -392,3 +392,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1832_判断句子是否为全字母句](https://leetcode-cn.com/problems/check-if-the-sentence-is-pangram/)
+## 解法
+### 思路
+- 初始化一个长度为26的布尔数组
+- 遍历字符串，对出现的字母做在布尔数组中记录
+- 字符串遍历结束后，遍历布尔数组，如果有为false的就返回false，说明不是全字母，否则，遍历结束就返回true
+### 代码
+```java
+class Solution {
+    public boolean checkIfPangram(String sentence) {
+        boolean[] bucket = new boolean[26];
+        for (char c : sentence.toCharArray()) {
+            bucket[c - 'a'] = true;
+        }
+
+        for (boolean b : bucket) {
+            if (!b) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
