@@ -417,3 +417,23 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1837_K进制表示下的各位数字总和](https://leetcode-cn.com/problems/sum-of-digits-in-base-k/)
+## 解法
+### 思路
+模拟：
+- 循环，根据进制数取余，就是当前低位的位数
+- 然后除以进制数就能进到新的k进制的一位，继续计算
+- 直到n为0为止
+### 代码
+```java
+class Solution {
+    public int sumBase(int n, int k) {
+        int ans = 0;
+        while (n > 0) {
+            ans += n % k;
+            n /= k;
+        }
+        return ans;
+    }
+}
+```
