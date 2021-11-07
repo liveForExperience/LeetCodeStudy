@@ -440,8 +440,16 @@ class Solution {
 # [LeetCode_1844_将所有数字用字符替换](https://leetcode-cn.com/problems/replace-all-digits-with-characters/)
 ## 解法
 ### 思路
-
+模拟
 ### 代码
 ```java
-
+class Solution {
+    public String replaceDigits(String s) {
+        char[] cs = s.toCharArray();
+        for (int i = 1; i < cs.length; i += 2) {
+            cs[i] = (char)(cs[i - 1] + (cs[i] - '0'));
+        }
+        return new String(cs);
+    }
+}
 ```
