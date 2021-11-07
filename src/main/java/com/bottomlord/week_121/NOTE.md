@@ -453,3 +453,23 @@ class Solution {
     }
 }
 ```
+# [LeetCode_598_范围求和II](https://leetcode-cn.com/problems/range-addition-ii/)
+## 解法
+### 思路
+- 遍历ops，求出所有操作对应的行和列的最小值
+- 这些最小值就是在每次操作的时候都会增加的范围
+- 遍历结束后，返回行和列的乘积即可
+### 代码
+```java
+class Solution {
+    public int maxCount(int m, int n, int[][] ops) {
+        int r = m, c = n;
+        for (int[] op : ops) {
+            r = Math.min(r, op[0]);
+            c = Math.min(c, op[1]);
+        }
+        
+        return r * c;
+    }
+}
+```
