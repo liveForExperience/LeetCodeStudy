@@ -45,3 +45,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1848_到目标元素的最小距离](https://leetcode-cn.com/problems/minimum-distance-to-the-target-element/)
+## 解法
+### 思路
+- 从start坐标先向左再向右遍历
+- 分别找到第一个与target值相等的坐标
+- 算出坐标与start的距离，返回最小值
+### 代码
+```java
+class Solution {
+    public int getMinDistance(int[] nums, int target, int start) {
+        int dis = Integer.MAX_VALUE;
+        for (int i = start; i < nums.length; i++) {
+            if (nums[i] == target) {
+                dis = i - start;
+                break;
+            }
+        }
+        
+        for (int i = start; i >= 0; i--) {
+            if (start - i >= dis) {
+                break;
+            }
+            
+            if (nums[i] == target) {
+                return start - i;
+            }
+        }
+        
+        return dis;
+    }
+}
+```
