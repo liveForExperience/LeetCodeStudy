@@ -1,0 +1,47 @@
+# [LeetCode_299_猜数字游戏](https://leetcode-cn.com/problems/bulls-and-cows/)
+## 解法
+### 思路
+- 第一次遍历
+  - 找到两个字符串完全相等的字母，统计a的个数
+  - 记录没有完全相等的字母的个数，按照字母做分类，记录在bucket数组中
+- 复制一下bucket数组，记作arr
+- 第二次遍历
+  - 通过guess中出现的字母，到bucket数组中做累减统计，计算guess中出现的，但位置不同的字母有哪些
+- 第三次遍历
+  - 将arr的元素与bucket的元素做相减，计算前，如果bucket的元素小于0，记作0。
+  - 将相减的值累加，就是b的数值
+- 最后将a和b的值用字符串表示返回
+### 代码
+```java
+class Solution {
+    public String getHint(String secret, String guess) {
+        int n = secret.length(), a = 0, b = 0;
+        Set<Integer> set = new HashSet<>();
+        int[] bucket = new int[10];
+        for (int i = 0; i < n; i++) {
+            if (secret.charAt(i) == guess.charAt(i)) {
+                set.add(i);
+                a++;
+                continue;
+            }
+
+            bucket[secret.charAt(i) - '0']++;
+        }
+
+        int[] arr = Arrays.copyOf(bucket, bucket.length);
+        for (int i = 0; i < n; i++) {
+            if (set.contains(i)) {
+                continue;
+            }
+
+            bucket[guess.charAt(i) - '0']--;
+        }
+
+        for (int i = 0; i < bucket.length; i++) {
+            b += arr[i] - Math.max(bucket[i], 0);
+        }
+
+        return a + "A" + b + "B";
+    }
+}
+```
