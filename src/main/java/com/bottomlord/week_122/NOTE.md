@@ -77,3 +77,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_488_祖玛游戏](https://leetcode-cn.com/problems/zuma-game/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_495_提莫攻击](https://leetcode-cn.com/problems/teemo-attacking/)
+## 解法
+### 思路
+- 使用变量end表示中毒窗口的右边界
+- 遍历timeSeries，判断time是否在end的右边
+  - 如果是：说明新的中毒周期与老的中毒周期没有重叠，直接累加区间即可
+  - 如果不是：说明新老周期有重叠，需要剔除掉老周期与新周期重叠的部分再累加
+- 同时遍历过程中还要不断更新右边界，已备下一个循环进行判断
+### 代码
+```java
+class Solution {
+    public int findPoisonedDuration(int[] timeSeries, int duration) {
+        int end = -1, ans = 0;
+        for (int time : timeSeries) {
+            if (time > end) {
+                ans += duration;
+            } else {
+                ans += time + duration - 1 - end;
+            }
+
+            end = time + duration - 1;
+        }
+
+        return ans;
+    }
+}
+```
