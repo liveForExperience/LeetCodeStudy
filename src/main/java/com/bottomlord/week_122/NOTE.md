@@ -80,10 +80,103 @@ class Solution {
 # [LeetCode_488_祖玛游戏](https://leetcode-cn.com/problems/zuma-game/)
 ## 解法
 ### 思路
-
+回溯：
+- 首先定义一个用于清理现有字符串的函数，通过2层循环将连续3个的字符串消除，且直到不再出现连续的为止
+- 主体逻辑里：
+  - 首先将手上的珠子通过int数组对不同颜色珠子计数，方便在后续回溯过程中累加和恢复
+  - 其次需要设定回溯中的退出条件：
+    - 也就是当前字符串消除干净的时候，直接退出
+    - 另外还有一种情况就是所有的放置可能都模拟过了，都没办法得到消除干净的效果，这样也就退出了
+  - 设定一个减枝条件：也就是当前的步数超过了已经消除干净的最短步数，那么这个路径也就不用搜索了，这也代表了回溯过程中还需要记录当前的步数
+  - 回溯主逻辑中，需要对已有珠子进行遍历，值得搜索的珠子有几种情况：
+    - 珠子有1个，且手上的珠子超过2个同样颜色的，那么这种情况值得搜索
+    - 珠子连续2个，且手上的珠子至少有1个同样颜色的，那么这种情况也值得搜索
+    - 珠子连续2个，但是手上的珠子没有同样颜色的，那么这种情况就要寄希望于其他珠子消除以后，这个珠子会联动的消除，那么这种也值得取搜索一下，搜索的方式，就是在这组珠子后面插入所有可能的手上的珠子，然后继续搜索
 ### 代码
 ```java
+class Solution {
+    private int[] bucket;
+    private int ans;
 
+    public int findMinStep(String board, String hand) {
+        this.ans = Integer.MAX_VALUE;
+        this.bucket = new int[26];
+        for (char c : hand.toCharArray()) {
+            bucket[c - 'A']++;
+        }
+        backTrack(new StringBuilder(board), 0);
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+
+    private void backTrack(StringBuilder sb, int step) {
+        if (step > ans) {
+            return;
+        }
+
+        if (sb.length() == 0) {
+            ans = step;
+            return;
+        }
+
+        for (int i = 0; i < sb.length(); i++) {
+            int j = i;
+            while (j + 1 < sb.length() && sb.charAt(j) == sb.charAt(j + 1)) {
+                j++;
+            }
+
+            char c = sb.charAt(i);
+            if (i == j && bucket[c - 'A'] >= 2) {
+                StringBuilder cur = new StringBuilder(sb);
+                cur.insert(i, cur.charAt(i));
+                del(cur);
+                bucket[c - 'A']--;
+                backTrack(cur, step + 1);
+                bucket[c - 'A']++;
+            } else if (j - i == 1) {
+                if (bucket[c - 'A'] >= 1) {
+                    StringBuilder cur = new StringBuilder(sb);
+                    cur.insert(i, c);
+                    del(cur);
+                    bucket[c - 'A']--;
+                    backTrack(cur, step + 1);
+                    bucket[c - 'A']++;
+                    continue;
+                }
+
+                for (int k = 0; k < bucket.length; k++) {
+                    if (bucket[k] == 0 || k == c - 'A') {
+                        continue;
+                    }
+
+                    StringBuilder cur = new StringBuilder(sb);
+                    cur.insert(i + 1, (char) (k + 'A'));
+                    bucket[k]--;
+                    backTrack(cur, step + 1);
+                    bucket[k]++;
+                }
+            }
+        }
+    }
+
+    private void del(StringBuilder sb) {
+        boolean flag = true;
+        while (flag) {
+            flag = false;
+
+            for (int i = 0; i < sb.length(); i++) {
+                int j = i;
+                while (j + 1 < sb.length() && sb.charAt(j) == sb.charAt(j + 1)) {
+                    j++;
+                }
+
+                if (j - i >= 2) {
+                    flag = true;
+                    sb.delete(i, j + 1);
+                }
+            }
+        }
+    }
+}
 ```
 # [LeetCode_495_提莫攻击](https://leetcode-cn.com/problems/teemo-attacking/)
 ## 解法
