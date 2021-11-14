@@ -205,3 +205,178 @@ class Solution {
     }
 }
 ```
+# [LeetCode_375_猜数字大小II](https://leetcode-cn.com/problems/guess-number-higher-or-lower-ii/)
+## 解法
+### 思路
+动态规划：
+- 思考过程：
+  1. 首先在[1,n]的范围中，要求出最小的花费，这个题目的结构就是在范围中求最值的架构，适合使用dp
+  2. 在确定dp后，开始找状态转移方程：
+    - 在猜数字的过程中，如果随机选择一个值x，那么基于这个值就会出现3种情况，猜中和选中的值比x大或者小，那么随之而来的问题就变成了，求出[1,x - 1]和[x + 1, n]这2个范围中的较大花费
+    - 那么从上面推演的过程，可以得到这个方程：dp[1][n] = x + max(dp[1][x-1], dp[x+1][n])
+      - 这里x就是选择x的花费
+      - max的原因是，考虑的是猜中至少需要的金钱数，也就说在选择x后在最坏的情况下需要花费的金额
+    - 那么进一步的，状态转移方程也就出现了：
+      - dp[i][j]（i和j表示范围的左右边界）
+      - dp[i][j] = x + max(dp[i][x-1], dp[x+1][j])
+  3. 这个得到的状态转移方程，对应的是选择x时猜中一定需要的花费，那么为了得到题目的答案，就需要将所有的可能枚举一次，求出所有可能的值中最小的那个，从而契合题目要求的最小花费的要求
+  4. dp的base case可以这么理解，如果范围是1个数字，那么这个花费就是0，因为直接就可以猜中，而如果左边界大于右边界，这种情况不会出现，所以花费也是0，所以i>=j的情况下，花费就是0
+### 代码
+```java
+class Solution {
+    public int getMoneyAmount(int n) {
+        int[][] dp = new int[n + 1][n + 1];
+        for (int i = n - 1; i >= 1; i--) {
+            for (int j = i + 1; j <= n; j++) {
+                int min = Integer.MAX_VALUE;
+                for (int k = i; k < j; k++) {
+                    int cost = k + Math.max(dp[i][k - 1], dp[k + 1][j]);
+                    min = Math.min(min, cost);
+                }
+                dp[i][j] = min;
+            }
+        }
+        return dp[1][n];
+    }
+}
+```
+# [LeetCode_677_键值映射](https://leetcode-cn.com/problems/map-sum-pairs/)
+## 解法
+### 思路
+map+字典树
+- map存储数值，字典树存储字符串前缀
+- insert的时候，分别在map和字典树中存储对应的信息
+- sum的时候，通过字典树进行搜索，然后通过map找到对应的数值，并进行累加，之后返回
+### 代码
+```java
+class MapSum {
+    private DictTree tree;
+    public MapSum() {
+        this.tree = new DictTree();
+    }
+
+    public void insert(String key, int val) {
+        this.tree.insert(key, val);
+    }
+
+    public int sum(String prefix) {
+        return tree.search(prefix);
+    }
+
+    private  class DictTree {
+        private Map<String, Integer> mapping;
+        private DictNode root;
+
+        public DictTree() {
+            this.mapping = new HashMap<>();
+            this.root = new DictNode(' ');
+        }
+
+        public void insert(String str, Integer val) {
+            this.mapping.put(str, val);
+            char[] cs = str.toCharArray();
+            DictNode node = root;
+            for (char c : cs) {
+                if (node.children[c - 'a'] == null) {
+                    node.children[c - 'a'] = new DictNode(c);
+                }
+
+                node = node.children[c - 'a'];
+            }
+        }
+
+        public Integer search(String str) {
+            char[] cs = str.toCharArray();
+            DictNode node = root;
+            for (char c : cs) {
+                node = node.children[c - 'a'];
+                if (node == null) {
+                    return 0;
+                }
+            }
+            return dfs(node, new StringBuilder(str));
+        }
+
+        private int dfs(DictNode node, StringBuilder sb) {
+            if (node == null) {
+                return 0;
+            }
+
+            if (node.isEmpty()) {
+                return mapping.getOrDefault(sb.toString(), 0);
+            }
+
+            int sum = mapping.getOrDefault(sb.toString(), 0);
+            DictNode[] children = node.children;
+            for (int i = 0; i < 26; i++) {
+                DictNode child = children[i];
+                int len = sb.length();
+                sum += dfs(child, sb.append((char)('a' + i)));
+                sb.setLength(len);
+            }
+
+            return sum;
+        }
+    }
+
+    private  class DictNode {
+        private char c;
+        private DictNode[] children;
+
+        public DictNode(char c) {
+            this.c = c;
+            this.children = new DictNode[26];
+        }
+
+        public boolean isEmpty() {
+            for (DictNode child : children) {
+                if (child != null) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+}
+```
+# [LeetCode_520_检测大写字母](https://leetcode-cn.com/problems/detect-capital/)
+## 解法
+### 思路
+按情况模拟判断
+### 代码
+```java
+class Solution {
+    public boolean detectCapitalUse(String word) {
+        if (word.length() == 1) {
+            return true;
+        }
+        
+        char first = word.charAt(0);
+        boolean firstBig = Character.isUpperCase(first);
+        if (firstBig) {
+            boolean secondBig = Character.isUpperCase(word.charAt(1));
+            if (secondBig) {
+                for (int i = 2; i < word.toCharArray().length; i++) {
+                    if (Character.isLowerCase(word.charAt(i))) {
+                        return false;
+                    }
+                }
+            } else {
+                for (int i = 2; i < word.toCharArray().length; i++) {
+                    if (Character.isUpperCase(word.charAt(i))) {
+                        return false;
+                    }
+                }
+            }
+        } else {
+            for (int i = 1; i < word.toCharArray().length; i++) {
+                if (Character.isUpperCase(word.charAt(i))) {
+                    return false;
+                }
+            }
+
+        }
+        return true;
+    }
+}
+```
