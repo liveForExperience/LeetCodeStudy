@@ -61,3 +61,77 @@ class Solution {
     }
 }
 ```
+# [LeetCode_318_最大单词长度乘积](https://leetcode-cn.com/problems/maximum-product-of-word-lengths/)
+## 解法
+### 思路
+3层循环模拟
+### 代码
+```java
+class Solution {
+    public int maxProduct(String[] words) {
+        int len = 0;
+        for (int i = 0; i < words.length; i++) {
+            boolean[] bucket = new boolean[26];
+            char[] cs = words[i].toCharArray();
+            for (char c : cs) {
+                bucket[c - 'a'] = true;
+            }
+            
+            int il = words[i].length();
+                    
+            for (int j = i + 1; j < words.length; j++) {
+                if (il * words[j].length() <= len) {
+                    continue;
+                }
+                
+                char[] jcs = words[j].toCharArray();
+                boolean flag = true;
+                for (char jc : jcs) {
+                    if (bucket[jc - 'a']) {
+                        flag = false;
+                        break;
+                    }
+                }
+                
+                if (flag) {
+                    len = il * words[j].length();
+                }
+            }
+        }
+        
+        return len;
+    }
+}
+```
+## 解法二
+### 思路
+- 解法一的算法，每次j指针对应的字符串都会被重复统计一次字符的出现情况
+- 可以提前将所有字符串的字符出现情况统计好，然后再2层循环遍历字符串，直接使用计算好的情况来判断是否有重复字符，然后计算乘积
+- 同时，用来统计字符出现情况可以从解法一中的26长度的布尔数组，一个int值，通过位来统计字符出现的情况，然后通过与运算来判断是否有交集
+### 代码
+```java
+class Solution {
+    public int maxProduct(String[] words) {
+        int len = words.length;
+        int[] arr = new int[len];
+
+        for (int i = 0; i < len; i++) {
+            String word = words[i];
+            for (char c : word.toCharArray()) {
+                arr[i] |= 1 << (c - 'a');
+            }
+        }
+        
+        int max = 0;
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                if ((arr[i] & arr[j]) == 0) {
+                    max = Math.max(max, words[i].length() * words[j].length());
+                }
+            }
+        }
+        
+        return max;
+    }
+}
+```
