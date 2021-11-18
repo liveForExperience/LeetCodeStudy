@@ -166,3 +166,61 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1854_人口最多的年份](https://leetcode-cn.com/problems/maximum-population-year/)
+## 解法
+### 思路
+桶计数
+### 代码
+```java
+class Solution {
+    public int maximumPopulation(int[][] logs) {
+        int[] bucket = new int[100];
+        for (int[] log : logs) {
+            int begin = log[0] - 1950, end = log[1] - 1950;
+            for (int i = begin; i < end; i++) {
+                bucket[i]++;
+            }
+        }
+
+        int max = 0, year = 0;
+        for (int i = 0; i < bucket.length; i++) {
+            int num = bucket[i];
+            if (num > max) {
+                year = i;
+                max = num;
+            }
+        }
+        
+        return year + 1950;
+    }
+}
+```
+## 解法
+### 思路
+等差法：
+- 对出生和死亡的年份进行计数，出生就+1，死亡就-1，这样就记录了每一年整体人口的变化数量
+- 基于变化数量，遍历所有年份，通过累加变化来统计人口变化的趋势，并比较较大值，如果是最大值，就记录下年份
+- 遍历结束后，返回记录年份即可，时间复杂度从O(N^2) 变为了 O(N)
+### 代码
+```java
+class Solution {
+    public int maximumPopulation(int[][] logs) {
+        int[] bucket = new int[101];
+        for (int[] log : logs) {
+            bucket[log[0] - 1950]++;
+            bucket[log[1] - 1950]--;
+        }
+        
+        int max = 0, year = 0, cur = 0;
+        for (int i = 0; i < bucket.length; i++) {
+            cur += bucket[i];
+            if (cur > max) {
+                year = i + 1950;
+                max = cur;
+            }
+        }
+        
+        return year;
+    }
+}
+```
