@@ -135,3 +135,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_563_二叉树的坡度](https://leetcode-cn.com/problems/binary-tree-tilt/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    private int sum = 0;
+    public int findTilt(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        
+        doFindTilt(root);
+        
+        return sum;
+    }
+    
+    private int doFindTilt(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        
+        int left = doFindTilt(node.left), right = doFindTilt(node.right);
+        
+        sum += Math.abs(left - right);
+        
+        return node.val + left + right;
+    }
+}
+```
