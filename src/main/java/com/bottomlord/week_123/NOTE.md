@@ -224,3 +224,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_397_整数替换](https://leetcode-cn.com/problems/integer-replacement/)
+## 解法
+### 思路
+dfs+记忆化
+### 代码
+```java
+class Solution {
+    public int integerReplacement(int n) {
+        return dfs(n, new HashMap<>());
+    }
+
+    private int dfs(long n, Map<Long, Integer> memo) {
+        if (n == 1) {
+            return 0;
+        }
+        
+        if (memo.containsKey(n)) {
+            return memo.get(n);
+        }
+        
+        int ans;
+        if (n % 2 == 0) {
+            ans = dfs(n / 2, memo);
+        } else {
+            int plusOne = dfs(n + 1, memo),
+                subtractOne = dfs(n - 1, memo);
+            
+            ans = Math.min(plusOne, subtractOne);
+        }
+        
+        memo.put(n, ans + 1);
+        return ans + 1;
+    }
+}
+```
