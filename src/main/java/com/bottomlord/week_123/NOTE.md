@@ -287,3 +287,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1859_将句子排序](https://leetcode-cn.com/problems/sorting-the-sentence)
+## 解法
+### 思路
+熟练使用String的API
+### 代码
+```java
+class Solution {
+    public String sortSentence(String s) {
+        String[] ss = s.split(" ");
+        String[] ans = new String[ss.length];
+        for (String str : ss) {
+            int index = str.charAt(str.length() - 1) - '0';
+            ans[index - 1] = str.substring(0, str.length() - 1);
+        }
+        
+        return String.join(" ", ans);
+    }
+}
+```
