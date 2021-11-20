@@ -259,3 +259,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_594_最长和谐子序列](https://leetcode-cn.com/problems/longest-harmonious-subsequence/)
+## 解法
+### 思路
+- 对数组序列的所有元素做hash表计数
+- 遍历桶，找到相邻两个数统计个数最大的一组，记录个数
+- 遍历结束，返回最大值
+### 代码
+```java
+class Solution {
+    public int findLHS(int[] nums) {
+        Map<Integer, Integer> mapping = new HashMap<>();
+        for (int num : nums) {
+            mapping.put(num, mapping.getOrDefault(num, 0) + 1);
+        }
+
+        int ans = 0;
+        for (Integer num : mapping.keySet()) {
+            if (!mapping.containsKey(num + 1)) {
+                continue;
+            }
+            
+            ans = Math.max(mapping.get(num) + mapping.get(num + 1), ans);
+        }
+        
+        return ans;
+    }
+}
+```
