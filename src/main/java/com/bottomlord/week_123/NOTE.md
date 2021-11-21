@@ -306,3 +306,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1863_找出所有子集的异或总和再求和](https://leetcode-cn.com/problems/sum-of-all-subset-xor-totals/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    private int ans = 0;
+    public int subsetXORSum(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            dfs(nums, i, 0);
+        }
+        return ans;
+    }
+
+    private void dfs(int[] nums, int index, int xor) {
+        if (index == nums.length) {
+            return;
+        }
+        
+        xor ^= nums[index];
+        ans += xor;
+        
+        for (int i = index + 1; i < nums.length; i++) {
+            dfs(nums, i, xor);
+        }
+    }
+}
+```
