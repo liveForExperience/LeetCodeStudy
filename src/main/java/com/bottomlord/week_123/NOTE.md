@@ -335,3 +335,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_559_N叉树的最大深度](https://leetcode-cn.com/problems/maximum-depth-of-n-ary-tree/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public int maxDepth(Node root) {
+        if (root == null || root.children == null) {
+            return 0;
+        }
+
+        int ans = 0;
+        for (Node child : root.children) {
+            ans = Math.max(ans, maxDepth(child));
+        }
+
+        return ans + 1;
+    }
+}
+```
