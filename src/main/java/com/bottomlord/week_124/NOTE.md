@@ -127,3 +127,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1869_哪种连续子字符串更长](https://leetcode-cn.com/problems/longer-contiguous-segments-of-ones-than-zeros/)
+## 解法
+### 思路
+- 遍历字符串
+- 分别计算连续1和连续0的长度，更新长度最大值
+- 遍历结束后进行判断
+### 代码
+```java
+class Solution {
+    public boolean checkZeroOnes(String s) {
+        int len = s.length(), max1 = 0, max0 = 0;
+        for (int i = 0; i < len;) {
+            if (s.charAt(i) == '1') {
+                int one = 0;
+                while (i < len && s.charAt(i) == '1') {
+                    one++;
+                    i++;
+                }
+
+                max1 = Math.max(one, max1);
+            } else {
+                int zero = 0;
+                while (i < len && s.charAt(i) == '0') {
+                    zero++;
+                    i++;
+                }
+
+                max0 = Math.max(zero, max0);
+            }
+        }
+
+        return max1 > max0;
+    }
+}
+```
