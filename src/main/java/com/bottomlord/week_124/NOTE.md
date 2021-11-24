@@ -162,3 +162,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_423_从英文中重建数字](https://leetcode-cn.com/problems/reconstruct-original-digits-from-english/)
+## 解法
+### 思路
+- 识别英文中各个代表数字的单词中，每个单词是否有独有的字母
+  - 0：zero，z
+  - 2：two，w
+  - 4：four，u
+  - 6：six，x
+  - 8：eight，g
+  - 3：h - nums[8]：h出现在3和8里，8通过g确定后，算出h出现的个数，减去8的个数即是3的个数
+  - 5：f - nums[4]：f出现在4和5里，4通过u确定后，算出f出现的个数，减去4的个数即是5的个数
+  - 7：s - nums[6]：s出现在6和7里，6通过x确定后，算出s出现的个数，减去6的个数即是7的个数
+  - 9：i - nums[5] - nums[6] - nums[8]：i出现在5，6，8，9里，剩余逻辑如上推理
+  - 1：n - nums[7] - nums[9] * 2：n出现在1，7，9里，其中9里有2个n，所以需要在计算的时候*2，剩余逻辑如上推理
+- 这些数字的个数通过如上推算出来后，就可以通过数字大小拼接字符串了
+### 代码
+```java
+class Solution {
+    public String originalDigits(String s) {
+        char[] cs = s.toCharArray();
+        int[] nums = new int[10], bucket = new int[26];
+        for (char c : cs) {
+            bucket[c - 'a']++;
+        }
+
+        nums[0] = bucket['z' - 'a'];
+        nums[2] = bucket['w' - 'a'];
+        nums[4] = bucket['u' - 'a'];
+        nums[6] = bucket['x' - 'a'];
+        nums[8] = bucket['g' - 'a'];
+        nums[3] = bucket['h' - 'a'] - nums[8];
+        nums[5] = bucket['f' - 'a'] - nums[4];
+        nums[7] = bucket['s' - 'a'] - nums[6];
+        nums[9] = bucket['i' - 'a'] - nums[5] - nums[6] - nums[8];
+        nums[1] = bucket['n' - 'a'] -nums[7] - 2 * nums[9];
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < nums[i]; j++) {
+                sb.append(i);
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
