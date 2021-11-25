@@ -231,3 +231,19 @@ class Solution {
     }
 }
 ```
+# [LeetCode_458_可怜的小猪](https://leetcode-cn.com/problems/poor-pigs/)
+## 解法
+### 思路
+- 一只小猪代表一个维度(设为n), 每只小猪可以测试的次数+1为这只小猪在本维度上可以确定的点的数量(设为s), 则组成的n维空间中的总的点的数量为 s^n .
+- 小猪喝水策略: 把所有的水桶排成一个n维的n方体, 每只小猪喝垂直于本维度(轴)的一个"超平面".
+- 如2只小猪, 5个点. 25桶水排成一个矩形, 一只喝行, 一只喝列. 2只小猪确定一个点(***).
+- 如3只小猪, 5个点. 125桶水排成一个立方体, 一只喝垂直于x轴的面, 一只喝垂直于y轴的面, 一只喝垂直于z轴的面. 3只小猪确定一个点(***).
+- 如n只小猪, 5个点. 5^n桶水排成一个n方体, 每只喝垂直于本维度的一个"超平面"上的所有的水. n只小猪确定n维空间中的一个点(***).
+### 代码
+```java
+class Solution {
+    public int poorPigs(int buckets, int minutesToDie, int minutesToTest) {
+        return (int) Math.ceil(Math.log(buckets) / Math.log(minutesToTest / minutesToDie + 1));
+    }
+}
+```
