@@ -209,3 +209,25 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1876_长度为三且各字符不同的子字符串]()
+## 解法
+### 思路
+- 循环字符串
+- 每连续的3个字符为一组进行判断，是否有重复字符
+- 如果没有就累加1
+- 循环结束返回累加值
+### 代码
+```java
+class Solution {
+    public int countGoodSubstrings(String s) {
+        char[] cs = s.toCharArray();
+        int count = 0;
+        for (int i = 0; i < s.length() - 2; i++) {
+            if (cs[i] != cs[i + 1] && cs[i + 1] != cs[i + 2] && cs[i] != cs[i + 2]) {
+                count++;
+            }
+        }
+        return count;
+    }
+}
+```
