@@ -247,3 +247,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_700_二叉搜索树中的搜索](https://leetcode-cn.com/problems/search-in-a-binary-search-tree/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public TreeNode searchBST(TreeNode root, int val) {
+        if (root == null) {
+            return null;
+        }
+        
+        int cur = root.val;
+        
+        if (cur == val) {
+            return root;
+        }
+        
+        if (cur < val) {
+            return searchBST(root.right, val);
+        } else {
+            return searchBST(root.left, val);
+        }
+    }
+}
+```
