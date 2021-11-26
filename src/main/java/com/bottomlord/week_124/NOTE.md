@@ -273,3 +273,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1880_检查某单词是否等于两单词之和](https://leetcode-cn.com/problems/check-if-word-equals-summation-of-two-words/)
+## 解法
+### 思路
+- 构建字符换转数字函数
+- 相加比较
+### 代码
+```java
+class Solution {
+    public boolean isSumEqual(String firstWord, String secondWord, String targetWord) {
+        return convert(firstWord) + convert(secondWord) == convert(targetWord);
+    }
+
+    private long convert(String word) {
+        long sum = 0;
+        char[] cs = word.toCharArray();
+        
+        for (int i = 0; i < cs.length; i++) {
+            sum = sum * 10 + (cs[i] - 'a');
+        }
+
+        return sum;
+    }
+}
+```
