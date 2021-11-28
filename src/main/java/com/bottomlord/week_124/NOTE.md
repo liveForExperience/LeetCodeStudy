@@ -297,3 +297,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_519_随机翻转矩阵](https://leetcode-cn.com/problems/random-flip-matrix/)
+## 解法
+### 思路
+- 将横和纵坐标的乘积作为随机值来获取
+- 随机值的边界就是[0,x*y)
+- 边界的右边界在每次flip之后缩减
+- 每一次使用过一个随机值后，将该值与随机值的右边界交换，使得该值永远不会在下一次随机的时候获取到，获取到的则是没使用过得右边界
+- 当然，如果随机到的就是右边界，那因为下次因为右边界的缩减，所以也永远不会再随机到
+### 代码
+```java
+class Solution {
+    private int num, r, c;
+    private Map<Integer, Integer> mapping;
+    private Random random;
+    public Solution(int n_rows, int n_cols) {
+        num = n_rows * n_cols;
+        r = n_rows;
+        c = n_cols;
+        mapping = new HashMap<>();
+        random = new Random();
+    }
+
+    public int[] flip() {
+        int index = random.nextInt(num--);
+        int value = mapping.getOrDefault(index, index);
+        mapping.put(index, mapping.getOrDefault(num, num));
+        return new int[]{value / c, value % c};
+    }
+
+    public void reset() {
+        num = r * c;
+        mapping.clear();
+    }
+}
+```
