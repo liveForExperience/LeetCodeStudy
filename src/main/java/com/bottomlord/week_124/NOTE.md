@@ -341,5 +341,81 @@ class Solution {
 - 遍历结束后返回即可
 ### 代码
 ```java
+class Solution {
+  public List<Integer> findAnagrams(String s, String p) {
+    int len = s.length(), subLen = p.length();
+    int[][] mapping = new int[len + 1][26];
 
+    for (int i = 0; i < len; i++) {
+      mapping[i + 1] = Arrays.copyOfRange(mapping[i], 0, 26);
+      mapping[i + 1][s.charAt(i) - 'a']++;
+    }
+
+    int[] subBucket = new int[26];
+    for (int i = 0; i < subLen; i++) {
+      subBucket[p.charAt(i) - 'a']++;
+    }
+
+    List<Integer> ans = new ArrayList<>();
+    for (int i = 0; i < len - subLen + 1; i++) {
+      if (Arrays.equals(subBucket, get(i, i + subLen, mapping))) {
+        ans.add(i);
+      }
+    }
+
+    return ans;
+  }
+
+  private int[] get(int ia, int ib, int[][] mapping) {
+    int[] bucket = Arrays.copyOfRange(mapping[ib], 0, mapping[ib].length);
+    int[] arr = mapping[ia];
+    for (int i = 0; i < arr.length; i++) {
+      bucket[i] -= arr[i];
+    }
+
+    return bucket;
+  }
+}
+```
+# [LeetCode_1886_判断矩阵经轮转后是否一致](https://leetcode-cn.com/problems/determine-whether-matrix-can-be-obtained-by-rotation/)
+## 解法
+### 思路
+
+### 代码
+```java
+class Solution {
+    public boolean findRotation(int[][] mat, int[][] target) {
+        for (int i = 0; i < 4; i++) {
+            if (isSame(mat, target)) {
+                return true;
+            }
+            mat = rotation(mat);
+        }
+        
+        return false;
+    }
+    
+    private boolean isSame(int[][] x, int[][] y) {
+        int len = x[0].length;
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j < len; j++) {
+                if (x[i][j] != y[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private int[][] rotation(int[][] mat) {
+        int len = mat[0].length;
+        int[][] matrix = new int[len][len];
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j < len; j++) {
+                matrix[i][j] = mat[j][len - 1 - i];
+            }
+        }
+        return matrix;
+    }
+}
 ```
