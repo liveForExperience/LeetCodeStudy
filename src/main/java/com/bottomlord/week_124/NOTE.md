@@ -380,7 +380,7 @@ class Solution {
 # [LeetCode_1886_判断矩阵经轮转后是否一致](https://leetcode-cn.com/problems/determine-whether-matrix-can-be-obtained-by-rotation/)
 ## 解法
 ### 思路
-
+模拟
 ### 代码
 ```java
 class Solution {
