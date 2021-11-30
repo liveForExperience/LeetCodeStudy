@@ -96,3 +96,33 @@ class Solution {
     }
 }
 ```
+# [LeetCode_400_第N位数字](https://leetcode-cn.com/problems/nth-digit/)
+## 解法
+### 思路
+- 举例：
+  - 1位数有9个
+  - 2位数有90个，数字有90*2=180
+  - 3位数有900个，数字有900*3=2700
+  - ...
+  - digit位有`pow(10, digit - 1) * 9个`，数字就是`digit * pow(10, digit - 1) * 9`
+- 根据如上的例子，就能找到第N个数字在哪位数字中
+- 在求该数字在第几位的时候，N累减遍历到的位数对应的个数，在最后找到对应位数的时候，N就对应在当前位的第几个数
+- 然后`pow(10, digit - 1)`就能找到当前位的第一个数，然后根据N就能找到第N个数字的位置`(N-1) / digit + pow(10, digit - 1)`
+- 然后根据N和digit之间取余的值来确定要求的数字是求出的值得第几个位上的数字
+### 代码
+```java
+class Solution {
+    public int findNthDigit(int n) {
+        int digit = 1;
+        while (Math.pow(10, digit - 1) * 9 * digit < n) {
+            n -= Math.pow(10, digit - 1) * 9 * digit;
+            digit++;
+        }
+
+        int num = (n - 1) / digit + (int) Math.pow(10, digit - 1);
+
+        int index = n % digit == 0 ? digit - 1 : n % digit - 1;
+        return Integer.toString(num).charAt(index) - '0';
+    }
+}
+```
