@@ -151,3 +151,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_23_合并K个升序链表](https://leetcode-cn.com/problems/merge-k-sorted-lists/)
+## 解法
+### 思路
+使用优先级队列做多项归并排序
+### 代码
+```java
+class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0) {
+            return null;
+        }
+
+        ListNode root = new ListNode(0);
+        ListNode node = root;
+
+        PriorityQueue<ListNode> queue = new PriorityQueue<>(Comparator.comparingInt(x -> x.val));
+        
+        for (ListNode list : lists) {
+            if (list == null) {
+                continue;
+            }
+            
+            queue.offer(list);
+        }
+        
+        if (queue.isEmpty()) {
+            return null;
+        }
+        
+        while (!queue.isEmpty()) {
+            ListNode cur = queue.poll();
+            if (cur.next != null) {
+                queue.offer(cur.next);
+            }
+            
+            node.next = cur;
+            node = cur;
+        }
+        
+        return root.next;
+    }
+}
+```
