@@ -126,3 +126,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1446_连续字符](https://leetcode-cn.com/problems/consecutive-characters/)
+## 解法
+### 思路
+循环+模拟
+### 代码
+```java
+class Solution {
+    public int maxPower(String s) {
+        char[] cs = s.toCharArray();
+        int max = 0;
+        for (int i = 0; i < cs.length;) {
+            char c = cs[i];
+            int count = 0;
+            while (i < cs.length && c == cs[i]) {
+                count++;
+                i++;
+            }
+            
+            max = Math.max(count, max);
+        }
+        
+        return max;
+    }
+}
+```
