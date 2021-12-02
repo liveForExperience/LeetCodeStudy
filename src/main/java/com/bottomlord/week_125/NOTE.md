@@ -194,3 +194,72 @@ class Solution {
     }
 }
 ```
+# [LeetCode_506_相对名次](https://leetcode-cn.com/problems/relative-ranks/)
+## 解法
+### 思路
+- 初始化一个坐标值数组，从0到n-1
+- 根据坐标对应的score值倒叙排序
+- 根据坐标值数组排序后的顺序，依次初始化对应的字符串数组作为结果
+### 代码
+```java
+class Solution {
+    public String[] findRelativeRanks(int[] score) {
+        int len = score.length;
+        Integer[] arr = new Integer[len];
+        for (int i = 0; i < len; i++) {
+            arr[i] = i;
+        }
+
+        String[] ans = new String[len];
+        Arrays.sort(arr, (x, y) -> score[y] - score[x]);
+        
+        for (int i = 0; i < len; i++) {
+            if (i == 0) {
+                ans[arr[i]] = "Gold Medal";
+            } else if (i == 1) {
+                ans[arr[i]] = "Silver Medal";
+            } else if (i == 2) {
+                ans[arr[i]] = "Bronze Medal";
+            } else {
+                ans[arr[i]] = i + 1 + "";
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+桶排序
+- 根据score数组最大值构建一个int包装类数组
+- 遍历score，将score值对应的坐标放入包装类数组中
+- 倒叙遍历包装类数组，跳过为null的元素，然后对非null的元素进行计数
+- 将前三个元素的坐标值放到结果数组中，做好转义，剩余的则是将计数值放入结果数组中
+### 代码
+```java
+class Solution {
+    public String[] findRelativeRanks(int[] score) {
+        int max = Arrays.stream(score).max().getAsInt();
+        Integer[] bucket = new Integer[max + 1];
+        for (int i = 0; i < score.length; i++) {
+            bucket[score[i]] = i;
+        }
+        
+        int count = 0;
+        String[] ans = new String[score.length];
+        for (int i = bucket.length - 1; i >= 0; i--) {
+            Integer index = bucket[i];
+            
+            if (index == null) {
+                continue;
+            }
+
+            count++;
+            ans[index] = count > 3 ? "" + count : count == 1 ? "Gold Medal" : count == 2 ? "Silver Medal" : "Bronze Medal";
+        }
+        
+        return ans;
+    }
+}
+```
