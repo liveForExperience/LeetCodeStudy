@@ -263,3 +263,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1005_K次取反后最大化的数组和](https://leetcode-cn.com/problems/maximize-sum-of-array-after-k-negations/)
+## 解法
+### 思路
+- 因为数字的范围是-100到100，可以用桶排序的方式对数字做计数和排序
+- 根据k的次数在负数区间中做取反的模拟
+  - 负数计数-1，相反数计数+1
+- 如果k还有剩余，计算是偶数个还是计数个
+  - 偶数个不处理
+  - 奇数个就找到非负整数区间中最小的一个，做翻转处理（可以预先累加到结果里，这样下次求和时候不需要遍历负数区间）
+- 遍历数组非负整数区间累加结果并返回
+### 代码
+```java
+class Solution {
+    public int largestSumAfterKNegations(int[] nums, int k) {
+        int[] bucket = new int[201];
+        for (int num : nums) {
+            bucket[num + 100]++;
+        }
+
+        for (int i = 0; i < 101 && k > 0; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+
+            while (bucket[i] > 0 && k > 0) {
+                bucket[i]--;
+                bucket[200 - i]++;
+                k--;
+            }
+        }
+
+        int sum = 0;
+        if (k % 2 == 1) {
+            for (int i = 100; i < bucket.length; i++) {
+                if (bucket[i] != 0) {
+                    bucket[i]--;
+                    sum -= (i - 100);
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+
+            int time = bucket[i];
+            sum += time * (i - 100);
+        }
+
+        return sum;
+    }
+}
+```
