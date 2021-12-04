@@ -351,3 +351,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1897_重新分配字符使所有字符串都相等](https://leetcode-cn.com/problems/redistribute-characters-to-make-all-strings-equal/)
+## 解法
+### 思路
+- 统计字符串中字母出现的个数
+- 判断是否都能被字符串个数整除，如果可以就是true，否则false
+### 代码
+```java
+class Solution {
+    public boolean makeEqual(String[] words) {
+        int n = words.length;
+        int[] bucket = new int[26];
+        
+        for (String word : words) {
+            for (char c : word.toCharArray()) {
+                bucket[c - 'a']++;
+            }
+        }
+
+        for (int num : bucket) {
+            if (num % n != 0) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
