@@ -318,3 +318,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_383_赎金信](https://leetcode-cn.com/problems/ransom-note/)
+## 解法
+### 思路
+桶计数：
+- 遍历赎金信的字符串，对字母计数
+- 遍历杂志的字符串，对字母计数值做累减，如果总数为0就返回true
+- 遍历结束还不是0就返回false
+### 代码
+```java
+class Solution {
+    public boolean canConstruct(String ransomNote, String magazine) {
+        int count = 0;
+        int[] bucket = new int[26];
+        for (char c : ransomNote.toCharArray()) {
+            bucket[c - 'a']++;
+            count++;
+        }
+        
+        for (char c : magazine.toCharArray()) {
+            if (bucket[c - 'a'] > 0) {
+                bucket[c - 'a']--;
+                count--;
+            }
+            
+            if (count == 0) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
