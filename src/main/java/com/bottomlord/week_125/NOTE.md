@@ -457,3 +457,40 @@ class Solution {
   }
 }
 ```
+# [LeetCode_372_超级次方](https://leetcode-cn.com/problems/super-pow/)
+## 解法
+### 思路
+- 利用指数的数学性质，分治递归处理
+- 每次都处理2部分的指数
+  - 指数最后一位
+  - 数组剩下的部分 * 10
+- 这样不断分治，直到数组为空，这个时候就返回1，代表已经没有要处理的剩余部分了。
+### 代码
+```java
+class Solution {
+    private int base = 1337;
+    public int superPow(int a, int[] b) {
+        if (b.length == 0) {
+            return 1;
+        }
+
+        int last = b[b.length - 1];
+        return pow(a, last) * pow(superPow(a, Arrays.copyOfRange(b, 0, b.length - 1)), 10) % base;
+    }
+
+    private int pow(int a, int b) {
+        if (b == 0) {
+            return 1;
+        }
+
+        a %= base;
+
+        if (b % 2 == 1) {
+            return (a * pow(a, b - 1)) % base;
+        } else {
+            int c = pow(a, b / 2);
+            return c * c % base;
+        }
+    }
+}
+```
