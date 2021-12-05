@@ -494,3 +494,69 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1909_删除一个元素使数组严格递增](https://leetcode-cn.com/problems/remove-one-element-to-make-the-array-strictly-increasing/)
+## 解法
+### 思路
+- 遍历一次数组，找到第一组不符合严格递增规则的2个元素，记录下来
+- 分别尝试去除这个元素后，是否能符合严格升序，如果都不可以就返回false
+### 代码
+```java
+class Solution {
+    public boolean canBeIncreasing(int[] nums) {
+        int x = -1, y = -1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] <= nums[i - 1]) {
+                x = i;
+                y = i - 1;
+                break;
+            }
+        }
+
+        if (x == -1) {
+            return true;
+        }
+
+        boolean flag = true;
+        for (int i = 1; i < nums.length; i++) {
+            if (i == x) {
+                continue;
+            }
+
+            int c = i - 1;
+            if (i - 1 == x) {
+                c = i - 2;
+            }
+
+            if (nums[i] <= nums[c]) {
+                flag = false;
+                break;
+            }
+        }
+        
+        if (flag) {
+            return true;
+        }
+        
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (i == y) {
+                continue;
+            }
+
+            int c = i + 1;
+            if (i + 1 == y) {
+                c = i + 2;
+            }
+            
+            if (c == nums.length) {
+                return true;
+            }
+
+            if (nums[i] >= nums[c]) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
