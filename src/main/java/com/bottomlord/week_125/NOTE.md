@@ -379,3 +379,81 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1903_字符串中的最大奇数](https://leetcode-cn.com/problems/largest-odd-number-in-string/)
+## 失败解法
+### 原因
+超时
+### 思路
+- 2层循环
+  - 外层循环数字长度
+  - 内层循环数字起始字符
+- 内层判断当前层是否有奇数，且保留最大值，内层循环结束后如果有符合的值就返回
+- 循环结束，则表明没有符合的，返回空字符串
+### 代码
+```java
+class Solution {
+  public String largestOddNumber(String num) {
+    int n = num.length();
+
+    boolean flag = false;
+    String max = "0";
+    for (int i = n; i >= 1; i--) {
+      for (int j = 0; j + i <= n; j++) {
+        if (num.charAt(j) == '0') {
+          continue;
+        }
+
+        if (Integer.parseInt(num.charAt(j + i - 1) + "") % 2 == 1) {
+          flag = true;
+          max = max(num.substring(j, j + i), max);
+        }
+      }
+
+      if (flag) {
+        return max;
+      }
+    }
+
+    return "";
+  }
+
+  private String max(String x, String y) {
+    int num = x.compareTo(y);
+    return num == 0 ? x : num > 0 ? x : y;
+  }
+}
+```
+## 解法
+### 思路
+- 从头部找到第一个非0字符
+- 从字符串尾部找到第一个奇数字符
+- 返回区间确定的字符串返回
+### 代码
+```java
+class Solution {
+  public String largestOddNumber(String num) {
+    Set<Character> set = new HashSet<>();
+    set.add('1');
+    set.add('3');
+    set.add('5');
+    set.add('7');
+    set.add('9');
+    int start = num.length(), end = -1;
+    for (int i = 0; i < num.length(); i++) {
+      if (num.charAt(i) != '0') {
+        start = i;
+        break;
+      }
+    }
+
+    for (int i = num.length() - 1; i >= 0; i--) {
+      if (set.contains(num.charAt(i))) {
+        end = i;
+        break;
+      }
+    }
+
+    return end >= start ? num.substring(start, end + 1) : "";
+  }
+}
+```
