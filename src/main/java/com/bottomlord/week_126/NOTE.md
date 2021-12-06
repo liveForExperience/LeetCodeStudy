@@ -70,3 +70,19 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1920_基于排列构建数组](https://leetcode-cn.com/problems/build-array-from-permutation/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] buildArray(int[] nums) {
+        int[] ans = new int[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            ans[i] = nums[nums[i]];
+        }
+        return ans;
+    }
+}
+```
