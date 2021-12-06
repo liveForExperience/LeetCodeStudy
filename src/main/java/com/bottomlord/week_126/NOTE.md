@@ -86,3 +86,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1925_统计平方和三元组的数目](https://leetcode-cn.com/problems/count-square-sum-triples/)
+## 解法
+### 思路
+3层循环
+### 代码
+```java
+class Solution {
+    public int countTriples(int n) {
+        int count = 0;
+        for (int i = 1; i <= n; i++) {
+            for (int j = i + 1; j <= n; j++) {
+                for (int k = j; k <= n; k++) {
+                    if (Math.pow(i, 2) + Math.pow(j, 2) == Math.pow(k, 2)) {
+                        count+=2;
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+}
+```
+## 解法
+### 思路
+2层循环
+### 代码
+```java
+class Solution {
+    public int countTriples(int n) {
+        int count = 0;
+        Set<Double> set = new HashSet<>();
+        for (int i = 1; i <= n; i++) {
+            set.add(i * 1.0);
+        }
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = i + 1; j <= n; j++) {
+                double a = Math.pow(i, 2), b = Math.pow(j, 2);
+                if (set.contains(Math.sqrt(a + b))) {
+                    count += 2;
+                }
+            }
+        }
+
+        return count;
+    }
+}
+```
