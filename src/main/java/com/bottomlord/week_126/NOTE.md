@@ -135,3 +135,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1034_边界着色](https://leetcode-cn.com/problems/coloring-a-border/)
+## 解法
+### 思路
+- 记忆+回溯
+- 注意不要对不同颜色的区块的坐标进行记忆，否则会导致减枝后出现判断错误
+### 代码
+```java
+class Solution {
+    private int[][] dirs = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+    public int[][] colorBorder(int[][] grid, int row, int col, int color) {
+        int r = grid.length, c = grid[0].length;
+        boolean[][] memo = new boolean[r][c];
+
+        backTrack(grid, row, col, r, c, grid[row][col], color, memo);
+        return grid;
+    }
+
+    private boolean backTrack(int[][] grid, int row, int col, int r, int c, int target, int color, boolean[][] memo) {
+        if (row < 0 || row >= r || col < 0 || col >= c) {
+            return false;
+        }
+        
+        if (memo[row][col]) {
+            return true;
+        }
+        
+        if (grid[row][col] != target) {
+            return false;
+        }
+
+        memo[row][col] = true;
+
+        for (int[] dir : dirs) {
+            boolean result = backTrack(grid, row + dir[0], col + dir[1],  r, c, target, color, memo);
+            if (!result) {
+                grid[row][col] = color;
+            }
+        }
+
+        return true;
+    }
+}
+```
