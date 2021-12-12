@@ -312,3 +312,35 @@ public String shortestCompletingWord(String licensePlate, String[] words) {
     }
 }
 ```
+# [LeetCode_709_转换成小写字母](https://leetcode-cn.com/problems/to-lower-case/)
+## 解法
+### 思路
+遍历+判断+StringBuilder
+### 代码
+```java
+class Solution {
+    public String toLowerCase(String s) {
+        StringBuilder sb = new StringBuilder();
+        char[] cs = s.toCharArray();
+        for (char c : cs) {
+            if (Character.isUpperCase(c)) {
+                sb.append((char)(c - 'A' + 'a'));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+}
+```
+## 解法二
+### 思路
+使用String的api
+### 代码
+```java
+class Solution {
+    public String toLowerCase(String s) {
+        return s.toLowerCase();
+    }
+}
+```
