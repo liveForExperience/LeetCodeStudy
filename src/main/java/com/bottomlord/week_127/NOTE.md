@@ -33,3 +33,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_689_三个无重叠子数组的最大和](https://leetcode-cn.com/problems/maximum-sum-of-3-non-overlapping-subarrays/)
+## 解法
+### 思路
+[解法](https://leetcode-cn.com/problems/course-schedule-iii/solution/gong-shui-san-xie-jing-dian-tan-xin-yun-ghii2/)
+### 代码
+```java
+
+```
+# [LeetCode_690_课程表III](https://leetcode-cn.com/problems/course-schedule-iii/)
+## 解法
+### 思路
+- 如果2门课的结束时间有早晚，d1 <= d2
+  - 如果先学习d2，再学习d1，这种情况是符合的，那么先学习d1，再学习d2也肯定是可以的
+  - 但是如果先学习d1在学习d2成立，却无法退出先学习d2再学习d1成立
+- 
+### 代码
+```java
+
+```
