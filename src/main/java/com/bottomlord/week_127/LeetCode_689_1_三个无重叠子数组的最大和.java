@@ -6,6 +6,6 @@ package com.bottomlord.week_127;
  */
 public class LeetCode_689_1_三个无重叠子数组的最大和 {
     public int[] maxSumOfThreeSubarrays(int[] nums, int k) {
-
+        return null;
     }
 }
