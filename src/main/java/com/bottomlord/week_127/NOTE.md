@@ -126,3 +126,30 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1518_换酒问题](https://leetcode-cn.com/problems/water-bottles/)
+## 解法
+### 思路
+循环模拟：
+- 初始化2个变量
+  - sum记录已经喝了的瓶数
+  - empty记录当前的空瓶数
+- 循环
+  - 条件：empty >= numExchange
+  - 过程：
+    - sum累加当前空瓶可以兑换的新酒数drink
+    - empty = drink + 剩下不能兑换的空瓶数
+- 循环结束后返回sum
+### 代码
+```java
+class Solution {
+    public int numWaterBottles(int numBottles, int numExchange) {
+        int sum = numBottles, empty = numBottles;
+        while (empty >= numExchange) {
+            int drink = empty / numExchange;
+            sum += drink;
+            empty = drink + empty % numExchange;
+        }
+        return sum;
+    }
+}
+```
