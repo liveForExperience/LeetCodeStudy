@@ -153,3 +153,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_911_在线选举](https://leetcode-cn.com/problems/online-election/)
+## 解法
+### 思路
+二分查找：
+- 初始化
+  - 遍历person数组，统计变化过程中的得票数最大值
+  - 当出现当前得票数与最大值一样或更大的时候，将内容记录下来（之所以在一样的是有也要记录下来，因为题目要求得票数一样的时候，将最近的人员作为得票数最高的那个人）
+  - 记录的内容为，list中的一个一维2个元素的数组，第一个元素是时间，第二个元素记录的是人员坐标
+- 查询：
+  - 使用二分查找，找到比当前查询时间更小或相等的的最近的变化点，如果没有，就说明大家还都是0的状态，就直接返回0
+  - 找到后，返回数组的第二个元素即可
+### 代码
+```java
+class TopVotedCandidate {
+    private List<int[]> list = new ArrayList<>();
+    public TopVotedCandidate(int[] persons, int[] times) {
+        int n = times.length, val = 0;
+        Map<Integer, Integer> mapping = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            mapping.put(persons[i], mapping.getOrDefault(persons[i], 0) + 1);
+            if (mapping.get(persons[i]) >= val) {
+                val = mapping.get(persons[i]);
+                list.add(new int[]{times[i], persons[i]});
+            }
+        }
+    }
+
+    public int q(int t) {
+        int head = 0, tail = list.size() - 1;
+        while (head < tail) {
+            int mid = head + tail + 1 >> 1;
+            if (list.get(mid)[0] <= t) {
+                head = mid;
+            } else {
+                tail = mid - 1;
+            }
+        }
+
+        return list.get(tail)[0] <= t ? list.get(tail)[1] : 0;
+    }
+}
+```
