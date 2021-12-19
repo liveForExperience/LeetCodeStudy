@@ -195,3 +195,62 @@ class TopVotedCandidate {
     }
 }
 ```
+# [LeetCode_419_甲板上的战舰](https://leetcode-cn.com/problems/battleships-in-a-board/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+  private final int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+  public int countBattleships(char[][] board) {
+    int row = board.length, col = board[0].length, count = 0;
+    for (int i = 0; i < row; i++) {
+      for (int j = 0; j < col; j++) {
+        if (board[i][j] == 'X') {
+          count++;
+          dfs(board, row, col, i, j);
+        }
+      }
+    }
+
+    return count;
+  }
+
+  private void dfs(char[][] board, int row, int col, int r, int c) {
+    if (r < 0 || r >= row || c < 0 || c >= col || board[r][c] != 'X') {
+      return;
+    }
+
+    board[r][c] = '.';
+
+    for (int[] direction : directions) {
+      dfs(board, row, col, r + direction[0], c + direction[1]);
+    }
+  }
+}
+```
+## 解法二
+### 思路
+- 基于解法一，发现其实不需要做深度优先的状态翻转
+- 因为遍历过程是从上往下，从左往右，所以一艘舰船的左上方的标记一定是最先被发现的
+- 又因为舰船之间是有空隙的，只需要统计第一次碰到的X就可以
+- 为了只记录第一次的X，就需要当前出现X的位置，它的上方或左边不是X即可
+### 代码
+```java
+class Solution {
+    public int countBattleships(char[][] board) {
+        int row = board.length, col = board[0].length, count = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (board[i][j] == 'X' && (i == 0 || board[i - 1][j] != 'X') && (j == 0 || board[i][j - 1] != 'X')) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+```
