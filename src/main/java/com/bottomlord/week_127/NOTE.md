@@ -347,3 +347,37 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1929_1_数组串联](https://leetcode-cn.com/problems/concatenation-of-array/)
+## 解法
+### 思路
+- 初始化2倍长度的数组
+- 遍历原数组并填充
+- 返回2倍长数组作为结果
+### 代码
+```java
+class Solution {
+    public int[] getConcatenation(int[] nums) {
+        int n = nums.length;
+        int[] ans = new int[2 * n];
+        for (int i = 0; i < n; i++) {
+            ans[i] = ans[i + n] = nums[i];
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+使用System的数组拷贝API复制两次得到结果
+### 代码
+```java
+class Solution {
+    public int[] getConcatenation(int[] nums) {
+        int n = nums.length;
+        int[] ans = new int[n * 2];
+        System.arraycopy(nums, 0, ans, 0, n);
+        System.arraycopy(nums, 0, ans, n, n);
+        return ans;
+    }
+}
+```
