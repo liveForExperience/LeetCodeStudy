@@ -381,3 +381,98 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII101_分割等和子集]()
+## 失败解法
+### 原因
+超时
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+  public boolean canPartition(int[] nums) {
+    int sum = 0;
+    for (int num : nums) {
+      sum += num;
+    }
+
+    if (sum % 2 == 1) {
+      return false;
+    }
+
+    return backTrack(nums, 0, sum / 2, 0);
+  }
+
+  private boolean backTrack(int[] nums, int index, int target, int cur) {
+    if (cur > target) {
+      return false;
+    }
+
+    if (cur == target) {
+      return true;
+    }
+
+    for (int i = index; i < nums.length; i++) {
+      cur += nums[i];
+      boolean result = backTrack(nums, i + 1, target, cur);
+      if (result) {
+        return true;
+      }
+      cur -= nums[i];
+    }
+
+    return false;
+  }
+}
+```
+## 解法
+### 思路
+- 在失败解法基础上增加记忆化搜索
+- 使用二维数组记录当前坐标和总和是否出现过
+- 然后在递归过程中，先判断总和是否和目标值一样，如果不一样且记忆中出现过，就直接返回false，达到减枝的效果
+### 代码
+```java
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int n = nums.length;
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+
+        if (sum % 2 == 1) {
+            return false;
+        }
+
+        return backTrack(nums, 0, sum / 2, 0, new boolean[n][sum + 1]);
+    }
+
+    private boolean backTrack(int[] nums, int index, int target, int cur, boolean[][] memo) {
+        if (cur > target) {
+            return false;
+        }
+
+        if (cur == target) {
+            return true;
+        }
+
+        if (index >= nums.length || memo[index][cur]) {
+            return false;
+        }
+
+        for (int i = index; i < nums.length; i++) {
+            cur += nums[i];
+            boolean result = backTrack(nums, i + 1, target, cur, memo);
+            if (result) {
+                return true;
+            }
+            
+            memo[i][cur] = true;
+            
+            cur -= nums[i];
+        }
+
+        return false;
+    }
+}
+```
