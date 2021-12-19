@@ -254,3 +254,13 @@ class Solution {
     }
 }
 ```
+# [LeetCode_997_找到小镇的法官](https://leetcode-cn.com/problems/find-the-town-judge/)
+## 解法
+### 思路
+- 根据数组生成入度表和出度表
+- 遍历人员数组，找到入度表为n-1，出度表为0的元素返回
+- 遍历结束则说明没有，返回-1
+### 代码
+```java
+
+```
