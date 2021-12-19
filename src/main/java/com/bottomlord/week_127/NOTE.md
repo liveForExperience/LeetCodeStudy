@@ -36,10 +36,77 @@ class Solution {
 # [LeetCode_689_三个无重叠子数组的最大和](https://leetcode-cn.com/problems/maximum-sum-of-3-non-overlapping-subarrays/)
 ## 解法
 ### 思路
-[解法](https://leetcode-cn.com/problems/course-schedule-iii/solution/gong-shui-san-xie-jing-dian-tan-xin-yun-ghii2/)
+- [解法参考](https://leetcode-cn.com/problems/maximum-sum-of-3-non-overlapping-subarrays/solution/cpp-dong-tai-gui-hua-si-lu-qing-xi-dai-m-izh9/)
+- 时间复杂度是O(N)
+- 先生成前缀和，通过这个前缀和快速获取到所有K长度子数组的总和
+- 分别从左和右生成i位置的子数组的左边和右边的最大子数组起始位置，需要注意
+  - 子数组之间不能有重复部分，所以间隔一定是K
+  - 因为总和相等的时候，会对字典序进行排序，所以:
+    - 求左边最大的时候，比较的是大于max的值，大才会更新坐标
+    - 求右边最大的时候，比较的是大于等于max的值，符合的时候更新坐标
+- 最后遍历之前的子数组和的那个数组，求能生成最大值的那个组合
+- 遍历结束后返回记录的那个组合
 ### 代码
 ```java
+class Solution {
+    public int[] maxSumOfThreeSubarrays(int[] nums, int k) {
+        int n = nums.length;
+        int[] sums = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            sums[i] = sums[i - 1] + nums[i - 1];
+        }
 
+        int[] arr = new int[n - k + 1];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = sums[i + k] - sums[i];
+        }
+
+        int[] left = new int[arr.length],
+              right = new int[arr.length],
+              ans = new int[3];
+
+        Arrays.fill(left, -1);
+        Arrays.fill(right, -1);
+
+        int max = -1, maxIndex = -1;
+        for (int i = k; i < left.length; i++) {
+            if (arr[i - k] > max) {
+                max = arr[i - k];
+                maxIndex = i - k;
+            }
+
+            left[i] = maxIndex;
+        }
+
+        max = -1;
+        maxIndex = -1;
+        for (int i = right.length - 1 - k; i >= 0; i--) {
+            if (arr[i + k] >= max) {
+                max = arr[i + k];
+                maxIndex = i + k;
+            }
+
+            right[i] = maxIndex;
+        }
+
+        max = -1;
+        for (int i = 0; i < arr.length; i++) {
+            if (left[i] == -1 || right[i] == -1) {
+                continue;
+            }
+
+            int sum = arr[i] + arr[left[i]] + arr[right[i]];
+            if (sum > max) {
+                max = sum;
+                ans[0] = left[i];
+                ans[1] = i;
+                ans[2] = right[i];
+            }
+        }
+
+        return ans;
+    }
+}
 ```
 # [LeetCode_690_课程表III](https://leetcode-cn.com/problems/course-schedule-iii/)
 ## 解法
@@ -262,5 +329,21 @@ class Solution {
 - 遍历结束则说明没有，返回-1
 ### 代码
 ```java
+class Solution {
+  public int findJudge(int n, int[][] trust) {
+    int[] ins = new int[n], outs = new int[n];
+    for (int[] arr : trust) {
+      outs[arr[0] - 1]++;
+      ins[arr[1] - 1]++;
+    }
 
+    for (int i = 0; i < n; i++) {
+      if (ins[i] == n - 1 && outs[i] == 0) {
+        return i + 1;
+      }
+    }
+
+    return -1;
+  }
+}
 ```
