@@ -69,3 +69,73 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1933_可以输入的最大单词数](https://leetcode-cn.com/problems/maximum-number-of-words-you-can-type/)
+## 解法
+### 思路
+- 使用一维数组记录brokenLetters
+- 遍历字符串，通过数组快速判断单词是否可以计数
+- 如果可以计数就累加
+- 遍历结束，返回计数值
+### 代码
+```java
+class Solution {
+  public int canBeTypedWords(String text, String brokenLetters) {
+    boolean[] arr = new boolean[26];
+    for (char c : brokenLetters.toCharArray()) {
+      arr[c - 'a'] = true;
+    }
+
+    int count = 0;
+    for (int i = 0; i < text.length(); i++) {
+      boolean flag = false;
+      while (i < text.length() && text.charAt(i) != ' ') {
+        if (arr[text.charAt(i) - 'a']) {
+          flag = true;
+        }
+
+        i++;
+      }
+
+      if (!flag) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+}
+```
+## 解法二
+### 思路
+使用string的api切分字符串后，使用一维数组快速判断
+### 代码
+```java
+class Solution {
+public int canBeTypedWords(String text, String brokenLetters) {
+        String[] strs = text.split(" ");
+        boolean[] arr = new boolean[26];
+        for (char c : brokenLetters.toCharArray()) {
+            arr[c - 'a'] = true;
+        }
+        
+        int count = 0;
+        for (String str : strs) {
+            if (canType(str, arr)) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+    
+    private boolean canType(String str, boolean[] arr) {
+        for (char c : str.toCharArray()) {
+            if (arr[c - 'a']) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
