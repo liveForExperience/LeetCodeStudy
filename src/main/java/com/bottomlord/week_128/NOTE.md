@@ -240,3 +240,41 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1945_字符串转化后的各位数字之和](https://leetcode-cn.com/problems/sum-of-digits-of-string-after-convert/)
+## 解法
+### 思路
+- 遍历字符串生成数字字符串
+- 循环k次生成对应的总和
+### 代码
+```java
+class Solution {
+    public int getLucky(String s, int k) {
+        String numStr = str2NumStr(s);
+        int num = 0;
+        for (int i = 0; i < k; i++) {
+            num = str2Num(numStr);
+            numStr = Integer.toString(num);
+        }
+        return num;
+    }
+    
+    private String str2NumStr(String str) {
+        char[] cs = str.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : cs) {
+            sb.append(c - 'a' + 1);
+        }
+        
+        return sb.toString();
+    }
+    
+    private int str2Num(String str) {
+        char[] cs = str.toCharArray();
+        int sum = 0;
+        for (char c : cs) {
+            sum += c - '0';
+        }
+        return sum;
+    }
+}
+```
