@@ -205,3 +205,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1941_检查是否所有字符出现次数相同](https://leetcode-cn.com/problems/check-if-all-characters-have-equal-number-of-occurrences/)
+## 解法
+### 思路
+- 桶计数
+- 遍历桶判断
+### 代码
+```java
+class Solution {
+  public boolean areOccurrencesEqual(String s) {
+    int[] bucket = new int[26];
+    char[] cs = s.toCharArray();
+    for (char c : cs) {
+      bucket[c - 'a']++;
+    }
+
+    Integer target = null;
+    for (int num : bucket) {
+      if (num == 0) {
+        continue;
+      }
+
+      if (target == null) {
+        target = num;
+        continue;
+      }
+
+      if (num != target) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+}
+```
