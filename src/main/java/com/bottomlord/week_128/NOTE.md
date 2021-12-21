@@ -139,3 +139,69 @@ public int canBeTypedWords(String text, String brokenLetters) {
     }
 }
 ```
+# [LeetCode_1154_一年中的第几天](https://leetcode-cn.com/problems/day-of-the-year/)
+## 解法
+### 思路
+- 初始化一个数组，存储年中天数的前缀和
+- 根据字符串获取年月日的信息
+- 根据月的信息判断是否要考虑闰月的情况
+  - 小于等于2月
+  - 大于2月
+- 如果需要考虑，就根据年算出当年是否是闰年
+- 最后根据每个月的天数，算出当前的天数并返回
+### 代码
+```java
+class Solution {
+    public int dayOfYear(String date) {
+        int[] monthDays = new int[]{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
+
+        String[] factors = date.split("-");
+        int year = Integer.parseInt(factors[0]),
+            month = Integer.parseInt(factors[1]),
+            day = Integer.parseInt(factors[2]);
+
+        if (month <= 2) {
+            return monthDays[month - 1] + day;
+        }
+
+        return monthDays[month - 1] + day + (isLeapYear(year) ? 1 : 0);
+    }
+
+    private boolean isLeapYear(int year) {
+        if (year % 100 == 0) {
+            return year % 400 == 0;
+        }
+        
+        return year % 4 == 0;
+    }
+}
+```
+## 解法二
+### 思路
+使用字符计算替换String的切分api
+### 代码
+```java
+class Solution {
+    public int dayOfYear(String date) {
+        int[] monthDays = new int[]{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
+
+        int year = 1000 * (date.charAt(0) - '0') + 100 * (date.charAt(1) - '0') + 10 * (date.charAt(2) - '0') + (date.charAt(3) - '0'),
+            month = 10 * (date.charAt(5) - '0') + (date.charAt(6) - '0'),
+            day = 10 * (date.charAt(8) - '0') + (date.charAt(9) - '0');
+
+        if (month <= 2) {
+            return monthDays[month - 1] + day;
+        }
+
+        return monthDays[month - 1] + day + (isLeapYear(year) ? 1 : 0);
+    }
+
+    private boolean isLeapYear(int year) {
+        if (year % 100 == 0) {
+            return year % 400 == 0;
+        }
+
+        return year % 4 == 0;
+    }
+}
+```
