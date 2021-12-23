@@ -278,3 +278,159 @@ class Solution {
     }
 }
 ```
+# [LeetCode_686_重复叠加字符串匹配](https://leetcode-cn.com/problems/repeated-string-match/)
+## 解法
+### 思路
+- 特殊情况先考虑
+  - 如果a已经包含b，那么直接返回1
+- 按照题目意思，如果a重复n次就可以包含b，那说明
+  - 一定可以从a的某一个字符开始，不断头尾相连的循环a，可以一一和b的字符对应
+  - 如果不可以，则说明不包含，直接返回-1
+- 如果可以，就不断追加a这个字符串即可
+### 代码
+```java
+class Solution {
+    public int repeatedStringMatch(String a, String b) {
+                if (a.contains(b)) {
+            return 1;
+        }
+        
+        boolean is = false;
+        for (int i = 0; i < a.length(); i++) {
+            boolean match = true;
+            int ia = i;
+            for (int ib = 0; ib < b.length(); ib++) {
+                if (a.charAt(ia) != b.charAt(ib)) {
+                    match = false;
+                    break;
+                }
+                
+                if (++ia == a.length()) {
+                    ia = 0;
+                }
+            }
+            
+            if (match) {
+                is = true;
+                break;
+            }
+        }
+        
+        if (!is) {
+            return -1;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+        while (true) {
+            if (sb.toString().contains(b)) {
+                return count; 
+            }
+            
+            sb.append(a);
+            count++;
+        }
+    }
+}
+```
+## 解法二
+### 思路
+- 如果b是a的x倍，那么a乘以x倍之后，会出现3种情况
+  - 正好完全一致，例如`a = ab`和`b = abab`
+  - 不能包含，于是再累加一次才能包含，例如`a = ab`和`b = ababa`
+  - 不能包含，累加一次也不能包含，再累加一次可以，例如`a = abc`和`b = bcabcabca`
+- 之所以如上3种情况可以覆盖所有可能是因为，如果a乘以n倍后一定有b这个子串，那么当a乘以x，导致和b一样长度或者少小于a的长度后，再在头尾在加上2个a，一定会包含，如果这都不能包含，那再累加也不可能
+- 然后再把b中有a没有字符的情况提前过滤一下，即可
+- 在这个算法中，string的indexOf使用的应该是类似KMP的算法，从而获取到匹配的第一个坐标值。
+### 代码
+```java
+class Solution {
+    public int repeatedStringMatch(String a, String b) {
+        boolean[] bucket = new boolean[26];
+        char[] as = a.toCharArray(), bs = b.toCharArray();
+        for (char c : as) {
+            bucket[c - 'a'] = true;
+        }
+
+        for (char c : bs) {
+            if (!bucket[c - 'a']) {
+                return -1;
+            }
+        }
+
+        int x = b.length() / a.length();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < x; i++) {
+            sb.append(a);
+        }
+
+        for (int i = 0; i <= 2; i++) {
+            if (sb.indexOf(b) >= 0) {
+                return x + i;
+            }
+            
+            sb.append(a);
+        }
+        
+        return -1;
+    }
+}
+```
+# [LeetCode_1044_最长重复子串](https://leetcode-cn.com/problems/longest-duplicate-substring/)
+## 解法
+### 思路
+字符串哈希+前缀和+二分查找
+- 最长字符串，语义含有二段性
+  - 小于等于最长字符串的都存在
+  - 比最长字符串大的都不存在
+- 使用二分法来找到这个二段性的分界点
+- 使用字符串哈希来记录字符串每个字符的哈希值
+- 使用二分查找找到最大长度，期间通过字符串哈希+前缀和来判断是否存在重复字符串
+- 二分查找结束后，返回找到的最长字符串
+- [参考](https://leetcode-cn.com/problems/longest-duplicate-substring/solution/tong-ge-lai-shua-ti-la-er-fen-cha-zhao-z-gc3d/)
+### 代码
+```java
+class Solution {
+    private int prime = 31;
+
+    public String longestDupSubstring(String s) {
+        int head = 0, tail = s.length();
+        String ans = "";
+        while (head <= tail) {
+            int mid = (head + tail + 1) / 2;
+            String str = find(s, mid);
+            if (!Objects.equals(str, "")) {
+                head = mid + 1;
+                ans = str;
+            } else {
+                tail = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+
+    private String find(String s, int len) {
+        Set<Long> set = new HashSet<>();
+        long hash = 0, power = 1;
+        for (int i = 0; i < len; i++) {
+            hash = hash * prime + s.charAt(i);
+            power *= prime;
+        }
+        set.add(hash);
+
+        String ans = "";
+        for (int i = len; i < s.length(); i++) {
+            hash = hash * prime + s.charAt(i) - power * s.charAt(i - len);
+
+            if (set.contains(hash) &&  s.indexOf(ans = s.substring(i - len + 1, i + 1)) != i) {
+                return ans;
+            }
+
+            set.add(hash);
+        }
+
+        return ans;
+    }
+}
+```
