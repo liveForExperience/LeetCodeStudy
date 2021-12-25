@@ -434,3 +434,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_28_实现strStr](https://leetcode-cn.com/problems/implement-strstr/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1705_吃苹果的最大数目](https://leetcode-cn.com/problems/maximum-number-of-eaten-apples/)
+## 解法
+### 思路
+- 使用优先级队列来存储数组元素
+  - 数组的第一个元素存储当前苹果的过期时间
+  - 数组的第二个元素存储当前批次苹果的个数
+- 优先级队列用苹果的过期时间升序来存储
+- 将生成苹果和过期和吃苹果的过程都放在一个循环中处理
+- 循环的继续的条件：
+  - 苹果生成数组还没有过滤完
+  - 队列里还有元素
+- 循环里
+  - 如果苹果还没有生成完成，就把苹果批次数组放入队列中
+  - 然后判断当前时间和队列顶部元素，是否队列顶部元素相对当前时间已经过期，如果是的话就循环将这些批次的苹果从队列中去除
+  - 然后判断队列中是否还有元素，有的话说明可以吃，就进行吃苹果的逻辑，并对吃苹果的次数进行记录
+- 循环结束返回记录吃苹果的次数
+### 代码
+```java
+class Solution {
+    public int eatenApples(int[] apples, int[] days) {
+        Queue<int[]> queue = new PriorityQueue<>(Comparator.comparingInt(x -> x[0]));
+        int n = apples.length, index = 0, count = 0;
+        while (index < n || !queue.isEmpty()) {
+            if (index < n && apples[index] > 0) {
+                queue.offer(new int[]{index + days[index], apples[index]});
+            }
+
+            while (!queue.isEmpty() && queue.peek()[0] <= index) {
+                queue.poll();
+            }
+
+            if (!queue.isEmpty()) {
+                int[] arr = queue.poll();
+                arr[1]--;
+                count++;
+                if (arr[1] > 0 && index < arr[0]) {
+                    queue.offer(arr);
+                }
+            }
+
+            index++;
+        }
+
+        return count;
+    }
+}
+```
