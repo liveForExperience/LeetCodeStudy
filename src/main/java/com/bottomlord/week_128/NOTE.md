@@ -489,3 +489,59 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1609_奇偶树](https://leetcode-cn.com/problems/even-odd-tree/)
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+  public boolean isEvenOddTree(TreeNode root) {
+    Queue<TreeNode> queue = new ArrayDeque<>();
+    queue.offer(root);
+    int level = 0;
+    while (!queue.isEmpty()) {
+      int count = queue.size();
+      Integer pre = null;
+      while (count-- > 0) {
+        TreeNode node = queue.poll();
+        int val = node.val;
+        if (level % 2 == 0) {
+          if (val % 2 != 1) {
+            return false;
+          }
+
+          if (pre != null) {
+            if (val <= pre) {
+              return false;
+            }
+          }
+        } else {
+          if (val % 2 != 0) {
+            return false;
+          }
+
+          if (pre != null) {
+            if (val >= pre) {
+              return false;
+            }
+          }
+        }
+        pre = val;
+
+        if (node.left != null) {
+          queue.offer(node.left);
+        }
+
+        if (node.right != null) {
+          queue.offer(node.right);
+        }
+      }
+
+      level++;
+    }
+
+    return true;
+  }
+}
+```
