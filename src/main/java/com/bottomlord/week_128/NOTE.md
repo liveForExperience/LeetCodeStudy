@@ -572,3 +572,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1957_删除字符使字符串变好](https://leetcode-cn.com/problems/delete-characters-to-make-fancy-string/)
+## 解法
+### 思路
+遍历+模拟
+### 代码
+```java
+class Solution {
+    public String makeFancyString(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            sb.append(c);
+            int count = 0;
+            while (i + 1 < s.length() && c == s.charAt(i + 1)) {
+                count++;
+                if (count < 2) {
+                    sb.append(c);
+                }
+                i++;
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
