@@ -598,3 +598,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_Bigram分词](https://leetcode-cn.com/problems/occurrences-after-bigram/)
+## 解法
+### 思路
+遍历字符串，判断是否连续2个字符都是匹配的，如果是，就把第三个记录下来
+### 代码
+```java
+class Solution {
+    public String[] findOcurrences(String text, String first, String second) {
+        String[] strs = text.split(" ");
+        List<String> ans = new ArrayList<>();
+        for (int i = 0; i < strs.length - 2; i++) {
+            if (Objects.equals(strs[i], first) &&
+            Objects.equals(strs[i + 1], second)) {
+                ans.add(strs[i + 2]);
+            }
+        }
+        
+        return ans.toArray(new String[0]);
+    }
+}
+```
