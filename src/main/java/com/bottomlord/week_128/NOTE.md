@@ -434,14 +434,6 @@ class Solution {
     }
 }
 ```
-# [LeetCode_28_实现strStr](https://leetcode-cn.com/problems/implement-strstr/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_1705_吃苹果的最大数目](https://leetcode-cn.com/problems/maximum-number-of-eaten-apples/)
 ## 解法
 ### 思路
