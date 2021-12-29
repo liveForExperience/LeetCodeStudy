@@ -231,3 +231,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1995_3](https://leetcode-cn.com/problems/count-special-quadruplets/)
+## 解法
+### 思路
+动态规划：
+- `dp[i][j][k]`：前i个数字中，总和为j，参与个数为k的情况下的可能数
+- base case：dp[0][0][0] = 1，代表没有元素参与，总数为0，参与个数为0的情况下，可能数为1
+- 状态转移方程：
+  - `dp[i][j][k] = dp[i - 1][j][k] + dp[i - 1][j - 1][k - 1]`
+  - 代表的含义：
+    - 当`nums[i-1]`不参与到可能性判断中时候，可能数就是`dp[i - 1][j][k]`，
+    - 当`nums[i-1]`参与到可能性判断中时候，可能数就是`dp[i - 1][j - 1][k - 1]`
+    - 它们两者的和就是总可能数
+- 这里j的总和就是400，k就是3，而i的范围就是从4到n
+### 代码
+```java
+class Solution {
+    public int countQuadruplets(int[] nums) {
+        int n = nums.length;
+        int[][][] dp = new int[n][401][4];
+        dp[0][0][0] = 1;
+        for (int i = 1; i < n; i++) {
+            int num = nums[i - 1];
+            for (int j = 0; j < 401; j++) {
+                for (int k = 0; k < 4; k++) {
+                    dp[i][j][k] += dp[i - 1][j][k];
+                    if (j - num >= 0 && k - 1 >= 0) {
+                        dp[i][j][k] += dp[i - 1][j - num][k - 1];
+                    }
+                }
+            }
+        }
+
+        int count = 0;
+        for (int i = 3; i < n; i++) {
+            count += dp[i][nums[i]][3];
+        }
+        return count;
+    }
+}
+```
