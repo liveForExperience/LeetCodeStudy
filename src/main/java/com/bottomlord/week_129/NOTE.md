@@ -202,3 +202,32 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 四个数字之间的关系可以整理成`nums[a] + nums[b] = nums[d] - nums[c]`
+- 通过一次二层嵌套的for循环生成`nums[a] + nums[b]`，对值进行计数
+- 再通过一次二层嵌套for循环，匹配是否存在对应的值，累加计数值
+- 但如果按照如上的方式处理，无法保证b和c之间的前后顺序关系，从而使得结果变多
+- 所以需要将2个for循环再合并在一起
+  - 外层确定b的位置
+  - 内层第一个循环，确定a并记录count值
+  - 内层第二个循环，确定c和d，c为b+1，遍历允许范围内的d，然后在统计数组中找count值
+### 代码
+```java
+class Solution {
+    public int countQuadruplets(int[] nums) {
+        int[] arr = new int[10000];
+        int n = nums.length, count = 0;
+        for (int b = 1; b < n - 2; b++) {
+            for (int a = 0; a < b; a++) {
+                arr[nums[a] + nums[b] + 200]++;
+            }
+
+            for (int d = b + 2; d < n; d++) {
+                count += arr[nums[d] - nums[b + 1] + 200];
+            }
+        }
+        return count;
+    }
+}
+```
