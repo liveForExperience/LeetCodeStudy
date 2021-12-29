@@ -176,3 +176,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1995_统计特殊四元组](https://leetcode-cn.com/problems/count-special-quadruplets/)
+## 解法
+### 思路
+- 排序
+- 暴力穷举
+### 代码
+```java
+class Solution {
+    public int countQuadruplets(int[] nums) {
+        int count = 0;
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                for (int k = j + 1; k < nums.length; k++) {
+                    for (int l = k + 1; l < nums.length; l++) {
+                        int sum = nums[i] + nums[j] + nums[k];
+                        if (sum == nums[l]) {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        return count;
+    }
+}
+```
