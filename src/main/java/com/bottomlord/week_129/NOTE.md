@@ -271,3 +271,67 @@ class Solution {
     }
 }
 ```
+# [LeetCode_846_一手顺子](https://leetcode-cn.com/problems/hand-of-straights/)
+## 解法
+### 思路
+- 首先数组长度需要被`groupSize`整除
+- 因为需要所有组都是顺子，所以可以对数组进行桶排序
+- 然后遍历桶，将桶中元素依次放入优先级队列中
+- 每次从队列中找出`groupSize`个元素
+- 判断这些元素是否是有顺序的，如果没有就返回false，如果有，就对元素对应的个数依次减一，并剔除掉个数为0的
+- 数组桶排序会超出内存限制，换成map统计
+### 代码
+```java
+class Solution {
+    public boolean isNStraightHand(int[] hand, int groupSize) {
+        int n = hand.length;
+        if (n == 0) {
+            return true;
+        }
+
+        if (n % groupSize != 0) {
+            return false;
+        }
+
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : hand) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        
+
+        PriorityQueue<int[]> queue = new PriorityQueue<>(Comparator.comparingInt(x -> x[0]));
+        for (Integer num : map.keySet()) {
+            queue.offer(new int[]{num, map.get(num)});
+        }
+
+        while (!queue.isEmpty()) {
+            int count = groupSize;
+            Integer pre = null;
+            List<int[]> toAdd = new ArrayList<>();
+            while (count-- > 0) {
+                if (queue.isEmpty()) {
+                    return false;
+                }
+
+                int[] arr = queue.poll();
+                if (pre != null && arr[0] - 1 != pre) {
+                    return false;
+                }
+
+                pre = arr[0];
+                arr[1]--;
+
+                if (arr[1] != 0) {
+                    toAdd.add(arr);
+                }
+            }
+
+            for (int[] arr : toAdd) {
+                queue.offer(arr);
+            }
+        }
+
+        return true;
+    }
+}
+```
