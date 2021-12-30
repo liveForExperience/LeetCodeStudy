@@ -1,11 +1,111 @@
 # [LeetCode_28_实现strStr()](https://leetcode-cn.com/problems/implement-strstr/)
 ## 解法
 ### 思路
-kmp：
-
+String的indexOf函数
 ### 代码
 ```java
+class Solution {
+    public int strStr(String haystack, String needle) {
+        return haystack.indexOf(needle);
+    }
+}
+```
+## 解法二
+### 思路
+2层循环比较
+### 代码
+```java
+class Solution {
+    public int strStr(String haystack, String needle) {
+        int lenH = haystack.length(), lenN = needle.length();
+        if (lenN == 0) {
+            return 0;
+        }
+        
+        if (lenN > lenH) {
+            return -1;
+        }
+        
+        if (lenN == lenH) {
+            return Objects.equals(haystack, needle) ? 0 : -1;
+        }
+        
+        for (int i = 0; i < lenH - lenN + 1; i++) {
+            boolean flag = true;
+            for (int j = 0; j < lenN; j++) {
+                if (haystack.charAt(i + j) != needle.charAt(j)) {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if (flag) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
+## 解法三
+### 思路
+- 生成模式串的字符串hash值
+- 遍历字符串
+- 生成第一段字符串的hash值
+- 然后每次移动一个字符，加上对应的字符hash值，减去最高位的字符串hash值
+- 循环往复的比较
+### 代码
+```java
+class Solution {
 
+    private final long pow = 31;
+
+    public int strStr(String haystack, String needle) {
+        int lenH = haystack.length(), lenN = needle.length();
+        if (lenN == 0) {
+            return 0;
+        }
+
+        if (lenN > lenH) {
+            return -1;
+        }
+
+        if (lenN == lenH) {
+            return Objects.equals(haystack, needle) ? 0 : -1;
+        }
+
+        long hashN = getStrHash(needle),
+             hashH = getStrHash(haystack.substring(0, lenN));
+
+        if (hashH == hashN) {
+            return 0;
+        }
+
+        long base = 1;
+        for (int i = 0; i < lenN - 1; i++) {
+            base *= pow;
+        }
+
+        for (int i = lenN; i < lenH; i++) {
+            hashH = (hashH - ((haystack.charAt(i - lenN) - 'a' + 1) * base)) * pow + (haystack.charAt(i) - 'a' + 1);
+            if (hashH == hashN) {
+                return i - lenN + 1;
+            }
+        }
+
+        return -1;
+    }
+
+    private long getStrHash(String str) {
+        long num = 0;
+        char[] cs = str.toCharArray();
+        for (char c : cs) {
+            num = num * pow + (c - 'a' + 1);
+        }
+        return num;
+    }
+}
 ```
 # [LeetCode_825_适龄的朋友](https://leetcode-cn.com/problems/friends-of-appropriate-ages/)
 ## 失败解法
