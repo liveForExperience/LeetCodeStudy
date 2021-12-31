@@ -435,3 +435,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1961_检查字符串是否为数组前缀](https://leetcode-cn.com/problems/check-if-string-is-a-prefix-of-array/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_507_完美数](https://leetcode-cn.com/problems/perfect-number/)
+## 解法
+### 思路
+- 遍历1到n的平方根，找出正因数
+- 累加正因数和能被整除的另一个正因数
+- 遍历结束后减去自身，自身是num和1相除得到的
+- 判断是否是完美数并返回
+### 代码
+```java
+class Solution {
+    public boolean checkPerfectNumber(int num) {
+        int n = (int) Math.sqrt(num) + 1;
+        int sum = 0;
+        for (int i = 1; i < n; i++) {
+            if (num % i == 0) {
+                sum += i;
+                sum += num / i == i ? 0 : num / i;
+            }
+        }
+ 
+        return sum - num == num;
+    }
+}
+```
