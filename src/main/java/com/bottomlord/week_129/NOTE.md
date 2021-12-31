@@ -438,10 +438,25 @@ class Solution {
 # [LeetCode_1961_检查字符串是否为数组前缀](https://leetcode-cn.com/problems/check-if-string-is-a-prefix-of-array/)
 ## 解法
 ### 思路
-
+- 初始化StringBuilder对象，用于存放临时字符串
+- 遍历字符串数组words
+- 循环逻辑中，将当前遍历到的字符串追加到sb中，并与s进行一次比较，如果相等就直接返回true
+- 遍历结束如果还没有返回，则代表不是数组前缀，返回false
 ### 代码
 ```java
-
+class Solution {
+    public boolean isPrefixString(String s, String[] words) {
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            sb.append(word);
+            if (Objects.equals(sb.toString(), s)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
 ```
 # [LeetCode_507_完美数](https://leetcode-cn.com/problems/perfect-number/)
 ## 解法
