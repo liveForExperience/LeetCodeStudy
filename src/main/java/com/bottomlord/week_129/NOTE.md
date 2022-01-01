@@ -482,3 +482,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1967_作为子字符串出现在单词中的字符串数目](https://leetcode-cn.com/problems/number-of-strings-that-appear-as-substrings-in-word/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_2022_将一维数组转变成二维数组](https://leetcode-cn.com/problems/convert-1d-array-into-2d-array/)
+## 解法
+### 思路
+- 根据m和n初始化二维数组
+- 遍历m和n，m作为外层循环次数，n作为内层循环次数
+- 遍历结束后返回结果
+- 需要先确定m*n与数组长度是否相等，如果不相等就返回空数组
+### 代码
+```java
+class Solution {
+    public int[][] construct2DArray(int[] original, int m, int n) {
+        if (original.length != m * n) {
+            return new int[0][0];
+        }
+        
+        int[][] arr = new int[m][n];
+        int index = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                arr[i][j] = original[index++];
+            }
+        }
+        
+        return arr;
+    }
+}
+```
