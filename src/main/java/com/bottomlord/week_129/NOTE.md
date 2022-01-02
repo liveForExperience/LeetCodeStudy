@@ -485,10 +485,52 @@ class Solution {
 # [LeetCode_1967_作为子字符串出现在单词中的字符串数目](https://leetcode-cn.com/problems/number-of-strings-that-appear-as-substrings-in-word/)
 ## 解法
 ### 思路
-
+使用String的contains方法判断是否存在，然后循环判断和累加，循环结束后返回计数值
 ### 代码
 ```java
+class Solution {
+  public int numOfStrings(String[] patterns, String word) {
+    int count = 0;
+    for (String pattern : patterns) {
+      count += word.contains(pattern) ? 1 : 0;
+    }
+    return count;
+  }
+}
+```
+## 解法二
+### 思路
+暴力2层循环
+### 代码
+```java
+class Solution {
+  public int numOfStrings(String[] patterns, String word) {
+    int count = 0;
+    for (String pattern : patterns) {
+      if (pattern.length() > word.length()) {
+        continue;
+      }
 
+      boolean flag = false;
+      for (int i = 0; i < word.length() - pattern.length() + 1; i++) {
+        if (word.charAt(i) != pattern.charAt(0)) {
+          continue;
+        }
+
+        if (word.startsWith(pattern, i)) {
+          flag = true;
+          break;
+        }
+      }
+
+      if (flag) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+}
 ```
 # [LeetCode_2022_将一维数组转变成二维数组](https://leetcode-cn.com/problems/convert-1d-array-into-2d-array/)
 ## 解法
@@ -514,6 +556,37 @@ class Solution {
         }
         
         return arr;
+    }
+}
+```
+# [LeetCode_390_消除游戏](https://leetcode-cn.com/problems/elimination-game/)
+## 解法
+### 思路
+- 题目的要求是求最后剩下的数，当最后只剩下1个数的时候，这个数也是那次处理时候的第一个数，所以其实就是在确定每次处理的第一个数的同时，确定是否只剩下一个数
+- 只剩下一个数比较好求，每次跳一个删除，会导致要么删掉一半（长度是偶数的时候），要么删掉一半多1个（奇数的时候），所以每次n/2就可以了
+- 起始数字head，要确定，就要看每次删除数字的时候，会不会把原来的数字删掉，如果删掉，新的head和原来的数差多少
+  - 会不会把原来的数字删掉，起始要看2种情况
+    - 如果是向右删除，一定会删掉原来的起始
+    - 如果是向左边删除，那么剩下的数字是偶数个，不会删掉，奇数个会删掉
+  - 差多少数字，通过观察可以发现，每次删掉以后，2个数之间的差值会以2的幂变化，1，2，4，8这样
+    - 所以这个差距也可以在每次处理的时候，通过*2来维护
+- 最后就是找到剩下值为1的情况时，head是多少找到即可，也就是不断地循环，n /= 2，当n == 1的时候返回head
+### 代码
+```java
+class Solution {
+    public int lastRemaining(int n) {
+        boolean left = true;
+        int head = 1, step = 1;
+        while (n > 1) {
+            if (left || n % 2 == 1) {
+                head += step;
+            }
+            step <<= 1;
+            n >>= 1;
+            left = !left;
+        }
+        
+        return head;
     }
 }
 ```
