@@ -590,3 +590,87 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1971_寻找图中是否存在路径](https://leetcode-cn.com/problems/find-if-path-exists-in-graph/)
+## 失败解法
+### 原因
+超时
+### 思路
+dfs + memo
+### 代码
+```java
+class Solution {
+    public boolean validPath(int n, int[][] edges, int start, int end) {
+        Map<Integer, List<Integer>> mapping = new HashMap<>();
+        for (int[] edge : edges) {
+            mapping.computeIfAbsent(edge[0], x -> new ArrayList<>()).add(edge[1]);
+            mapping.computeIfAbsent(edge[1], x -> new ArrayList<>()).add(edge[0]);
+        }
+
+        return dfs(start, end, mapping, new boolean[n]);
+    }
+
+    private boolean dfs(int start, int end, Map<Integer, List<Integer>> mapping, boolean[] memo) {
+        if (memo[start]) {
+            return false;
+        }
+
+        memo[start] = true;
+
+        if (start == end) {
+            return true;
+        }
+
+        if (!mapping.containsKey(start)) {
+            return false;
+        }
+
+        for (Integer next : mapping.get(start)) {
+            boolean result = dfs(next, end, mapping, memo);
+            if (result) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+并查集
+### 代码
+```java
+class Solution {
+    public boolean validPath(int n, int[][] edges, int start, int end) {
+        Dsu dsu = new Dsu(n);
+        for (int[] edge : edges) {
+            dsu.union(edge[0], edge[1]);
+        }
+        
+        return dsu.find(start) == dsu.find(end);
+    }
+
+    private class Dsu {
+        private int[] parent;
+
+        public Dsu(int n) {
+            this.parent = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+        }
+
+        public int find(int x) {
+            if (parent[x] != x) {
+                parent[x] = find(parent[x]);
+            }
+
+            return parent[x];
+        }
+
+        public void union(int x, int y) {
+            parent[find(x)] = find(y);
+        }
+    }
+}
+```
