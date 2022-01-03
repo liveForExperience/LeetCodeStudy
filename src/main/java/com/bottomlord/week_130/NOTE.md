@@ -34,3 +34,30 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1974_使用特殊打字机键入单词的最少时间](https://leetcode-cn.com/problems/minimum-time-to-type-word-using-special-typewriter/)
+## 解法
+### 思路
+- 从a出发，判断正向或者逆向，那个方向的距离最近
+- 每次都选最小的距离累加
+- 遍历结束，返回结果
+### 代码
+```java
+class Solution {
+    public int minTimeToType(String word) {
+        int start = 0, ans = 0;
+        char[] cs = word.toCharArray();
+        for (char c : cs) {
+            ans++;
+            int index = c - 'a';
+            if (index > start) {
+                ans += Math.min(index - start, start + 26 - index);
+            } else if (index < start) {
+                ans += Math.min(start - index, index + 26 - start);
+            }
+            start = c - 'a';
+        }
+
+        return ans;
+    }
+}
+```
