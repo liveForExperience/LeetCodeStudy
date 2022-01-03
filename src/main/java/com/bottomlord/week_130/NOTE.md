@@ -61,3 +61,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1979_找出数组的最大公约数](https://leetcode-cn.com/problems/find-greatest-common-divisor-of-array/)
+## 解法
+### 思路
+- 遍历求最大值和最小值
+- 对最大和最小值求最大公约数，公式`y == 0 ? x : gcd(y, x % y)`
+### 代码
+```java
+class Solution {
+    public int findGCD(int[] nums) {
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int num : nums) {
+            min = Math.min(min, num);
+            max = Math.max(max, num);
+        }
+
+        return gcd(max, min);
+    }
+
+    private int gcd(int x, int y) {
+        return y == 0 ? x : gcd(y, x % y);
+    }
+}
+```
