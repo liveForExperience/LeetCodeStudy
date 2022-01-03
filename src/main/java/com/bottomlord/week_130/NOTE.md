@@ -84,3 +84,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1984_学生分数的最小差值](https://leetcode-cn.com/problems/minimum-difference-between-highest-and-lowest-of-k-scores/)
+## 解法
+### 思路
+- 排序
+- 比较k长度的子数组中头尾元素的差，记录最小值
+- 遍历结束，返回最小值
+### 代码
+```java
+class Solution {
+    public int minimumDifference(int[] nums, int k) {
+        Arrays.sort(nums);
+        int ans = Integer.MAX_VALUE, n = nums.length;
+        for (int i = 0; i < n - k + 1; i++) {
+            ans = Math.min(ans, nums[i + k - 1] - nums[i]);
+        }
+        return ans;
+    }
+}
+```
