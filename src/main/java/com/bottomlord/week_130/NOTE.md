@@ -103,3 +103,95 @@ class Solution {
     }
 }
 ```
+# [LeetCode_913_猫和老鼠](https://leetcode-cn.com/problems/cat-and-mouse/)
+## 解法
+### 思路
+状态转移方程：
+- `dp[mouse][cat][turn]`:表示当老鼠在mouse节点，猫在cat节点，且游戏已经进行了turn轮开始，猫和老鼠可能的游戏结果
+- 状态边界：
+  - mouse为0，则老鼠胜利，值为1
+  - mouse == cat，则猫胜利，值为2
+  - turn >= 2n，说明之后老鼠和猫都必定会走到重复的节点，值必定是0
+- 因为是老鼠先移动，再由猫开始移动，所以可以通过turn的奇偶性来判断当前的玩家是谁
+  - 偶数是老鼠
+  - 奇数是猫
+- 老鼠移动时候：
+  - 如果存在一个可以移动的节点，能够使老鼠获得1的值，说明当前状态是老鼠必胜的状态，因为老鼠选择的是最优解
+  - 如果老鼠到不了值为2的点，但存在一个能够使老鼠获得0的值，那么说明当前是老鼠的必和状态
+  - 如果如上两种值都到达不了，那说明当前状态就是老鼠的必败状态
+- 猫移动的时候：
+  - 如果存在一个可以移动的节点，能够使猫获得2的值，说明当前状态是猫必胜的状态，因为猫选择的是最优解
+  - 如果猫到不了值为2的点，但存在一个能够使猫获得0的值，那么说明当前是猫的必和状态
+  - 如果如上两种值都到达不了，那说明当前状态就是猫的必败状态
+- 初始化一个3维数组，用于存储dp方程的状态，并赋值-1
+- 从`dp[1][2][0]`开始填充dp数组
+- 如果当前mouse为0，则值为1；如果当前cat和mouse值一样，则值为2，否则就继续基于图进一步搜索
+- 进一步搜索就是dfs，遍历图中的下一个顶点
+  - 如果返回的结果是必胜则直接停止搜索，返回结果
+  - 如果返回的结果是必和则赋值后继续搜索
+  - 如果返回的结果是必败则继续搜索
+### 代码
+```java
+class Solution {
+    private int[][] graph;
+    private int[][][] dp;
+    private int n;
+
+    public int catMouseGame(int[][] graph) {
+        this.n = graph.length;
+        this.graph = graph;
+        this.dp = new int[n][n][2 * n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                Arrays.fill(dp[i][j], -1);
+            }
+        }
+
+        return getResult(1, 2, 0);
+    }
+
+    private int getResult(int mouse, int cat, int turn) {
+        if (turn == 2 * n) {
+            return 0;
+        }
+
+        if (dp[mouse][cat][turn] < 0) {
+            if (mouse == 0) {
+                dp[mouse][cat][turn] = 1;
+            } else if (mouse == cat) {
+                dp[mouse][cat][turn] = 2;
+            } else {
+                getNextResult(mouse, cat, turn);
+            }
+        }
+
+        return dp[mouse][cat][turn];
+    }
+
+    private void getNextResult(int mouse, int cat, int turn) {
+        int curMove = turn % 2 == 0 ? mouse : cat;
+        int defaultResult = curMove == mouse ? 2 : 1;
+        int result = defaultResult;
+
+        for (int next : graph[curMove]) {
+            if (curMove == cat && next == 0) {
+                continue;
+            }
+
+            int nextMouse = curMove == mouse ? next : mouse;
+            int nextCat = curMove == cat ? next : cat;
+            int nextResult = getResult(nextMouse, nextCat, turn + 1);
+
+            if (nextResult != defaultResult) {
+                result = nextResult;
+                if (result != 0) {
+                    break;
+                }
+            }
+        }
+
+        dp[mouse][cat][turn] = result;
+    }
+}
+```
