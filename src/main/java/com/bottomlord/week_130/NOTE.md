@@ -297,3 +297,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2000_反转单词前缀](https://leetcode-cn.com/problems/reverse-prefix-of-word/)
+## 解法
+### 思路
+- 遍历字符串，找到匹配的第一个字符的坐标
+- 如果没找到就直接返回word
+- 遍历0到index / 2范围内的字符串，将这些字符与`index - i`的字符进行互换
+### 代码
+```java
+class Solution {
+    public String reversePrefix(String word, char ch) {
+        int index = findIndex(word, ch);
+        if (index == -1) {
+            return word;
+        }
+        char[] cs = word.toCharArray();
+        int n = index / 2;
+        for (int i = 0; i <= n; i++) {
+            char c = cs[i];
+            cs[i] = cs[index - i];
+            cs[index - i] = c;
+        }
+        
+        return new String(cs);
+    }
+
+    private int findIndex(String word, char c) {
+        char[] cs = word.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] == c) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+}
+```
