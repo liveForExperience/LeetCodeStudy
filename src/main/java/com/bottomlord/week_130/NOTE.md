@@ -414,7 +414,7 @@ class Solution {
   }
 }
 ```
-# [LeetCode_2011_执行操作后的变量值]()
+# [LeetCode_2011_执行操作后的变量值](https://leetcode-cn.com/problems/final-value-of-variable-after-performing-operations/)
 ## 解法
 ### 思路
 - map存储操作符和数值之间的关系
@@ -435,6 +435,33 @@ class Solution {
             count += mapping.get(operation);
         }
         return count;
+    }
+}
+```
+# [LeetCode_2016_增量元素之间的最大差值](https://leetcode-cn.com/problems/maximum-difference-between-increasing-elements/)
+## 解法
+### 思路
+- 初始化最大差值为-1，因为差值不会为负，且未找到正好返回-1
+- 遍历数值
+- 记录并更新最小值
+- 比较看是否比最小值大
+  - 如果是，就更新差值
+  - 如果不是，就跳过
+- 遍历结束，返回最大差值
+### 代码
+```java
+class Solution {
+    public int maximumDifference(int[] nums) {
+        int max = -1, min = nums[0], n = nums.length;
+        for (int i = 1; i < n; i++) {
+            if (nums[i] <= min) {
+                min = nums[i];
+                continue;
+            }
+            
+            max = Math.max(max, nums[i] - min);
+        }
+        return max;
     }
 }
 ```
