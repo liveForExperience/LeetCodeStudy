@@ -380,3 +380,61 @@ class Solution {
   }
 }
 ```
+# [LeetCode_71_简化路径](https://leetcode-cn.com/problems/simplify-path/)
+## 解法
+### 思路
+栈
+### 代码
+```java
+class Solution {
+  public String simplifyPath(String path) {
+    String[] arr = path.split("/");
+    Stack<String> stack = new Stack<>();
+
+    for (String s : arr) {
+      if (Objects.equals("", s) || Objects.equals(".", s)) {
+        continue;
+      }
+
+      if (Objects.equals("..", s)) {
+        if (!stack.isEmpty()) {
+          stack.pop();
+        }
+        continue;
+      }
+
+      stack.push(s);
+    }
+
+    if (stack.isEmpty()) {
+      return "/";
+    }
+
+    return "/" + String.join("/", stack);
+  }
+}
+```
+# [LeetCode_2011_执行操作后的变量值]()
+## 解法
+### 思路
+- map存储操作符和数值之间的关系
+- 遍历操作符数组，累加映射的数值
+- 遍历结束后返回累加后的数值
+### 代码
+```java
+class Solution {
+    public int finalValueAfterOperations(String[] operations) {
+        Map<String, Integer> mapping = new HashMap<>();
+        mapping.put("X++", 1);
+        mapping.put("++X", 1);
+        mapping.put("X--", -1);
+        mapping.put("--X", -1);
+        
+        int count = 0;
+        for (String operation : operations) {
+            count += mapping.get(operation);
+        }
+        return count;
+    }
+}
+```
