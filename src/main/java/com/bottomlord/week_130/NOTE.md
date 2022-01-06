@@ -334,3 +334,49 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2006_差的绝对值为K的数对数目](https://leetcode-cn.com/problems/count-number-of-pairs-with-absolute-difference-k/)
+## 解法
+### 思路
+暴力循环
+### 代码
+```java
+class Solution {
+  public int countKDifference(int[] nums, int k) {
+    int n = nums.length, count = 0;
+    for (int i = 0; i < n; i++) {
+      for (int j = i + 1; j < n; j++) {
+        if (Math.abs(nums[i] - nums[j]) == k) {
+          count++;
+        }
+      }
+    }
+
+    return count;
+  }
+}
+```
+## 解法二
+### 思路
+哈希表
+- 因为要求是`i < j` 且 `|nums[i] - nums[j]| = k`，那么细想可以得到
+- 其实题目允许满足`nums[j] - nums[i] = k`或者`nums[i] - nums[j] = k`中的任意一种即可，那么前后顺序就可以不用考虑了，因为i和j的位置可以互换
+- 又因为k不等于0，所以nums[i]和nums[j]相等的情况也可以省略
+- 所以只需要统计nums中元素出现的个数，然后再遍历一遍nums数组，找到 num + k 的值出现的个数即可
+### 代码
+```java
+class Solution {
+  public int countKDifference(int[] nums, int k) {
+    int[] bucket = new int[201];
+    int count = 0;
+    for (int num : nums) {
+      bucket[num]++;
+    }
+
+    for (int num : nums) {
+      count += bucket[num + k];
+    }
+
+    return count;
+  }
+}
+```
