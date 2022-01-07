@@ -465,3 +465,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1614_括号的最大嵌套深度](https://leetcode-cn.com/problems/maximum-nesting-depth-of-the-parentheses/)
+## 解法
+### 思路
+- 遍历字符串
+- 遇到左括号就累加，然后更新最大值
+  - 直接可以累加，是因为题目保证了只存在有效括号
+- 遇到右括号就累减
+### 代码
+```java
+class Solution {
+    public int maxDepth(String s) {
+        int count = 0, ans = 0;
+        char[] cs = s.toCharArray();
+        for (char c : cs) {
+            if (c == '(') {
+                count++;
+                ans = Math.max(ans, count);
+            }
+            
+            if (c == ')') {
+                count--;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
