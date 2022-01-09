@@ -560,3 +560,31 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1629_按键持续时间最长的键](https://leetcode-cn.com/problems/slowest-key/)
+## 解法
+### 思路
+- 桶计数
+- 遍历记录间隔时间最大值
+- 遍历桶，找到最大值对应的字符
+### 代码
+```java
+class Solution {
+    public char slowestKey(int[] releaseTimes, String keysPressed) {
+        int[] bucket = new int[26];
+        int max = 0;
+        char[] cs = keysPressed.toCharArray();
+        for (int i = 0; i < releaseTimes.length; i++) {
+            bucket[cs[i] - 'a'] = Math.max(i == 0 ? releaseTimes[i] : releaseTimes[i] - releaseTimes[i - 1], bucket[cs[i] - 'a']);
+            max = Math.max(max, bucket[cs[i] - 'a']);
+        }
+
+        for (int i = 25; i >= 0; i--) {
+            if (bucket[i] == max) {
+                return (char) (i + 'a');
+            }
+        }
+
+        return ' ';
+    }
+}
+```
