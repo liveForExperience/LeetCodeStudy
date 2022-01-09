@@ -588,3 +588,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_89_格雷编码](https://leetcode-cn.com/problems/gray-code/)
+## 解法
+### 思路
+[图解](https://leetcode-cn.com/problems/gray-code/solution/gray-code-jing-xiang-fan-she-fa-by-jyd/)
+### 代码
+```java
+class Solution {
+    public List<Integer> grayCode(int n) {
+        int head = 1;
+        List<Integer> ans = new ArrayList<>();
+        ans.add(0);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = ans.size() - 1; j >= 0; j--) {
+                ans.add(head + ans.get(j));
+            }
+            head <<= 1;
+        }
+
+        return ans;
+    }
+}
+```
