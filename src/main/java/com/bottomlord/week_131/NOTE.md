@@ -70,3 +70,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2037_使每位学生都有座位的最少移动次数](https://leetcode-cn.com/problems/minimum-number-of-moves-to-seat-everyone/)
+## 解法
+### 思路
+- 分别对两个数组排序
+- 遍历两个数组，累加差值
+### 代码
+```java
+class Solution {
+    public int minMovesToSeat(int[] seats, int[] students) {
+        Arrays.sort(seats);
+        Arrays.sort(students);
+        int sum = 0;
+        for (int i = 0; i < seats.length; i++) {
+            sum += Math.abs(seats[i] - students[i]);
+        }
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+自己实现排序
+### 代码
+```java
+
+```
