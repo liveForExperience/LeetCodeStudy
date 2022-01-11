@@ -307,3 +307,61 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2053_数组中第K个独一无二的字符串](https://leetcode-cn.com/problems/kth-distinct-string-in-an-array/)
+## 解法
+### 思路
+- 遍历字符串数组，使用map记录当前字符串的出现个数
+- 再次遍历字符串数组，判断当前字符串是否是独一无二的，并根据k找到指定的字符串
+### 代码
+```java
+class Solution {
+    public String kthDistinct(String[] arr, int k) {
+        Map<String, Integer> map = new HashMap<>();
+        for (String s : arr) {
+            map.put(s, map.getOrDefault(s, 0) + 1);
+        }
+        
+        int count = 0;
+        for (String s : arr) {
+            if (map.get(s) == 1) {
+                count++;
+            }
+            
+            if (count == k) {
+                return s;
+            }
+        }
+        
+        return "";
+    }
+}
+```
+## 解法二
+### 思路
+使用2个set来替代解法一中的map
+### 代码
+```java
+class Solution {
+    public String kthDistinct(String[] arr, int k) {
+        Set<String> set = new HashSet<>(), notOnlyOne = new HashSet<>();
+        for (String s : arr) {
+            if (!set.add(s)) {
+                notOnlyOne.add(s);
+            }
+        }
+
+        int count = 0;
+        for (String s : arr) {
+            if (notOnlyOne.contains(s)) {
+                continue;
+            }
+            
+            if (k == ++count) {
+                return s;
+            }
+        }
+        
+        return "";
+    }
+}
+```
