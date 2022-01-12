@@ -365,3 +365,78 @@ class Solution {
     }
 }
 ```
+# [LeetCode_334_递增的三元子序列](https://leetcode-cn.com/problems/increasing-triplet-subsequence/)
+## 失败解法
+### 原因
+超时，O(N^2)
+### 思路
+最长上升子序列
+- 维护一个数组arr，arr中记录原数组中以坐标i元素为结尾的最长子序列长度
+- 维护这个arr的过程，就是遍历数组，然后将当前元素与前置元素比较，并判断当前最长序列值的过程
+### 代码
+```java
+class Solution {
+    public boolean increasingTriplet(int[] nums) {
+        int n = nums.length;
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1);
+        int max = 1;
+        for (int i = 1; i < n; i++) {
+            int curMax = dp[i];
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    curMax = Math.max(curMax, dp[j] + 1);
+                }
+            }
+            dp[i] = curMax;
+            max = Math.max(curMax, max);
+            if (max >= 3) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```
+## 解法
+### 思路
+- 在解法一的基础上，增加一个数组f，用来记录所有对应下标长度的元素，最小值是多少
+- 根据题意可以推测输出，这个数组f中的元素也一定是保持单调递增的，原因是
+  - 假设，有`i < j`，且`f[i] == f[j] = x`，那么如果将j去除后半部分的元素，使之长度与i相等，那么`f[j]`的值必然小于x，则这种情况不成立
+  - 同样的，如果`f[i] > f[j] = x`，那么缩短j之后，必然也能找到一个新的值更新`f[i]`，所以也不成立
+- 遍历数组，获取到待确认的数值`nums[i]`
+- 从1到当前坐标+1（代表字符串长度）的区间中做二分查找，查找的对象是f数组
+- 二分查找的过程就是确定，比当前值小的元素中最大的元素的位置，这个位置就是长度
+- 如果找到大于3的值就返回true，否则遍历结束，返回false
+### 代码
+```java
+class Solution {
+    public boolean increasingTriplet(int[] nums) {
+        int n = nums.length, max = 1;
+        int[] f = new int[n + 1];
+        Arrays.fill(f, Integer.MAX_VALUE);
+        for (int i = 0; i < nums.length; i++) {
+            int num = nums[i];
+            int l = 1, r = i + 1;
+            while (l < r) {
+                int mid = l + r >> 1;
+                if (f[mid] >= num) {
+                    r = mid;
+                } else {
+                    l = mid + 1;
+                }
+            }
+            
+            f[r] = num;
+            max = Math.max(max, r);
+            
+            if (max >= 3) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
