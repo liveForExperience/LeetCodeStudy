@@ -493,3 +493,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2062_统计字符串中的元音子字符串](https://leetcode-cn.com/problems/count-vowel-substrings-of-a-string/)
+## 解法
+### 思路
+- 外层遍历字符串，找到元音子字符串的起始字符
+- 内层循环确定从哪个字符开始成为有效的子字符串，然后持续累加到不是元音为止
+- 累加计数值，最终返回
+### 代码
+```java
+class Solution {
+    public int countVowelSubstrings(String word) {
+        Set<Character> memo = new HashSet<>();
+        memo.add('a');
+        memo.add('e');
+        memo.add('i');
+        memo.add('o');
+        memo.add('u');
+        int n = word.length();
+        
+        int target = 1 | (1 << ('e' - 'a')) | (1 << ('i' - 'a')) | (1 << ('o' - 'a')) | (1 << ('u' - 'a')),
+            sum = 0;
+        for (int i = 0; i < n; i++) {
+            if (!memo.contains(word.charAt(i))) {
+                continue;
+            }
+            
+            int num = 0, count = 0;
+            for (int j = i; j < n; j++) {
+                if (!memo.contains(word.charAt(j))) {
+                    break;
+                }
+                
+                num |= (1 << (word.charAt(j) - 'a'));
+                
+                if (num == target) {
+                    count++;
+                }
+            }
+            
+            sum += count;
+        }
+        
+        return sum;
+    }
+}
+```
