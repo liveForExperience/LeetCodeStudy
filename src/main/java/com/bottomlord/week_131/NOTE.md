@@ -475,3 +475,21 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2057_值相等的最小索引](https://leetcode-cn.com/problems/smallest-index-with-equal-value/)
+## 解法
+### 思路
+遍历并判断
+### 代码
+```java
+class Solution {
+    public int smallestEqual(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            if (i % 10 == nums[i]) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
