@@ -440,3 +440,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_747_至少是其他数字两倍的最大数](https://leetcode-cn.com/problems/largest-number-at-least-twice-of-others/)
+## 解法
+### 思路
+- 遍历维护最大和第二大元素坐标
+- 遍历结束判断最大值是否大于等于第二大值的2倍，如果是就返回坐标，否则返回-1
+### 代码
+```java
+class Solution {
+    public int dominantIndex(int[] nums) {
+        if (nums.length < 2) {
+            return 0;
+        }
+
+        int a = nums[0], b = nums[1], maxI, secondI;
+        if (a >= b) {
+            maxI = 0;
+            secondI = 1;
+        } else {
+            maxI = 1;
+            secondI = 0;
+        }
+        for (int i = 2; i < nums.length; i++) {
+            int num = nums[i], max = nums[maxI], second = nums[secondI];
+            if (num >= max) {
+                secondI = maxI;
+                maxI = i;
+            } else if (num >= second) {
+                secondI = i;
+            }
+        }
+
+        return nums[maxI] >= 2 * nums[secondI] ? maxI : -1;
+    }
+}
+```
