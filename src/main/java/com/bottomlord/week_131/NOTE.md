@@ -577,3 +577,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2068_检查连个字符串是否几乎相等](https://leetcode-cn.com/problems/check-whether-two-strings-are-almost-equivalent/)
+## 解法
+### 思路
+- 桶计数
+- 遍历桶判断
+### 代码
+```java
+class Solution {
+    public boolean checkAlmostEquivalent(String word1, String word2) {
+        int[] bucket = new int[26];
+        for (char c : word1.toCharArray()) {
+            bucket[c - 'a']++;
+        }
+
+        for (char c : word2.toCharArray()) {
+            bucket[c - 'a']--;
+        }
+
+        for (int num : bucket) {
+            if (Math.abs(num) > 3) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
