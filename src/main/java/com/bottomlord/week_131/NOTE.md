@@ -538,3 +538,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_373_查找和最小的K对数字](https://leetcode-cn.com/problems/find-k-pairs-with-smallest-sums/)
+## 解法
+### 思路
+优先级队列
+- 和最小的组合一定是`nums1[0] + nums2[1]`
+- 初始化一个优先级队列，该队列存储结果数组，它的排序规则就是`nums1[idx1[0]] + nums2[idx1[1]] - nums1[idx2[0]] - nums2[idx2[1]]`
+- 然后将部分的数组放入到优先级队列中，例如遍历nums1[]数组，将nums1的所有下标和0组合成数组放入优先级队列
+- 然后遍历优先级队列，每次拿出一个最小的数组后，在这个数组基础上，第二个元素+1，然后放入队列中。这样可以避免通过嵌套循环产生的重复数据
+- 然后遍历到k个之后返回即可
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        PriorityQueue<int[]> queue = new PriorityQueue<>((x, y) -> nums1[x[0]] + nums2[x[1]] - nums1[y[0]] - nums2[y[1]]);
+        int len1 = nums1.length, len2 = nums2.length;
+
+        for (int i = 0; i < Math.min(len1, k); i++) {
+            queue.offer(new int[]{i, 0});
+        }
+
+        List<List<Integer>> ans = new ArrayList<>();
+        int index = 0;
+        while (!queue.isEmpty() && index++ < k) {
+            int[] idx = queue.poll();
+
+            List<Integer> list = new ArrayList<>();
+            list.add(nums1[idx[0]]);
+            list.add(nums2[idx[1]]);
+            ans.add(list);
+
+            if (idx[1] + 1 < len2) {
+                queue.offer(new int[]{idx[0], idx[1] + 1});
+            }
+        }
+
+        return ans;
+    }
+}
+```
