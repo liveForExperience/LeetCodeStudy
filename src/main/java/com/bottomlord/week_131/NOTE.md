@@ -605,3 +605,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1716_计算力扣银行的钱](https://leetcode-cn.com/problems/calculate-money-in-leetcode-bank/)
+## 解法
+### 思路
+- 根据n计算出有多少完整周
+- 计算出剩余周的多出的天数
+- 所有钱的公式：每周固定会增加21+每周第一天的累加值+剩余天数计算值
+### 代码
+```java
+class Solution {
+    public int totalMoney(int n) {
+        int week = n / 7, left = n % 7, start = 1, sum = 0;
+        for (int i = 0; i < week; i++) {
+            sum += start++ * 7 + 21;
+        }
+        
+        return sum + start * left + left * (left - 1) / 2;
+    }
+}
+```
