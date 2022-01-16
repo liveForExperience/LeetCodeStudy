@@ -649,3 +649,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2073_买票需要的时间](https://leetcode-cn.com/problems/time-needed-to-buy-tickets/)
+## 解法
+### 思路
+遍历数组并模拟买票过程
+### 代码
+```java
+class Solution {
+    public int timeRequiredToBuy(int[] tickets, int k) {
+        int ans = 0, i = 0, n = tickets.length;
+        while (tickets[k] > 0) {
+            int num = tickets[i];
+            if (num == 0) {
+                i = (i + 1) % n;
+                continue;
+            }
+            
+            tickets[i++]--;
+            ans++;
+            i %= n;
+        }
+        
+        return ans;
+    }
+}
+```
