@@ -624,3 +624,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_382_链表随机节点](https://leetcode-cn.com/problems/linked-list-random-node/)
+## 解法
+### 思路
+[题解](https://leetcode-cn.com/problems/linked-list-random-node/solution/gong-shui-san-xie-xu-shui-chi-chou-yang-1lp9d/)
+### 代码
+```java
+class Solution {
+    private ListNode head;
+    private Random random;
+    public Solution(ListNode head) {
+        this.head = head;
+        this.random = new Random();
+    }
+
+    public int getRandom() {
+        int num = 0, index = 1;
+        for (ListNode node = head; node != null; node = node.next) {
+            if (random.nextInt(index++) == 0) {
+                num = node.val;
+            }
+        }
+        return num;
+    }
+}
+```
