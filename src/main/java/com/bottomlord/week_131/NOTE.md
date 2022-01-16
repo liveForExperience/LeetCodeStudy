@@ -674,3 +674,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2078_两栋颜色不同且距离最远的房子](https://leetcode-cn.com/problems/two-furthest-houses-with-different-colors/)
+## 解法
+### 思路
+- 布尔数组记录处理过的颜色
+- 从头开始遍历数组，确定要比较的颜色后，从数组最后开始内层遍历，找到第一个不同颜色的坐标后，比较距离的最大值并暂存
+- 遍历结束后返回最大值
+### 代码
+```java
+class Solution {
+    public int maxDistance(int[] colors) {
+        int n = colors.length, max = 0;
+        boolean[] m = new boolean[101];
+        for (int i = 0; i < colors.length; i++) {
+            if (m[colors[i]]) {
+                continue;
+            }
+            
+            m[colors[i]] = true;
+            
+            for (int j = n - 1; j > i; j--) {
+                if (colors[j] != colors[i]) {
+                    max = Math.max(max, Math.abs(i - j));
+                    break;
+                }
+            }
+        }
+        
+        return max;
+    }
+}
+```
