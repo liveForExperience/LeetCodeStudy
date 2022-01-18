@@ -278,3 +278,102 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2094_找出3位整数](https://leetcode-cn.com/problems/finding-3-digit-even-numbers/)
+## 解法
+### 思路
+暴力求解
+### 代码
+```java
+class Solution {
+    public int[] findEvenNumbers(int[] digits) {
+        Arrays.sort(digits);
+        int n = digits.length;
+        Set<Integer> set = new HashSet<>();
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (digits[i] == 0) {
+                continue;
+            }
+
+            for (int j = 0; j < n; j++) {
+                if (i == j) {
+                    continue;
+                }
+
+                for (int k = 0; k < n; k++) {
+                    if (k == i || k == j) {
+                        continue;
+                    }
+
+                    if (digits[k] % 2 != 0) {
+                        continue;
+                    }
+
+                    int num = 100 * digits[i] + 10 * digits[j] + digits[k];
+                    if (set.add(num)) {
+                        ans.add(num);
+                    }
+                }
+            }
+        }
+        
+        return ans.stream().mapToInt(x -> x).toArray();
+    }
+}
+```
+## 解法二
+### 思路
+- 将数组中的数字统计到桶中
+- 初始化一个结果数组，数组长度默认为8
+- 3层遍历，每一层依次确定百十和个位，数值从小到达
+  - 百位从1开始，确定一个数，就在桶中减一，并在内层处理完后加回来
+  - 十位从0开始，和百位一样处理
+  - 个位从0开始，每次循环+2，同时也是从桶中找到数字，然后将算出来的结果放入结果数组中，如果越界，就对数组进行扩容
+- 使用一个变量记录当前累加的数字个数，在遍历结束后，将结果数组复制为数字个数长度
+### 代码
+```java
+class Solution {
+    public int[] findEvenNumbers(int[] digits) {
+        int[] bucket = new int[10];
+        for (int digit : digits) {
+            bucket[digit]++;
+        }
+
+        int[] ans = new int[8];
+        int index = 0;
+
+        for (int i = 1; i < 10; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+
+            bucket[i]--;
+            for (int j = 0; j < 10; j++) {
+                if (bucket[j] == 0) {
+                    continue;
+                }
+
+                bucket[j]--;
+
+                for (int k = 0; k < 10; k += 2) {
+                    if (bucket[k] == 0) {
+                        continue;
+                    }
+                    
+                    int num = i * 100 + j * 10 + k;
+                    if (index >= ans.length) {
+                        ans = Arrays.copyOf(ans, index << 1);
+                    }
+                    ans[index++] = num;
+                }
+                
+                bucket[j]++;
+            }
+            
+            bucket[i]++;
+        }
+
+        return Arrays.copyOf(ans, index);
+    }
+}
+```
