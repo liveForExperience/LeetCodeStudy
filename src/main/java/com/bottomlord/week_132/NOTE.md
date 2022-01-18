@@ -134,3 +134,85 @@ class Solution {
     }
 }
 ```
+# [LeetCode_539_最小时间差](https://leetcode-cn.com/problems/minimum-time-difference/)
+## 解法
+### 思路
+- 字符串转60进制数
+- 排序
+- 遍历并计算最小差值
+- 遍历结束返回
+### 代码
+```java
+class Solution {
+    public int findMinDifference(List<String> timePoints) {
+        List<Integer> list = new ArrayList<>();
+        for (String timePoint : timePoints) {
+            list.add(convert(timePoint));
+        }
+        
+        list.sort(Comparator.comparingInt(x -> x));
+
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < list.size(); i++) {
+            int next = list.get((i + 1) % list.size());
+            min = Math.min(min, (next - list.get(i) + 1440) % 1440);
+        }
+        
+        return min;
+    }
+    
+    private Integer convert(String str) {
+        String[] strs = str.split(":");
+        return Integer.parseInt(strs[0]) * 60 + Integer.parseInt(strs[1]);
+    }
+}
+```
+## 解法二
+### 思路
+桶排序
+- 初始化1440长度的桶
+- 字符串换算数值后放入对应桶坐标中
+- 遍历桶，计算差值
+### 代码
+```java
+class Solution {
+    public int findMinDifference(List<String> timePoints) {
+        int[] bucket = new int[1441];
+        for (String timePoint : timePoints) {
+            int index = convert(timePoint);
+            bucket[index]++;
+            if (bucket[index] > 1) {
+                return 0;
+            }
+        }
+        
+        int lastIndex = lastIndex(bucket), min = Integer.MAX_VALUE;
+        
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+            
+            min = Math.min(min, (i - lastIndex + 1440) % 1440);
+            lastIndex = i;
+        }
+        
+        return min;
+    }
+
+    private Integer convert(String str) {
+        String[] strs = str.split(":");
+        return Integer.parseInt(strs[0]) * 60 + Integer.parseInt(strs[1]);
+    }
+    
+    private int lastIndex(int[] bucket) {
+        for (int i = bucket.length - 1; i >= 0; i--) {
+            if (bucket[i] != 0) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
