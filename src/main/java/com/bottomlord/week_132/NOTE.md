@@ -463,3 +463,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2099_找到和最大的长度为 K 的子序列](https://leetcode-cn.com/problems/find-subsequence-of-length-k-with-the-largest-sum/)
+## 解法
+### 思路
+- 复制数组
+- 对复制数组排序
+- 遍历复制数组，找到最大的k个数字
+- 将数字放入map中计数
+- 遍历原数组，如果map中存在的，就放入结果数组中，并更新map的统计值
+- 如果统计值更新为0，则将该key删除
+- 遍历结束，返回结果数组
+### 代码
+```java
+class Solution {
+    public int[] maxSubsequence(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int[] copy = Arrays.copyOf(nums, nums.length);
+        Arrays.sort(copy);
+
+        for (int i = copy.length - 1; i >= copy.length - k; i--) {
+            int num = copy[i];
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        
+        int[] ans = new int[k];
+        int index = 0;
+        for (int num : nums) {
+            if (index == k) {
+                break;
+            }
+            
+            if (!map.containsKey(num)) {
+                continue;
+            }
+            
+            ans[index++] = num;
+            
+            map.put(num, map.get(num) - 1);
+            
+            if (map.get(num) == 0) {
+                map.remove(num);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
