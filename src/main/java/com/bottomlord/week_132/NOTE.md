@@ -510,3 +510,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2103_环和杆](https://leetcode-cn.com/problems/rings-and-rods/)
+## 解法
+### 思路
+- 遍历字符串，用int数组来记录每个杆子上的环的状态
+- 使用该元素的位来记录颜色的状态
+- 字符串遍历结束，遍历int数组，计算数字为7的个数，累加个数
+- 遍历结束，返回累加值
+### 代码
+```java
+class Solution {
+    public int countPoints(String rings) {
+        int n = rings.length();
+        int[] bucket = new int[10];
+        
+        for (int i = 0; i < n; i += 2) {
+            char color = rings.charAt(i);
+            int index = color == 'R' ? 0 : color == 'G' ? 1 : 2;
+            int stick = rings.charAt(i + 1) - '0';
+            
+            bucket[stick] |= (1 << index);
+        }
+        
+        int count = 0;
+        for (int num : bucket) {
+            if (num == 7) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+```
