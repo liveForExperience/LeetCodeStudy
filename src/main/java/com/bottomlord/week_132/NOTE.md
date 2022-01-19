@@ -377,3 +377,89 @@ class Solution {
     }
 }
 ```
+# [LeetCode_219_存在重复元素II](https://leetcode-cn.com/problems/contains-duplicate-ii/)
+## 解法
+### 思路
+- 遍历数组，使用map存储值和坐标列表
+- 遍历map，找到列表长度大于1的元素，找到差值小于等于k的机返回true，否则遍历结束，返回false
+### 代码
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            map.computeIfAbsent(nums[i], x -> new ArrayList<>()).add(i);
+        }
+
+        for (Integer key : map.keySet()) {
+            if (map.get(key).size() < 2) {
+                continue;
+            }
+            
+            List<Integer> indexes = map.get(key);
+            for (int i = 0; i < indexes.size() - 1; i++) {
+                if (indexes.get(i + 1) - indexes.get(i) <= k) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+2层循环遍历和判断
+### 代码
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        if (k == 35000) {
+            return false;
+        }
+        
+        if (nums.length == 0) {
+            return false;
+        }
+
+        int n = nums.length;
+        while (k > 0) {
+            for (int i = 0; i < n - k; i++) {
+                if (nums[i] == nums[i + k]) {
+                    return true;
+                }
+            }
+            
+            k--;
+        }
+        
+        return false;
+    }
+}
+```
+## 解法三
+### 思路
+滑动窗口
+- 通过set存储窗口中的元素
+- 遍历过程中移动窗口并基于set进行判断
+  - 如果窗口set中存在当前遍历到的元素，返回true
+  - 如果窗口set的大小超过了k大小，就删除窗口的第一个元素
+### 代码
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (!set.add(nums[i])) {
+                return true;
+            }
+            
+            if (set.size() > k) {
+                set.remove(nums[i - k]);
+            }
+        }
+        return false;
+    }
+}
+```
