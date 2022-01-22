@@ -783,3 +783,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2119_反转两次的数字](https://leetcode-cn.com/problems/a-number-after-a-double-reversal/)
+## 解法
+### 思路
+- 定义转换函数
+- 转换两次后和原数字比较，返回比较结果
+### 代码
+```java
+class Solution {
+    public boolean isSameAfterReversals(int num) {
+        return num == reverse(reverse(num));
+    }
+
+    private int reverse(int num) {
+        int ans = 0;
+        while (num > 0) {
+            int cur = num % 10;
+            ans = ans * 10 + cur;
+            num /= 10;
+        }
+        return ans;
+    }
+}
+```
