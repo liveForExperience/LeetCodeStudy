@@ -596,3 +596,134 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1345_跳跃游戏IV](https://leetcode-cn.com/problems/jump-game-iv/)
+## 解法
+### 思路
+dfs+记忆化
+### 代码
+```java
+class Solution {
+  private int min;
+
+  public int minJumps(int[] arr) {
+    min = arr.length;
+
+    Map<Integer, List<Integer>> map = new HashMap<>();
+    for (int i = 0; i < arr.length; i++) {
+      map.computeIfAbsent(arr[i], x -> new ArrayList<>()).add(i);
+    }
+
+    dfs(0, 0, arr, map, new HashSet<>());
+
+    return min;
+  }
+
+  private void dfs(int index, int count, int[] arr, Map<Integer, List<Integer>> map, Set<Integer> memo) {
+    if (count > min) {
+      return;
+    }
+
+    if (index == arr.length - 1) {
+      min = count;
+      return;
+    }
+
+    List<Integer> list = new ArrayList<>(map.get(arr[index]));
+    if (index != 0) {
+      list.add(index - 1);
+    }
+
+    if (index != arr.length - 1) {
+      list.add(index + 1);
+    }
+
+    for (int i : list) {
+      if (i == index) {
+        continue;
+      }
+
+      if (memo.contains(i)) {
+        continue;
+      }
+
+      memo.add(i);
+      dfs(i, count + 1, arr, map, memo);
+      memo.remove(i);
+    }
+  }
+}
+```
+## 解法二
+### 思路
+- 这是一个无权图， 求无权图到结尾节点的最小距离可以使用bfs
+- 在普通的图的bfs过程中，会对所有边都进行搜索，但是在无权图中，因为所有搜索过的边都已经放入过队列中，无需再处理
+- 在实际的代码逻辑中，可以将map中存储的映射在取出后，删除掉，代表这个映射已经处理过
+### 代码
+```java
+class Solution {
+    public int minJumps(int[] arr) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            map.computeIfAbsent(arr[i], x -> new ArrayList<>()).add(i);
+        }
+
+        Set<Integer> memo = new HashSet<>();
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.offer(new int[]{0, 0});
+
+        while (!queue.isEmpty()) {
+            int[] a = queue.poll();
+            int index = a[0], step = a[1];
+
+            if (index == arr.length - 1) {
+                return step;
+            }
+
+            int val = arr[index];
+            step++;
+
+            List<Integer> list = map.getOrDefault(val, new ArrayList<>());
+            map.remove(val);
+            
+            if (index != 0) {
+                list.add(index - 1);
+            }
+
+            if (index != arr.length - 1) {
+                list.add(index + 1);
+            }
+
+            for (Integer i : list) {
+                if (memo.contains(i)) {
+                    continue;
+                }
+
+                memo.add(i);
+                queue.offer(new int[]{i, step});
+            }
+        }
+
+        return -1;
+    }
+}
+```
+# [LeetCode_1332_删除回文子序列](https://leetcode-cn.com/problems/remove-palindromic-subsequences/)
+## 解法
+### 思路
+- 因为只有2个字母，所以字符串本身不是回文串，那么就需要删除2次，否则就是1次
+- 2次就是，一次删除a，一次删除b
+### 代码
+```java
+class Solution {
+    public int removePalindromeSub(String s) {
+        int start = 0, end = s.length() - 1;
+        while (start < end) {
+            if (s.charAt(start++) != s.charAt(end--)) {
+                return 2;
+            }
+        }
+        return 1;
+    }
+}
+```
