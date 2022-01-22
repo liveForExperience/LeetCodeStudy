@@ -727,3 +727,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2108_找出数组中的第一个回文字符串](https://leetcode-cn.com/problems/find-first-palindromic-string-in-the-array/)
+## 解法
+### 思路
+- 遍历数组，判断是否是回文的
+- 遇到第一个就返回
+### 代码
+```java
+class Solution {
+    public String firstPalindrome(String[] words) {
+        for (String word : words) {
+            if (isPalindrome(word)) {
+                return word;
+            }
+        }
+        return "";
+    }
+
+    private boolean isPalindrome(String word) {
+        int start = 0, end = word.length() - 1;
+        while (start < end) {
+            if (word.charAt(start++) != word.charAt(end--)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
