@@ -755,3 +755,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2114_句子中的最多单词数](https://leetcode-cn.com/problems/maximum-number-of-words-found-in-sentences/)
+## 解法
+### 思路
+- 遍历字符串数组，逐个判断每个字符串的单词个数
+- 单词个数通过遍历字符串寻找空格数来确定
+- 遍历时记录最大个数，遍历结束后返回
+### 代码
+```java
+class Solution {
+    public int mostWordsFound(String[] sentences) {
+        int max = 0;
+        for (String sentence : sentences) {
+            max = Math.max(max, count(sentence));
+        }
+        return max;
+    }
+    
+    private int count(String sentence) {
+        int count = 0;
+        for (char c : sentence.toCharArray()) {
+            if (c == ' ') {
+                count++;
+            }
+        }
+        return count + 1;
+    }
+}
+```
