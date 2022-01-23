@@ -806,3 +806,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2034_股票价格波动](https://leetcode-cn.com/problems/stock-price-fluctuation/)
+## 解法
+### 思路
+- 变量存储当前最大时间戳，用户返回当前最大时间戳
+- 使用HashMap存储时间戳对应的价格，用于当出现错误数据时，做更新的依据
+- 使用TreeMap存储价格的排序数据
+- 如果出现错误数据，hashmap和treemap都需要联动的更新
+### 代码
+```java
+class StockPrice {
+private int maxTimestamp;
+        private Map<Integer, Integer> map;
+        private TreeMap<Integer, Integer> countMap;
+
+        public StockPrice() {
+            this.maxTimestamp = 0;
+            this.map = new HashMap<>();
+            this.countMap = new TreeMap<>();
+        }
+
+        public void update(int timestamp, int price) {
+            maxTimestamp = Math.max(timestamp, maxTimestamp);
+            Integer prePrice = map.get(timestamp);
+            map.put(timestamp, price);
+
+            if (prePrice != null) {
+                countMap.put(prePrice, countMap.getOrDefault(prePrice, 0) - 1);
+                if (countMap.get(prePrice) == 0) {
+                    countMap.remove(prePrice);
+                }
+            }
+            
+            countMap.put(price, countMap.getOrDefault(price, 0) + 1);
+        }
+
+        public int current() {
+            return map.get(maxTimestamp);
+        }
+
+        public int maximum() {
+            return countMap.lastKey();
+        }
+
+        public int minimum() {
+            return countMap.firstKey();
+        }
+}
+```
