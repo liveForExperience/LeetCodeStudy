@@ -55,3 +55,23 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1688_比赛中的配对次数](https://leetcode-cn.com/problems/count-of-matches-in-tournament/)
+## 解法
+### 思路
+模拟
+- 循环变更n的同时计算出当前循环周期内的配对次数
+- 循环退出条件为`n==1`
+- 在循环过程中累加配对值，循环结束后返回
+### 代码
+```java
+class Solution {
+    public int numberOfMatches(int n) {
+        int count = 0;
+        while (n > 1) {
+            count += n / 2;
+            n = n % 2 == 1 ? n / 2 + 1 : n / 2;
+        }
+        return count;
+    }
+}
+```
