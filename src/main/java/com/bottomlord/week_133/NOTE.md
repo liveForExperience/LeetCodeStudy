@@ -148,3 +148,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2133_查是否每一行每一列都包含全部整数](https://leetcode-cn.com/problems/check-if-every-row-and-column-contains-all-numbers/)
+## 解法
+### 思路
+- 2层循环遍历
+- 借助布尔数组做是否存在的记录
+- 任意一组不符合情况就返回false
+- 遍历结束返回true
+### 代码
+```java
+class Solution {
+    public boolean checkValid(int[][] matrix) {
+        int n = matrix.length;
+        int sum = (1 + n) * n / 2;
+
+        for (int i = 0; i < n; i++) {
+            boolean[] row = new boolean[n], col = new boolean[n];
+            for (int j = 0; j < n; j++) {
+                row[matrix[i][j] - 1] = true;
+                col[matrix[j][i] - 1] = true;
+            }
+
+            if (!full(row) || !full(col)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+    private boolean full(boolean[] arr) {
+        for (boolean b : arr) {
+            if (!b) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
