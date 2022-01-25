@@ -75,3 +75,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2124_检查是否所有A都在B之前](https://leetcode-cn.com/problems/check-if-all-as-appears-before-all-bs/)
+## 解法
+### 思路
+- 遍历字符数组，找到可能的ab分界点，记录当前找到的状态为true
+- 继续遍历，如果状态为true的同时，还碰到a则返回false，否则遍历结束返回true
+### 代码
+```java
+class Solution {
+    public boolean checkString(String s) {
+        char[] cs = s.toCharArray();
+        boolean half = false;
+        for (char c : cs) {
+            if (!half && c == 'b') {
+                half = true;
+                continue;
+            }
+            
+            if (half && c == 'a') {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
