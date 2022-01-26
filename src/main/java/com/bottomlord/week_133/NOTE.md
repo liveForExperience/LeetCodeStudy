@@ -188,3 +188,15 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2013_检测正方形](https://leetcode-cn.com/problems/detect-squares/)
+## 解法
+### 思路
+- hash表记录add进来的坐标
+- count的时候，遍历row对应的col数组
+- 基于遍历的candidateCol，找到其他3个坐标，这3个坐标可能有2组，分别累加这些坐标的所有可能性
+  - 2组的原因是，得到candidateCol后，代表确定了一条边，这条边的两侧都有可能组成正方形，所以是2组
+- 遍历时候需要注意剔除candidateCol和col一样的情况，因为这种情况相当于是一个长度为0的点，会导致结果过多
+### 代码
+```java
+
+```
