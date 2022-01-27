@@ -198,5 +198,84 @@ class Solution {
 - 遍历时候需要注意剔除candidateCol和col一样的情况，因为这种情况相当于是一个长度为0的点，会导致结果过多
 ### 代码
 ```java
+    class DetectSquares {
+  private final Map<Integer, int[]> rowMap;
 
+  public DetectSquares() {
+    this.rowMap = new HashMap<>();
+  }
+
+  public void add(int[] point) {
+    rowMap.computeIfAbsent(point[0], x -> new int[1001])[point[1]]++;
+  }
+
+  public int count(int[] point) {
+    int row = point[0], col = point[1];
+    if (!rowMap.containsKey(row) || rowMap.get(row)[col] <= 0) {
+      return 0;
+    }
+
+    int[] colSet = rowMap.get(row);
+
+    int count = 0;
+    for (int candidateCol = 0; candidateCol < colSet.length; candidateCol++) {
+      if (colSet[candidateCol] == 0) {
+        continue;
+      }
+
+      int candidateLen = Math.abs(candidateCol - col);
+
+      int positiveCandidateRow = row + candidateLen,
+              negativeCandidateRow = row - candidateLen;
+
+      if (positiveCandidateRow <= 1000 &&
+              rowMap.containsKey(positiveCandidateRow) &&
+              rowMap.get(positiveCandidateRow)[candidateCol] > 0) {
+        count += colSet[candidateCol] * rowMap.get(positiveCandidateRow)[col] * rowMap.get(positiveCandidateRow)[candidateCol];
+      }
+
+      if (negativeCandidateRow >= 0 &&
+              rowMap.containsKey(negativeCandidateRow) &&
+              rowMap.get(negativeCandidateRow)[candidateCol] > 0) {
+        count += colSet[candidateCol] * rowMap.get(negativeCandidateRow)[col] * rowMap.get(negativeCandidateRow)[candidateCol];
+      }
+    }
+
+    return count;
+  }
+}
+```
+# [LeetCode_2138_将字符串拆分为若干长度为k的组](https://leetcode-cn.com/problems/divide-a-string-into-groups-of-size-k/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public String[] divideString(String s, int k, char fill) {
+        int n = s.length(), left = n % k == 0 ? 0 : k - (n % k);
+        
+        StringBuilder sb = new StringBuilder(s);
+        for (int i = 0; i < left; i++) {
+            sb.append(fill);
+        }
+        
+        char[] cs = sb.toString().toCharArray();
+
+        StringBuilder sb2 = new StringBuilder();
+        String[] ans = new String[sb.length() / k];
+        int index = 0;
+        
+        for (int i = 1; i <= cs.length; i++) {
+            sb2.append(cs[i - 1]);
+            
+            if (sb2.length() % k == 0) {
+                ans[index++] = sb2.toString();
+                sb2 = new StringBuilder();
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
