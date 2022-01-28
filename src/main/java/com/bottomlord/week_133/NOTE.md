@@ -289,5 +289,58 @@ class Solution {
 - 遍历结束返回累加值
 ### 代码
 ```java
+class Solution {
+  public int minimumCost(int[] cost) {
+    int n = cost.length, left = n % 3 == 0 ? 0 : 3 - (n % 3), sum = 0;
+    Arrays.sort(cost);
+    int[] arr = new int[n + left];
+    System.arraycopy(cost, 0, arr, left, n);
 
+    for (int i = arr.length - 1; i >= 0;) {
+      sum += arr[i--];
+      sum += arr[i--];
+      i--;
+    }
+
+    return sum;
+  }
+}
+```
+# [LeetCode_1996_游戏中弱角色的数量](https://leetcode-cn.com/problems/the-number-of-weak-characters-in-the-game/)
+## 解法
+### 思路
+- 对数组排序
+  - 如果进攻不相等，按照进攻的降序排列
+  - 如果进攻相等，按照防守的升序排列
+- 这样排序的原因是：
+  - 按照正序遍历数组，遍历过程中遍历到的元素，进攻一定不比之前的元素大
+    - 如果前面的元素比当前元素大，那只要比较防守就可以了
+    - 防守可以通过遍历过程中记录最大值来确定防守值的上限，这样首先所有历史值一定比当前的进攻大，同时当前防守值又比防守上限值小，所以一定有一个比当前元素的进攻和防守都大的元素存在
+    - 但是这边有一个问题，就是如果之前的几个元素是和当前值一样的呢？
+      - 历史的上限值不能直接用，因为如果这个上限值是相同进攻值的元素生成的，那就不符合题意，不能累加结果了
+      - 所以当进攻值相同的时候，如果相同进攻值的历史元素，防守值都肯定比当前元素的防守值小，那么当当前元素的防守值符合小于上限值的情况，那么这个上限值一定不是相同进攻的历史值产生的，所以排序的时候，如果进攻值相等，防守值就要非降序排列
+- 然后遍历过程也就很明显了
+  - 如果当前防守值比上限值小，就累加
+  - 如果不比上限值小，那就更新上限值
+- 遍历结束，返回累加值
+- 注意
+  - 防守上限值初始为0，这样一开始最大的进攻值元素，他的防守值肯定也不会小于这个上限值了
+  - 这里的排序，如果进攻和防守颠倒也没有关系，逻辑是一样的，因为都要完全小于某个元素的进攻和防守
+### 代码
+```java
+class Solution {
+    public int numberOfWeakCharacters(int[][] properties) {
+        Arrays.sort(properties, (x, y) -> x[1] == y[1] ? x[0] - y[0] : y[1] - x[1]);
+        int maxDef = 0, ans = 0;
+        for (int[] property : properties) {
+            if (property[0] < maxDef) {
+                ans++;
+            } else {
+                maxDef = property[0];
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
