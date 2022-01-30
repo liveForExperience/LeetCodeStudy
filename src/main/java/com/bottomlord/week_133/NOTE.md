@@ -381,18 +381,15 @@ class Solution {
                 int r = arr[0], c = arr[1];
                 
                 for (int[] direction : directions) {
-                    int newR = r + direction[0], newC = c + direction[1];
-                    if (newR < 0 || newR >= row ||
-                        newC < 0 || newC >= col ) {
-                        continue;
-                    }
-                    
-                    if (!memo[newR][newC]) {
-                        queue.offer(new int[]{newR, newC});
-                        matrix[newR][newC] = level;
-                    }
-                    
-                    memo[newR][newC] = true;
+                  int newR = r + direction[0], newC = c + direction[1];
+                  if (newR < 0 || newR >= row ||
+                          newC < 0 || newC >= col ||
+                          memo[newR][newC]) {
+                    continue;
+                  }
+                  queue.offer(new int[]{newR, newC});
+                  matrix[newR][newC] = level;
+                  memo[newR][newC] = true;
                 }
             }
             
