@@ -462,3 +462,64 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2148_元素计数](https://leetcode-cn.com/problems/count-elements-with-strictly-smaller-and-greater-elements/)
+## 解法
+### 思路
+treemap
+### 代码
+```java
+class Solution {
+    public int countElements(int[] nums) {
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+
+        int index = 0, sum = 0;
+        for (Integer key : map.keySet()) {
+            if (index == 0 || index == map.keySet().size() - 1) {
+                index++;
+                continue;
+            }
+
+            sum += map.get(key);
+
+            index++;
+        }
+
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+- 如果数组长度不足3，则直接返回0，因为不可能有符合题目要求的元素
+- 求出数组中的最大和最小值，和这两个值相等的元素，肯定不是题目要求的元素
+- 遍历数组，累加不是最大和最小值的元素的个数
+- 返回累加值
+### 代码
+```java
+class Solution {
+  public int countElements(int[] nums) {
+    int len = nums.length;
+    if (len < 3) {
+      return 0;
+    }
+
+    int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
+    for (int num : nums) {
+      max = Math.max(max, num);
+      min = Math.min(min, num);
+    }
+
+    int ans = 0;
+    for (int num : nums) {
+      if (num != max && num != min) {
+        ans++;
+      }
+    }
+
+    return ans;
+  }
+}
+```
