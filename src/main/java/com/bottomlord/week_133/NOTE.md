@@ -589,3 +589,146 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP40_心算挑战](https://leetcode-cn.com/problems/uOAnQW/)
+## 解法
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    private int sum = 0;
+    public int maxmiumScore(int[] cards, int cnt) {
+        Arrays.sort(cards);
+        int maxOddIndex = -1, maxEvenIndex = -1;
+        for (int i = cards.length - 1; i >= 0; i--) {
+            if (cards[i] % 2 == 0 && maxEvenIndex == -1) {
+                maxEvenIndex = i;
+            }
+
+            if (cards[i] % 2 != 0 && maxOddIndex == -1) {
+                maxOddIndex = i;
+            }
+            
+            if (maxEvenIndex != -1 && maxOddIndex != -1) {
+                break;
+            }
+        }
+        
+        if (maxEvenIndex + 1 >= cnt) {
+            backTrack(cards, maxEvenIndex, 0, cnt, 0);
+        }
+        
+        if (maxOddIndex + 1 >= cnt) {
+            backTrack(cards, maxOddIndex, 0, cnt, 0);
+        }
+        
+        return sum;
+    }
+
+    private boolean backTrack(int[] cards, int index, int time, int cnt, int sum) {
+        if (time == cnt) {
+            if (sum % 2 == 0) {
+                this.sum = Math.max(this.sum, sum);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        if (index < 0) {
+            return false;
+        }
+
+        for (int i = index; i >= 0; i--) {
+            boolean result = backTrack(cards, i - 1, time + 1, cnt, sum + cards[i]);
+            if (result) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+贪心
+- 对数组进行桶计数
+- 遍历桶，将元素区分为奇数和偶数列表
+- 再次遍历桶，尽可能将提前遇到的元素的值进行累加，直到cnt值用完
+- 判断累加值是否是偶数，如果是偶数就返回
+- 如果不是偶数，那就试着替换结果中的最后一个元素
+  - 如果最后一个是奇数，就替换成剩下没有遍历的最大的偶数
+  - 如果最后一个是偶数，就替换成剩下没有遍历的最大的奇数
+- 为了完成上述步骤
+  - 需要在第二次遍历桶的过程中，尝试记录下最后的奇数和偶数
+  - 而且为了快速知道剩下最大的奇数或偶数是什么，所以可以用链表实现的列表来存储奇偶数，每次某个数用完，就将它从链表中去除，这样在做尝试替换的时候，就可以直接从链表的尾部将那个要的值取出来了
+### 代码
+```java
+class Solution {
+    public int maxmiumScore(int[] cards, int cnt) {
+        int[] bucket = new int[1001];
+        LinkedList<Integer> oddList = new LinkedList<>(), evenList = new LinkedList<>();
+        for (int card : cards) {
+            bucket[card]++;
+        }
+
+        for (int i = bucket.length - 1; i >= 0; i--) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+
+            if (i % 2 == 0) {
+                evenList.add(i);
+            } else {
+                oddList.add(i);
+            }
+        }
+
+        int sum = 0, minOdd = -1, minEven = -1;
+        for (int i = bucket.length - 1; i >= 0; i--) {
+            int num = bucket[i];
+            if (num == 0) {
+                continue;
+            }
+
+            int count = Math.min(cnt, num);
+            sum += count * i;
+
+            bucket[i] -= count;
+            if (i % 2 == 0) {
+                minEven = i;
+                if (bucket[i] == 0) {
+                    evenList.removeFirst();
+                }
+            } else {
+                minOdd = i;
+                if (bucket[i] == 0) {
+                    oddList.removeFirst();
+                }
+            }
+
+            cnt -= count;
+
+            if (cnt == 0) {
+                break;
+            }
+        }
+
+        if (sum % 2 == 0) {
+            return sum;
+        }
+
+        int maxWhenChangeEven = 0, maxWhenChangeOdd = 0;
+        if (minEven > 0 && !oddList.isEmpty()) {
+            maxWhenChangeEven = sum - minEven + oddList.getFirst();
+        }
+
+        if (minOdd > 0 && !evenList.isEmpty()) {
+            maxWhenChangeOdd = sum - minOdd + evenList.getFirst();
+        }
+
+        return Math.max(maxWhenChangeEven, maxWhenChangeOdd);
+    }
+}
+```
