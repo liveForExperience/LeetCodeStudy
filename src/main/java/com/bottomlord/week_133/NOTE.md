@@ -403,3 +403,65 @@ class Solution {
     }
 }
 ```
+# [LeetCode_884_两句话中的不常见单词](https://leetcode-cn.com/problems/uncommon-words-from-two-sentences/)
+## 解法
+### 思路
+- 遍历字符串，生成两个map
+- 遍历一个map，比较另一个map
+- 遍历的时候，过滤掉个数超过1的
+### 代码
+```java
+class Solution {
+    public String[] uncommonFromSentences(String s1, String s2) {
+        Map<String, Integer> map1 = countMap(s1), map2 = countMap(s2);
+        List<String> strs = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : map1.entrySet()) {
+            if (entry.getValue() != 1) {
+                continue;
+            }
+            
+            if (!map2.containsKey(entry.getKey())) {
+                strs.add(entry.getKey());
+            }
+        }
+
+        for (Map.Entry<String, Integer> entry : map2.entrySet()) {
+            if (entry.getValue() != 1) {
+                continue;
+            }
+
+            if (!map1.containsKey(entry.getKey())) {
+                strs.add(entry.getKey());
+            }
+        }
+
+        return strs.toArray(new String[0]);
+    }
+
+    private Map<String, Integer> countMap(String s1) {
+        char[] cs = s1.toCharArray();
+        Map<String, Integer> map = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
+        for (char c : cs) {
+            if (c == ' ') {
+                String str = sb.toString();
+                if (str.length() == 0) {
+                    continue;
+                }
+
+                map.put(str, map.getOrDefault(str, 0) + 1);
+                sb = new StringBuilder();
+            } else {
+                sb.append(c);
+            }
+        }
+
+        if (sb.length() != 0) {
+            String str = sb.toString();
+            map.put(str, map.getOrDefault(str, 0) + 1);
+        }
+
+        return map;
+    }
+}
+```
