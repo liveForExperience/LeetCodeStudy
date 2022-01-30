@@ -523,3 +523,41 @@ class Solution {
   }
 }
 ```
+# [LeetCode_LCP11_期望个数统计](https://leetcode-cn.com/problems/qi-wang-ge-shu-tong-ji/)
+## 解法
+### 思路
+- 初始化set集合用于去重
+- 遍历数字数组，加入到set集合
+- 遍历结束，返回set的长度
+### 代码
+```java
+class Solution {
+    public int expectNumber(int[] scores) {
+        Set<Integer> set = new HashSet<>();
+        for (int score : scores) {
+            set.add(score);
+        }
+        return set.size();
+    }
+}
+```
+## 解法二
+### 思路
+- 遍历数组，使用桶计数累计元素的出现情况，并累加第一次出现的情况
+### 代码
+```java
+class Solution {
+  public int expectNumber(int[] scores) {
+    boolean[] bucket = new boolean[1000001];
+    int ans = 0;
+    for (int score : scores) {
+      if (!bucket[score]) {
+        bucket[score] = true;
+        ans++;
+      }
+    }
+
+    return ans;
+  }
+}
+```
