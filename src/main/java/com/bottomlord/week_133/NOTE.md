@@ -561,3 +561,31 @@ class Solution {
   }
 }
 ```
+# [LeetCode_LCP39_无人机方阵](https://leetcode-cn.com/problems/0jQkd0/)
+## 解法
+### 思路
+- 统计source和target数组的颜色值
+  - target正值统计
+  - source负值统计
+- 遍历统计颜色的数组，累加非负整数，并作为结果返回
+### 代码
+```java
+class Solution {
+    public int minimumSwitchingTimes(int[][] source, int[][] target) {
+        int[] bucket = new int[10001];
+        int row = source.length, col = source[0].length;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                bucket[target[i][j]]++;
+                bucket[source[i][j]]--;
+            }
+        }
+
+        int sum = 0;
+        for (int num : bucket) {
+            sum += Math.max(num, 0);
+        }
+        return sum;
+    }
+}
+```
