@@ -26,3 +26,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP44_开幕式烟火](https://leetcode-cn.com/problems/sZ59z6/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public int numColor(TreeNode root) {
+        Set<Integer> set = new HashSet<>();
+        dfs(root, set);
+        return set.size();
+    }
+    
+    private void dfs(TreeNode node, Set<Integer> set) {
+        if (node == null) {
+            return;
+        }
+        
+        set.add(node.val);
+        dfs(node.left, set);
+        dfs(node.right, set);
+    }
+}
+```
