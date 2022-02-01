@@ -50,3 +50,16 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCS01_下载插件](https://leetcode-cn.com/problems/Ju9Xwi/)
+## 解法
+### 思路
+- 下载的时间复杂度是O(1)，扩容的时间复杂度是O(log2)
+- 所以选择先进行扩容，再一次性下载
+### 代码
+```java
+class Solution {
+    public int leastMinutes(int n) {
+       return (int)Math.ceil(Math.log(n) / Math.log(2)) + 1;
+    }
+}
+```
