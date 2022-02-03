@@ -63,3 +63,53 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCS02_完成一半题目](https://leetcode-cn.com/problems/WqXACV/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1414_和为K的最少斐波那契数字数目](https://leetcode-cn.com/problems/find-the-minimum-number-of-fibonacci-numbers-whose-sum-is-k/)
+## 解法
+### 思路
+递归
+### 代码
+```java
+class Solution {
+    private int count = 0;
+
+    public int findMinFibonacciNumbers(int k) {
+        recuse(k, new HashSet<>());
+        return count;
+    }
+
+    private void recuse(int k, Set<Integer> set) {
+        int fab = fab(k, set);
+        count++;
+        if (fab == k) {
+            return;
+        }
+
+        if (set.contains(k - fab)) {
+            count++;
+            return;
+        }
+
+        recuse(k - fab, set);
+    }
+
+    private int fab(int k, Set<Integer> set) {
+        int x = 0, z = 0, y = 1;
+        while (z <= k) {
+            set.add(y);
+            z = x + y;
+            x = y;
+            y = z;
+        }
+
+        return x;
+    }
+}
+```
