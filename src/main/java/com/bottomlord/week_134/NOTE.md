@@ -66,10 +66,37 @@ class Solution {
 # [LeetCode_LCS02_完成一半题目](https://leetcode-cn.com/problems/WqXACV/)
 ## 解法
 ### 思路
-
+- 桶计数算出知识点的重复次数
+- 对出现次数进行排序
+- 从大到小循环累减知识点个数，直到N被消耗完，处理过程中记录循环的个数
 ### 代码
 ```java
+class Solution {
+    public int halfQuestions(int[] questions) {
+        int[] bucket = new int[1001];
+        for (int question : questions) {
+            bucket[question]++;
+        }
 
+        Arrays.sort(bucket);
+        int n = questions.length / 2, ans = 0;
+
+        for (int i = bucket.length - 1; i >= 0; i--) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+
+            n -= bucket[i];
+            ans++;
+
+            if (n <= 0) {
+                break;
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
 # [LeetCode_1414_和为K的最少斐波那契数字数目](https://leetcode-cn.com/problems/find-the-minimum-number-of-fibonacci-numbers-whose-sum-is-k/)
 ## 解法
