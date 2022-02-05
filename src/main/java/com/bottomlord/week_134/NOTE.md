@@ -140,3 +140,53 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII01_整数除法](https://leetcode-cn.com/problems/xoh6Oh/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1219_黄金矿工](https://leetcode-cn.com/problems/path-with-maximum-gold/)
+## 解法
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+    private final int[][] directions = new int[][]{{0,1},{0,-1},{1,0},{-1,0}};
+    
+    public int getMaximumGold(int[][] grid) {
+        int max = 0, row = grid.length, col = grid[0].length;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 0) {
+                    continue;
+                }
+                
+                max = Math.max(max, backTrack(grid, row, col, i, j, 0, new boolean[row][col]));
+            }
+        }
+        
+        return max;
+    }
+
+    private int backTrack(int[][] grid, int row, int col, int x, int y, int pre, boolean[][] memo) {
+        if (x < 0 || x >= row || y < 0 || y >= col || memo[x][y] || grid[x][y] == 0) {
+            return pre;
+        }
+        
+        memo[x][y] = true;
+        pre += grid[x][y];
+        int curMax = pre;
+        for (int[] direction : directions) {
+            int newX = x + direction[0], newY = y + direction[1];
+            curMax = Math.max(curMax, backTrack(grid, row, col, newX, newY, pre, memo));
+        }
+        memo[x][y] = false;
+        
+        return curMax;
+    }
+}
+```
