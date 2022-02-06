@@ -143,10 +143,38 @@ class Solution {
 # [LeetCode_offerII01_整数除法](https://leetcode-cn.com/problems/xoh6Oh/)
 ## 解法
 ### 思路
-
+二分+递归
 ### 代码
 ```java
+class Solution {
+    public int divide(int a, int b) {
+        long x = a, y = b;
+        int sign = (x > 0) ^ (y > 0) ? -1 : 1;
+        x = x < 0 ? -x : x;
+        y = y < 0 ? -y : y;
+        long r = (cal(x, y) * sign);
+        return r == 2147483648L ? 2147483647 : (int)r;
+    }
 
+    private long cal(long a, long b) {
+        if (a < b) {
+            return 0L;
+        }
+
+        long count = 0, bit = 1, c = b;
+        while (a > 0) {
+            if (a - c < 0) {
+                break;
+            }
+            a -= c;
+            c <<= 1;
+            count += bit;
+            bit <<= 1;
+        }
+
+        return count + cal(a, b);
+    }
+}
 ```
 # [LeetCode_1219_黄金矿工](https://leetcode-cn.com/problems/path-with-maximum-gold/)
 ## 解法
