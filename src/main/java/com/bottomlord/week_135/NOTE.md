@@ -43,3 +43,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2160_拆分数位后四位数字的最小和](https://leetcode-cn.com/problems/minimum-sum-of-four-digit-number-after-splitting-digits/)
+## 解法
+### 思路
+- 将数字拆分成4个整数
+- 非降序排序4个整数
+- 返回1和3以及2和4组成的两个数的和
+### 代码
+```java
+class Solution {
+    public int minimumSum(int num) {
+        int[] arr = new int[4];
+        int index = 0;
+        while (num > 0) {
+            arr[index++] = num % 10;
+            num /= 10;
+        }
+        Arrays.sort(arr);
+        return arr[0] * 10 + arr[2] + arr[1] * 10 + arr[3];
+    }
+}
+```
