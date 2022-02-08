@@ -150,3 +150,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2164_对奇偶下标分别排序](https://leetcode-cn.com/problems/sort-even-and-odd-indices-independently/)
+## 解法
+### 思路
+- 将数组分成奇偶2个子数组
+- 将奇偶坐标对应的值放入子数组中
+- 对两个子数组分别排序
+- 将两个子数交叉合并为一个数组返回
+- 需要注意奇偶性对应的是下标值不是实际的奇偶顺序
+### 代码
+```java
+class Solution {
+    public int[] sortEvenOdd(int[] nums) {
+        int n = nums.length;
+        boolean odd = n % 2 == 1;
+        int evenLen = odd ? n / 2 + 1 : n / 2,
+            oddLen = n / 2;
+
+        int[] odds = new int[oddLen], evens = new int[evenLen];
+        int oddIndex = 0, evenIndex = 0;
+        for (int i = 0; i < n; i++) {
+            if (i % 2 == 0) {
+                evens[evenIndex++] = nums[i];
+            } else {
+                odds[oddIndex++] = nums[i];
+            }
+        }
+
+        Arrays.sort(odds);
+        Arrays.sort(evens);
+        
+        oddIndex = oddLen - 1;
+        evenIndex = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (i % 2 == 0) {
+                nums[i] = evens[evenIndex++];
+            } else {
+                nums[i] = odds[oddIndex--];
+            }
+        }
+        
+        return nums;
+    }
+}
+```
