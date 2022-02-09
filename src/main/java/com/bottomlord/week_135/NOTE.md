@@ -195,3 +195,65 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII003_前n个数字二进制中1的个数](https://leetcode-cn.com/problems/w3tCBm/)
+## 解法
+### 思路
+- 初始化数组用于储存每个数字的1的个数
+- 从1开始遍历，逐个计算1的个数，并储存到数组中
+- 遍历结束，返回数组
+### 代码
+```java
+class Solution {
+    public int[] countBits(int n) {
+        int[] ans = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            ans[i] = count(i);
+        }
+        return ans;
+    }
+
+    private int count(int n) {
+        int bit = 1, count = 0;
+        while (bit <= n) {
+            if ((bit & n) != 0) {
+                count++;
+            }
+            
+            bit <<= 1;
+        }
+        
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+- 通过观察可以发现：
+  - 偶数二进制1的个数和它除以2得到的二进制1的个数是一样的，因为偶数的最低位一定是0，然后除以二等于无符号右移1位，所以1的个数不会变
+  - 奇数二进制1的个数和比它小的最近偶数相比，多一个1，因为奇数比偶数大1，而这个1就体现在最低位的不同
+- 所以可以当做一个简单的动态规划来看待：
+  - dp[i]：表示值为i的二进制中1的个数
+  - 状态转移方程：
+    - 当i为奇数的时候：dp[i] = dp[i - 1] + 1
+    - 当i为偶数的时候：dp[i] = dp[i / 2]
+  - base case：
+    - dp[0] = 0
+### 代码
+```java
+class Solution {
+    public int[] countBits(int n) {
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        
+        for (int i = 1; i <= n; i++) {
+            if (i % 2 == 0) {
+                dp[i] = dp[i / 2];
+            } else {
+                dp[i] = dp[i - 1] + 1;
+            }
+        }
+        
+        return dp;
+    }
+}
+```
