@@ -257,3 +257,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII6_排序数组中两个数字之和](https://leetcode-cn.com/problems/kLl5u1/)
+## 解法
+### 思路
+使用map
+### 代码
+```java
+class Solution {
+  public int[] twoSum(int[] numbers, int target) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int i = 0; i < numbers.length; i++) {
+      int num = numbers[i];
+      if (map.containsKey(target - num)) {
+        return new int[]{Math.min(i, map.get(target - num)), Math.max(i, map.get(target - num))};
+      }
+      map.put(num, i);
+    }
+    return null;
+  }
+}
+```
+## 解法二
+### 思路
+- 因为是升序的数组，所以一定没有重复元素
+- 又有序就可以使用双指针
+### 代码
+```java
+class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        int head = 0, tail = numbers.length - 1;
+        while (head < tail) {
+            int sum = numbers[head] + numbers[tail];
+            if (sum == target) {
+                return new int[]{head, tail};
+            } else if (sum > target) {
+                tail--;
+            } else {
+                head++;
+            }
+        }
+        
+        return null;
+    }
+}
+```
