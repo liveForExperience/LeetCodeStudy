@@ -328,3 +328,65 @@ class Solution {
   }
 }
 ```
+# [LeetCode_offerII12_左右两边子数组的和相等](https://leetcode-cn.com/problems/tvdfij/)
+## 解法
+### 思路
+- 求数组总和
+- 判断特殊情况：如果总和减去第一个元素值，等于0，那就返回第一个坐标，意思是说这个数组的剩余元素相加等于0，以第一个元素为中间坐标，两侧相等
+- 循环遍历数组，退出条件是遍历到倒数第二个元素。
+- 循环过程中累加数组值，然后判断是否当前累加值和后一个元素之后的所有元素之和相等，这个等式依赖总和来表示，如果判断成立，就直接返回当前坐标的后一个坐标
+- 循环结束，如果没有找到坐标，那么就和循环开始前一样，判断一下数组是否以最后一个元素为中心坐标，如果是就返回最后一个元素
+- 如果都没有找到，就返回-1
+### 代码
+```java
+class Solution {
+    public int pivotIndex(int[] nums) {
+        int sum = Arrays.stream(nums).sum();
+        
+        if (sum - nums[0] == 0) {
+            return 0;
+        }
+        
+        int curSum = 0;
+        for (int i = 0; i < nums.length - 1; i++) {
+            curSum += nums[i];
+            if (sum - nums[i + 1] == curSum * 2) {
+                return i + 1;
+            }
+        }
+        
+        if (sum - nums[nums.length - 1] == 0) {
+            return nums.length - 1;
+        }
+
+        return -1;
+    }
+}
+```
+## 解法二
+### 思路
+- 因为有第一个和倒数第一个元素这样的特殊情况，所以可以换一种思路
+- 使用两个变量，一个是数组总和sum，一个是遍历的累加总和cur
+- 然后sum在循环过程中不断累减，cur不断累加，这两个值是否相等就可以匹配题目的中心坐标两侧相等的要求，只不过需要在累减后但没有累加前的这个时间点进行比较，如果相等就返回当前坐标
+- 也就相当于解法一，遍历的i代表的是中心坐标左侧的最后一个元素，而当前解法将i对应的元素当做是那个中心坐标
+### 代码
+```java
+class Solution {
+    public int pivotIndex(int[] nums) {
+        int sum = 0, cur = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+
+        for (int i = 0; i < nums.length; i++) {
+            sum -= nums[i];
+            if (sum == cur) {
+                return i;
+            }
+            cur += nums[i];
+        }
+        
+        return -1;
+    }
+}
+```
