@@ -301,3 +301,30 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1447_最简分数](https://leetcode-cn.com/problems/simplified-fractions/)
+## 解法
+### 思路
+- 定义最大公约数方程
+- 2层嵌套遍历，外层确定分母，内层确定分子
+- 判断分母和分子的最大公约数是否是1，如果是就是最简分数，存储到list中
+- 循环结束，返回list
+### 代码
+```java
+class Solution {
+  public List<String> simplifiedFractions(int n) {
+    List<String> ans = new ArrayList<>();
+    for (int i = 1; i <= n; i++) {
+      for (int j = i + 1; j <= n; j++) {
+        if (gcd(i, j) == 1) {
+          ans.add(i + "/" + j);
+        }
+      }
+    }
+    return ans;
+  }
+
+  private int gcd(int x, int y) {
+    return y == 0 ? x : gcd(y, x % y);
+  }
+}
+```
