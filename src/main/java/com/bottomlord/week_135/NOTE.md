@@ -488,3 +488,70 @@ public boolean validPalindrome(String s) {
     }
 }
 ```
+# [LeetCode_offerII23_两个链表的第一个重合节点](https://leetcode-cn.com/problems/3u1WK4/)
+## 解法
+### 思路
+- 计算出两个链表各自的长度，m和n
+- 那么从两个链表头开始遍历链表，且到达链表尾部后再接上另一链表的头，这样遍历的距离一定是一样的，也就是m+n
+- 而在这个m+n的长度中，如果两个链表是交汇的，那么定义第一个链表独立的长度是a，第二个链表独立的长度是b，共同的部分是c，那么`m + n = a + b + 2c`
+- 而如上的过程中，他们必定会先经历`a + c + b`或`b + c + a`的距离，所以他们的遍历过程一定会在`a + b + c`这段距离之后同时到达第二个c的第一个节点，故这个节点就是他们的第一个交汇点。
+### 代码
+```java
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode nodeA = headA, nodeB = headB;
+        if (nodeA == nodeB) {
+            return nodeA;
+        }
+        
+        int a = count(nodeA), b = count(nodeB), index = 0;
+        while (index++ < a + b) {
+            if (nodeA == null) {
+                nodeA = headB;
+            } else {
+                nodeA = nodeA.next;
+            }
+            
+            if (nodeB == null) {
+                nodeB = headA;
+            } else {
+                nodeB = nodeB.next;
+            }
+            
+            if (nodeA == nodeB) {
+                return nodeA;
+            }
+        }
+        
+        return null;
+    }
+    
+    private int count(ListNode node) {
+        int count = 0;
+        while (node != null) {
+            count++;
+            node = node.next;
+        }
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+在解法一的基础上简化逻辑
+- 因为从两个头遍历的路程是相等的，所以就算不交汇，他们最终一定同时为null
+- 按照如上的规则，代码就可以直接简化，不必先计算两个链表各自的长度，直接遍历即可
+### 代码
+```java
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode nodeA = headA, nodeB = headB;
+        while (nodeA != nodeB) {
+            nodeA = nodeA == null ? headB : nodeA.next;
+            nodeB = nodeB == null ? headA : nodeB.next;
+        }
+        
+        return nodeA;
+    }
+}
+```
