@@ -453,3 +453,38 @@ public boolean isPalindrome(String s) {
     }
 }
 ```
+# [LeetCode_offerII19_最多删除一个字符得到回文](https://leetcode-cn.com/problems/RQku0D/)
+## 解法
+### 思路
+递归
+- 初始判断3种情况
+- 在具体判断逻辑中，当发生比对字符不等的情况，就继续判断舍去头或尾字符的情况，并根据返回的情况来判断是否成立
+- 递归的退出条件就是错误的次数
+### 代码
+```java
+class Solution {
+public boolean validPalindrome(String s) {
+        int n = s.length();
+        return valid(s, 0, n - 1, 0) ||
+               valid(s, 0, n - 2, 1) ||
+               valid(s, 1, n - 1, 1);
+    }
+
+    private boolean valid(String s, int head, int tail, int count) {
+        if (count > 1) {
+            return false;
+        }
+
+        while (head < tail) {
+            if (s.charAt(head) != s.charAt(tail)) {
+                return valid(s, head + 1, tail, count + 1) || valid(s, head, tail - 1, count + 1);
+            }
+
+            head++;
+            tail--;
+        }
+
+        return true;
+    }
+}
+```
