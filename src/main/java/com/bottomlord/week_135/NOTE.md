@@ -555,3 +555,22 @@ public class Solution {
     }
 }
 ```
+# [LeetCode_offerII24_反转链表](https://leetcode-cn.com/problems/UHnkqh/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        ListNode node = head, pre = null;
+        while (node != null) {
+            ListNode next = node.next;
+            node.next = pre;
+            pre = node;
+            node = next;
+        }
+        return pre;
+    }
+}
+```
