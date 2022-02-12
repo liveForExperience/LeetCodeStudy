@@ -628,3 +628,79 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII27_回文链表](https://leetcode-cn.com/problems/aMhZSa/)
+## 解法
+### 思路
+- 先遍历并记录下链表的数字序列
+- 然后开始头尾比较，如果有不匹配就返回false
+- 遍历结束，因为没有不匹配，所以返回true
+### 代码
+```java
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        ListNode node = head;
+        while (node != null) {
+            list.add(node.val);
+            node = node.next;
+        }
+        
+        int l = 0, r = list.size() - 1;
+        while (l < r) {
+            if (!Objects.equals(list.get(l++), list.get(r--))) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+## 解法二
+### 思路
+快慢指针
+- 用快慢指针：
+  - 初始化一个假节点，该节点的next指针指向链表的头指针
+  - 快慢指针指向这个假节点
+  - 快慢指针的目的是要找到链表中间节点的左边一个节点，或者两个中间节点的靠左节点
+  - 慢指针每次移动1步，快指针每次移动2步
+- 确定好了中间节点（慢指针指向节点的next指针指向的节点），以该节点为起始，做链表翻转，将后半部分翻转回来
+- 然后就可以从head和翻转后的后半部分结尾开始，相向的同时遍历，并做判断。这样就不需要像解法一一样使用动态数组存储数据
+### 代码
+```java
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        ListNode fake = new ListNode(0), slow = fake, fast = fake;
+        fake.next = head;
+        
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        
+        ListNode tail = reverse(slow.next);
+        
+        while (head != tail && head != null && tail != null) {
+            if (head.val != tail.val) {
+                return false;
+            }
+            
+            head = head.next;
+            tail = tail.next;
+        }
+        
+        return true;
+    }
+    
+    private ListNode reverse(ListNode node) {
+        ListNode pre = null;
+        while (node != null) {
+            ListNode next = node.next;
+            node.next = pre;
+            pre = node;
+            node = next;
+        }
+        
+        return pre;
+    }
+}
+```
