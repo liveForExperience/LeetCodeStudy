@@ -704,3 +704,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII32_有效的变位词](https://leetcode-cn.com/problems/dKk3P7/)
+## 解法
+### 思路
+- 比较字符串是否完全相等，如果相等就返回false
+- 使用数组统计两个字符串的个数
+- 第一个字符串的个数累加，第二个字符串的个数累减
+- 遍历统计数组，如果个数不是0，就返回false
+- 如果都没有返回false，就返回true
+### 代码
+```java
+class Solution {
+    public boolean isAnagram(String s, String t) {
+        if (Objects.equals(s, t)) {
+            return false;
+        }
+        
+        int[] arr = new int[26];
+        for (char c : s.toCharArray()) {
+            arr[c - 'a']++;
+        }
+
+        for (char c : t.toCharArray()) {
+            arr[c - 'a']--;
+        }
+
+        for (int num : arr) {
+            if (num != 0) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
