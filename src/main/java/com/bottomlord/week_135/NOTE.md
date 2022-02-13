@@ -739,3 +739,53 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII34_外星语言是否排序](https://leetcode-cn.com/problems/lwyVBB/)
+## 解法
+### 思路
+哈希表
+### 代码
+```java
+class Solution {
+    public boolean isAlienSorted(String[] words, String order) {
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < order.length(); i++) {
+            char c = order.charAt(i);
+            map.put(c, i);
+        }
+        
+        map.put(' ', -1);
+        
+        int len = words.length;
+        for (int i = 0; i < len - 1; i++) {
+            char[] cs = get(words[i], words[i + 1]);
+            if (cs == null) {
+                continue;
+            }
+
+            if (map.get(cs[0]) > map.get(cs[1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private char[] get(String x, String y) {
+        int xl = x.length(), yl = y.length();
+        for (int i = 0; i < xl || i < yl; i++) {
+            if (i >= xl) {
+                return new char[]{' ', y.charAt(i)};
+            }
+            
+            if (i >= yl) {
+                return new char[]{x.charAt(i), ' '};
+            }
+            
+            if (x.charAt(i) != y.charAt(i)) {
+                return new char[]{x.charAt(i), y.charAt(i)};
+            }
+        }
+
+        return null;
+    }
+}
+```
