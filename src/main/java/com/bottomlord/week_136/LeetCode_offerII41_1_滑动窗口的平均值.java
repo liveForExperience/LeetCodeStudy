@@ -9,9 +9,8 @@ import java.util.Queue;
  */
 public class LeetCode_offerII41_1_滑动窗口的平均值 {
     class MovingAverage {
-        private Queue<Integer> queue;
-        private int size;
-        private int average;
+        private final Queue<Integer> queue;
+        private final int size;
 
         public MovingAverage(int size) {
             this.queue = new ArrayDeque<>();

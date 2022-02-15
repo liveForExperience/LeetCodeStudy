@@ -77,3 +77,42 @@ class MovingAverage {
     }
 }
 ```
+# [LeetCode_2169_得到0的操作数](https://leetcode-cn.com/problems/count-operations-to-obtain-zero/)
+## 解法
+### 思路
+递归
+### 代码
+```java
+class Solution {
+    public int countOperations(int num1, int num2) {
+        if (num1 == 0 || num2 == 0) {
+            return 0;
+        }
+        
+        return 1 + countOperations(num1 >= num2 ? num1 - num2 : num1, num1 >= num2 ? num2 : num2 - num1);
+    }
+}
+```
+## 解法二
+### 思路
+- 题目的本意就是在模拟整数除法操作
+- 所以可以通过除法快速求出操作的次数，然后用取余得到的数字代替原来的较大值，继续循环，直到某一个数为0为止
+### 代码
+```java
+class Solution {
+    public int countOperations(int num1, int num2) {
+        int ans = 0;
+        while (num1 > 0 && num2 > 0) {
+            if (num1 >= num2) {
+                ans += num1 / num2;
+                num1 %= num2;
+            } else {
+                ans += num2 / num1;
+                num2 %= num1;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
