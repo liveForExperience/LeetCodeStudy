@@ -152,3 +152,72 @@ class RecentCounter {
     }
 }
 ```
+# [LeetCode_offerII52_展平二叉搜索树](https://leetcode-cn.com/problems/NYBBNL/)
+## 解法
+### 思路
+- 中序遍历，将遍历到的节点按顺序放入list中
+- 遍历list，将节点两两连接
+- 返回list的第一个节点
+### 代码
+```java
+class Solution {
+    public TreeNode increasingBST(TreeNode root) {
+        List<TreeNode> list = new ArrayList<>();
+        dfs(root, list);
+        if (list.isEmpty()) {
+            return null;
+        }
+        
+        for (int i = 0; i < list.size(); i++) {
+            list.get(i).left = null;
+            if (i == list.size() - 1) {
+                list.get(i).right = null;
+            } else {
+                list.get(i).right = list.get(i + 1);
+            }
+        }
+        return list.get(0);
+    }
+    
+    private void dfs(TreeNode node, List<TreeNode> list) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, list);
+        list.add(node);
+        dfs(node.right, list);
+    }
+}
+```
+## 解法二
+### 思路
+- 不适用额外的集合来储存节点的指针，而是使用一个游标指针，在中序遍历的过程中进行操作
+- 当找到最小节点后，开始使用游标指针，将节点的左树置为null，并将游标指向右子树的根节点
+### 代码
+```java
+class Solution {
+    private TreeNode iter;
+    
+    public TreeNode increasingBST(TreeNode root) {
+        TreeNode head = new TreeNode(-1);
+        iter = head;
+        inOrder(root);
+        return head.right;
+    }
+    
+    private void inOrder(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        
+        inOrder(node.left);
+        
+        node.left = null;
+        iter.right = node;
+        iter = node;
+        
+        inOrder(node.right);
+    }
+}
+```
