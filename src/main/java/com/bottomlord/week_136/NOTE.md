@@ -116,3 +116,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII42_最近请求次数](https://leetcode-cn.com/problems/H8086Q/)
+## 解法
+### 思路
+优先级队列+map
+### 代码
+```java
+class RecentCounter {
+    private final Queue<int[]> queue;
+    private final Map<Integer, int[]> map;
+    private int sum;
+    public RecentCounter() {
+        this.sum = 0;
+        this.queue = new PriorityQueue<>(Comparator.comparingInt(x -> x[0]));
+        this.map = new HashMap<>();
+    }
+
+    public int ping(int t) {
+        if (map.containsKey(t)) {
+            int[] arr = map.get(t);
+            arr[1]++;
+        } else {
+            int[] arr = new int[]{t, 1};
+            queue.offer(arr);
+            map.put(t, arr);
+        }
+
+        sum++;
+
+        while (!queue.isEmpty() && queue.peek()[0] < t - 3000) {
+            sum -= queue.poll()[1];
+        }
+
+        return sum;
+    }
+}
+```
