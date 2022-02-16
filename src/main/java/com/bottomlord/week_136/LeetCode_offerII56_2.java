@@ -6,7 +6,7 @@ import com.bottomlord.TreeNode;
  * @author chen yue
  * @date 2022-02-16 10:49:23
  */
-public class LeetCode_offerII59_2 {
+public class LeetCode_offerII56_2 {
     public boolean findTarget(TreeNode root, int k) {
         return dfs(root, root, k);
     }

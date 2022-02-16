@@ -296,7 +296,7 @@ class Solution {
     }
 }
 ```
-# [LeetCode_offerII59_二叉搜索树中两个节点之和](https://leetcode-cn.com/problems/opLdQZ/)
+# [LeetCode_offerII56_二叉搜索树中两个节点之和](https://leetcode-cn.com/problems/opLdQZ/)
 ## 解法
 ### 思路
 - dfs生成数字set
@@ -367,6 +367,35 @@ class Solution {
         } else {
             return find(node.right, target);
         }
+    }
+}
+```
+# [LeetCode_offerII59_数据流的第K大数值](https://leetcode-cn.com/problems/jBjn9C/)
+## 解法
+### 思路
+小顶堆
+### 代码
+```java
+class KthLargest {
+
+    private PriorityQueue<Integer> queue;
+    private int k;
+
+    public KthLargest(int k, int[] nums) {
+        this.k = k;
+        this.queue = new PriorityQueue<>();
+        for (int num : nums) {
+            queue.offer(num);
+        }
+    }
+
+    public int add(int val) {
+        queue.offer(val);
+        while (queue.size() > k) {
+            queue.poll();
+        }
+
+        return queue.peek();
     }
 }
 ```

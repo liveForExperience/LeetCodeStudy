@@ -9,7 +9,7 @@ import java.util.Set;
  * @author chen yue
  * @date 2022-02-16 10:38:44
  */
-public class LeetCode_offerII59_1_二叉搜索树中两个节点之和 {
+public class LeetCode_offerII56_1_二叉搜索树中两个节点之和 {
     public boolean findTarget(TreeNode root, int k) {
         Set<Integer> set = new HashSet<>();
         dfs(root, set);
