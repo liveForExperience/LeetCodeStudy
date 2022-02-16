@@ -221,3 +221,78 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1719_重构一棵树的方案数](https://leetcode-cn.com/problems/number-of-ways-to-reconstruct-a-tree/)
+## 解法
+### 思路
+- 参考题解：
+  - [题解1](https://leetcode-cn.com/problems/number-of-ways-to-reconstruct-a-tree/solution/zhong-gou-yi-ke-shu-de-fang-an-shu-by-le-36e1/)
+  - [题解2](https://leetcode-cn.com/problems/number-of-ways-to-reconstruct-a-tree/solution/xiang-xi-fen-xi-liang-chong-jian-shu-si-eomax/)
+- 核心是要确认一颗树中节点与其一个祖先路径的上的其他节点的度数的关系
+- 根据题解中的分析可以了解到
+  - 根节点的度数等于节点个数-1
+  - 树中某个节点的祖先节点的度数一定比节点的度数大
+  - 父节点一定是祖先节点中度数最小的
+  - 如果度数相等的两个统一路径上的节点，一定是可以互换的
+### 代码
+```java
+class Solution {
+    public int checkWays(int[][] pairs) {
+        int root = -1;
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int[] pair : pairs) {
+            map.computeIfAbsent(pair[0], x -> new HashSet<>()).add(pair[1]);
+            map.computeIfAbsent(pair[1], x -> new HashSet<>()).add(pair[0]);
+        }
+
+        for (Map.Entry<Integer, Set<Integer>> entry : map.entrySet()) {
+            if (entry.getValue().size() == map.size() - 1) {
+                root = entry.getKey();
+            }
+        }
+
+        if (root == -1) {
+            return 0;
+        }
+
+        int ans = 1;
+        for (Map.Entry<Integer, Set<Integer>> entry : map.entrySet()) {
+            int node = entry.getKey();
+            if (node == root) {
+                continue;
+            }
+
+            Set<Integer> degrees = entry.getValue();
+            int curDegreeSize = degrees.size();
+            int parent = -1;
+            int parentDegreeSize = Integer.MAX_VALUE;
+
+            for (Integer degree : degrees) {
+                if (map.get(degree).size() < parentDegreeSize && map.get(degree).size() >= curDegreeSize) {
+                    parent = degree;
+                    parentDegreeSize = map.get(degree).size();
+                }
+            }
+
+            if (parent == -1) {
+                return 0;
+            }
+
+            for (Integer degree : degrees) {
+                if (degree == parent) {
+                    continue;
+                }
+
+                if (!map.get(degree).contains(parent)) {
+                    return 0;
+                }
+            }
+
+            if (curDegreeSize == parentDegreeSize) {
+                ans = 2;
+            }
+        }
+
+        return ans;
+    }
+}
+```
