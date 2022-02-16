@@ -425,3 +425,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII72_求平方根](https://leetcode-cn.com/problems/jJ0w9p/)
+## 解法
+### 思路
+二分查找
+### 代码
+```java
+class Solution {
+    public int mySqrt(int x) {
+        long head = 0, tail = x;
+        while (head < tail) {
+            long mid = head + (tail - head + 1) / 2;
+            long val = mid * mid;
+            if (val == x) {
+                return (int)mid;
+            } else if (val < x) {
+                head = mid;
+            } else {
+                tail = mid - 1;
+            }
+        }
+        return (int)head;
+    }
+}
+```
