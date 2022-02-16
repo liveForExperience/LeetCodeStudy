@@ -399,3 +399,29 @@ class KthLargest {
     }
 }
 ```
+# [LeetCode_offerII68_查找插入位置](https://leetcode-cn.com/problems/N6YdxV/)
+## 解法
+### 思路
+二分查找
+### 代码
+```java
+class Solution {
+    public int searchInsert(int[] nums, int target) {
+        int head = 0, tail = nums.length - 1;
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+            
+            int num = nums[mid];
+            if (num == target) {
+                return mid;
+            } else if (num < target) {
+                head = mid + 1;
+            } else {
+                tail = mid - 1;
+            }
+        }
+        
+        return head;
+    }
+}
+```
