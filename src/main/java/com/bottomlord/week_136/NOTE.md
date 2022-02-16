@@ -296,3 +296,77 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII59_二叉搜索树中两个节点之和](https://leetcode-cn.com/problems/opLdQZ/)
+## 解法
+### 思路
+- dfs生成数字set
+- 遍历set，找set中是否存在k-num的差值，如果存在就返回true
+- 遍历结束，没有找到，就返回false
+### 代码
+```java
+class Solution {
+    public boolean findTarget(TreeNode root, int k) {
+        Set<Integer> set = new HashSet<>();
+        dfs(root, set);
+        for (Integer num : set) {
+            if (num != k - num && set.contains(k - num)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void dfs(TreeNode node, Set<Integer> set) {
+        if (node == null) {
+            return;
+        }
+        
+        dfs(node.left, set);
+        set.add(node.val);
+        dfs(node.right, set);
+    }
+}
+```
+## 解法二
+### 思路
+- 不使用额外的数据结构
+- 两层递归
+  - 第一层递归用于寻找两个元素中的第一个元素
+  - 第二层递归用于从根节点开始，通过二叉搜索树的特性，二分查找第二个元素，如果找到就返回true，否则继续搜索
+### 代码
+```java
+class Solution {
+    public boolean findTarget(TreeNode root, int k) {
+        return dfs(root, root, k);
+    }
+
+    private boolean dfs(TreeNode node, TreeNode root, int k) {
+        if (node == null) {
+            return false;
+        }
+
+        int val = node.val, target = k - val;
+        if (val != target && find(root, target)) {
+            return true;
+        }
+
+        return dfs(node.left, root, k) || dfs(node.right, root, k);
+    }
+
+    private boolean find(TreeNode node, int target) {
+        if (node == null) {
+            return false;
+        }
+
+        if (node.val == target) {
+            return true;
+        }
+
+        if (node.val > target) {
+            return find(node.left, target);
+        } else {
+            return find(node.right, target);
+        }
+    }
+}
+```
