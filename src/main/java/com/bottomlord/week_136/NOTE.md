@@ -487,3 +487,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_offerII88_爬楼梯的最少成本](https://leetcode-cn.com/problems/GzCJIP/)
+## 解法
+### 思路
+动态规划：
+- dp[i]：到达第i级并准备继续向上所需要的体力值的最小值
+- 状态转移方程：`dp[i] = min(dp[i - 1], dp[i - 2]) + cost[i]`
+- base case：
+  - `dp[0] = cost[0]`
+  - `dp[1] = cost[1]`
+### 代码
+```java
+class Solution {
+    public int minCostClimbingStairs(int[] cost) {
+        int len = cost.length;
+        int[] dp = new int[len + 1];
+        dp[0] = cost[0];
+        dp[1] = cost[1];
+        for (int i = 2; i < dp.length - 1; i++) {
+            dp[i] = Math.min(dp[i - 1], dp[i - 2]) + cost[i];
+        }
+        
+        return Math.min(dp[len - 1], dp[len - 2]);
+    }
+}
+```
+## 解法二
+### 思路
+通过观察解法一可以发现，状态转移方程只需要dp[i-1]和dp[i-2]这两个值，所以可以对数组进行压缩，使用变量代替
+### 代码
+```java
+class Solution {
+  public int minCostClimbingStairs(int[] cost) {
+    int one = cost[0], two = cost[1], len = cost.length, ans;
+    for (int i = 2; i < len; i++) {
+      ans = Math.min(one, two) + cost[i];
+      one = two;
+      two = ans;
+    }
+
+    return Math.min(one, two);
+  }
+}
+```
