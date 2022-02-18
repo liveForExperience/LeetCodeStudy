@@ -530,3 +530,35 @@ class Solution {
   }
 }
 ```
+# [LeetCode_573_松鼠模拟](https://leetcode-cn.com/problems/squirrel-simulation/)
+## 解法
+### 思路
+- 两个点的距离公式：`dis = abs(x[0] - y[0]) + abs(x[1] - y[1])`
+- 根据观察可以发现，所有坚果，除了松鼠第一次选择的坚果外，其他坚果与树之间都会有来回的距离产生
+- 而实际计算过程中，如果松鼠选择了某个坚果，那么该坚果与树之间的一次距离，就会替换成与松鼠的距离，而要求出距离总和的最短情况，就可以找到坚果与松鼠的距离比与树的距离缩短的长度最大的情况，将这种情况计算进去即可。
+### 代码
+```java
+class Solution {
+    public int minDistance(int height, int width, int[] tree, int[] squirrel, int[][] nuts) {
+        int disTreeAndNut = 0, disSquirrelAndNut = 0, max = Integer.MIN_VALUE, ans = 0;
+        for (int[] nut : nuts) {
+            int treeDis = distance(tree, nut);
+            int squDis = distance(squirrel, nut);
+            
+            if (treeDis - squDis > max) {
+                disTreeAndNut = treeDis;
+                disSquirrelAndNut = squDis;
+                max = treeDis - squDis;
+            }
+            
+            ans += 2 * treeDis;
+        }
+        
+        return ans - disTreeAndNut + disSquirrelAndNut;
+    }
+    
+    private int distance(int[] x, int[] y) {
+        return Math.abs(x[0] - y[0]) + Math.abs(x[1] - y[1]);
+    }
+}
+```
