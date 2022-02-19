@@ -562,3 +562,103 @@ class Solution {
     }
 }
 ```
+# [LeetCode_582_杀掉进程](https://leetcode-cn.com/problems/kill-process/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_969_煎饼排序](https://leetcode-cn.com/problems/pancake-sorting/)
+## 解法
+### 思路
+- 因为是[0, k-1]范围的翻转，所以要形成升序，可以依次确定最大值即可
+- 而将最大值通过煎饼排序放置到指定数组范围结尾的方法，就是
+  - 先找到当前范围的最大值坐标
+  - 将最大值坐标翻转到第一的位置，然后再做一次煎饼翻转，翻转的范围就是你要他到的范围
+- 如此，这个最大值就确定了，然后缩小范围到前一个坐标即可
+- 因为翻转次数在数组长度*10的范围内都有效，而这个算法的最差情况是每次确定一个最大值都翻转2次，所以一定小于最大翻转次数
+### 代码
+```java
+class Solution {
+  public List<Integer> pancakeSort(int[] arr) {
+    int len = arr.length, index = len - 1;
+    List<Integer> ans = new ArrayList<>();
+    while (index >= 0) {
+      int maxIndex = findMaxNumIndex(arr, index);
+
+      if (maxIndex == index) {
+        index--;
+        continue;
+      }
+
+      reserve(arr, 0, maxIndex);
+      ans.add(maxIndex + 1);
+      reserve(arr, 0, index);
+      ans.add(index-- + 1);
+    }
+
+    return ans;
+  }
+
+  private int findMaxNumIndex(int[] arr, int tail) {
+    int max = Integer.MIN_VALUE, maxIndex = -1;
+    for (int i = 0; i <= tail; i++) {
+      if (max < arr[i]) {
+        max = arr[i];
+        maxIndex = i;
+      }
+    }
+    return maxIndex;
+  }
+
+  private void reserve(int[] arr, int head, int tail) {
+    while (head < tail) {
+      int tmp = arr[head];
+      arr[head] = arr[tail];
+      arr[tail] = tmp;
+      head++;
+      tail--;
+    }
+  }
+}
+```
+# [LeetCode_杀掉进程](https://leetcode-cn.com/problems/kill-process/)
+## 解法
+### 思路
+邻接表+dfs
+### 代码
+```java
+class Solution {
+    public List<Integer> killProcess(List<Integer> pid, List<Integer> ppid, int kill) {
+        Map<Integer, Integer> mapping = new HashMap<>();
+        Map<Integer, List<Integer>> edges = new HashMap<>();
+        for (int i = 0; i < pid.size(); i++) {
+            mapping.put(i, pid.get(i));
+        }
+
+        for (int i = 0; i < ppid.size(); i++) {
+            edges.computeIfAbsent(ppid.get(i), x -> new ArrayList<>()).add(mapping.get(i));
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        dfs(kill, ans, edges);
+        return ans;
+    }
+
+    private void dfs(Integer kill, List<Integer> list, Map<Integer, List<Integer>> edges) {
+        if (kill == null) {
+            return;
+        }
+
+        list.add(kill);
+        List<Integer> nexts = edges.get(kill);
+        if (nexts != null) {
+            for (Integer next : nexts) {
+                dfs(next, list, edges);
+            }
+        }
+    }
+}
+```
