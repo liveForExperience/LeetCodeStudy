@@ -161,3 +161,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2176_统计数组中相等且可以被整除的数对](https://leetcode-cn.com/problems/count-equal-and-divisible-pairs-in-an-array/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int countPairs(int[] nums, int k) {
+        int len = nums.length, count = 0;
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                if (nums[i] == nums[j] && (i * j) % k == 0) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+}
+```
+# [LeetCode_2180_1_统计各位数字之和为偶数的整数个数](https://leetcode-cn.com/problems/count-integers-with-even-digit-sum/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int countEven(int num) {
+        int count = 0;
+        for (int i = 1; i <= num; i++) {
+            if (check(i)) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    private boolean check(int num) {
+        int sum = 0;
+        while (num > 0) {
+            sum += num % 10;
+            num /= 10;
+        }
+        return sum % 2 == 0;
+    }
+}
+```
+# [LeetCode_1994_好子集的数目](https://leetcode-cn.com/problems/the-number-of-good-subsets/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
