@@ -208,11 +208,110 @@ class Solution {
     }
 }
 ```
+# [LeetCode_553_最优除法](https://leetcode-cn.com/problems/optimal-division/)
+## 解法
+### 思路
+- 表达式应该分成2个部分，左边的除数应该是最大值，右边除数应该是最小值
+- 通过观察可以发现，因为所有数都是整数，所以最大值一定是没有被除的数，所以第一个元素就是除数。而最小值应该是不断被除的数字，所以剩下的数不断被除就可以了
+### 代码
+```java
+class Solution {
+    public String optimalDivision(int[] nums) {
+        int len = nums.length;
+        if (len == 1) {
+            return String.valueOf(nums[0]);
+        }
+        
+        if (len == 2) {
+            return nums[0] + "/" + nums[1]; 
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            if (i == 0) {
+                sb.append(nums[i]).append("/").append("(");
+                continue;
+            }
+            
+            sb.append(nums[i]);
+            if (i != len - 1) {
+                sb.append("/");
+            } else {
+                sb.append(")");
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
 # [LeetCode_1994_好子集的数目](https://leetcode-cn.com/problems/the-number-of-good-subsets/)
 ## 解法
 ### 思路
-
+- 枚举出30以内的所有质数，一共10个： `[2,3,5,7,11,13,17,19,23,29]`
+- 因为不同位置的所有元素算是不同的子集可能，所以对数值出现的次数进行统计，这个统计值会在后面用来累加可能数
+- 正序依次遍历所有num，通过试除法来判断当前元素是否符合题目要求，没有重复的质数因数，如果有就中断
+- 如果没有，那么就要和过去的状态进行联合判断，如果还符合，就累加进去，累加的时候要和统计的个数相乘
+- 这里还需要考虑一个特殊的数字，1，因为1和任何元素相乘的结果都是原值，所以只要算出2到30区间范围内的可能后，对1再做计算就可以
+- 而这里做联合判断的方式，主要是将10个质数是否使用，通过一个10位的二进制数来表示，然后通过当前元素的质数使用情况和过去的质数使用情况进行判断，就可以直到当前这个数和之前的状态放在一起是否能符合题目的要求
 ### 代码
 ```java
+class Solution {
+    private final int[] p = new int[]{2,3,5,7,11,13,17,19,23,29};
+    public int numberOfGoodSubsets(int[] nums) {
+        int[] buckets = new int[35];
+        for (int i : nums) {
+            buckets[i]++;
+        }
 
+        int mask = 1 << 10;
+        long[] states = new long[mask];
+        states[0] = 1;
+
+        int mod = (int) 1e9 + 7;
+        for (int i = 2; i <= 30; i++) {
+            if (buckets[i] == 0) {
+                continue;
+            }
+
+            int cur = 0, x = i;
+            boolean ok = true;
+            for (int j = 0; j < 10 && ok; j++) {
+                int c = 0;
+                while (x % p[j] == 0) {
+                    cur |= (1 << j);
+                    c++;
+                    x /= p[j];
+                }
+
+                if (c > 1) {
+                    ok = false;
+                }
+            }
+
+            if (!ok) {
+                continue;
+            }
+
+            for (int pre = mask - 1; pre >= 0; pre--) {
+                if ((cur & pre) != 0) {
+                    continue;
+                }
+
+                states[pre | cur] = (states[pre | cur] + states[pre] * buckets[i]) % mod;
+            }
+        }
+
+        long ans = 0;
+        for (int i = 1; i < mask; i++) {
+            ans = (ans + states[i]) % mod;
+        }
+
+        for (int i = 0; i < buckets[1]; i++) {
+            ans = (ans * 2) % mod;
+        }
+
+        return (int)ans;
+    }
+}
 ```
