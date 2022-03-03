@@ -209,3 +209,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2185_统计包含给定前缀的字符串](https://leetcode-cn.com/problems/counting-words-with-a-given-prefix/)
+## 解法
+### 思路
+- 模拟
+- 注意pref比word长的情况
+### 代码
+```java
+class Solution {
+    public int prefixCount(String[] words, String pref) {
+        int ans = 0;
+        for (String word : words) {
+            if (match(word, pref)) {
+                ans++;
+            }
+        }
+        return ans;
+    }
+    
+    private boolean match(String word, String pref) {
+        int len = pref.length();
+        if (len > word.length()) {
+            return false;
+        }
+
+        for (int i = 0; i < len; i++) {
+            if (word.charAt(i) != pref.charAt(i)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
