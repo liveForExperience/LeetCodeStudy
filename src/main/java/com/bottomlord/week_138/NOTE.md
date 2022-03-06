@@ -274,3 +274,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2100_适合打劫银行的日子](https://leetcode-cn.com/problems/find-good-days-to-rob-the-bank/solution/gua-he-da-jie-yin-xing-de-ri-zi-by-leetc-z6r1/)
+## 解法
+### 思路
+动态规划：
+- 2个dp数组，分别记录i
+  - 左边连续非递增序列的个数
+  - 右边连续非递减序列的个数
+- 状态转移方程：
+  - left[i] = nums[i] <= nums[i - 1] ? left[i - 1] + 1 : 0
+  - right[i] = nums[i] <= nums[i + 1] ? right[i + 1] + 1 : 0
+### 代码
+```java
+class Solution {
+  public List<Integer> goodDaysToRobBank(int[] security, int time) {
+    int len = security.length;
+    int[] left = new int[len], right = new int[len];
+    for (int i = 1; i < len; i++) {
+      if (security[i] <= security[i - 1]) {
+        left[i] = left[i - 1] + 1;
+      }
+    }
+
+    for (int i = len - 2; i >= 0; i--) {
+      if (security[i] <= security[i + 1]) {
+        right[i] = right[i + 1] + 1;
+      }
+    }
+
+    List<Integer> ans = new ArrayList<>();
+    for (int i = 0; i < len; i++) {
+      if (left[i] >= time && right[i] >= time) {
+        ans.add(i);
+      }
+    }
+
+    return ans;
+  }
+}
+```
