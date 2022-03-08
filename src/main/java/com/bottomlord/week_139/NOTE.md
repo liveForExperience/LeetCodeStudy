@@ -167,3 +167,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2190_数组中紧跟key之后出现最频繁的数字](https://leetcode-cn.com/problems/most-frequent-number-following-key-in-an-array/https://leetcode-cn.com/problems/most-frequent-number-following-key-in-an-array/)
+## 解法
+### 思路
+暴力
+### 代码
+```java
+class Solution {
+    public int mostFrequent(int[] nums, int key) {
+        int max = 0, ans = -1;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != key) {
+                continue;
+            }
+            
+            if (i + 1 == nums.length) {
+                continue;
+            }
+            
+            int target = nums[i + 1], count = 1;
+            for (int j = i + 2; j < nums.length; j++) {
+                if (nums[j] == target && nums[j - 1] == key) {
+                    count++;
+                }
+            }
+            
+            if (count > max) {
+                max = count;
+                ans = target;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
