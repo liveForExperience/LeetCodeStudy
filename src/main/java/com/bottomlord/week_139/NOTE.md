@@ -59,3 +59,111 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2055_蜡烛之间的盘子](https://leetcode-cn.com/problems/plates-between-candles/)
+## 失败解法
+### 原因
+超时
+### 思路
+暴力
+### 代码
+```java
+class Solution {
+    public int[] platesBetweenCandles(String s, int[][] queries) {
+        int len = queries.length;
+        int[] ans = new int[len];
+        for (int i = 0; i < queries.length; i++) {
+            ans[i] = count(s, queries[i][0], queries[i][1]);
+        }
+
+        return ans;
+    }
+
+    private int count(String s, int left, int right) {
+        int l = left - 1, r = right + 1;
+        for (int i = left; i <= right; i++) {
+            if (s.charAt(i) == '|') {
+                l = i;
+                break;
+            }
+        }
+
+        for (int i = right; i >= left; i--) {
+            if (s.charAt(i) == '|') {
+                r = i;
+                break;
+            }
+        }
+
+        if (l == left - 1 || r == right + 1 || l >= r) {
+            return 0;
+        }
+
+        int count = 0;
+        for (int i = l; i <= r; i++) {
+            if (s.charAt(i) == '*') {
+                count++;
+            }
+        }
+
+        return count;
+    }
+}
+```
+## 解法
+### 思路
+- 遍历数组candies，从左到右找到蜡烛的坐标
+- 初始化两个数组，这两个数组的作用：
+  - 一个数组left用来记录以当前坐标为左边界，右边（包括当前坐标）最近的一个蜡烛的坐标位置
+  - 一个数组right用来记录以当前坐标为右边界，左边（包括当前坐标）最近的一个蜡烛的坐标位置
+- 初始化数组sums，这个数组用来记录盘子的前缀和，为了方便计算，数组长度在candies基础上+1
+- 最后遍历queries数组
+  - 根据数组元素的第一和第二元素，在left和right中找到左右边界的蜡烛位置
+  - 在根据left和right的位置，在sums中找到盘子的个数
+### 代码
+```java
+class Solution {
+    public int[] platesBetweenCandles(String s, int[][] queries) {
+        int len = s.length();
+        int[] left = new int[len],
+              right = new int[len],
+              sums = new int[len + 1];
+
+        char[] cs = s.toCharArray();
+        int pre = -1, count = 0;
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] == '|') {
+                pre = i;
+            }
+
+            right[i] = pre;
+
+            if (cs[i] == '*') {
+                count++;
+            }
+
+            sums[i + 1] = count;
+        }
+
+        pre = cs.length;
+        for (int i = cs.length - 1; i >= 0; i--) {
+            if (cs[i] == '|') {
+                pre = i;
+            }
+
+            left[i] = pre;
+        }
+
+        int[] ans = new int[queries.length];
+        for (int i = 0; i < queries.length; i++) {
+            int l = left[queries[i][0]], r = right[queries[i][1]];
+            if (l >= r) {
+                ans[i] = 0;
+            } else {
+                ans[i] = sums[r] - sums[l];
+            }
+        }
+        
+        return ans;
+    }
+}
+```
