@@ -202,3 +202,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2194_Excel表中某个范围内的单元格](https://leetcode-cn.com/problems/cells-in-a-range-on-an-excel-sheet/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public List<String> cellsInRange(String s) {
+        List<String> ans = new ArrayList<>();
+        int row1 = s.charAt(0) - 'A',
+            col1 = s.charAt(1) - '0',
+            row2 = s.charAt(3) - 'A',
+            col2 = s.charAt(4) - '0';
+        
+        for (int i = row1; i <= row2; i++) {
+            for (int j = col1; j <= col2; j++) {
+                ans.add(String.valueOf((char)(i + 'A')) + j);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+优化
+### 代码
+```java
+class Solution {
+    public List<String> cellsInRange(String s) {
+        List<String> ans = new ArrayList<>();
+        for (int i = s.charAt(0); i <= s.charAt(3); i++) {
+            for (int j = s.charAt(1); j <= s.charAt(4); j++) {
+                ans.add(new String(new char[]{(char)i, (char)j}));
+            }
+        }
+        return ans;
+    }
+}
+```
