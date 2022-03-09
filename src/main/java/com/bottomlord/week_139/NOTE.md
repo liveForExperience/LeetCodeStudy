@@ -243,3 +243,70 @@ class Solution {
     }
 }
 ```
+# [LeetCode_798_得分最高的最小轮调](https://leetcode-cn.com/problems/smallest-rotation-with-highest-score/)
+## 失败解法
+### 原因
+超时
+### 思路
+暴力
+### 代码
+```java
+class Solution {
+  public int bestRotation(int[] nums) {
+    int len = nums.length;
+    int[] indexes = new int[len];
+    for (int i = 0; i < indexes.length; i++) {
+      indexes[i] = i;
+    }
+
+    int max = 0, ans = 0;
+    for (int time = 0; time < len; time++) {
+      int count = doCount(nums, indexes);
+      if (count > max) {
+        max = count;
+        ans = time;
+      }
+      arrIncrease(indexes);
+    }
+
+    return ans;
+  }
+
+  private int doCount(int[] nums, int[] indexes) {
+    int len = nums.length, count = 0;
+    for (int i = 0; i < len; i++) {
+      if (nums[i] <= indexes[i]) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  private void arrIncrease(int[] nums) {
+    int len = nums.length;
+    for (int i = 0; i < nums.length; i++) {
+      nums[i] = (nums[i] + len - 1) % len;
+    }
+  }
+}
+```
+## 解法
+### 思路
+- 通过观察可以发现，左边是随着轮调逐次减1的
+- 而坐标与值之间的关系有如下几种情况
+  - 没有移动时，val <= i的，那么随着轮调，那么随着轮调，i会逐步减小，直到van > i之前，还是有count的
+  - 没有移动时，val > i的，那么随着轮调，不会得到count值
+  - 如上2种情况，count总值都不会+1，除非一种情况，那就是0转换为n-1时候，因为n-1一定是最大值，所以此时count总值一定会+1
+- 所以根据如上情况，如果能统计除有count到没count的临界点，val == i的时候，那么统计这个点上有多少值，那么当轮调一次，这部分的count就应该被减去，同时因为轮调必定会发生0到n-1的转换，所以也需要在总值上+1
+- 那么可以：
+  - 将没有轮调的初始count值计算出来
+  - 将临界点count值的集合计算出来，每一个坐标对应当前轮调步数对应的临界点count值
+  - 得到临界点集合后，遍历这个集合，要从1开始，代表从第1次轮调的状态开始
+  - 然后在初始值的基础上，不断减去当前轮调后，不再可以计算count值的个数，同时+1，这个1就是0转变为n-1时产生的count值1
+  - 遍历过程中不断比较最大值，看看走哪第几次轮调的时候，count值是最大的，暂存这个最大值和坐标值直至轮调结束
+- 遍历结束，返回坐标值
+### 代码
+```java
+
+```
