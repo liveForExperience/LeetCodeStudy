@@ -308,5 +308,175 @@ class Solution {
 - 遍历结束，返回坐标值
 ### 代码
 ```java
+public class Solution {
+  public int bestRotation(int[] nums) {
+    int len = nums.length, val = 0;
+    for (int i = 0; i < nums.length; i++) {
+      if (nums[i] <= i) {
+        val++;
+      }
+    }
 
+    int[] steps = new int[len];
+    for (int i = 0; i < steps.length; i++) {
+      if (nums[i] <= i) {
+        steps[i - nums[i]]++;
+      } else {
+        steps[len - (nums[i] - i)]++;
+      }
+    }
+
+    int max = val, ans = 0;
+    for (int i = 1; i < nums.length; i++) {
+      val = val - steps[i - 1] + 1;
+      if (val > max) {
+        max = val;
+        ans = i;
+      }
+    }
+
+    return ans;
+  }
+}
+```
+# [LeetCode_2049_统计最高分的节点数目](https://leetcode-cn.com/problems/count-nodes-with-the-highest-score/)
+## 解法
+### 思路
+- 根据parents生成邻接表，通过该邻接表可以做到遍历
+- 遍历所有要去除边的节点
+- 在该节点计算2大部分数据
+  - 所有子树的个数
+  - 自己的父节点所在子树的个数：`count = n - 1 - sum(child_count)`
+- 将这些总数相乘后，查看是否和当前的最大值相等，如果相等就累加个数，否则就更新最大值，并把个数更新为1
+- 注意：
+  - 相乘值可能溢出，用64位整数
+  - 使用记忆化搜索进行减枝
+### 代码
+```java
+class Solution {
+    public int countHighestScoreNodes(int[] parents) {
+        int n = parents.length;
+        List<Integer>[] graph = new ArrayList[n];
+
+        for (int i = 0; i < graph.length; i++) {
+            graph[i] = new ArrayList<>();
+        }
+
+        for (int i = 1; i < parents.length; i++) {
+            graph[parents[i]].add(i);
+        }
+
+        long max = 0;
+        int ans = 0;
+        Integer[] memo = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            long count = dfs(graph, i, n, memo);
+            if (count == max)  {
+                ans++;
+            } else if (count > max) {
+                ans = 1;
+                max = count;
+            }
+        }
+
+        return ans;
+    }
+
+    private long dfs(List<Integer>[] graph, int node, int n, Integer[] memo) {
+        List<Integer> children = graph[node];
+
+        long ans = 1, count = 0;
+        for (Integer child : children) {
+            Integer m = memo[child];
+            int childCount;
+            if (m == null) {
+               childCount = innerDfs(graph, child, memo);
+               memo[child] = childCount;
+            } else {
+                childCount = m;
+            }
+            
+            ans *= childCount;
+            count += childCount;
+        }
+
+        if (node != 0) {
+            ans *= (n - 1 - count);
+        }
+
+        return ans;
+    }
+
+    private int innerDfs(List<Integer>[] graph, int node, Integer[] memo) {
+        int count = 1;
+
+        List<Integer> children = graph[node];
+        for (Integer child : children) {
+            Integer m = memo[child];
+            int childCount;
+            if (m == null) {
+                childCount = innerDfs(graph, child, memo);
+                memo[child] = childCount;
+            } else {
+                childCount = m;
+            }
+            
+            count += childCount;
+        }
+
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+简化解法一的代码
+- 其实在内层dfs的时候，就已经可以同时去计算去除边的情况了
+- 在dfs递归返回的过程中依次判断所有的节点
+- 这样代码就可以减少很大一部分
+### 代码
+```java
+class Solution {
+    private int ans = 0, n;
+    private long max = 0;
+    public int countHighestScoreNodes(int[] parents) {
+        n = parents.length;
+        List<Integer>[] graph = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+        }
+
+        for (int i = 1; i < n; i++) {
+            graph[parents[i]].add(i);
+        }
+        
+        dfs(graph, 0);
+        
+        return ans;
+    }
+    
+    private int dfs(List<Integer>[] graph, int node) {
+        List<Integer> children = graph[node];
+        long cur = 1;
+        int count = 0;
+        for (Integer child : children) {
+            int childCount = dfs(graph, child);
+            cur *= childCount;
+            count += childCount;
+        }
+        
+        if (node != 0) {
+            cur *= (n - count - 1);
+        }
+        
+        if (max == cur) {
+            ans++;
+        } else if (max < cur) {
+            max = cur;
+            ans = 1;
+        }
+        
+        return count + 1;
+    }
+}
 ```
