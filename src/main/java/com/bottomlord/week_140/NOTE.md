@@ -37,3 +37,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2044_1_统计按位或能得到最大值的子集数目](https://leetcode-cn.com/problems/count-number-of-maximum-bitwise-or-subsets/)
+## 解法
+### 思路
+回溯+计数
+### 代码
+```java
+class Solution {
+    int max = Integer.MIN_VALUE, ans = 0;
+    public int countMaxOrSubsets(int[] nums) {
+        backTrack(nums, 0, 0);
+        return ans;
+    }
+    
+    private void backTrack(int[] nums, int start, int num) {
+        if (start >= nums.length) {
+            return;
+        }
+        
+        for (int i = start; i < nums.length; i++) {
+            int cur = num | nums[i];
+            if (cur > max) {
+                max = cur;
+                ans = 1;
+            } else if (cur == max) {
+                ans++;
+            }
+            
+            backTrack(nums, i + 1, cur);
+        }
+    }
+}
+```
