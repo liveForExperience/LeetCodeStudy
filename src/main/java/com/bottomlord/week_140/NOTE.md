@@ -355,3 +355,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2043_简易银行系统](https://leetcode-cn.com/problems/simple-bank-system/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Bank {
+    private long[] balance;
+    private int len;
+    public Bank(long[] balance) {
+        this.balance = balance;
+        this.len = balance.length;
+    }
+
+    public boolean transfer(int account1, int account2, long money) {
+        if (account1 > len || account2 > len) {
+            return false;
+        }
+
+        if (balance[account1 - 1] >= money) {
+            balance[account1 - 1] -= money;
+            balance[account2 - 1] += money;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean deposit(int account, long money) {
+        if (account > len) {
+            return false;
+        }
+
+        balance[account - 1] += money;
+        return true;
+    }
+
+    public boolean withdraw(int account, long money) {
+        if (account > len || balance[account - 1] < money) {
+            return false;
+        }
+        
+        balance[account - 1] -= money;
+        return true;
+    }
+}
+```
