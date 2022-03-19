@@ -449,6 +449,43 @@ class Solution {
   }
 }
 ```
+## 解法二
+### 思路
+优化代码，减少StringBuilder的new次数
+### 代码
+```java
+class Solution {
+  public String tree2str(TreeNode root) {
+    StringBuilder sb = new StringBuilder();
+    dfs(root, sb);
+    return sb.substring(1, sb.length() - 1).toString();
+  }
+
+  private void dfs(TreeNode node, StringBuilder sb) {
+    if (node == null) {
+      return;
+    }
+
+    sb.append("(");
+
+    sb.append(node.val);
+
+    if (node.left != null) {
+      dfs(node.left, sb);
+    }
+
+    if (node.right != null) {
+      if (node.left == null) {
+        sb.append("(").append(")");
+      }
+
+      dfs(node.right, sb);
+    }
+
+    sb.append(")");
+  }
+}
+```
 # [LeetCode_616_给字符串添加加粗标签](https://leetcode-cn.com/problems/add-bold-tag-in-string/)
 ## 解法
 ### 思路
@@ -630,6 +667,64 @@ class Solution {
         }
         
         return sb.toString();
+    }
+}
+```
+# [LeetCode_624_数组列表中的最大距离](https://leetcode-cn.com/problems/maximum-distance-in-arrays/)
+## 解法
+### 思路
+- 遍历arrays，记录4个东西：
+  - 最大值
+  - 最大值对应的坐标
+  - 最小值
+  - 最小值对应的坐标
+- 如果最大值和最小值的坐标个数，不是都等于1，或者虽然都是1，但是值不同，那么说明存在不是同一个数组中的两个值能够形成最大距离
+- 如果是在同一个数组里的，那么就分别遍历其他的最大值和最小值可能，找到最大的距离
+### 代码
+```java
+class Solution {
+    public int maxDistance(List<List<Integer>> arrays) {
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        List<Integer> minIndexes = new ArrayList<>(),
+                maxIndexes = new ArrayList<>();
+
+        for (int i = 0; i < arrays.size(); i++) {
+            List<Integer> array = arrays.get(i);
+            int curMin = array.get(0), curMax = array.get(array.size() - 1);
+
+            if (curMin < min) {
+                min = curMin;
+                minIndexes.clear();
+                minIndexes.add(i);
+            } else if (curMin == min) {
+                minIndexes.add(i);
+            }
+
+            if (curMax > max) {
+                max = curMax;
+                maxIndexes.clear();
+                maxIndexes.add(i);
+            } else if (curMax == max) {
+                maxIndexes.add(i);
+            }
+        }
+
+        if (maxIndexes.size() > 1 || minIndexes.size() > 1 || !Objects.equals(maxIndexes.get(0), minIndexes.get(0))) {
+            return max - min;
+        }
+
+        int ans = 0, maxIndex = maxIndexes.get(0), minIndex = minIndexes.get(0);
+        for (int i = 0; i < arrays.size(); i++) {
+            if (maxIndex != i) {
+                ans = Math.max(ans, max - arrays.get(i).get(0));
+            }
+
+            if (minIndex != i) {
+                ans = Math.max(ans, arrays.get(i).get(arrays.get(i).size() - 1) - min);
+            }
+        }
+
+        return ans;
     }
 }
 ```
