@@ -402,3 +402,234 @@ class Bank {
     }
 }
 ```
+# [LeetCode_606_根据二叉树创建字符串](https://leetcode-cn.com/problems/construct-string-from-binary-tree/)
+## 解法
+### 思路
+dfs
+- 需要注意，如果left为空，但是right不为空，那么left需要有一个空的空格
+### 代码
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+  public String tree2str(TreeNode root) {
+    if (root == null) {
+      return "";
+    }
+
+    StringBuilder sb = new StringBuilder();
+    sb.append(root.val);
+    String left = tree2str(root.left);
+    if (!Objects.equals(left, "")) {
+      sb.append("(").append(left).append(")");
+    }
+
+    String right = tree2str(root.right);
+    if (!Objects.equals(right, "")) {
+      if (Objects.equals(left, "")) {
+        sb.append("(").append(")");
+      }
+      sb.append("(").append(right).append(")");
+    }
+
+    return sb.toString();
+  }
+}
+```
+# [LeetCode_616_给字符串添加加粗标签](https://leetcode-cn.com/problems/add-bold-tag-in-string/)
+## 解法
+### 思路
+字典树
+- 字典树节点中存储一个深度值，代表当前节点对应字符串s的坐标值，用于方便定位
+- 然后就是遍历s生成树
+- 遍历words找到对应的节点，并判断从该节点出发是否能生成word，如果能就记录在boolean数组中
+- 最后遍历boolean数组，生成字符串
+### 代码
+```java
+class Solution {
+    public String addBoldTag(String s, String[] words) {
+        int len = s.length();
+        boolean[] bucket = new boolean[len];
+        char[] cs = s.toCharArray();
+        TrieTree tree = new TrieTree();
+        tree.insert(s);
+
+        for (String word : words) {
+            List<TrieNode> nodes = tree.listNode(word.charAt(0));
+            for (TrieNode node : nodes) {
+                if (tree.isWord(node, word)) {
+                    for (int i = node.depth; i < node.depth + word.length(); i++) {
+                        bucket[i] = true;
+                    }
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bucket.length;) {
+            int count = 0;
+            StringBuilder curSb = new StringBuilder();
+            while (i < bucket.length && bucket[i]) {
+                count++;
+                curSb.append(cs[i++]);
+            }
+
+            if (count == 0) {
+                sb.append(cs[i]);
+                i++;
+            } else {
+                sb.append("<b>").append(curSb).append("</b>");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private class TrieTree {
+        private TrieNode root;
+        public TrieTree() {
+            this.root = new TrieNode(' ', -1);
+        }
+
+        public void insert(String s) {
+            TrieNode node = root;
+            char[] cs = s.toCharArray();
+            for (int i = 0; i < cs.length; i++) {
+                node = node.addChild(cs[i], i);
+            }
+        }
+
+        public List<TrieNode> listNode(char c) {
+            List<TrieNode> ans = new ArrayList<>();
+            Queue<TrieNode> queue = new ArrayDeque<>();
+            queue.offer(root);
+            while (!queue.isEmpty()) {
+                TrieNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+
+                if (node.c == c) {
+                    ans.add(node);
+                }
+
+                for (TrieNode child : node.children) {
+                    if (child == null) {
+                        continue;
+                    }
+
+                    queue.offer(child);
+                }
+            }
+
+            return ans;
+        }
+
+        public boolean isWord(TrieNode node, String word) {
+            if (word == null || word.length() == 0) {
+                return true;
+            }
+
+            if (node.c != word.charAt(0)) {
+                return false;
+            }
+
+            char[] cs = word.toCharArray();
+            for (int i = 1; i < cs.length; i++) {
+                char c = cs[i];
+                if (node.children[c] == null) {
+                    return false;
+                }
+
+                node = node.children[c];
+            }
+
+            return true;
+        }
+    }
+
+    private class TrieNode {
+        private char c;
+        private int depth;
+        private TrieNode[] children;
+
+        public TrieNode(char c, int depth) {
+            this.c = c;
+            this.depth = depth;
+            this.children = new TrieNode[123];
+        }
+
+        public TrieNode addChild(char c, int depth) {
+            if (this.children[c] != null) {
+                return this.children[c];
+            }
+
+            this.children[c] = new TrieNode(c, depth);
+            return this.children[c];
+        }
+    }
+}
+```
+## 解法二
+### 思路
+不用字典树，直接3层遍历
+### 代码
+```java
+class Solution {
+    public String addBoldTag(String s, String[] words) {
+        int n = s.length();
+        boolean[] bucket = new boolean[n];
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            for (String word : words) {
+                boolean flag = true;
+                for (int j = 0; j < word.length(); j++) {
+                    if (j + i >= n || cs[i + j] != word.charAt(j)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                
+                if (!flag) {
+                    continue;
+                }
+                
+                for (int j = 0; j < word.length(); j++) {
+                    bucket[i + j] = true;
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bucket.length;) {
+            int count = 0;
+            StringBuilder curSb = new StringBuilder();
+            while (i < bucket.length && bucket[i]) {
+                count++;
+                curSb.append(cs[i++]);
+            }
+            
+            if (count == 0) {
+                sb.append(cs[i++]);
+            } else {
+                sb.append("<b>").append(curSb).append("</b>");
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
