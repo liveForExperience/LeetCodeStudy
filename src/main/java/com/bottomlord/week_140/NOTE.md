@@ -853,3 +853,116 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2039_网络空闲时刻](https://leetcode-cn.com/problems/the-time-when-the-network-becomes-idle/)
+## 解法
+### 思路
+- 通过数组生成邻接表，因为是无向图，所以是双向都要保存
+- 通过bfs计算出数据服务器距离主服务器的最短距离
+- 通过patience数组计算出每个节点最后收到数据包的秒数
+- 通过计算秒数的最大值求得结果
+  - 公式：time = pat * ((2 * dis - 1) / pat) + 2 * dis + 1
+### 代码
+```java
+class Solution {
+    public int networkBecomesIdle(int[][] edges, int[] patience) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int[] edge : edges) {
+            map.computeIfAbsent(edge[0], x -> new ArrayList<>()).add(edge[1]);
+            map.computeIfAbsent(edge[1], x -> new ArrayList<>()).add(edge[0]);
+        }
+
+        Map<Integer, Integer> disMap = new HashMap<>();
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.offer(new int[]{0, 0});
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            while (count-- > 0) {
+                int[] arr = queue.poll();
+                if (arr == null) {
+                    continue;
+                }
+
+                if (!disMap.containsKey(arr[0])) {
+                    disMap.put(arr[0], arr[1]);
+                }
+
+                if (!map.containsKey(arr[0])) {
+                    continue;
+                }
+
+                for (Integer next : map.get(arr[0])) {
+                    if (disMap.containsKey(next)) {
+                        continue;
+                    }
+
+                    queue.offer(new int[]{next, arr[1] + 1});
+                }
+            }
+        }
+
+        disMap.remove(0);
+
+        int max = 0;
+        for (Map.Entry<Integer, Integer> entry : disMap.entrySet()) {
+            int node = entry.getKey(), dis = entry.getValue(), pat = patience[node];
+            int time = ((dis * 2 - 1) / pat) * pat, last = time + dis * 2 + 1;
+            max = Math.max(max, last);
+        }
+
+        return max;
+    }
+}
+```
+## 解法二
+### 思路
+优化代码
+- 使用list代替map作为邻接表
+- 将遍历时间合并到bfs过程中
+### 代码
+```java
+class Solution {
+    public int networkBecomesIdle(int[][] edges, int[] patience) {
+        int n = patience.length;
+        List<List<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        for (int[] edge : edges) {
+            graph.get(edge[0]).add(edge[1]);
+            graph.get(edge[1]).add(edge[0]);
+        }
+        
+        int max = 0;
+        Set<Integer> memo = new HashSet<>();
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.offer(new int[]{0, 0});
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            
+            while (count-- > 0) {
+                int[] arr = queue.poll();
+                if (arr == null) {
+                    continue;
+                }
+                
+                int node = arr[0], dis = arr[1], pat = patience[node];
+                if (memo.contains(node)) {
+                    continue;
+                }
+                
+                if (dis != 0) {
+                    max = Math.max(max, pat * ((2 * dis - 1) / pat) + 2 * dis + 1);
+                }
+                
+                memo.add(node);
+                for (Integer nextNode : graph.get(node)) {
+                    queue.offer(new int[]{nextNode, dis + 1});
+                }
+            }
+        }
+        
+        return max;
+    }
+}
+```
