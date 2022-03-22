@@ -129,3 +129,35 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2038_如果相邻两个颜色均相同则删除当前颜色](https://leetcode-cn.com/problems/remove-colored-pieces-if-both-neighbors-are-the-same-color/)
+## 解法
+### 思路
+模拟
+- 分析题目可以发现，A和B的抽取数量与另一方没有关系，所以只需要计算出连续的字符长度以及连续字符的个数就可知道每一方可以抽取的数量
+- 抽取的数量 = 连续长度 - 2
+- 最后比较A的抽取数量是否大于B即可
+### 代码
+```java
+class Solution {
+    public boolean winnerOfGame(String colors) {
+        char[] cs = colors.toCharArray();
+        int aNum = 0, bNum = 0;
+        for (int i = 0; i < cs.length;) {
+            char c = cs[i];
+            int count = 0;
+            while (i < cs.length && c == cs[i]) {
+                count++;
+                i++;
+            }
+            
+            if (c == 'A') {
+                aNum += Math.max(count - 2, 0);
+            } else {
+                bNum += Math.max(count - 2, 0);
+            }
+        }
+        
+        return aNum > bNum;
+    }
+}
+```
