@@ -217,3 +217,62 @@ class Solution {
     }
 }
 ```
+# [LeetCode_634_寻找数组的错位排列](https://leetcode-cn.com/problems/find-the-derangement-of-an-array/)
+## 解法
+### 思路
+- 如果将坐标a的元素进行放置，那么就有n-1种可能
+- 如果此时将其放在b坐标上，那么就会有两种情况：
+  - b放在a上，那么此时剩下的可能情况就是(n - 2)子问题的结果，再乘以(n - 1)种a的可能，除了a和b之外，其他都是不选择自己。
+  - b不放在a上，那么剩下的可能情况就是(n - 1)子问题的结果，再乘以(n - 1)种a的可能，除了b之外，其他都是不选择自己，b是不选择a。
+- 找到子问题的递推关系，就可以通过动态规划来处理
+- `dp[i]`：i个元素的错排状态个数
+- 状态转移方程：`dp[i] = (i - 1) * (dp [i - 1] + dp[i - 2])`
+- base case：`dp[1] = 0`，`dp[2] = 1`
+- 返回结果就是`dp[n]`
+### 代码
+```java
+class Solution {
+    public int findDerangement(int n) {
+        if (n == 1) {
+            return 0;
+        }
+        
+        int mod = 1000000007;
+
+        long[] dp = new long[n + 1];
+        dp[1] = 0;
+        dp[2] = 1;
+
+        for (int i = 3; i <= n; i++) {
+            dp[i] = (i - 1) * (dp[i - 1] + dp[i - 2]);
+            dp[i] %= mod;
+        }
+
+        return (int)dp[n];
+    }
+}
+```
+## 解法二
+### 思路
+在解法一的基础上做状态压缩
+### 代码
+```java
+class Solution {
+    public int findDerangement(int n) {
+        if (n == 1) {
+            return 0;
+        }
+
+        int mod = 1000000007;
+        
+        long two = 0, one = 1, cur = one;
+        for (int i = 3; i <= n; i++) {
+            cur = ((i - 1) * (one + two)) % mod;
+            two = one;
+            one = cur;
+        }
+        
+        return (int) cur;
+    }
+}
+```
