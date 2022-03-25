@@ -276,3 +276,57 @@ class Solution {
     }
 }
 ```
+# [LeetCode_172_阶乘后的零](https://leetcode-cn.com/problems/factorial-trailing-zeroes/)
+## 解法
+### 思路
+- 阶乘后结尾0的个数取决于阶乘因数中10的个数
+- 而10又可以通过`2*5`获得，所以求得2和5两者作为因数出现的较小值，就可以获得0的个数
+- 相同的数，因为2<5，所以包含5的有因数数量一定不多于2的因数数量，所以只要求出5的因数个数即可
+- 参考：https://leetcode-cn.com/problems/factorial-trailing-zeroes/solution/by-ac_oier-1y6w/
+### 代码
+```java
+class Solution {
+  public int trailingZeroes(int n) {
+    int count5 = 0;
+    for (int i = 2; i <= n; i++) {
+      int num = i;
+      while (num % 5 == 0) {
+        num /= 5;
+        count5++;
+      }
+    }
+
+    return count5;
+  }
+}
+```
+## 解法二
+### 思路
+- 在解法一的基础上，要找到包含5因数的个数，其实可以通过在`1-n`这个范围中找到5，25，125的倍数来确定
+- 有多少个5的倍数，就说明这些数一定至少有1个5作为因数，依次类推，25就是至少有2个因数
+- 所以可以通过不断计算5的倍数作为除数x，通过`n / x`来计算出这个个数
+- 因为25的倍数，这些数是在之前5的倍数计算过程中出现过的，所以这个重复值要去掉，所以可以通过n不断累除5，并累加商的方式来算这个个数。
+- 第一次除5，得到的是5的倍数的个数
+- 然后再上一次商的基础上第二次除5，相当于在之前的5的倍数中找25的倍数，等价于n / 25
+- 依次类推
+### 代码
+```java
+class Solution {
+    public int trailingZeroes(int n) {
+        int ans = 0;
+        while (n > 0) {
+            n /= 5;
+            ans += n;
+        }
+        return ans;
+    }
+}
+```
+# [LeetCode_635_设计日志存储系统](https://leetcode-cn.com/problems/design-log-storage-system/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
