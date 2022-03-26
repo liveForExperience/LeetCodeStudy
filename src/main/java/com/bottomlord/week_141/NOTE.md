@@ -322,6 +322,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2206_将数组划分成相等数对](https://leetcode-cn.com/problems/divide-array-into-equal-pairs/)
+## 解法
+### 思路
+- 桶计数，出现一次记录一次
+- 遍历桶，如果个数是奇数返回false
+- 遍历结束返回true
+### 代码
+```java
+class Solution {
+    public boolean divideArray(int[] nums) {
+        int[] bucket = new int[501];
+        for (int num : nums) {
+            bucket[num]++;
+        }
+
+        for (int i = 1; i < bucket.length; i++) {
+            if (bucket[i] % 2 != 0) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
 # [LeetCode_635_设计日志存储系统](https://leetcode-cn.com/problems/design-log-storage-system/)
 ## 解法
 ### 思路
