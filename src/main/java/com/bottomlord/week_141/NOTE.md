@@ -347,6 +347,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2210_统计数组中峰和谷的数量](https://leetcode-cn.com/problems/count-hills-and-valleys-in-an-array/)
+## 解法
+### 思路
+遍历模拟
+### 代码
+```java
+class Solution {
+    public int countHillValley(int[] nums) {
+        int count = 0;
+        for (int i = 1; i < nums.length - 1 && i >= 0;) {
+            int left = find(i,  -1, nums),
+                right = find(i, 1, nums);
+            
+            if (left != -1 && right != -1) {
+                if (nums[i] > nums[left] && nums[i] > nums[right]) {
+                    count++;
+                } else if (nums[i] < nums[left] && nums[i] < nums[right]) {
+                    count++;
+                }
+            }
+
+            i = right;
+        }
+
+        return count;
+    }
+
+    private int find(int index, int path, int[] nums) {
+        int num = nums[index];
+        for (int i = index + path; i < nums.length && i >= 0; i += path) {
+            if (num != nums[i]) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+}
+```
 # [LeetCode_635_设计日志存储系统](https://leetcode-cn.com/problems/design-log-storage-system/)
 ## 解法
 ### 思路
