@@ -386,11 +386,37 @@ class Solution {
     }
 }
 ```
-# [LeetCode_635_设计日志存储系统](https://leetcode-cn.com/problems/design-log-storage-system/)
+# [LeetCode_2028_找出缺失的观测数据](https://leetcode-cn.com/problems/find-missing-observations/)
 ## 解法
 ### 思路
-
+模拟
+- 求出m的长度
+- 算出(m + n) * mean的总和
+- 算出n对应的总和nSum
+- 如果nSum < n 或者 nSum > 6 * n，说明不存在对应的可能选项
+- 之后只要计算nSum与n相除的商向下取整的平均值，这个就是所有n个数字最少的值
+- 以及余数是多少，这个就是由多少个值是要+1的，这样他们的和就是nSum
+- 遍历生成这样的数组再返回即可
 ### 代码
 ```java
-
+class Solution {
+    public int[] missingRolls(int[] rolls, int mean, int n) {
+        int m = rolls.length;
+        int sum = (n + m) * mean;
+        
+        int mSum = Arrays.stream(rolls).sum(), nSum = sum - mSum;
+        
+        if (nSum < n || nSum > 6 * n) {
+            return new int[0];
+        }
+        
+        int x = nSum / n, y = nSum % n;
+        int[] ans = new int[n];
+        for (int i = 0; i < n; i++) {
+            ans[i] = i < y ? x + 1 : x;
+        }
+        
+        return ans;
+    }
+}
 ```
