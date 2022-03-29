@@ -82,3 +82,37 @@ class LogSystem {
     }
 }
 ```
+# [LeetCode_2024_考试的最大困扰度](https://leetcode-cn.com/problems/maximize-the-confusion-of-an-exam/)
+## 解法
+### 思路
+滑动窗口
+- 通过滑动窗口来确定最大长度，这个方法需要对`T`和`F`的情况做分别的计算
+- 滑动窗口要确定窗口的left和right指针
+- 初始left和right都是0，然后right递增
+- 在遍历的过程中，统计有效长度和不相等字符的个数
+- 如果出现不相等字符数大于要求的k，那么就内层循环移动left，直到统计的不相等个数不大于k为止
+- 每次遍历过程中都用统计到的长度和暂存的最大值作比较，保留最大值
+- 遍历结束后返回暂存的最大值
+### 代码
+```java
+class Solution {
+    public int maxConsecutiveAnswers(String answerKey, int k) {
+        return Math.max(count(answerKey, 'T', k), count(answerKey, 'F', k));
+    }
+
+    private int count(String key, char target, int k) {
+        int ans = 0, left = 0, n = key.length(), cur = 0;
+        for (int right = 0; right < n; right++) {
+            cur += key.charAt(right) != target ? 1 : 0;
+
+            while (cur > k) {
+                cur -= key.charAt(left++) != target ? 1 : 0;
+            }
+
+            ans = Math.max(right - left + 1, ans);
+        }
+
+        return ans;
+    }
+}
+```
