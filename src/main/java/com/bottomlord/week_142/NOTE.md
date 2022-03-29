@@ -116,3 +116,31 @@ class Solution {
     }
 }
 ```
+# [LeetCode_651_4键键盘](https://leetcode-cn.com/problems/4-keys-keyboard/)
+## 解法
+### 思路
+动态规划：
+- dp[i]：第i步能够生成A的最大个数
+- 状态转移方程：dp[i] = max(dp[i - 1] + 1, dp[j] * (i - j - 1))
+- base case：dp[i] = i
+- 过程：
+  - 外层遍历初始化base case
+  - 内层遍历`j`，然后比较`base case`和`dp[j] * (i - j - 1)`的最大值
+  - 遍历结束后返回`dp[n]`
+### 代码
+```java
+class Solution {
+    public int maxA(int n) {
+        int[] dp = new int[n + 1];
+        for (int i = 0; i <= n; i++) {
+            dp[i] = i;
+            
+            for (int j = 0; j < i - 1; j++) {
+                dp[i] = Math.max(dp[j] * (i - j - 1), dp[i]);
+            }
+        }
+        
+        return dp[n];
+    }
+}
+```
