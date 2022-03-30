@@ -144,3 +144,115 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1606_找到处理最多请求的处理器](https://leetcode-cn.com/problems/find-servers-that-handled-most-number-of-requests/)
+## 解法
+### 思路
+优先级队列
+- 初始换3个数据结构：
+  - 数组request：长度为k，记录每台服务器处理request的个数
+  - TreeSet-available：用于记录当前可用的服务器，并通过TreeSet特性找到最接近某个值的数
+  - 优先级队列busy：用于记录当前正在处理请求的服务器，存储请求的结束时间和服务器编号，堆顶元素是最小的请求结束时间
+- 过程：
+  - 初始化request和available
+  - 遍历arrival
+    - 判断busy是否不为空，如果不为空，就拿堆顶元素和当前时间(arrival[i])做比较，如果元素结束时间不大于当前时间（说明服务器在当前时间已经变得可用），则弹出并放入available中
+    - 判断available是否为空
+      - 如果为空就放弃请求
+      - 如果不为空：
+        - 就将当前请求对应的最近的服务器放入busy队列中
+        - 在request中对服务器的请求处理数做+1统计
+        - 将available中的当前使用server进行去除
+  - 循环结束后，统计最大值并返回对应的服务器编号列表
+### 代码
+```java
+class Solution {
+    public List<Integer> busiestServers(int k, int[] arrival, int[] load) {
+        int[] requests = new int[k];
+        TreeSet<Integer> available = new TreeSet<>();
+        Queue<int[]> busy = new PriorityQueue<>(Comparator.comparingInt(x -> x[0])) ;
+
+        for (int i = 0; i < k; i++) {
+            available.add(i);
+        }
+
+        int max = 0;
+        for (int i = 0; i < arrival.length; i++) {
+            while (!busy.isEmpty() && busy.peek()[0] <= arrival[i]) {
+                int[] busyServer = busy.poll();
+                available.add(busyServer[1]);
+            }
+
+            if (available.isEmpty()) {
+                continue;
+            }
+
+            Integer server = available.ceiling(i % k);
+            if (server == null) {
+                server = available.first();
+            }
+            available.remove(server);
+
+            busy.offer(new int[]{arrival[i] + load[i], server});
+            requests[server]++;
+            max = Math.max(max, requests[server]);
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < requests.length; i++) {
+            if (requests[i] == max) {
+                ans.add(i);
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 在解法一的基础上，同样使用优先级队列来代替TreeSet实现的available
+- 此时就要解决放回到available队列时候，server要使用大于当前时间i的最小的那个同余数的需求，也就是说新生成的x，在通过x % k计算后，得到的就是server的id
+- 使用的公式：`i + (k - (i % k - id))`，公式的含义：
+  - i % k，相当于将当前时间缩小到与id一样都小于k的状态
+  - i % k - id，相当远算出i缩小后与k之间的距离
+  - k - (i % k - id)，相当于算出i缩小后，需要加上多少可以得到下一个大于i且是id同余数的数字
+  - i + i + (k - (i % k - id))，相当于求得i之后的那个最小的id同余数
+### 代码
+```java
+class Solution {
+    public List<Integer> busiestServers(int k, int[] arrival, int[] load) {
+        int[] requests = new int[k];
+        Queue<Integer> available = new PriorityQueue<>();
+        Queue<int[]> busy = new PriorityQueue<>(Comparator.comparingInt(x -> x[0]));
+        for (int i = 0; i < k; i++) {
+            available.offer(i);
+        }
+
+        int max = 0;
+        for (int i = 0; i < arrival.length; i++) {
+            int time = arrival[i];
+
+            while (!busy.isEmpty() && busy.peek()[0] <= time) {
+                int[] busyServer = busy.poll();
+                available.offer(i + (k - (i % k - busyServer[1])) % k);
+            }
+            
+            if (available.isEmpty()) {
+                continue;
+            }
+            
+            int server = available.poll() % k;
+            requests[server]++;
+            busy.offer(new int[]{arrival[i] + load[i], server});
+            max = Math.max(requests[server], max);
+        }
+        
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < requests.length; i++) {
+            if (requests[i] == max) {
+                ans.add(i);
+            }
+        }
+        return ans;
+    }
+}
+```
