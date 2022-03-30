@@ -256,3 +256,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_658_找到K个最接近的元素](https://leetcode-cn.com/problems/find-k-closest-elements/)
+## 解法
+### 思路
+- 拷贝数组
+- 遍历原数组，计算出每个元素与x的距离值，并赋值给该元素
+- 根据处理过的，记录距离的数组，计算前缀和
+- 遍历前缀和数组，根据长度快速查出2个坐标之间距离为k的距离总和，找到最短的那段距离
+- 如果找到了就记录起始和结尾坐标
+- 遍历结束后，根据记录的起始和结尾坐标，生成list
+### 代码
+```java
+class Solution {
+    public List<Integer> findClosestElements(int[] arr, int k, int x) {
+        int[] copy = Arrays.copyOfRange(arr, 0, arr.length);
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = Math.abs(arr[i] - x);
+        }
+
+        int n = arr.length;
+        int[] sums = new int[n + 1];
+        for (int i = 0; i < n; i++) {
+            sums[i + 1] = sums[i] + arr[i];
+        }
+
+        int min = Integer.MAX_VALUE, start = 0, end = 0, target = k * x;
+
+        for (int i = 0; i + k <= n; i++) {
+            int cur = sums[i + k] - sums[i];
+            if (cur < min) {
+                start = i;
+                end = i + k - 1;
+                min = cur;
+            }
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        for (int i = start; i <= end; i++) {
+            ans.add(copy[i]);
+        }
+        return ans;
+    }
+}
+```
