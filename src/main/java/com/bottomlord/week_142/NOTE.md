@@ -348,3 +348,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2215_找出两数组的不同](https://leetcode-cn.com/problems/find-the-difference-of-two-arrays/)
+## 解法
+### 思路
+- 用2个set来辅助判断是否在另一个数组中存在
+- 因为答案需要去重，使用set来对结果再进行去重
+- 分别遍历玩两个数组，并通过set判断后，放入结果set中
+- 遍历完成后将结果set转换为list后放入结果列表中
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> findDifference(int[] nums1, int[] nums2) {
+        Set<Integer> set1 = new HashSet<>(), set2 = new HashSet<>();
+        for (int num : nums1) {
+            set1.add(num);
+        }
+
+        for (Integer num : nums2) {
+            set2.add(num);
+        }
+
+        List<List<Integer>> ans = new ArrayList<>();
+        Set<Integer> ans1 = new HashSet<>(), ans2 = new HashSet<>();
+
+        for (int num : nums1) {
+            if (!set2.contains(num)) {
+                ans1.add(num);
+            }
+        }
+
+        for (int num : nums2) {
+            if (!set1.contains(num)) {
+                ans2.add(num);
+            }
+        }
+
+        ans.add(new ArrayList<>(ans1));
+        ans.add(new ArrayList<>(ans2));
+        return ans; 
+    }
+}
+```
