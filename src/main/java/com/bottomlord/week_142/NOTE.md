@@ -299,3 +299,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_662_二叉树最大深度](https://leetcode-cn.com/problems/maximum-width-of-binary-tree/)
+## 解法
+### 思路
+bfs
+- 队列中记录一个obj数组
+  - node节点
+  - node对应的坐标值（坐标值和用数组模拟二叉树的规则一致，左子树等于根节点坐标值 * 2 - 1，右子树等于根节点坐标 * 2）
+- bfs过程中记录当前层的最小和最大值，然后求距离，并和暂存的最大值作比较，取较大值
+- 需要注意int值溢出的情况，可以先用long值存储，最后再强转成int
+- bfs结束后，返回暂存的最大值
+### 代码
+```java
+class Solution {
+    public int widthOfBinaryTree(TreeNode root) {
+        Queue<Object[]> queue = new ArrayDeque<>();
+        queue.offer(new Object[]{root, 1L});
+
+        long ans = 0;
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            long min = Long.MAX_VALUE, max = Long.MIN_VALUE;
+            while (count-- > 0) {
+                Object[] arr = queue.poll();
+                if (arr == null) {
+                    continue;
+                }
+
+                TreeNode node = (TreeNode) arr[0];
+                long num = (long) arr[1];
+
+                min = Math.min(min, num);
+                max = Math.max(max, num);
+
+                if (node.left != null) {
+                    queue.offer(new Object[]{node.left, num * 2 - 1});
+                }
+                
+                if (node.right != null) {
+                    queue.offer(new Object[]{node.right, num * 2});
+                }
+            }
+            
+            ans = Math.max(max - min + 1, ans);
+        }
+        
+        return (int)ans;
+    }
+}
+```
