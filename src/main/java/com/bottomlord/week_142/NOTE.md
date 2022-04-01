@@ -430,3 +430,110 @@ class Solution {
     }
 }
 ```
+# [LeetCode_663_均匀树划分](https://leetcode-cn.com/problems/equal-tree-partition/)
+## 解法
+### 思路
+dfs
+- 先计算节点总和
+- 如果总和是奇数，直接返回false
+- 设定一个类变量用于判定当前已经找到符合的情况
+- dfs过程中判断左子树或者右子树的节点总和与之前计算出的总和是否是二倍关系，如果是就修改类变量flag为true，并直接返回
+- dfs过程中的退出条件，除了判定当前节点是否为空外，也要判定是否已经找到情况，即flag为true，如果符合这两种条件就直接返回
+- 还需要注意的是，如果node为空的情况下返回0，那么当碰到总和是0的时候，可能会导致误判，所以此时用int的边界值来标记
+- dfs返回的时候，返回当前节点+左右子树的总和，此时就要结合边界标记，再做一下处理，如果遇到左右子树是int边界值，说明碰到了节点为空的情况，此时转换为0
+- 第二次dfs结束后返回flag的结果即可
+### 代码
+```java
+class Solution {
+    private boolean flag = false;
+    public boolean checkEqualTree(TreeNode root) {
+        int total = dfs1(root);
+
+        if (total % 2 != 0) {
+            return false;
+        }
+
+        dfs2(root, total);
+        return flag;
+    }
+
+    private int dfs1(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+
+        return node.val + dfs1(node.left) + dfs1(node.right);
+    }
+
+    private int dfs2(TreeNode node, int total) {
+        if (flag) {
+            return Integer.MAX_VALUE;
+        }
+
+        if (node == null) {
+            return Integer.MAX_VALUE;
+        }
+
+        int left = dfs2(node.left, total);
+        if(total - left == left) {
+            flag = true;
+            return 0;
+        }
+
+
+        int right = dfs2(node.right, total);
+        if (total - right == right) {
+            flag = true;
+            return 0;
+        }
+
+        return (left == Integer.MAX_VALUE ? 0 : left) + (right == Integer.MAX_VALUE ? 0 : right) + node.val;
+    }
+}
+```
+## 解法二
+### 思路
+dfs
+- 将子树结果存储到list中
+- 遍历list，找到sum - num == num的情况
+- 因为有sum==0的情况，所以null的状态要和解法一一样用边界值来代替，并在返回的时候做转换
+- 这种解法使得类没了状态，但是增加了空间的使用
+### 代码
+```java
+class Solution {
+
+  public boolean checkEqualTree(TreeNode root) {
+    List<Integer> list = new ArrayList<>();
+    int sum = dfs(root, list);
+
+    for (int num : list) {
+      if (sum - num == num) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private int dfs(TreeNode node, List<Integer> list) {
+    if (node == null) {
+      return Integer.MAX_VALUE;
+    }
+
+    int left = dfs(node.left, list),
+            right = dfs(node.right, list);
+
+    if(left != Integer.MAX_VALUE) {
+      list.add(left);
+    }
+
+    if (right != Integer.MAX_VALUE) {
+      list.add(right);
+    }
+
+    return (left == Integer.MAX_VALUE ? 0 : left) +
+            (right == Integer.MAX_VALUE ? 0 : right) +
+            node.val;
+  }
+}
+```
