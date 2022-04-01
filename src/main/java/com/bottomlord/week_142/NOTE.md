@@ -389,3 +389,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_954_二倍数对数组](https://leetcode-cn.com/problems/array-of-doubled-pairs/)
+## 解法
+### 思路
+- 题目要求长度n的数组，能组成n/2对二倍数对
+- 可以通过map对元素个数进行计数
+- 然后将数组排序，从最小值开始遍历，尝试通过map查找是否能组成倍数对
+- 如果能够组成，就更新map的统计个数
+- 遍历结束，如果组成了n /2 对，就返回true，否则返回false
+### 代码
+```java
+class Solution {
+    public boolean canReorderDoubled(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : arr) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+
+        Arrays.sort(arr);
+
+        int n = arr.length, half = n / 2, count = 0;
+
+        for (int num : arr) {
+            if (map.getOrDefault(num, 0) <= 0) {
+                continue;
+            }
+
+            map.put(num, map.get(num) - 1);
+
+            if (map.getOrDefault(num * 2, 0) <= 0) {
+                map.put(num, map.get(num) + 1);
+                continue;
+            }
+
+            map.put(num * 2, map.get(num * 2) - 1);
+            count++;
+        }
+
+        return count == half;
+    }
+}
+```
