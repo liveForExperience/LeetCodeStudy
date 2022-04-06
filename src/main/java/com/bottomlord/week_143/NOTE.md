@@ -108,3 +108,53 @@ class Solution {
     }
 }
 ```
+# [LeetCode_310_最小高度树](https://leetcode-cn.com/problems/minimum-height-trees/)
+## 解法
+### 思路
+- 根据观察可以发现，最小高度树，根节点只可能是1或者2个
+- 而根节点一定是可以通过层层去除叶子结点，最终获得的
+- 所以可以通过邻接表，求出叶子结点的列表
+- 然后将叶子结点去除后，不断循环，直到节点个数小于等于2为止
+- 邻接表中界定叶子结点：相连节点个数为1，则当前节点就是叶子节点
+### 代码
+```java
+class Solution {
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        if (n == 1) {
+            return Collections.singletonList(0);
+        }
+
+        List<Set<Integer>> list = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            list.add(new HashSet<>());
+        }
+
+        for (int[] edge : edges) {
+            list.get(edge[0]).add(edge[1]);
+            list.get(edge[1]).add(edge[0]);
+        }
+
+        List<Integer> leaves = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).size() == 1) {
+                leaves.add(i);
+            }
+        }
+
+        while (n > 2) {
+            n -= leaves.size();
+            List<Integer> newLeaves = new ArrayList<>();
+            for (Integer leaf : leaves) {
+                int node = list.get(leaf).iterator().next();
+                list.get(node).remove(leaf);
+                if (list.get(node).size() == 1) {
+                    newLeaves.add(node);
+                }
+            }
+            leaves = newLeaves;
+        }
+        
+        return leaves;
+    }
+}
+```
