@@ -181,3 +181,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2229_检查数组是否连续](https://leetcode-cn.com/problems/check-if-an-array-is-consecutive/)
+## 解法
+### 思路
+- 排序后遍历数组，查看是否以1为步数递增
+### 代码
+```java
+class Solution {
+    public boolean isConsecutive(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] + 1 != nums[i + 1]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
