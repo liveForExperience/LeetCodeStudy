@@ -158,3 +158,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2220_转换数字的最少位翻转次数](https://leetcode-cn.com/problems/minimum-bit-flips-to-convert-number/)
+## 解法
+### 思路
+求汉明距离
+### 代码
+```java
+class Solution {
+    public int minBitFlips(int start, int goal) {
+        int xor = start ^ goal;
+        
+        int bit = 1, count = 0;
+        while (xor > 0) {
+            if ((xor & bit) == 1) {
+                count++;
+            }
+            
+            xor >>= 1;
+        }
+        
+        return count;
+    }
+}
+```
