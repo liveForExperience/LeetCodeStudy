@@ -200,3 +200,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_670_最大交换](https://leetcode-cn.com/problems/maximum-swap/)
+## 解法
+### 思路
+- 将数字转换为字符数组
+- 从第0个元素开始，找到从当前坐标到字符数组结尾的范围中最大值
+- 如果最大值和当前坐标对应的值不相等，那么就交换，然后停止处理，直接将字符数组转换后返回
+- 如果相等，那么就右移坐标，然后使用相同的逻辑处理，只不过范围缩小了
+- 如果整个遍历过程都没有找到符合的情况，那么说明数字本身就是最大值，返回原值即可
+### 代码
+```java
+class Solution {
+    public int maximumSwap(int num) {
+        String str = Integer.toString(num);
+        int n = str.length();
+        char[] cs = str.toCharArray();
+        
+        for (int i = 0; i < n; i++) {
+            int index = findMaxIndex(cs, i);
+            char maxChar = str.charAt(index);
+            
+            if (cs[i] != maxChar) {
+                cs[index] = cs[i];
+                cs[i] = maxChar;
+                break;
+            }
+        }
+
+        return Integer.parseInt(new String(cs));
+    }
+    
+    private int findMaxIndex(char[] cs, int start) {
+        char maxChar = '0';
+        int index = start;
+        
+        for (int i = start; i < cs.length; i++) {
+            if (maxChar <= cs[i]) {
+                maxChar = cs[i];
+                index = i;
+            }
+        }
+        
+        return index;
+    }
+}
+```
