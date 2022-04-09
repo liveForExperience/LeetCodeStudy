@@ -245,3 +245,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_780_到达终点](https://leetcode-cn.com/problems/reaching-points/)
+## 解法
+### 思路
+- 题目限制出现的数字都是正整数，所以：
+  - 如果tx == ty，那么这两个数字的组合没有上一个状态
+  - 如果tx > ty，那么一定是从(tx + ty, ty)的状态转变过啦的
+  - 同理，tx < ty，那么就是从(tx, ty + tx)的状态转变过来的
+- 于是可以通过tx和ty反推出某一个前置的状态，这个反推的过程停止与如下的情况
+  - tx == sx
+  - ty == sy
+  - tx == ty
+- 当tx和ty反推结束后，对tx和ty进行判断
+- 如果tx < sx 或者 ty < sy，那么肯定是不满足的
+- 如果tx == sx或者ty == sy，那么说明剩下的那个数，例如tx，一定要比sx大，且一定是通过sx + sy的方式获得的，所以可以通过(tx - sx) % sy == 0来判断是否符合，如果符合就是true，否则就是false
+- 还有一种情况就是直接tx == sx 且 ty == sy
+### 代码
+```java
+class Solution {
+    public boolean reachingPoints(int sx, int sy, int tx, int ty) {
+        while (tx > sx && ty > sy && tx != ty) {
+            if (tx > ty) {
+                tx %= ty;
+            } else {
+                ty %= tx;
+            }
+        }
+
+        if (tx == sx && ty == sy) {
+            return true;
+        } else if (tx == sx && (ty > sy && (ty - sy) % sx == 0)) {
+            return true;
+        } else if (ty == sy && (tx > sx && (tx - sx) % sy == 0)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+```
