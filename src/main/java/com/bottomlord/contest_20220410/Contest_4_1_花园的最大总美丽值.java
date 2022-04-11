@@ -9,13 +9,13 @@ import java.util.Arrays;
 public class Contest_4_1_花园的最大总美丽值 {
     public long maximumBeauty(int[] flowers, long newFlowers, int target, int full, int partial) {
         Arrays.sort(flowers);
-        int n = flowers.length;
+        long n = flowers.length;
 
         if (flowers[0] >= target) {
-            return (long) full * n;
+            return full * n;
         }
 
-        long fullStatus = (long) n * target;
+        long fullStatus = n * target;
         long curFlowers = 0;
         for (int flower : flowers) {
             curFlowers += Math.min(flower, target);
@@ -29,9 +29,9 @@ public class Contest_4_1_花园的最大总美丽值 {
                     sumFlowers += flowers[x++];
                 }
 
-                long beauty = (long) (n - i) * full;
+                long beauty = (n - i) * full;
                 if (x > 0) {
-                    beauty += Math.min((long) (target - 1) * partial, (leftFlowers + sumFlowers) / x);
+                    beauty += Math.min(target - 1, (leftFlowers + sumFlowers) / x) * partial;
                 }
                 max = Math.max(max, beauty);
             }

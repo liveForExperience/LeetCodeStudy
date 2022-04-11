@@ -180,7 +180,7 @@ class Solution {
 
                 long beauty = (n - i) * full;
                 if (x > 0) {
-                    beauty += Math.min((long) (target - 1), (leftFlowers + sumFlowers) / x) * partial;
+                    beauty += Math.min(target - 1, (leftFlowers + sumFlowers) / x) * partial;
                 }
                 max = Math.max(max, beauty);
             }
