@@ -21,3 +21,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_694_不同岛屿的数量](https://leetcode-cn.com/problems/number-of-distinct-islands/)
+## 解法
+### 思路
+- 遍历二维数组，从左到右，从上到下
+- 当遇到非0的坐标时，开始dfs
+- dfs遍历时使用字符串记录过程，并将遍历过的坐标的值转换为0
+- 遍历结束后将字符串放入set中统计
+- 二维数组遍历结束后，返回set的个数
+### 代码
+```java
+class Solution {
+private int[][] dirs = new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+    public int numDistinctIslands(int[][] grid) {
+
+        Set<String> set = new HashSet<>();
+        int row = grid.length, col = grid[0].length;
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 0) {
+                    continue;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                dfs(grid, i, j, row, col, 0, sb);
+                set.add(sb.toString());
+            }
+        }
+
+        return set.size();
+    }
+
+    private void dfs(int[][] grid, int x, int y, int row, int col, int dir, StringBuilder sb) {
+        if (x < 0 || x >= row || y < 0 || y >= col || grid[x][y] == 0) {
+            return;
+        }
+
+        grid[x][y] = 0;
+        sb.append(dir);
+        for (int i = 0; i < dirs.length; i++) {
+            dfs(grid, x + dirs[i][0], y + dirs[i][1], row, col, i, sb);
+        }
+        sb.append(-dir);
+    }
+}
+```
