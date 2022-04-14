@@ -102,3 +102,15 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2236_判断根结点是否等于子结点之和](https://leetcode-cn.com/problems/root-equals-sum-of-children/)
+## 解法
+### 思路
+- 判断根节点与左右节点的和是否一致
+### 代码
+```java
+class Solution {
+    public boolean checkTree(TreeNode root) {
+        return root.val == root.left.val + root.right.val;
+    }
+}
+```
