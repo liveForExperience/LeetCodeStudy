@@ -68,3 +68,37 @@ private int[][] dirs = new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
     }
 }
 ```
+# [LeetCode_2235_两整数相加](https://leetcode-cn.com/problems/add-two-integers/)
+## 解法
+### 思路
+num1 + num2
+### 代码
+```java
+class Solution {
+    public int sum(int num1, int num2) {
+        return num1 + num2;
+    }
+}
+```
+## 解法二
+### 思路
+不使用+号：
+- 使用`^`号进行不进位加法
+- 使用`&`号和左移得到进位的值
+- 再用`^`和进位值做不进位加法就能得到一次进位的结果
+- 持续以上过程，直到进位值为0为止
+- 初始可以将num1的值当做进位值，另一个值当做不进位加法后的值
+### 代码
+```java
+class Solution {
+    public int sum(int num1, int num2) {
+        while (num1 != 0) {
+            int tmp = num1 ^ num2;
+            num1 = (num1 & num2) << 1;
+            num2 = tmp;
+        }
+
+        return num2;
+    }
+}
+```
