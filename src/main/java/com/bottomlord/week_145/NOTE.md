@@ -106,3 +106,11 @@ class Solution {
     }
 }
 ```
+# [LeetCode_587_安装栅栏](https://leetcode-cn.com/problems/erect-the-fence/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
