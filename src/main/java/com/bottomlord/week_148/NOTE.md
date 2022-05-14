@@ -104,3 +104,21 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2255_统计是给定字符串前缀的字符串数目](https://leetcode.cn/problems/count-prefixes-of-a-given-string/)
+## 解法
+### 思路
+使用startWith遍历判断
+### 代码
+```java
+class Solution {
+    public int countPrefixes(String[] words, String s) {
+        int count = 0;
+        for (String word : words) {
+            if (s.startsWith(word)) {
+                count++;
+            }
+        }
+        return count;
+    }
+}
+```
