@@ -122,3 +122,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP55_采集果实](https://leetcode.cn/problems/PTXy4P/)
+## 解法
+### 思路
+- 通过limit值来来计算每一批次需要的时间
+- 求得时间后算出时间，求时间的时候，需要通过每一批次的个数和limit之间是否能整除来判断是否要在sum/limit之后要不要+1，如果不能整除就需要+1
+- 循环累加时间后得到结果返回
+### 代码
+```java
+class Solution {
+    public int getMinimumTime(int[] time, int[][] fruits, int limit) {
+        int ans = 0;
+        for (int[] fruit : fruits) {
+            int index = fruit[0], sum = fruit[1];
+            ans += time[index] * (sum % limit == 0 ? sum / limit : sum / limit + 1);
+        }
+        return ans;
+    }
+}
+```
