@@ -141,11 +141,3 @@ class Solution {
     }
 }
 ```
-# [LeetCode_691_铁制拼词](https://leetcode.cn/problems/stickers-to-spell-word/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
