@@ -6,7 +6,7 @@ import java.util.Arrays;
  * @author chen yue
  * @date 2022-05-22 10:28:10
  */
-public class Contest_2_1 {
+public class Contest_2_1_装满石头的背包的最大数量 {
     public int maximumBags(int[] capacity, int[] rocks, int additionalRocks) {
         int n = capacity.length;
         int[] bucket = new int[n];

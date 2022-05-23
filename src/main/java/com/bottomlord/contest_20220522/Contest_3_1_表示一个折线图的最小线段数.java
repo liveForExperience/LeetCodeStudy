@@ -9,7 +9,7 @@ import java.util.Comparator;
  * @author chen yue
  * @date 2022-05-22 10:28:15
  */
-public class Contest_3_1 {
+public class Contest_3_1_表示一个折线图的最小线段数 {
     public int minimumLines(int[][] stockPrices) {
         int n = stockPrices.length, ans = 0;
         Arrays.sort(stockPrices, Comparator.comparingInt(x -> x[0]));
