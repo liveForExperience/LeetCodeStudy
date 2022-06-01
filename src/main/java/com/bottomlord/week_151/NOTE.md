@@ -76,3 +76,13 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1254_统计封闭岛屿的数目](https://leetcode.cn/problems/number-of-closed-islands/)
+## 解法
+### 思路
+dfs
+- 如果搜索到边界，判断当前是否是海水，如果是，就直接返回错误，提前退出
+- 其他情况就翻转陆地状态，不断搜索，直到无法继续搜索为止
+### 代码
+```java
+
+```
