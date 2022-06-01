@@ -47,3 +47,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_633_平方数之和](https://leetcode.cn/problems/sum-of-square-numbers/)
+## 解法
+### 思路
+二分查找
+### 代码
+```java
+class Solution {
+    public boolean judgeSquareSum(int c) {
+        for (long i = 0; i * i <= c; i++) {
+            long l = i, r = c;
+
+            while (l <= r) {
+                long mid = (r - l) / 2 + l;
+                long num = (long) i * i + mid * mid;
+
+                if (num == c) {
+                    return true;
+                } else if (num < c) {
+                    l = mid + 1;
+                } else {
+                    r = mid - 1;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
