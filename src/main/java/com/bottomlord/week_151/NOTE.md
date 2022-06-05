@@ -84,5 +84,103 @@ dfs
 - 其他情况就翻转陆地状态，不断搜索，直到无法继续搜索为止
 ### 代码
 ```java
+class Solution {
+    private int[][] grid;
+    private int r, c;
+    private final int[][] dirs = new int[][]{{1,0},{-1,0},{0,1},{0,-1}};
+    public int closedIsland(int[][] grid) {
+        this.r = grid.length;
+        this.c = grid[0].length;
+        this.grid = grid;
+        int ans = 0;
 
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (grid[i][j] == 1) {
+                    continue;
+                }
+
+                if (dfs(i, j)) {
+                    ans++;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean dfs(int x, int y) {
+        if ((x == 0 || x == r - 1 || y == 0 || y == c - 1) && grid[x][y] == 0) {
+            return false;
+        }
+
+        grid[x][y] = 1;
+        boolean ans = true;
+        for (int[] dir : dirs) {
+            int nx = x + dir[0], ny = y + dir[1];
+            if (nx < 0 || nx >= r || ny < 0 || ny >= c || grid[nx][ny] == 1) {
+                continue;
+            }
+            
+            ans &= dfs(nx, ny);
+        }
+        
+        return ans;
+    }
+}
+```
+# [LeetCode_1905_统计子岛屿](https://leetcode.cn/problems/count-sub-islands/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1855_下标对中的最大距离](https://leetcode.cn/problems/maximum-distance-between-a-pair-of-values/)
+## 解法
+### 思路
+二分查找
+### 代码
+```java
+class Solution {
+    public int maxDistance(int[] nums1, int[] nums2) {
+        int ans = 0;
+        for (int i = 0; i < nums1.length; i++) {
+            int index = binarySearch(nums2, nums1[i], i, nums2.length - 1);
+
+            if (index == -1) {
+                continue;
+            }
+
+            ans = Math.max(index - i, ans);
+        }
+
+        return ans;
+    }
+
+    private int binarySearch(int[] arr, int target, int l, int r) {
+        while (l <= r) {
+            int mid = (r - l) / 2 + l;
+
+            int num = arr[mid];
+
+            if (num >= target) {
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+
+        if (l - 1 >= arr.length || l - 1 < 0) {
+            return -1;
+        }
+
+        if (arr[l - 1] < target) {
+            return -1;
+        }
+
+        return l - 1;
+    }
+}
 ```
