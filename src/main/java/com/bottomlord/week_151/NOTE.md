@@ -129,14 +129,6 @@ class Solution {
     }
 }
 ```
-# [LeetCode_1905_统计子岛屿](https://leetcode.cn/problems/count-sub-islands/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_1855_下标对中的最大距离](https://leetcode.cn/problems/maximum-distance-between-a-pair-of-values/)
 ## 解法
 ### 思路
