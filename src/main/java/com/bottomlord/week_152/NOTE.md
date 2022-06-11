@@ -55,3 +55,68 @@ class Solution {
     }
 }
 ```
+# [LeetCode_730_统计不同回文子序列](https://leetcode.cn/problems/count-different-palindromic-subsequences/)
+## 解法
+### 思路
+动态规划：
+- dp[i][j]：坐标范围是i到j的子字符串，他的回文子序列个数
+- 状态转移方程：
+  - s[i] != s[j]：
+    - `dp[i][j] = dp[i][j - 1] + dp[i + 1][j] - dp[i + 1][j - 1]`
+    - 既然两个字符不相等，那就把判断下临近的两个子字符串，然后去除掉重复的部分
+  - s[i] == s[j]
+    - 如果s[i + 1][j - 1]范围内不包含这个添加的字符：
+      - dp[i][j] = 2 * dp[i + 1][j - 1] + 2
+      - 新增加的外部的2个字符，和原来的回文子串，可以获得相同个数的回文子串，同时，新增加的2个字符自身还能增加2个回文子串
+    - 如果s[i + 1][j - 1]范围内有1个添加的字符：
+      - dp[i][j] = 2 * dp[i + 1][j - 1] + 1
+      - 在上一种情况的基础上，减少一个额外回文子串的可能，比如外围是2个a，那么那个单独的a就需要去除，因为里面的子串中已经把这种可能加上了
+    - 如果s[i + 1][j - 1]范围内2个或以上添加的字符：
+        - dp[i][j] = 2 * dp[i + 1][j - 1] - dp[l + 1][r - 1]
+        - 新增加的外部的2个字符，和原来的回文子串，可以获得相同个数的回文子串，但是因为里面有相同的2个或以上字符，那么他们和他们内部的子字符串能够组成的序列，就会和现在的字符组成的序列重复，所以这部分要删掉
+        - 但是只要考虑遇到的最外层的那组就可以了，因为再内层的已经在之前的判断过程中被考虑掉了
+### 代码
+```java
+class Solution {
+    public int countPalindromicSubsequences(String s) {
+        int n = s.length();
+        int mod = 1000000007;
+        int[][] dp = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            dp[i][i] = 1;
+        }
+
+        for (int len = 2; len <= n; len++) {
+            for (int i = 0; i + len <= n; i++) {
+                int j = i + len - 1;
+                if (s.charAt(i) != s.charAt(j)) {
+                    dp[i][j] = dp[i + 1][j] + dp[i][j - 1] - dp[i + 1][j - 1];
+                } else {
+                    int l = i + 1, r = j - 1;
+
+                    while (l <= r && s.charAt(i) != s.charAt(l)) {
+                        l++;
+                    }
+
+                    while (l <= r && s.charAt(i) != s.charAt(r)) {
+                        r--;
+                    }
+
+                    if (l > r) {
+                        dp[i][j] = 2 * dp[i + 1][j - 1] + 2;
+                    } else if (l == r) {
+                        dp[i][j] = 2 * dp[i + 1][j - 1] + 1;
+                    } else {
+                        dp[i][j] = 2 * dp[i + 1][j - 1] - dp[l + 1][r - 1];
+                    }
+                }
+
+                dp[i][j] = dp[i][j] >= 0 ? dp[i][j] % mod : dp[i][j] + mod;
+            }
+        }
+
+        return dp[0][n - 1];
+    }
+}
+```
