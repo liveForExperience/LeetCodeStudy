@@ -120,3 +120,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_926_将字符串翻转到单调递增](https://leetcode.cn/problems/flip-string-to-monotone-increasing/)
+## 解法
+### 思路
+动态规划：
+- dp[i][2]：从0到i坐标位置的字符，为0的时候，需要翻转的最小此处，或者，为1时候需要翻转的最小个数
+- 状态转移方程：
+  - 为0的时候，前面必须是0：dp[i + 1][0] = dp[i][0] + (cs[i] == '0' ? 0 : 1);
+  - 为1的时候，前面可以是0和1：dp[i + 1][1] = Math.min(dp[i][1], dp[i][0]) + (cs[i] == '1' ? 0 : 1);
+- 结果：min(dp[n][0], dp[n][1])
+### 代码
+```java
+class Solution {
+  public int minFlipsMonoIncr(String s) {
+    int n = s.length();
+    char[] cs = s.toCharArray();
+    int[][] dp = new int[n + 1][2];
+    for (int i = 0; i < n; i++) {
+      dp[i + 1][0] = dp[i][0] + (cs[i] == '0' ? 0 : 1);
+      dp[i + 1][1] = Math.min(dp[i][1], dp[i][0]) + (cs[i] == '1' ? 0 : 1);
+    }
+
+    return Math.min(dp[n][0], dp[n][1]);
+  }
+}
+```
