@@ -43,3 +43,55 @@ class Solution {
     }
 }
 ```
+# [LeetCode_6095_强密码检验器II](https://leetcode.cn/problems/strong-password-checker-ii/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public boolean strongPasswordCheckerII(String password) {
+        boolean hasLower = false, hasUpper = false, hasNum = false, hasSpecial = false;
+        int n = password.length();
+        if (n < 8) {
+            return false;
+        }
+        
+        Set<Character> specials = new HashSet<>();
+        String specialStr = "!@#$%^&*()-+";
+        char[] cs = specialStr.toCharArray();
+
+        for (char c : cs) {
+            specials.add(c);
+        }
+        
+        for (int i = 0; i < n; i++) {
+            if (i != n - 1) {
+                if (password.charAt(i) == password.charAt(i + 1)) {
+                    return false;
+                }
+            }
+            
+            char c = password.charAt(i);
+            
+            if (Character.isDigit(c)) {
+                hasNum = true;
+            }
+            
+            if (Character.isLowerCase(c)) {
+                hasLower = true;
+            }
+            
+            if (Character.isUpperCase(c)) {
+                hasUpper = true;
+            }
+            
+            if (specials.contains(c)) {
+                hasSpecial = true;
+            }
+        }
+        
+        return hasNum && hasUpper && hasLower && hasSpecial;
+    }
+}
+```
