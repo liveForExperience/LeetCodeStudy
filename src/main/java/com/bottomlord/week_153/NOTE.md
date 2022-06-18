@@ -230,3 +230,83 @@ public int smallestDistancePair(int[] nums, int k) {
     }
 }
 ```
+# [LeetCode_offerII029_排序的环形链表](https://leetcode.cn/problems/4ueAj6/https://leetcode.cn/problems/4ueAj6/)
+## 解法
+### 思路
+- 没有节点：直接插入
+- 只有1个节点，插入到节点后面
+- 超过1个节点，遍历节点，用head记录链表的头节点
+- 使用两个指针，cur和next，分别指向当前节点，和当前节点的next指针指向的节点
+- 假设新增的节点为node，那么在如下情境下需要新增：
+  - cur > next，并且node >= cur && node >= next
+  - cur > next，并且node <= cur && node <= next
+  - node >= cur && node <= next
+- 如果遍历到next==head，说明链表里没有可以插入的位置，也就是说，所有的节点都是相等的，那么就可以直接在head后面添加，因为这样是符合题目要求的
+### 代码
+
+```java
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node next;
+
+    public Node() {}
+
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _next) {
+        val = _val;
+        next = _next;
+    }
+};
+*/
+
+class Solution {
+  public Node insert(Node head, int insertVal) {
+    Node node = new Node(insertVal);
+    if (head == null) {
+      head = node;
+      head.next = head;
+      return head;
+    }
+
+    Node cur = head, next = cur.next;
+    if (next == null) {
+      cur.next = node;
+      node.next = cur;
+      return head;
+    }
+
+    while (next != head) {
+      int curVal = cur.val, nextVal = next.val;
+
+      if (curVal > nextVal) {
+        if (insertVal >= curVal) {
+          cur.next = node;
+          node.next = next;
+          return head;
+        } else if (insertVal <= nextVal) {
+          cur.next = node;
+          node.next = next;
+          return head;
+        }
+      } else if (insertVal >= curVal && insertVal <= nextVal) {
+        cur.next = node;
+        node.next = next;
+        return head;
+      }
+
+      cur = next;
+      next = cur.next;
+    }
+
+    cur.next = node;
+    node.next = next;
+
+    return head;
+  }
+}
+```
