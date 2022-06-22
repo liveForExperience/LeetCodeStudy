@@ -109,3 +109,42 @@ class RangeModule {
     }
 }
 ```
+# [LeetCode_513_找树左下角的值](https://leetcode.cn/problems/find-bottom-left-tree-value/)
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+    public int findBottomLeftValue(TreeNode root) {
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+        int ans = -1;
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            boolean start = true;
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+                
+                if (start) {
+                    ans = node.val;
+                    start = false;
+                }
+                
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
