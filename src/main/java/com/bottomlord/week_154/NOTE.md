@@ -175,3 +175,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_710_黑名单的随机数](https://leetcode.cn/problems/random-pick-with-blacklist/)
+## 解法
+### 思路
+- 数字总数是m，黑名单数n，所以可用的数字是m-n个
+- 为了使每个非黑名单数获取的随机几率是一样的，可以将所有可用数字，放入到数组中[0, m-n]的位置上
+- 可以使用map来将[0,m-n]范围中的黑名单数，映射到[m-n,n]中的非黑名单数，这样就相当于将可用数都移动到了前m-n个数里
+### 代码
+```java
+class Solution {
+    private Random random = new Random();
+    private int m, n, bound;
+    private Map<Integer, Integer> map;
+    public Solution(int n, int[] blacklist) {
+        this.m = blacklist.length;
+        this.n = n;
+        this.bound = n - m;
+        this.map = new HashMap<>();
+        Set<Integer> blacks = new HashSet<>();
+        for (int black : blacklist) {
+            if (black >= bound) {
+                blacks.add(black);
+            }
+        }
+
+        int w = bound;
+        for (int black : blacklist) {
+            if (black < bound) {
+                while (blacks.contains(w)) {
+                    w++;
+                }
+                map.put(black, w++);
+            }
+        }
+    }
+
+    public int pick() {
+        int num = random.nextInt(bound);
+        return map.getOrDefault(num, num);
+    }
+}
+```
