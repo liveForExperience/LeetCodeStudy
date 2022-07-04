@@ -18,7 +18,7 @@ public class Contest_4_1_从树中删除边的最小分数 {
         in = new int[n];
         out = new int[n];
         xor = new int[n];
-        g = new ArrayList<>[n];
+        g = new ArrayList[n];
 
         Arrays.setAll(g, x -> new ArrayList<Integer>());
         for (int[] edge : edges) {
