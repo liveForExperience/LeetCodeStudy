@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_731_我的日程安排表II](https://leetcode.cn/problems/my-calendar-ii/)
 ## 解法
 ### 思路
