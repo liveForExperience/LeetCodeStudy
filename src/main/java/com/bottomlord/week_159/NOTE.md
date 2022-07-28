@@ -75,3 +75,52 @@ class CBTInserter {
     }
 }
 ```
+# [LeetCode_1331_数组序号转换](https://leetcode.cn/problems/rank-transform-of-an-array/)
+## 解法
+### 思路
+- 建立数组中数字与坐标之间的映射关系
+- 将数组去重
+- 将去重后的数组进行排序
+- 遍历排序后的去重数组
+  - 获取当前排序后的元素值
+  - 到映射关系中找到对应的坐标
+  - 在结果数组中的对应坐标位置，将当前去重数组的坐标+1后放入到结果数组中，作为排序结果
+- 遍历结束后，返回结果
+### 代码
+```java
+class Solution {
+    public int[] arrayRankTransform(int[] arr) {
+        int n = arr.length;
+
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            map.computeIfAbsent(arr[i], x -> new ArrayList<>()).add(i);
+        }
+
+        Set<Integer> set = new HashSet<>();
+        for (int num : arr) {
+            set.add(num);
+        }
+        
+        int[] x = new int[set.size()];
+        int index = 0;
+        for (Integer num : set) {
+            x[index++] = num;
+        }
+        
+        Arrays.sort(x);
+
+        int[] ans = new int[n];
+
+        for (int i = 0; i < x.length; i++) {
+            int num = x[i];
+            List<Integer> indexes = map.get(num);
+            for (Integer idx : indexes) {
+                ans[idx] = i + 1;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
