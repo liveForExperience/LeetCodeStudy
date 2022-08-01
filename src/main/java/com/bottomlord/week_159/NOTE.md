@@ -196,3 +196,49 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1161_最大层内元素和](https://leetcode.cn/problems/maximum-level-sum-of-a-binary-tree/)
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+  public int maxLevelSum(TreeNode root) {
+    Queue<TreeNode> queue = new ArrayDeque<>();
+    queue.offer(root);
+
+    int max = Integer.MIN_VALUE, index = 1, ans = index;
+
+    while (!queue.isEmpty()) {
+      int count = queue.size();
+
+      int sum = 0;
+      while (count-- > 0) {
+        TreeNode node = queue.poll();
+        if (node == null) {
+          continue;
+        }
+
+        sum += node.val;
+
+        if (node.left != null) {
+          queue.offer(node.left);
+        }
+
+        if (node.right != null) {
+          queue.offer(node.right);
+        }
+      }
+
+      if (sum > max) {
+        ans = index;
+        max = sum;
+      }
+
+      index++;
+    }
+
+    return ans;
+  }
+}
+```
