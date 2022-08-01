@@ -10,6 +10,7 @@ import java.util.List;
 public class LeetCode_556_1_下一个更大元素III {
     public int nextGreaterElement(int n) {
         List<Integer> list = new ArrayList<>();
+
         while (n > 0) {
             list.add(n % 10);
             n /= 10;
@@ -39,18 +40,18 @@ public class LeetCode_556_1_下一个更大元素III {
             swap(list, l++, r--);
         }
 
-        int ans = 0;
+        long ans = 0;
         for (int i = list.size() - 1; i >= 0; i--) {
             int num = list.get(i);
             ans = ans * 10 + num;
         }
 
-        return ans;
+        return ans > Integer.MAX_VALUE ? -1 : (int) ans;
     }
 
-    private void swap(List<Integer> list, int x, int y) {
-        int tmp = list.get(x);
-        list.set(x, list.get(y));
-        list.set(y, tmp);
+    private void swap(List<Integer> list, int l, int r) {
+        int tmp = list.get(l);
+        list.set(l, list.get(r));
+        list.set(r, tmp);
     }
 }
