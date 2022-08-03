@@ -12,7 +12,7 @@ public class LeetCode_1206_1_设计跳表 {
         }
 
         public boolean search(int target) {
-
+            return false;
         }
 
         public void add(int num) {
@@ -20,7 +20,7 @@ public class LeetCode_1206_1_设计跳表 {
         }
 
         public boolean erase(int num) {
-
+            return false;
         }
     }
 }

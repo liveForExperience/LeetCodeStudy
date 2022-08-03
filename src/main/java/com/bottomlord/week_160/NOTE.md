@@ -65,3 +65,32 @@ class MyCircularQueue {
     }
 }
 ```
+# [LeetCode_899_有序队列](https://leetcode.cn/problems/orderly-queue/)
+## 解法
+### 思路
+- 当k==1的时候，不能变更字符串顺序，所以只能通过题目要求的方式，轮换字符串头部字符生成新的字符串，在轮转的时候，记录最小的字符串
+- 当k>1的时候，只要返回字符串变换后的最小字典序排列即可
+### 代码
+```java
+class Solution {
+  public String orderlyQueue(String s, int k) {
+    int n = s.length();
+    if (k > 1) {
+      char[] cs = s.toCharArray();
+      Arrays.sort(cs);
+      return new String(cs);
+    }
+
+    String ans = s;
+    for (int i = 0; i < n; i++) {
+      String cur = s.substring(i, n) + s.substring(0, i);
+
+      if (ans.compareTo(cur) > 0) {
+        ans = cur;
+      }
+    }
+
+    return ans;
+  }
+}
+```
