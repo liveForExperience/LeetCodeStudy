@@ -94,3 +94,35 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2315_统计星号](https://leetcode.cn/problems/count-asterisks/)
+## 解法
+### 思路
+- 遍历字符串
+  - 如果遇到`|`，使用count记录
+  - 如果遇到`*`，判断count是否被2取模后是0，如果是，那么就说明不在2个`|`之间，就用ans变量记录下来
+- 遍历结束后返回ans个数作为结果
+### 代码
+```java
+class Solution {
+  public int countAsterisks(String s) {
+    int count = 0, ans = 0;
+    char[] cs = s.toCharArray();
+    for (int c : cs) {
+      if (c != '*' && c != '|') {
+        continue;
+      }
+
+      if (c == '|') {
+        count++;
+        continue;
+      } else {
+        if (count % 2 == 0) {
+          ans++;
+        }
+      }
+    }
+
+    return ans;
+  }
+}
+```
