@@ -126,3 +126,29 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2331_计算布尔二叉树的值](https://leetcode.cn/problems/evaluate-boolean-binary-tree/)
+## 解法
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public boolean evaluateTree(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+
+        int val = root.val;
+        if (val < 2) {
+            return val == 1;
+        }
+
+        boolean left = evaluateTree(root.left), right = evaluateTree(root.right);
+        if (val == 2) {
+            return left || right;
+        } else {
+            return left && right;
+        }
+    }
+}
+```
