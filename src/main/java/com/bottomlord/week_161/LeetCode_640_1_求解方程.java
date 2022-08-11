@@ -103,9 +103,4 @@ public class LeetCode_640_1_求解方程 {
 
         return Integer.parseInt(token.substring(0, token.length() - 1));
     }
-
-    public static void main(String[] args) {
-        LeetCode_640_1_求解方程 t = new LeetCode_640_1_求解方程();
-        t.solveEquation("-x=-1");
-    }
 }

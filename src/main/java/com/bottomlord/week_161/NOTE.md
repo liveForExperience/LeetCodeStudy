@@ -99,3 +99,73 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2335_装满杯子需要的最短总时长](https://leetcode.cn/problems/minimum-amount-of-time-to-fill-cups)
+## 解法
+### 思路
+优先级队列
+### 代码
+```java
+class Solution {
+    public int fillCups(int[] amount) {
+        Queue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
+        for (int num : amount) {
+            queue.offer(num);
+        }
+
+        int count = 0;
+        while (queue.size() > 1) {
+            int one = queue.poll(), two = queue.poll();
+            if (one == 0) {
+                count += two;
+                continue;
+            }
+            
+            if (two == 0) {
+                count += one;
+                continue;
+            }
+            
+            one --;
+            two --;
+
+            if (one != 0) {
+                queue.offer(one);
+            }
+
+            if (two != 0) {
+                queue.offer(two);
+            }
+
+            count++;
+        }
+
+        if (!queue.isEmpty()) {
+            count += queue.poll();
+        }
+
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+贪心：
+- 排序
+- 最大值如果大于小的2个值的和，那么最终的消耗就是最大值
+- 最大值会被事先消耗，剩下的就是`t = a + b - c`
+- 按照贪心思想，剩下的值可以理解成都能尽可能的通过填满2个杯子，那么就是`(t + 1) / 2`
+- 所以结果就是`t / 2 + c`
+### 代码
+```java
+class Solution {
+    public int fillCups(int[] amount) {
+        Arrays.sort(amount);
+        int a = amount[0], b = amount[1], c = amount[2];
+        if (c >= a + b) {
+            return c;
+        }
+        
+        return (a + b - c + 1) / 2 + c;
+    }
+}
+```
