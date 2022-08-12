@@ -169,3 +169,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1282_用户分组](https://leetcode.cn/problems/group-the-people-given-the-group-size-they-belong-to/)
+## 解法
+### 思路
+hash表
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> groupThePeople(int[] groupSizes) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < groupSizes.length; i++) {
+            map.computeIfAbsent(groupSizes[i], x -> new ArrayList<>()).add(i);
+        }
+
+        List<List<Integer>> ans = new ArrayList<>();
+        for (Map.Entry<Integer, List<Integer>> entry : map.entrySet()) {
+            int len = entry.getKey();
+            List<Integer> candidates = entry.getValue();
+            int index = 0;
+            
+            while (index < candidates.size()) {
+                List<Integer> list = new ArrayList<>();
+                for (int i = 0; i < len; i++) {
+                    list.add(candidates.get(index++));
+                }
+                ans.add(list);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
