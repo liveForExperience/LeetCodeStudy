@@ -169,14 +169,6 @@ class Solution {
     }
 }
 ```
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_1282_用户分组](https://leetcode.cn/problems/group-the-people-given-the-group-size-they-belong-to/)
 ## 解法
 ### 思路
@@ -202,6 +194,47 @@ class Solution {
                     list.add(candidates.get(index++));
                 }
                 ans.add(list);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+# [LeetCode_768_最多能完成排序的块II](https://leetcode.cn/problems/max-chunks-to-make-sorted-ii/)
+## 解法
+### 思路
+- 完整的数组，一定是一个正确答案，因为直接排序就可以了
+- 如果有2部分：
+  - 那么必定有一个坐标k，它和它左边的元素形成的子序列，可以通过排序，和排序后的同样坐标区间的元素频次完全相同
+  - 只要左边一部分是完全相同的，那么另一边也就可以通过排序获得完全相同的升序序列
+- 以此类推，2部分的右边部分，可以继续通过如上方法进行切分
+- 模拟如上的方式，可以通过遍历数组，并用hash表记录频次来处理
+### 代码
+```java
+class Solution {
+    public int maxChunksToSorted(int[] arr) {
+        int n = arr.length, ans = 0;
+        int[] sortedArr = new int[n];
+        System.arraycopy(arr, 0, sortedArr, 0, n);
+        Arrays.sort(sortedArr);
+
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            int x = arr[i], y = sortedArr[i];
+            map.put(x, map.getOrDefault(x, 0) + 1);
+            
+            if (map.get(x) == 0) {
+                map.remove(x);
+            }
+            
+            map.put(y, map.getOrDefault(y, 0) - 1);
+            if (map.get(y) == 0) {
+                map.remove(y);
+            }
+            
+            if (map.isEmpty()) {
+                ans++;
             }
         }
         
