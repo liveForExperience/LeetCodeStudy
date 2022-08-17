@@ -136,3 +136,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1224_最大相等频率](https://leetcode.cn/problems/maximum-equal-frequency/)
+## 解法
+### 思路
+- 使用2个数组和一个变量记录如下3项数据
+  - count[]：记录数值x出现的次数
+  - countFreq[]：记录出现次数为y的数值有多少个
+  - maxCount：记录数值出现次数最大的值
+- 遍历数组，并在每次遍历的时候判断，如上3项数据是否符合如下的3种状态之一，如果有符合就更新最大长度
+  - `maxCount == 1`：说明所有元素的出现次数都是1，那么减掉任何一个都符合规则
+  - 除了一个数值外，所有数值出现的个数都与maxCount相等，而那个特殊的数值是1
+  - 除了一个数值与maxCount一样外，所有其他数值的元素个数都相等，且都比maxCount小1
+### 代码
+```java
+class Solution {
+    public int maxEqualFreq(int[] nums) {
+        int[] count = new int[100001], countFreq = new int[100001];
+        int maxCount = 0, ans = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            int num = nums[i];
+            if (countFreq[count[num]] != 0) {
+                countFreq[count[num]]--;
+            }
+
+            count[num]++;
+            countFreq[count[num]]++;
+            maxCount = Math.max(maxCount, count[num]);
+
+            boolean ok = maxCount == 1 ||
+                    (countFreq[1] == 1 && maxCount * countFreq[maxCount] == i) ||
+                    (countFreq[maxCount] == 1 && countFreq[maxCount - 1] * (maxCount - 1) == i - maxCount + 1);
+            
+            if (ok) {
+                ans = i + 1;
+            }
+        }
+
+        return ans;
+    }
+}
+```
