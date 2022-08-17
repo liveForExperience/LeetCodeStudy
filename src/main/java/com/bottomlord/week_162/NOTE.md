@@ -98,3 +98,41 @@ class MyCircularDeque {
     }
 }
 ```
+# [LeetCode_1302_层数最深的叶子节点的和](https://leetcode.cn/problems/deepest-leaves-sum/)
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+    public int deepestLeavesSum(TreeNode root) {
+        int sum = 0;
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+        
+        while (!queue.isEmpty()) {
+            int count = queue.size(), cur = 0;
+            while (count-- > 0) {
+                TreeNode node = queue.poll();
+                if (node == null) {
+                    continue;
+                }
+                
+                cur += node.val;
+                
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+            
+            sum = cur;
+        }
+        
+        return sum;
+    }
+}
+```
