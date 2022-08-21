@@ -177,3 +177,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2341_数组能形成多少数对](https://leetcode.cn/problems/maximum-number-of-pairs-in-array/)
+## 解法
+### 思路
+- 遍历并桶计数
+- 遍历桶，并计算数对和剩余个数
+  - 计数值 / 2 相当于当前数的数对个数
+  - 如果计数值是奇数，遗留数会增加
+### 代码
+```java
+class Solution {
+    public int[] numberOfPairs(int[] nums) {
+        int[] bucket = new int[101];
+        for (int num : nums) {
+            bucket[num]++;
+        }
+
+        int count = 0, left = 0;
+        for (int num : bucket) {
+            count += num / 2;
+            left += num % 2 == 1 ? 1 : 0;
+        }
+
+        return new int[]{count, left};
+    }
+}
+```
