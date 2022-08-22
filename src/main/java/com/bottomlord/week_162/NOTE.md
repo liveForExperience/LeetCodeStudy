@@ -203,3 +203,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2347_最好的扑克手牌](https://leetcode.cn/problems/best-poker-hand/)
+## 解法
+### 思路
+根据题目列出的4种等级，依次判断：
+- 同花顺：所有suit相同
+- 3条：有3个一样的数字
+- pair：有2个一样的数字
+- High Card：5张都不一样
+### 代码
+```java
+class Solution {
+  public String bestHand(int[] ranks, char[] suits) {
+    int[] suitBucket = new int[4], rankBucket = new int[14];
+    for (int rank : ranks) {
+      rankBucket[rank]++;
+    }
+
+    for (char suit : suits) {
+      suitBucket[suit - 'a']++;
+    }
+
+    for (int count : suitBucket) {
+      if (count == 5) {
+        return "Flush";
+      }
+    }
+
+    boolean isPair = false;
+    for (int count : rankBucket) {
+      if (count >= 3) {
+        return "Three of a Kind";
+      }
+
+      if (count == 2) {
+        isPair = true;
+      }
+    }
+
+    return isPair ? "Pair" : "High Card";
+  }
+}
+```
