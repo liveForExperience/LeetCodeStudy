@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_641_设计循环双端队列](https://leetcode.cn/problems/design-circular-deque/)
 ## 解法
 ### 思路
