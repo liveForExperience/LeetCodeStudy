@@ -42,12 +42,4 @@ public class LeetCode_655_1_输出二叉树 {
         print(node.left, ans, r + 1, c - (1 << (height - r - 1)), height);
         print(node.right, ans, r + 1, c + (1 << (height - r - 1)), height);
     }
-
-    public static void main(String[] args) {
-        TreeNode t1 = new TreeNode(1), t2 = new TreeNode(2);
-        t1.left = t2;
-
-        LeetCode_655_1_输出二叉树 t = new LeetCode_655_1_输出二叉树();
-        t.printTree(t1);
-    }
 }
