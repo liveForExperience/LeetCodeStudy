@@ -52,3 +52,79 @@ class Solution {
     }
 }
 ```
+# [LeetCode_658_找到K个最接近的元素](https://leetcode.cn/problems/find-k-closest-elements/)
+## 解法
+### 思路
+- 对数组进行排序，排序的规则是与x的距离越小越靠前
+- 截取前k个元素
+- 对截取的列表做排序后返回
+### 代码
+```java
+class Solution {
+    public List<Integer> findClosestElements(int[] arr, int k, int x) {
+        List<Integer> list = new ArrayList<>();
+        for (int num : arr) {
+            list.add(num);
+        }
+
+        list.sort((a, b) -> {
+            int disA = Math.abs(a - x), disB = Math.abs(b - x);
+            if (disA != disB) {
+                return disA - disB;
+            }
+
+            return a - b;
+        });
+        
+        List<Integer> ans = list.subList(0, k);
+        ans.sort(Comparator.naturalOrder());
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 二分查找找到最接近x的坐标
+- 双指针确定区间范围
+- 返回区间元素
+### 代码
+```java
+class Solution {
+    public List<Integer> findClosestElements(int[] arr, int k, int x) {
+        int index = binarySearch(arr, x);
+        int l = index - 1, r = index;
+        while (k-- > 0) {
+            if (l < 0) {
+                r++;
+            } else if (r >= arr.length) {
+                l--;
+            } else if (x - arr[l] > arr[r] - x) {
+                r++;
+            } else {
+                l--;
+            }
+        }
+        
+        List<Integer> ans = new ArrayList<>();
+        for (int i = l + 1; i < r; i++) {
+            ans.add(arr[i]);
+        }
+        return ans;
+    }
+    
+    private int binarySearch(int[] arr, int target) {
+        int head = 0, tail = arr.length - 1;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2;
+            int num = arr[mid];
+            if (num >= target) {
+                tail = mid;
+            } else {
+                head = mid + 1;
+            }
+        }
+        
+        return head;
+    }
+}
+```
