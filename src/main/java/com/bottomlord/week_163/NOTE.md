@@ -128,3 +128,12 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1464_数组中两元素的最大乘积](https://leetcode.cn/problems/maximum-product-of-two-elements-in-an-array/)
+## 解法
+### 思路
+- 排序数组，获取最大的两个元素
+- 根据最大的两个元素进行计算并返回
+### 代码
+```java
+
+```
