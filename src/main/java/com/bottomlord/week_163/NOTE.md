@@ -265,3 +265,33 @@ class Solution {
     }
 }
 ```
+# [LeetCode_793_阶乘函数后K个零](https://leetcode.cn/problems/preimage-size-of-factorial-zeroes-function/)
+## 解法
+### 思路
+[题解](https://leetcode.cn/problems/preimage-size-of-factorial-zeroes-function/solution/by-muse-77-ajqn/)
+### 代码
+```java
+class Solution {
+    public int preimageSizeFZF(int k) {
+        long head = 0, tail = 5L * k;
+        while (head <= tail) {
+            long mid = head + (tail - head) / 2;
+            long n = 5L, num = 0L;
+            while (n <= mid) {
+                num += mid / n;
+                n *= 5;
+            }
+            
+            if (num == k) {
+                return 5;
+            } else if (num < k) {
+                head = mid + 1;
+            } else {
+                tail = mid - 1;
+            }
+        }
+        
+        return 0;
+    }
+}
+```
