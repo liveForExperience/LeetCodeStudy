@@ -135,5 +135,133 @@ class Solution {
 - 根据最大的两个元素进行计算并返回
 ### 代码
 ```java
+public class Solution {
+    public int maxProduct(int[] nums) {
+        Arrays.sort(nums);
+        return nums[nums.length - 1] * nums[nums.length - 2];
+    }
+}
+```
+## 解法二
+### 思路
+遍历确定最大的2个数
+### 代码
+```java
+public class Solution {
+    public int maxProduct(int[] nums) {
+        int one = 0, two = 0;
+        for (int num : nums) {
+            if (one == 0) {
+                one = num;
+                continue;
+            }
 
+            if (two == 0) {
+                if (one > num) {
+                    two = num;
+                } else {
+                    two = one;
+                    one = num;
+                }
+                continue;
+            }
+
+            if (num > one) {
+                two = one;
+                one = num;
+            } else if (num > two) {
+                two = num;
+            }
+        }
+
+        return (one - 1) * (two - 1);
+    }
+}
+```
+# [LeetCode_662_二叉树最大宽度](https://leetcode.cn/problems/maximum-width-of-binary-tree/)
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+    public int widthOfBinaryTree(TreeNode root) {
+        Queue<WrapNode> queue = new ArrayDeque<>();
+        queue.offer(new WrapNode(root, 0));
+        int ans = Integer.MIN_VALUE;
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            List<Integer> list = new ArrayList<>();
+            while (count-- > 0) {
+                WrapNode wrapNode = queue.poll();
+                if (wrapNode == null) {
+                    continue;
+                }
+                
+                TreeNode node = wrapNode.node;
+                list.add(wrapNode.index);
+                
+                if (node.left != null) {
+                    queue.offer(new WrapNode(node.left, wrapNode.index * 2));
+                }
+                
+                if (node.right != null) {
+                    queue.offer(new WrapNode(node.right, wrapNode.index * 2 + 1));
+                }
+            }
+            
+            ans = Math.max(ans, list.get(list.size() - 1) - list.get(0) + 1);
+        }
+        
+        return ans;
+    }
+    
+    private static class WrapNode {
+        private TreeNode node;
+        private int index;
+        
+        public WrapNode(TreeNode node, int index) {
+            this.node = node;
+            this.index = index;
+        }
+    }
+}
+```
+## 解法二
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    public int widthOfBinaryTree(TreeNode root) {
+        Map<Integer, Integer> map = new HashMap<>();
+        return dfs(new WrapNode(root, 0), 0, map);
+    }
+    
+    private int dfs(WrapNode node, int depth, Map<Integer, Integer> map) {
+        if (node == null) {
+            return 0;
+        }
+        
+        if (!map.containsKey(depth)) {
+            map.put(depth, node.index);
+        }
+        
+        WrapNode left = node.node.left == null ? null : new WrapNode(node.node.left, node.index * 2),
+                 right = node.node.right == null ? null : new WrapNode(node.node.right, node.index * 2 + 1);
+        
+        return Math.max(node.index - map.get(depth) + 1, 
+                Math.max(dfs(left, depth + 1, map), dfs(right, depth + 1, map)));
+    }
+
+    private static class WrapNode {
+        private TreeNode node;
+        private int index;
+
+        public WrapNode(TreeNode node, int index) {
+            this.node = node;
+            this.index = index;
+        }
+    }
+}
 ```
