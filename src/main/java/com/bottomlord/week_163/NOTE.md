@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_655_输出二叉树](https://leetcode.cn/problems/print-binary-tree/)
 ## 解法
 ### 思路
