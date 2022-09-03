@@ -40,3 +40,25 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2351_第一个出现两次的字母]()
+## 解法
+### 思路
+桶计数
+### 代码
+```java
+class Solution {
+    public char repeatedCharacter(String s) {
+        int[] bucket = new int[26];
+        char[] cs = s.toCharArray();
+        for (char c : cs) {
+            bucket[c - 'a']++;
+
+            if (bucket[c - 'a'] == 2) {
+                return c;
+            }
+        }
+
+        return ' ';
+    }
+}
+```
