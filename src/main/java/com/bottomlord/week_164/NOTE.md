@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_946_验证栈序列](https://leetcode.cn/problems/validate-stack-sequences/)
 ## 解法
 ### 思路
