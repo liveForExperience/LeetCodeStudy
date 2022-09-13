@@ -107,3 +107,30 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2367_算术三元组的数目](https://leetcode.cn/problems/number-of-arithmetic-triplets/)
+## 解法
+### 思路
+桶计数
+### 代码
+```java
+class Solution {
+    public int arithmeticTriplets(int[] nums, int diff) {
+        int ans = 0;
+        boolean[] bucket = new boolean[201];
+        for (int num : nums) {
+            bucket[num] = true;
+        }
+
+        for (int num : nums) {
+            if (num + diff <= 200 &&
+                num + 2 * diff <= 200 &&
+                bucket[num + diff] &&
+                bucket[num + 2 * diff]) {
+                ans++;
+            }
+        }
+
+        return ans;
+    }
+}
+```
