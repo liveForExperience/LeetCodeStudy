@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_857_雇佣k名工人的最低成本](https://leetcode.cn/problems/minimum-cost-to-hire-k-workers/)
 ## 解法
 ### 思路
