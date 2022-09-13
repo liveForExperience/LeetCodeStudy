@@ -189,3 +189,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2383_赢得比赛需要的最少训练时长](https://leetcode.cn/problems/minimum-hours-of-training-to-win-a-competition/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int minNumberOfHours(int initialEnergy, int initialExperience, int[] energy, int[] experience) {
+        int n = energy.length, time = 0;
+        for (int i = 0; i < n; i++) {
+            int e = energy[i], exp = experience[i];
+            if (initialEnergy <= e) {
+                int ec = e - initialEnergy + 1;
+                time += ec;
+                initialEnergy += ec;
+            }
+            
+            if (initialExperience <= exp) {
+                int expc = exp - initialExperience + 1;
+                time += expc;
+                initialExperience += expc;
+            }
+
+            initialEnergy -= e;
+            initialExperience += exp;
+        }
+        
+        return time;
+    }
+}
+```
