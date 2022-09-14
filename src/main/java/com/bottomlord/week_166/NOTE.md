@@ -284,3 +284,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2395_和相等的子数组](https://leetcode.cn/problems/find-subarrays-with-equal-sum/)
+## 解法
+### 思路
+嵌套循环
+### 代码
+```java
+class Solution {
+    public boolean findSubarrays(int[] nums) {
+        for (int i = 0; i < nums.length - 1; i++) {
+            int sum = nums[i] + nums[i + 1];
+            for (int j = i + 1; j < nums.length - 1; j++) {
+                if (sum == nums[j] + nums[j + 1]) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+set判断是否有重复和
+### 代码
+```java
+class Solution {
+    public boolean findSubarrays(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (!set.add(nums[i] + nums[i + 1])) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+```
