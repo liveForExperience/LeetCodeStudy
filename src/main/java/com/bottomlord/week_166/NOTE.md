@@ -348,3 +348,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2404_出现最频繁的偶数元素](https://leetcode.cn/problems/most-frequent-even-element/)
+## 解法
+### 思路
+- 排序
+- 统计相同偶数值的个数
+- 更新最大个数的偶数值
+- 遍历结束后返回最新的那个偶数值
+### 代码
+```java
+class Solution {
+    public int mostFrequentEven(int[] nums) {
+        Arrays.sort(nums);
+        int max = Integer.MIN_VALUE, ans = -1;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] % 2 == 1) {
+                continue;
+            }
+            
+            int j = i;
+            while (j < nums.length && nums[i] == nums[j]) {
+                j++;
+            }
+            
+            if (j - i + 1 > max) {
+                ans = nums[i];
+                max = j - i + 1;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
