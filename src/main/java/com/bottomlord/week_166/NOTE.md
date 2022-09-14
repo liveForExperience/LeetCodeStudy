@@ -220,3 +220,67 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2389_和有限的最长子序列](https://leetcode.cn/problems/longest-subsequence-with-limited-sum/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] answerQueries(int[] nums, int[] queries) {
+        int len = queries.length;
+        int[] ans = new int[len];
+        Arrays.sort(nums);
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        
+        for (int i = 0; i < queries.length; i++) {
+            int query = queries[i];
+            
+            int curSum = sum, count = nums.length;
+            for (int j = nums.length - 1; j >= 0; j--) {
+                if (curSum <= query) {
+                    ans[i] = count;
+                    break;
+                }
+                
+                curSum -= nums[j];
+                count--;
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+前缀和
+### 代码
+```java
+class Solution {
+    public int[] answerQueries(int[] nums, int[] queries) {
+        int len = nums.length;
+        Arrays.sort(nums);
+        int[] sums = new int[len + 1], ans = new int[queries.length];
+        
+        for (int i = 0; i < len; i++) {
+            sums[i + 1] += sums[i] + nums[i];
+        }
+        
+        for (int i = 0; i < queries.length; i++) {
+            for (int j = 1; j < sums.length; j++) {
+                if (sums[j] <= queries[i]) {
+                    ans[i] = j;
+                } else {
+                    break;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
