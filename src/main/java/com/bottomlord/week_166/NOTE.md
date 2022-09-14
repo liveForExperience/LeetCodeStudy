@@ -323,3 +323,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2399_检查相同字母间的距离](https://leetcode.cn/problems/check-distances-between-same-letters/)
+## 解法
+### 思路
+遍历字符串，统计2个相同字符之间的距离，并和distance数组进行比较，如果不符合就返回false，否则遍历结束，返回true
+### 代码
+```java
+class Solution {
+    public boolean checkDistances(String s, int[] distance) {
+        int[] bucket = new int[26];
+        Arrays.fill(bucket, -1);
+        
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            char c = cs[i];
+            if (bucket[c - 'a'] == -1) {
+                bucket[c - 'a'] = i;
+            } else if (distance[c - 'a'] != i - bucket[c - 'a'] - 1){
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
