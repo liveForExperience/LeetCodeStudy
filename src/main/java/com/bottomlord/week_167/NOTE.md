@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_827_最大人工岛](https://leetcode.cn/problems/making-a-large-island/)
 ## 解法
 ### 思路
