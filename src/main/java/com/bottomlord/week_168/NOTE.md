@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_777_在LR字符串中交换相邻字符](https://leetcode.cn/problems/swap-adjacent-in-lr-string/)
 ## 解法
 ### 思路
@@ -20,5 +12,39 @@
   - 如果需要相同的R，start的坐标大于end的，那么因为R只能向右，所以返回false
 ### 代码
 ```java
+public class Solution {
+  public boolean canTransform(String start, String end) {
+    int x = 0, y = 0, n = start.length();
+    while (x < n || y < n) {
+      while (x < n && start.charAt(x) == 'X') {
+        x++;
+      }
 
+      while (y < n && end.charAt(y) == 'X') {
+        y++;
+      }
+
+      if (x == n || y == n) {
+        return x == y;
+      }
+
+      if (start.charAt(x) != end.charAt(y)) {
+        return false;
+      }
+
+      if (start.charAt(x) == 'L' && x < y) {
+        return false;
+      }
+
+      if (start.charAt(x) == 'R' && x > y) {
+        return false;
+      }
+
+      x++;
+      y++;
+    }
+
+    return true;
+  }
+}
 ```
