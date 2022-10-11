@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_927_三等分](https://leetcode.cn/problems/three-equal-parts/)
 ## 解法
 ### 思路
