@@ -1,11 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_801_使序列递增的最小交换次数](https://leetcode.cn/problems/minimum-swaps-to-make-sequences-increasing/)
 ## 解法
 ### 思路
