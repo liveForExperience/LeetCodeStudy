@@ -47,3 +47,28 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+在解法一的基础上，省略一次左侧的遍历
+### 代码
+```java
+class Solution {
+    public int partitionDisjoint(int[] nums) {
+        int n = nums.length, min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        int[] rights = new int[n];
+        for (int i = n - 1; i >= 0; i--) {
+            min = Math.min(min, nums[i]);
+            rights[i] = min;
+        }
+        
+        for (int i = 0; i < n - 1; i++) {
+            max = Math.max(max, nums[i]);
+            if (max <= rights[i + 1]) {
+                return i + 1;
+            }
+        }
+        
+        return n;
+    }
+}
+```
