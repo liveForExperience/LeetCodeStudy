@@ -1,19 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
-# [LeetCode_940_不同子序列](https://leetcode.cn/problems/distinct-subsequences-ii/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_904_水果成篮](https://leetcode.cn/problems/fruit-into-baskets/)
 ## 解法
 ### 思路
