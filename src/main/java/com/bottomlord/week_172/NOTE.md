@@ -75,7 +75,7 @@ class Solution {
 # [LeetCode_907_子数组的最小值之和](https://leetcode.cn/problems/sum-of-subarray-minimums/)
 ## 解法
 ### 思路
-最小栈
+单调栈
 - 在一个数组中，一个最小值，它在其他数组中也可能是最小值，所以每个值如果作为候选的最小值，一定有一个辐射范围，将这个范围求出来，其实就能得到这个最小值能作用的子数组个数
 - 使用单调栈，在遍历数组的过程中，维护一个元素作用范围的左边界和右边界
   - 从左往右遍历，维护左边界
@@ -125,6 +125,75 @@ class Solution {
         }
 
         return (int)ans;
+    }
+}
+```
+# [LeetCode_934_最短的桥](https://leetcode.cn/problems/shortest-bridge/)
+## 解法
+### 思路
+dfs+bfs
+- 使用dfs遍历其中一块陆地，将遍历到的陆地位置放入到队列中，并标记为-1
+- 通过队列进行bfs，对bfs的次数进行计数，当找到第一块陆地的时候返回计数值
+### 代码
+```java
+class Solution {
+    private int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    public int shortestBridge(int[][] grid) {
+        Queue<int[]> queue = new ArrayDeque<>();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 0 || grid[i][j] == -1) {
+                    continue;
+                }
+
+                dfs(grid, i, j, queue);
+
+                int ans = 0;
+                while (!queue.isEmpty()) {
+                    int count = queue.size();
+
+                    while (count-- > 0) {
+                        int[] arr = queue.poll();
+                        if (arr == null) {
+                            continue;
+                        }
+
+                        int x = arr[0], y = arr[1];
+                        for (int[] direction : directions) {
+                            int nx = x + direction[0], ny = y + direction[1];
+                            if (nx < 0 || ny < 0 || nx >= grid.length || ny >= grid[0].length || grid[nx][ny] == -1) {
+                                continue;
+                            }
+
+                            if (grid[nx][ny] == 1) {
+                                return ans;
+                            }
+
+                            queue.offer(new int[]{nx, ny});
+                            grid[nx][ny] = -1;
+                        }
+                    }
+
+                    ans++;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private void dfs(int[][] grid, int x, int y, Queue<int[]> queue) {
+        int r = grid.length, c = grid[0].length;
+        if (x < 0 || x >= r || y < 0 || y >= c || grid[x][y] == -1 || grid[x][y] == 0) {
+            return;
+        }
+
+        queue.offer(new int[]{x, y});
+        grid[x][y] = -1;
+
+        for (int[] direction : directions) {
+            dfs(grid, x + direction[0], y + direction[1], queue);
+        }
     }
 }
 ```
