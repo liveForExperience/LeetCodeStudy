@@ -72,3 +72,59 @@ class Solution {
     }
 }
 ```
+# [LeetCode_907_子数组的最小值之和](https://leetcode.cn/problems/sum-of-subarray-minimums/)
+## 解法
+### 思路
+最小栈
+- 在一个数组中，一个最小值，它在其他数组中也可能是最小值，所以每个值如果作为候选的最小值，一定有一个辐射范围，将这个范围求出来，其实就能得到这个最小值能作用的子数组个数
+- 使用单调栈，在遍历数组的过程中，维护一个元素作用范围的左边界和右边界
+  - 从左往右遍历，维护左边界
+  - 从右往左遍历，维护右边界
+  - 在维护过程中，一个维护包含自己的边界，一个维护不包含自己的边界，用来方便计算子数组个数
+- 最后遍历数组，通过计算左右边界来计算子数组个数，然后乘以当前元素值
+### 代码
+```java
+class Solution {
+    public int sumSubarrayMins(int[] arr) {
+        int n = arr.length;
+        int[] lefts = new int[n], rights = new int[n];
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && arr[stack.peek()] > arr[i]) {
+                stack.pop();
+            }
+
+            if (stack.isEmpty()) {
+                lefts[i] = -1;
+            } else {
+                lefts[i] = stack.peek();
+            }
+
+            stack.push(i);
+        }
+
+        stack.clear();
+        for (int i = n - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && arr[stack.peek()] >= arr[i]) {
+                stack.pop();
+            }
+
+            if (stack.isEmpty()) {
+                rights[i] = n;
+            } else {
+                rights[i] = stack.peek();
+            }
+
+            stack.push(i);
+        }
+
+        long ans = 0;
+        for (int i = 0; i < n; i++) {
+            ans = (ans + (long)arr[i] * (i - lefts[i]) * (rights[i] - i)) % 1000000007;
+        }
+
+        return (int)ans;
+    }
+}
+```
