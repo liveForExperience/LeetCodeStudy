@@ -62,3 +62,57 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1106_解析布尔表达式](https://leetcode.cn/problems/parsing-a-boolean-expression/)
+## 解法
+### 思路
+栈
+- 遍历字符串
+- 把字符串中的字符内容拆分成3个部分，按照不同逻辑进行处理
+  - 逗号：忽略跳过
+  - 非右括号：放入栈中
+  - 右括号：处理栈中的元素，当遇到右括号的时候，栈顶元素中一定包含了至少一组表达式
+    - 弹出栈元素
+    - 如果是t或f，对其进行计数
+    - 如果是左括号就终止弹栈，然后从栈顶获取操作符
+    - 根据计算t和f的个数，结合操作符，获取表达式的结果
+    - 将表达式结果放入栈中
+- 字符串遍历结束，返回栈顶元素
+### 代码
+```java
+class Solution {
+  public boolean parseBoolExpr(String expression) {
+    Stack<Character> stack = new Stack<>();
+    char[] cs = expression.toCharArray();
+
+    for (char c : cs) {
+      if (c == ',') {
+      } else if (c != ')') {
+        stack.push(c);
+      } else {
+        int t = 0, f = 0;
+        while (stack.peek() != '(') {
+          char token = stack.pop();
+          if (token == 't') {
+            t++;
+          } else {
+            f++;
+          }
+        }
+
+        stack.pop();
+        char operator = stack.pop();
+
+        if (operator == '!') {
+          stack.push(t > 0 ? 'f' : 't');
+        } else if (operator == '|') {
+          stack.push(t > 0 ? 't' : 'f');
+        } else {
+          stack.push(f > 0 ? 'f' : 't');
+        }
+      }
+    }
+
+    return stack.pop() == 't';
+  }
+}
+```
