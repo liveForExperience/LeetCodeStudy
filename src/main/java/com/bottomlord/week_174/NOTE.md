@@ -1,19 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
-# [LeetCode_940_不同子序列](https://leetcode.cn/problems/distinct-subsequences-ii/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_790_多米诺和托米诺平铺](https://leetcode.cn/problems/domino-and-tromino-tiling/)
 ## 解法
 ### 思路
@@ -148,4 +132,17 @@ class Solution {
         return -1;
     }
 }
+```
+# [LeetCode_805_数值的均值分割](https://leetcode.cn/problems/split-array-with-same-average/)
+## 解法
+### 思路
+折半搜索
+- 公式推倒
+  - sumA / lenA = sumB / lenB
+  - sumA / (n - lenB) = sumB / lenB
+  - sumA / n - sumA / lenB= sumB / lenB
+  - sumA / n = sum / lenB
+### 代码
+```java
+
 ```
