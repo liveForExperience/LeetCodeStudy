@@ -166,3 +166,85 @@ class Solution {
     }
 }
 ```
+# [LeetCode_808_分汤](https://leetcode.cn/problems/soup-servings/)
+## 解法
+### 思路
+动态规划：
+- dp[i][j]：i和j代表ab各自剩余的汤的毫升数对应的概率结果
+- base case：
+  - i == 0 && j > 0，概率是1 + 0，因为a已经分配完了，b不能继续分配
+  - i == 0 && j == 0，概率是0 + 0.5，因为ab都分配完了
+  - i > 0 && j == 0，概率是0 + 0，因为b分配完了，a不能再分配
+- 状态转移方程：dp[i][j] = 0.25 * (dp[i - 4][j] + dp[i - 3][j - 1] + dp[i - 2][j - 2] + dp[i - 1][j - 3])
+- 结果：dp[n][n]
+### 代码
+```java
+class Solution {
+    public double soupServings(int n) {
+        n = Math.min(200, (int)Math.ceil(n / 25.0));
+        double[][] dp = new double[n + 1][n + 1];
+        for (int i = 1; i <= n; i++) {
+            dp[0][i] = 1;
+        }
+
+        dp[0][0] = 0.5;
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                double a = dp[Math.max(0, i - 4)][j],
+                    b = dp[Math.max(0, i - 3)][Math.max(0, j - 1)],
+                    c = dp[Math.max(0, i - 2)][Math.max(0, j - 2)],
+                    d = dp[Math.max(0, i - 1)][Math.max(0, j - 3)];
+                dp[i][j] = 0.25 * (a + b + c + d);
+            }
+        }
+
+        return dp[n][n];
+    }
+}
+```
+## 解法二
+### 思路
+记忆化+dfs
+### 代码
+```java
+class Solution {
+    public double soupServings(int n) {
+        n = Math.min(200, (int) Math.ceil(n / 25.0));
+        double[][] memo = new double[n + 1][n + 1];
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= n; j++) {
+                memo[i][j] = -1;
+            }
+        }
+        return dfs(n, n, memo);
+    }
+
+    private double dfs(int a, int b, double[][] memo) {
+        if (a == 0 && b > 0) {
+            return 1;
+        }
+
+        if (a == 0 && b == 0) {
+            return 0.5;
+        }
+
+        if (a > 0 && b == 0) {
+            return 0;
+        }
+
+        if (memo[a][b] != -1) {
+            return memo[a][b];
+        }
+
+        memo[a][b] = 0.25 * (
+                dfs(Math.max(0, a - 4), b, memo) +
+                dfs(Math.max(0, a - 3), Math.max(b - 1, 0), memo) +
+                dfs(Math.max(0, a - 2), Math.max(b - 2, 0), memo) +
+                dfs(Math.max(0, a - 1), Math.max(b - 3, 0), memo)
+        );
+
+        return memo[a][b];
+    }
+}
+```
