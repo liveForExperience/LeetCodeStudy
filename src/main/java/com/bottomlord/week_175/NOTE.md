@@ -248,3 +248,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_878_第N个神奇数字](https://leetcode.cn/problems/nth-magical-number/)
+## 解法
+### 思路
+二分查找
+- 题目要找的是第n个a或b的倍数
+- 因为这个序列一定是有序的，所以可以通过二分查找去找
+- 序列的区间
+  - 最小值：min(a,b)
+  - 最大值：n * min(a,b)
+- 这个值对应的个数可以通过这个公式求得
+  - cnt = x / a + x / b - x / c
+  - c是a和b的最小公倍数
+  - x/a代表能被a整除的小于等于x的个数
+  - x/b代表能被b整除的小于等于x的个数
+  - x/c代表当同时能被a和b整除的时候，重复计数的个数
+### 代码
+```java
+class Solution {
+    public int nthMagicalNumber(int n, int a, int b) {
+        long l = Math.min(a, b), r = (long)n * Math.min(a, b), 
+        mod = 1000000007L, c = lcm(a, b);
+        while (l <= r) {
+            long mid = l + (r - l) / 2;
+            long count = mid / a + mid / b - mid / c;
+            if (count >= n) {
+                r = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+
+        return (int)((r + 1) % mod);
+    }
+
+    private int lcm(int a, int b) {
+        return a * b / gcd(a, b);
+    }
+
+    private int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+}
+```
