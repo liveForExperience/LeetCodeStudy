@@ -291,3 +291,69 @@ class Solution {
     }
 }
 ```
+# [LeetCode_809_情感丰富的文字](https://leetcode.cn/problems/expressive-words/)
+## 解法
+### 思路
+双指针
+- 外层循环words数组，判断每个word是否和s形成题目要求的状态
+- 内部通过双指针进行判断：
+  - 2个指针分别对应word和s
+  - 然后分别对连续的相同的字符进行计数，根据题目要求
+    - 两个开始判断的字符必须相同
+    - word连续的字符个数必须比t的少
+    - 如果t的个数与word的字符个数不同，那么t的字符个数必须超过3
+### 代码
+```java
+class Solution {
+    public int expressiveWords(String s, String[] words) {
+        int ans = 0;
+        for (String word : words) {
+            if (check(word, s)) {
+                ans++;
+            }
+        }
+        
+        return ans;
+    }
+
+    private boolean check(String word, String s) {
+        int wl = word.length(), sl = s.length();
+        if (wl > sl) {
+            return false;
+        }
+
+        if (wl == sl) {
+            return Objects.equals(word, s);
+        }
+
+        int wi = 0, si = 0;
+        while (wi < wl && si < sl) {
+            int wc = 0, sc = 0;
+            char wchar = word.charAt(wi), schar = s.charAt(si);
+            if (wchar != schar) {
+                return false;
+            }
+            
+            while (wi < wl && word.charAt(wi) == wchar) {
+                wi++;
+                wc++;
+            }
+            
+            while (si < sl && s.charAt(si) == schar) {
+                si++;
+                sc++;
+            }
+            
+            if (wc > sc) {
+                return false;
+            }
+            
+            if (wc != sc && sc < 3) {
+                return false;
+            }
+        }
+        
+        return si == sl && wi == wl;
+    }
+}
+```
