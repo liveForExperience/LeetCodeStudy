@@ -99,3 +99,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2409_统计共同度过的日子数](https://leetcode.cn/problems/count-days-spent-together/)
+## 解法
+### 思路
+- 用数组记录12个月天数的前缀和
+- 利用前缀和数组和天数：
+  - 算出2个人arrive的时间的最大值
+  - 算出2个人leave的时间的最小值
+- 求出他们的差值作为结果返回
+### 代码
+```java
+class Solution {
+    private final int[] arr = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    public int countDaysTogether(String arriveAlice, String leaveAlice, String arriveBob, String leaveBob) {
+        int[] sums = new int[13];
+        for (int i = 1; i <= arr.length; i++) {
+            sums[i] = sums[i - 1] + arr[i - 1];
+        }
+
+        String rod = "-";
+        String[] arriveAliceStrs = arriveAlice.split(rod), leaveAliceStrs = leaveAlice.split(rod),
+                arriveBobStrs = arriveBob.split(rod), leaveBobStrs = leaveBob.split(rod);
+        int aam = Integer.parseInt(arriveAliceStrs[0]), aad = Integer.parseInt(arriveAliceStrs[1]),
+            lam = Integer.parseInt(leaveAliceStrs[0]), lad = Integer.parseInt(leaveAliceStrs[1]),
+            abm = Integer.parseInt(arriveBobStrs[0]), abd = Integer.parseInt(arriveBobStrs[1]),
+            lbm = Integer.parseInt(leaveBobStrs[0]), lbd = Integer.parseInt(leaveBobStrs[1]);
+
+        int day = Math.min(sums[lam - 1] + lad, sums[lbm - 1] + lbd) - Math.max(sums[aam - 1] + aad, sums[abm - 1] + abd);        
+        return day < 0 ? 0 : day + 1;
+    }
+}
+```
