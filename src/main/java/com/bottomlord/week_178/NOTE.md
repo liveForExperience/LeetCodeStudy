@@ -131,3 +131,14 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1780_判断一个数字是否可以表示成三的幂的和](https://leetcode.cn/problems/check-if-number-is-a-sum-of-powers-of-three/)
+## 解法
+### 思路
+- 通过进制转换来判断
+  - num % 3 == 0，当前位上没有值
+  - num % 3 == 1，当前位上只有1，代表通过3的整数次幂可能获得对应的值
+  - 如果是其他值，则代表无法达到题目要求
+### 代码
+```java
+
+```
