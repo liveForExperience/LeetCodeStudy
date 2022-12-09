@@ -140,5 +140,33 @@ class Solution {
   - 如果是其他值，则代表无法达到题目要求
 ### 代码
 ```java
+class Solution {
+  public boolean checkPowersOfThree(int n) {
+    while (n != 0) {
+      if (n % 3 == 0 || n % 3 == 1) {
+        n /= 3;
+      } else {
+        return false;
+      }
+    }
 
+    return true;
+  }
+}
+```
+# [LeetCode_2413_最小偶数倍](https://leetcode.cn/problems/smallest-even-multiple/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int smallestEvenMultiple(int n) {
+        if (n <= 2) {
+            return 2;
+        }
+
+        return n % 2 == 0 ? n : 2 * n;
+    }
+}
 ```
