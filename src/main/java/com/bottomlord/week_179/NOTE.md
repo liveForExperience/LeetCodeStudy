@@ -49,3 +49,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1781_所有子字符串美丽值之和](https://leetcode.cn/problems/sum-of-beauty-of-all-substrings/)
+## 解法
+### 思路
+循环模拟
+- 3层循环
+  - 第一层确定子字符串的起始字符
+  - 第二层确定子字符串的结尾字符
+  - 第三层，在通过2个坐标确定子字符串之后，遍历确定过程中累加的字符频次，来计算美丽值
+- 遍历结束，返回计算出来的累加的美丽值
+### 代码
+```java
+class Solution {
+    public int beautySum(String s) {
+        int ans = 0;
+        char[] cs = s.toCharArray();
+
+        for (int i = 0; i < cs.length; i++) {
+            int[] cnt = new int[26];
+            int maxFreq = 0;
+            for (int j = i; j < cs.length; j++) {
+                cnt[cs[j] - 'a']++;
+                maxFreq = Math.max(maxFreq, cnt[cs[j] - 'a']);
+
+                int minFreq = maxFreq;
+                for (int value : cnt) {
+                    if (value > 0) {
+                        minFreq = Math.min(minFreq, value);
+                    }
+                }
+
+                ans += maxFreq - minFreq;
+            }
+        }
+
+        return ans;
+    }
+}
+```
