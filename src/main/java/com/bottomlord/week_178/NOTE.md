@@ -1,19 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
-# [LeetCode_940_不同子序列](https://leetcode.cn/problems/distinct-subsequences-ii/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_1775_通过最少操作次数使数组的和相等](https://leetcode.cn/problems/equal-sum-arrays-with-minimum-number-of-operations/)
 ## 解法
 ### 思路
@@ -173,8 +157,23 @@ class Solution {
 # [LeetCode_2418_按身高排序](https://leetcode.cn/problems/sort-the-people/)
 ## 解法
 ### 思路
-
+模拟排序
 ### 代码
 ```java
+class Solution {
+  public String[] sortPeople(String[] names, int[] heights) {
+    int n = names.length;
+    Integer[] indexes = new Integer[n];
+    for (int i = 0; i < n; i++) {
+      indexes[i] = i;
+    }
 
+    Arrays.sort(indexes, (x, y) -> heights[y] - heights[x]);
+    String[] ans = new String[n];
+    for (int i = 0; i < indexes.length; i++) {
+      ans[i] = names[indexes[i]];
+    }
+    return ans;
+  }
+}
 ```
