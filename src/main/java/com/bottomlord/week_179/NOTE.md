@@ -87,3 +87,23 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1750_移除石子的最大得分](https://leetcode.cn/problems/maximum-score-from-removing-stones/)
+## 解法
+### 思路
+- 假设a<=b<=c，则3颗石子有如下两种情况：
+  - a+b<=c，那么最大得分就是a+b
+  - a+b>c，那么假设c与a和b各分了k1和k2次，分的时候，尽量使得a和b剩余的值接近。等c被分完后，a和b剩余的个数应该是相差1或者完全相等，则只要求出它们之间的最小值，或者求出(a+b)/2向下取整即可
+  - 第二种情况化简以后，可以得到：
+    1. (k1 + k2) + ((a - k1) + (b - k2)) / 2
+    2. c + (a + b - c) / 2
+    3. (a + b + c) / 2
+### 代码
+```java
+class Solution {
+    public int maximumScore(int a, int b, int c) {
+        int sum = a + b + c;
+        int max = Math.max(a, Math.max(b, c));
+        return Math.min(sum - max, sum / 2);
+    }
+}
+```
