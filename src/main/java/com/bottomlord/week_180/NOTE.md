@@ -126,3 +126,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2427_公因子的数目](https://leetcode.cn/problems/number-of-common-factors/)
+## 解法
+### 思路
+- 计算出最大公约数
+- 从做大公约数开始递减判断是否是公因数，直到1为止
+### 代码
+```java
+class Solution {
+    public int commonFactors(int a, int b) {
+        int gcd = gcd(a, b), cnt = 0;
+        for (int i = gcd; i >= 1; i--) {
+            if (a % i == 0 && b % i == 0) {
+                cnt++;
+            }
+        }
+
+        return cnt;
+    }
+
+    private int gcd(int x, int y) {
+        return x % y == 0 ? y : gcd(y, x % y);
+    }
+}
+```
