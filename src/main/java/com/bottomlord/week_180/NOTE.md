@@ -150,3 +150,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1739_放置盒子](https://leetcode.cn/problems/building-boxes/)
+## 解法
+### 思路
+- 1层1个，2层1+2个，3层1+2+3个
+- 依次类推就可以得到不比n大的最大层数
+- 如果满层个数与n相等，就直接返回层数
+- 否则就计算剩下方块，需要在当前的堆叠外层去套一层，套的时候就是1+2+3+...+i这样去套，可以参考[图解](https://leetcode.cn/problems/building-boxes/solution/mei-xiang-ming-bai-yi-ge-dong-hua-miao-d-8vbe/)
+### 代码
+```java
+class Solution {
+    public int minimumBoxes(int n) {
+        int cur = 0, i = 0, j = 0;
+        while (cur < n) {
+            j++;
+            i += j;
+            cur += i;
+        }
+        
+        if (cur == n) {
+            return i;
+        }
+        
+        cur -= i;
+        i -= j;
+        j = 0;
+        
+        while (cur < n) {
+            j++;
+            cur += j;
+        }
+        
+        return i + j;
+    }
+}
+```
