@@ -255,3 +255,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2441_与对应负数同时存在的最大正整数](https://leetcode.cn/problems/largest-positive-integer-that-exists-with-its-negative/)
+## 解法
+### 思路
+桶记录
+### 代码
+```java
+class Solution {
+    public int findMaxK(int[] nums) {
+        boolean[] bucket = new boolean[2001];
+        for (int num : nums) {
+            bucket[num + 1000] = true;
+        }
+
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] && bucket[-(i - 1000) + 1000]) {
+                return -(i - 1000);
+            }
+        }
+        
+        return -1;
+    }
+}
+```
