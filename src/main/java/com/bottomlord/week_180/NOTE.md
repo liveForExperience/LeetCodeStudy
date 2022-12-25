@@ -185,3 +185,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2432_处理用时最长的那个任务的员工](https://leetcode.cn/problems/the-employee-that-worked-on-the-longest-task/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int hardestWorker(int n, int[][] logs) {
+        int ans = -1, max = Integer.MIN_VALUE, lastLeave = 0;
+        for (int[] log : logs) {
+            int id = log[0], leave = log[1], diff = leave - lastLeave;
+            if (diff > max) {
+                max = diff;
+                ans = id;
+            } else if (diff == max) {
+                ans = ans == -1 ? id : Math.min(ans, id);
+            }
+            lastLeave = leave;
+        }
+        
+        return ans;
+    }
+}
+```
