@@ -278,3 +278,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2446_判断两个事件是否存在冲突](https://leetcode.cn/problems/determine-if-two-events-have-conflict/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public boolean haveConflict(String[] event1, String[] event2) {
+        int s1 = getTime(event1[0]), e1 = getTime(event1[1]),
+            s2 = getTime(event2[0]), e2 = getTime(event2[1]);
+
+        return (s2 >= s1 && s2 <= e1) || (e2 >= s1 && e2 <= e1) ||
+               (s1 >= s2 && s1 <= e2) || (e1 >= s2 && e1 <= e2);
+    }
+
+    private int getTime(String time) {
+        String[] factors = time.split(":");
+        return Integer.parseInt(factors[0]) * 60 + Integer.parseInt(factors[1]);
+    }
+}
+```
