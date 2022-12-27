@@ -45,3 +45,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2027_转换字符串的最少操作次数](https://leetcode.cn/problems/minimum-moves-to-convert-string/)
+## 解法
+### 思路
+- 遍历字符串，当遇到x的时候就修改当前及之后的2个字符为o
+- 然后继续遍历
+### 代码
+```java
+class Solution {
+    public int minimumMoves(String s) {
+        char[] cs = s.toCharArray();
+        int count = 0;
+        for (int i = 0; i < cs.length; i++) {
+            if (cs[i] == 'X') {
+                cs[i] = 'O';
+
+                if (i + 1 < cs.length) {
+                    cs[i + 1] = 'O';
+                }
+
+                if (i + 2 < cs.length) {
+                    cs[i + 2] = 'O';
+                }
+
+                i += 2;
+                count++;
+            }
+        }
+
+        return count;
+    }
+}
+```
