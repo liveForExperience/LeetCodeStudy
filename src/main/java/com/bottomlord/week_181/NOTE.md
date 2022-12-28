@@ -77,3 +77,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1750_删除字符串两端相同字符后的最短长度](https://leetcode.cn/problems/minimum-length-of-string-after-deleting-similar-ends/)
+## 解法
+### 思路
+双指针模拟
+### 代码
+```java
+class Solution {
+    public int minimumLength(String s) {
+        int left = 0, right = s.length() - 1;
+
+        while (left < right) {
+            char lc = s.charAt(left),
+                 rc = s.charAt(right);
+
+            if (lc != rc) {
+                return right - left + 1;
+            }
+
+            while (left <= right && s.charAt(left) == lc) {
+                left++;
+            }
+            
+            while (left <= right && s.charAt(right) == rc) {
+                right--;
+            }
+        }
+
+        return right - left + 1;
+    }
+}
+```
