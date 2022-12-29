@@ -108,3 +108,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2451_差值数组不同的字符串](https://leetcode.cn/problems/odd-string-difference/)
+## 解法
+### 思路
+模拟
+- 2层循环
+  - 第一层遍历差值比较的坐标位置
+  - 第二层遍历words字符串数组
+- 第二层内部使用map来记录diff和对应的字符串列表
+- 然后判断是否存在只有1个字符串的diff，如果有就返回座位结果
+### 代码
+```java
+class Solution {
+    public String oddString(String[] words) {
+        if (words == null || words.length == 0) {
+            return null;
+        }
+
+        int wordLen = words[0].length();
+        for (int i = 1; i < wordLen; i++) {
+            Map<Integer, List<String>> map = new HashMap<>();
+            
+            for (String word : words) {
+                map.computeIfAbsent(getDiff(word, i), x -> new ArrayList<>()).add(word);
+            }
+
+            for (Map.Entry<Integer, List<String>> entry : map.entrySet()) {
+                if (entry.getValue().size() == words.length) {
+                    break;
+                }
+                
+                if (entry.getValue().size() == 1) {
+                    return entry.getValue().get(0);
+                }
+            }
+        }
+
+        return null;
+    }
+    
+    private int getDiff(String word, int index) {
+        return word.charAt(index) - word.charAt(index - 1);
+    }
+}
+```
