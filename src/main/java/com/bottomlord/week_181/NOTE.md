@@ -173,3 +173,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2460_对数组执行操作](https://leetcode.cn/problems/apply-operations-to-an-array/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] applyOperations(int[] nums) {
+        int n = nums.length;
+        int[] arr = new int[n];
+        int head = 0;
+        int tail = n - 1;
+        
+        for (int i = 0; i < n - 1; i++) {
+            if (nums[i] != 0) {
+                if (nums[i] == nums[i + 1]) {
+                    nums[i] *= 2;
+                    nums[i + 1] = 0;
+                    arr[tail--] = 0;
+                }
+                
+                arr[head++] = nums[i];
+            }
+        }
+        
+        if (nums[n - 1] != 0) {
+            arr[head] = nums[n - 1]; 
+        }
+        
+        return arr;
+    }
+}
+```
