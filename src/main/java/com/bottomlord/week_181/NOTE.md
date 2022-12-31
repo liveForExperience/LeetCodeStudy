@@ -152,3 +152,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2455_可被三整除的偶数的平均值](https://leetcode.cn/problems/average-value-of-even-numbers-that-are-divisible-by-three/)
+## 解法
+### 思路
+- 遍历数组，判断能否被6整除，如果可以就累加和以及整除的个数
+- 返回总和与个数相除的商，但注意个数如果是0，则直接返回0
+### 代码
+```java
+class Solution {
+    public int averageValue(int[] nums) {
+        int sum = 0, count = 0;
+        for (int num : nums) {
+            if (num % 6 == 0) {
+                sum += num;
+                count++;
+            }
+        }
+        
+        return count == 0 ? 0 : sum / count;
+    }
+}
+```
