@@ -260,3 +260,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2475_数组中不等三元组的数目](https://leetcode.cn/problems/number-of-unequal-triplets-in-array/)
+## 解法
+### 思路
+3层循环
+### 代码
+```java
+class Solution {
+    public int unequalTriplets(int[] nums) {
+        int ans = 0;
+        for (int i = 0; i < nums.length; i++) {
+            int n1 = nums[i];
+            for (int j = i + 1; j < nums.length; j++) {
+                int n2 = nums[j];
+                
+                if (n1 == n2) {
+                    continue;
+                }
+                
+                for (int k = j + 1; k < nums.length; k++) {
+                    int n3 = nums[k];
+                    if (n1 == n3 || n2 == n3) {
+                        continue;
+                    }
+                    
+                    ans++;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
