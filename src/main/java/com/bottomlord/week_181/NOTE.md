@@ -316,3 +316,17 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- (1 + x) * x / 2 = (x + n) * (n - x + 1) / 2
+- x2 = (n2 + n) / 2
+- 开根号求x值，如果可以开出整数，那么就返回这个值，否则返回-1
+### 代码
+```java
+class Solution {
+    public int pivotInteger(int n) {
+        double x = Math.sqrt((n * n + n) / 2.0);
+        return x - (int) x > 0 ?  -1 : (int) x;
+    }
+}
+```
