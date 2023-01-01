@@ -293,3 +293,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2485_找出中枢整数](https://leetcode.cn/problems/find-the-pivot-integer/)
+## 解法
+### 思路
+前缀和
+### 代码
+```java
+class Solution {
+    public int pivotInteger(int n) {
+        int[] sums = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            sums[i] = sums[i - 1] + i;
+        }
+
+        for (int i = 1; i < sums.length; i++) {
+            if (sums[i] == sums[n] - sums[i - 1]) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
