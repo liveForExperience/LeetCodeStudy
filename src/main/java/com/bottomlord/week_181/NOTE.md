@@ -248,3 +248,15 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2469_温度转换](https://leetcode.cn/problems/convert-the-temperature/)
+## 解法
+### 思路
+过于简单，模拟
+### 代码
+```java
+class Solution {
+    public double[] convertTemperature(double celsius) {
+        return new double[]{celsius + 273.15, celsius * 1.8 + 32};
+    }
+}
+```
