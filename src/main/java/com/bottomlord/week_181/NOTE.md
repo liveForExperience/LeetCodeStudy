@@ -1,19 +1,3 @@
-# [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
-# [LeetCode_940_不同子序列](https://leetcode.cn/problems/distinct-subsequences-ii/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_1774_统计同构字符串的个数](https://leetcode.cn/problems/count-number-of-homogenous-substrings/)
 ## 解法
 ### 思路
