@@ -99,3 +99,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2481_分割圆的最少切割次数](https://leetcode.cn/problems/minimum-cuts-to-divide-a-circle/)
+## 解法
+### 思路
+观察发现：
+- n为偶数：切割次数为n/2
+- n为奇数且不为1时：切割次数为n
+- n为1是特殊情况，无需切割，为0
+### 代码
+```java
+class Solution {
+  public int numberOfCuts(int n) {
+    if (n == 1) {
+      return 0;
+    }
+
+    return n % 2 == 0 ? n / 2 : n;
+  }
+}
+```
