@@ -118,3 +118,34 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1802_有界数组中指定下标处的最大值](https://leetcode.cn/problems/maximum-value-at-a-given-index-in-a-bounded-array/)
+## 解法
+### 思路
+双指针
+- 从index坐标开始，向左和右分别同时遍历，且依次在各个坐标对应的值上累加1
+- 同时对累加的值进行存储，存储为sum，并将sum和maxSum进行比较，如果sum <= maxSum则继续循环
+- 每循环一次，就对结果值ans加1
+- 最后返回结果的时候，ans需要-1，因为最后一次是sum等于或者大于maxSum的时候累加的，所以需要减掉1
+- 优化：当maxSum-sum的值大于n，且l和r2个指针已经移动到了0和n-1的位置，不能再移动了，那么剩下的动作其实就是每次都增加至多n个元素的同时，ans也加1，那么这个过程就可以通过(maxSum - sum) / n求出次数，从而直接得到ans要增加的个数，且此时不需要-1，那是因为此时增加的个数不像之前是超过的，这次就是正常的个数
+### 代码
+```java
+class Solution {
+    public int maxValue(int n, int index, int maxSum) {
+        int ans = 1, sum = n, l = index, r = index;
+        
+        while (sum <= maxSum) {
+            sum += r - l + 1;
+            ans++;
+            
+            r = r == n - 1 ? n - 1 : r + 1;
+            l = l == 0 ? 0 : l - 1;
+            
+            if (l == 0 && r == n - 1 && n < maxSum - sum) {
+                return ans + (maxSum - sum) / n;
+            }
+        }
+        
+        return ans - 1;
+    }
+}
+```
