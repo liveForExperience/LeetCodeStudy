@@ -378,3 +378,67 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2500_删除每行中的最大值](https://leetcode.cn/problems/delete-greatest-value-in-each-row/)
+## 解法
+### 思路
+记忆化+模拟
+### 代码
+```java
+class Solution {
+    public int deleteGreatestValue(int[][] grid) {
+        int r = grid.length, c = grid[0].length, count = 0, ans = 0;
+        boolean[][] memo = new boolean[r][c];
+        
+        while (count < c) {
+            int max = Integer.MIN_VALUE;
+            for (int i = 0; i < r; i++) {
+                int rowMax = Integer.MIN_VALUE;
+                int maxC = -1;
+                for (int j = 0; j < c; j++) {
+                    if (memo[i][j]) {
+                        continue;
+                    }
+
+                    if (grid[i][j] > rowMax) {
+                        maxC = j;
+                        rowMax = grid[i][j];
+                    }
+                }
+                
+                memo[i][maxC] = true;
+                max = Math.max(max, rowMax);
+            }
+
+            count++;
+            ans += max;
+        }
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+排序+模拟
+### 代码
+```java
+class Solution {
+    public int deleteGreatestValue(int[][] grid) {
+        for (int[] arr : grid) {
+            Arrays.sort(arr);
+        }
+        
+        int ans = 0;
+        for (int i = 0; i < grid[0].length; i++) {
+            int max = Integer.MIN_VALUE;
+
+            for (int[] arr : grid) {
+                max = Math.max(max, arr[i]);
+            }
+            
+            ans += max;
+        }
+        
+        return ans;
+    }
+}
+```
