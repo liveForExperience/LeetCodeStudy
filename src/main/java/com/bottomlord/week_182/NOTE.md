@@ -319,3 +319,30 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2490_回环句](https://leetcode.cn/problems/circular-sentence/)
+## 解法
+### 思路
+- 切分字符串
+- 遍历判断
+### 代码
+```java
+class Solution {
+    public boolean isCircularSentence(String sentence) {
+        String[] words = sentence.split(" ");
+        int n = words.length;
+        String firstWord = words[0], lastWord = words[n - 1];
+        if (!Objects.equals(lastWord.charAt(lastWord.length() - 1), firstWord.charAt(0))) {
+            return false;
+        }
+        
+        for (int i = 0; i < n - 1; i++) {
+            String first = words[i], second = words[i + 1];
+            if (!Objects.equals(first.charAt(first.length() - 1), second.charAt(0))) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
