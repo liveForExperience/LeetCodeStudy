@@ -225,3 +225,97 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1658_将x减到0的最小操作数](https://leetcode.cn/problems/minimum-operations-to-reduce-x-to-zero/)
+## 失败解法
+### 原因
+超时
+### 思路
+回溯
+### 代码
+```java
+class Solution {
+
+  private int ans = Integer.MAX_VALUE;
+
+  public int minOperations(int[] nums, int x) {
+    int ans = dfs(x, 0, nums.length - 1, 0, nums);
+    return ans == Integer.MAX_VALUE ? -1 : ans;
+  }
+
+  private int dfs(int x, int l, int r, int count, int[] nums) {
+    if (count > ans) {
+      return Integer.MAX_VALUE;
+    }
+
+    if (l > r) {
+      return Integer.MAX_VALUE;
+    }
+
+    if (x < nums[l] && x < nums[r]) {
+      return Integer.MAX_VALUE;
+    }
+
+    if (x == nums[l] || x == nums[r]) {
+      return count + 1;
+    }
+
+    int ans = -1;
+    if (x < nums[l]) {
+      return dfs(x - nums[r], l, r - 1, count + 1, nums);
+    }
+
+    if (x < nums[r]) {
+      return dfs(x - nums[l], l + 1, r, count + 1, nums);
+    }
+
+    return Math.min(
+            dfs(x - nums[r], l, r - 1, count + 1, nums),
+            dfs(x - nums[l], l + 1, r, count + 1, nums)
+    );
+  }
+}
+```
+## 解法
+### 思路
+双指针
+- 初始化双指针l和r，l=-1，r=0
+  - 代表前缀是空数组，后缀是满数组
+- 然后移动left指针，直到left指针遍历完整个数组为止
+- 循环内部
+  - 通过leftSum + rightSum来确定当前的总和值，如果大于sum，那么将right指针向右移动
+  - 如果leftSum + rightSum == sum，那么就与暂存的操作数比较最小值
+  - 操作数的计算公式：`left + 1 + (n - right)`
+### 代码
+```java
+class Solution {
+    
+    public int minOperations(int[] nums, int x) {
+        int n = nums.length;
+        int sum = Arrays.stream(nums).sum();
+        if (x > sum) {
+            return -1;
+        }
+
+        if (x == sum) {
+            return n;
+        }
+        
+        int l = -1, r = 0, lSum = 0, rSum = sum, ans = Integer.MAX_VALUE;
+        for (; l < n; l++) {
+            if (l != -1) {
+                lSum += nums[l];
+            }
+            
+            while (r < n && lSum + rSum > x) {
+                rSum -= nums[r++];
+            }
+            
+            if (lSum + rSum == x) {
+                ans = Math.min(ans, l + 1 + (n - r));
+            }
+        }
+        
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+}
+```
