@@ -474,3 +474,53 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2511_最多可以摧毁的敌人城堡数目](https://leetcode.cn/problems/maximum-enemy-forts-that-can-be-captured/)
+## 解法
+### 思路
+暴力枚举
+- 外层循环找到值为1的坐标位置
+- 向左右分别循环找-1的位置，并统计移动的距离，求最大值
+- 将各个1位置的最大值比较，找到最大值作为结果返回
+### 代码
+```java
+class Solution {
+    public int captureForts(int[] forts) {
+        int ans = 0, n = forts.length;
+        for (int i = 0; i < n; i++) {
+            if (forts[i] != 1) {
+                continue;
+            }
+            
+            int index = i;
+            for (int j = i + 1; j < n; j++) {
+                if (forts[j] == 1) {
+                    break;
+                }
+                
+                if (forts[j] == -1) {
+                    index = j;
+                    break;
+                }
+            }
+            
+            ans = Math.max(index - i - 1, ans);
+            
+            index = i;
+            for (int j = i - 1; j >= 0; j--) {
+                if (forts[j] == 1) {
+                    break;
+                }
+
+                if (forts[j] == -1) {
+                    index = j;
+                    break;
+                }
+            }
+
+            ans = Math.max(i - index - 1, ans);
+        }
+        
+        return ans;
+    }
+}
+```
