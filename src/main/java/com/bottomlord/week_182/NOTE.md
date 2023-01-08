@@ -612,3 +612,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP61_气温变化趋势](https://leetcode.cn/problems/6CE719/)
+## 解法
+### 思路
+- 初始化两个数组用来记录两地的变化情况
+- 同时遍历2个数组，比较并计算连续天数，并最终返回最大值作为结果
+### 代码
+```java
+class Solution {
+    public int temperatureTrend(int[] temperatureA, int[] temperatureB) {
+        int n = temperatureA.length;
+        int[] changeA = new int[n - 1], changeB = new int[n - 1];
+        for (int i = 0; i < n - 1; i++) {
+            changeA[i] = getChange(temperatureA[i], temperatureA[i + 1]);
+            changeB[i] = getChange(temperatureB[i], temperatureB[i + 1]);
+        }
+        
+        int ans = 0, cur = 0;
+        for (int i = 0; i < n - 1; i++) {
+            if (changeA[i] == changeB[i]) {
+                cur++;
+            } else {
+                ans = Math.max(ans, cur);
+                cur = 0;
+            }
+        }
+        
+        return Math.max(ans, cur);
+    }
+
+    private int getChange(int x, int y) {
+        return Integer.compare(x - y, 0);
+    }
+}
+```
