@@ -524,3 +524,57 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2515_到目标字符串的最短距离](https://leetcode.cn/problems/shortest-distance-to-target-string-in-a-circular-array/)
+## 解法
+### 思路
+模拟
+- 向左和向右查找target，比较距离并获取距离最小值，最小值作为结果返回
+- 如果没有找到target就返回-1
+### 代码
+```java
+class Solution {
+  public int closetTarget(String[] words, String target, int startIndex) {
+    if (Objects.equals(words[startIndex], target)) {
+      return 0;
+    }
+
+    int n = words.length, index = (startIndex + 1) % n, lc = 0;
+    boolean flag = false;
+    while (index != startIndex) {
+      lc++;
+      if (Objects.equals(words[index], target)) {
+        flag = true;
+        break;
+      }
+
+      index = (index + 1) % n;
+    }
+
+    if (!flag) {
+      return -1;
+    }
+
+    index = (startIndex + n - 1) % n;
+    int rc = 0;
+
+    while (index != startIndex) {
+      rc++;
+      if (Objects.equals(words[index], target)) {
+        break;
+      }
+      index = (index - 1 + n) % n;
+    }
+
+    return Math.min(lc, rc);
+  }
+}
+```
+## 解法二
+### 思路
+- 从startIndex开始向左向右查找，并累加步数
+- 如果步数大于长度的一半，说明没有找到，返回-1
+- 否则当任意一个方向找到以后，返回步数值
+### 代码
+```java
+
+```
