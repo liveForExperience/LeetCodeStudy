@@ -646,3 +646,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2520_统计能整除数字的个数](https://leetcode.cn/problems/count-the-digits-that-divide-a-number/)
+## 解法
+### 思路
+模拟，注意除数不能为0
+### 代码
+```java
+class Solution {
+    public int countDigits(int num) {
+        int n = num, ans = 0;
+        while (n > 0) {
+            int digit = n % 10;
+            if (digit == 0) {
+                continue;
+            }
+
+            ans += num % digit == 0 ? 1 : 0;
+            n /= 10;
+        }
+        
+        return ans;
+    }
+}
+```
