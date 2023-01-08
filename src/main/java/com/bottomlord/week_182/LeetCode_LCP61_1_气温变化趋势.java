@@ -4,7 +4,7 @@ package com.bottomlord.week_182;
  * @author chen yue
  * @date 2023-01-08 13:12:18
  */
-public class LCP61_1_气温变化趋势 {
+public class LeetCode_LCP61_1_气温变化趋势 {
     public int temperatureTrend(int[] temperatureA, int[] temperatureB) {
         int n = temperatureA.length;
         int[] changeA = new int[n - 1], changeB = new int[n - 1];

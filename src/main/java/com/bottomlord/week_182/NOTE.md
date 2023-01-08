@@ -669,3 +669,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_LCP66_最小展台数量](https://leetcode.cn/problems/600YaG/)
+## 解法
+### 思路
+- 初始化一个桶bucket用来记录一共需要的展台数
+- 循环遍历demand
+- 在循环中
+  - 初始化一个记录当前demand的展台需要数的数组，遍历当前demand，并累加在数组中
+  - 当前demand数组curBucket与bucket进行比较，如果某个坐标，curBucket的值比bucket的值大，那么就更新bucket当前坐标的值为curBucket的值
+- 循环结束，遍历bucket，累加坐标值作为结果返回
+### 代码
+```java
+class Solution {
+    public int minNumBooths(String[] demand) {
+        int[] bucket = new int[26];
+        for (String cur : demand) {
+            char[] cs = cur.toCharArray();
+            int[] curBucket = new int[26];
+            for (char c : cs) {
+                curBucket[c - 'a']++;
+            }
+
+            for (int i = 0; i < 26; i++) {
+                if (bucket[i] < curBucket[i]) {
+                    bucket[i] = curBucket[i];
+                }
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < 26; i++) {
+            ans += bucket[i];
+        }
+        
+        return ans;
+    }
+}
+```
