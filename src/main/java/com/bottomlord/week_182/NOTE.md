@@ -576,5 +576,39 @@ class Solution {
 - 否则当任意一个方向找到以后，返回步数值
 ### 代码
 ```java
+class Solution {
+  public int closetTarget(String[] words, String target, int startIndex) {
+    int ans = 0, n = words.length;
+    while (!Objects.equals(target, words[(startIndex + ans) % n]) &&
+            !Objects.equals(target, words[(startIndex - 1 + n) % n])) {
+      ans++;
+      if (ans > n / 2) {
+        return -1;
+      }
+    }
 
+    return ans;
+  }
+}
+```
+# [LeetCode_2525_根据规则将箱子分类](https://leetcode.cn/problems/categorize-box-according-to-criteria/)
+## 解法
+### 思路
+模拟，注意case中的int溢出
+### 代码
+```java
+class Solution {
+    public String categorizeBox(int length, int width, int height, int mass) {
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1, "Bulky");
+        map.put(1 << 1, "Heavy");
+        map.put(1 | (1 << 1), "Both");
+        map.put(0, "Neither");
+
+        int x = 10000, y = 1000000000, z = 100;
+        int key = ((length >= x || width >= x || height >= x || (long) length * width * height >= y) ? 1 : 0) |
+                (mass >= z ? 1 << 1 : 0);
+        return map.get(key);
+    }
+}
 ```
