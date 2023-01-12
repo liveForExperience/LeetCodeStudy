@@ -74,3 +74,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_753_破解保险箱](https://leetcode.cn/problems/cracking-the-safe/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1807_替换字符串中的扩号内容](https://leetcode.cn/problems/evaluate-the-bracket-pairs-of-a-string/)
+## 解法
+### 思路
+- 使用哈希表和Regex API进行处理
+### 代码
+```java
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+class Solution {
+    public String evaluate(String s, List<List<String>> knowledge) {
+        Map<String, String> map = new HashMap<>();
+        for (List<String> str : knowledge) {
+            map.put("(" + str.get(0) + ")", str.get(1));
+        }
+
+        String regex = "\\([a-z]+\\)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(s);
+        StringBuffer stringBuffer = new StringBuffer();
+
+        while (matcher.find()) {
+            String substring = s.substring(matcher.start(), matcher.end());
+            matcher.appendReplacement(stringBuffer, matcher.group().replace(substring, map.getOrDefault(substring, "?")));
+        }
+
+        matcher.appendTail(stringBuffer);
+        return stringBuffer.toString();
+    }
+}
+```
