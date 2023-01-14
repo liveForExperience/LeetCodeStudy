@@ -113,3 +113,66 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1819_序列中不同最大公约数的数目](https://leetcode.cn/problems/number-of-different-subsequences-gcds/)
+## 解法
+### 思路
+- 如果算出一个序列中的最大公约数p，那么在序列中的值就是ci * p，那么任意增加一个序列中的值A = ck * p，它的最大公约数也一定是p
+- 通过布尔数组记录nums元素
+- 那么就可以遍历1到最大值作为最大公约数的候选值
+- 内部遍历时，通过找到当前所有候选最大公约数值的倍数，看看nums中是否存在倍数，如果存在，就计算候选公约数与num之间的公约数，如果计算出来的公约数与候选公约数一致，那就累加计数
+- 遍历结束后返回计数值
+- 迭代方式的gcd：
+```java
+class Solution {
+    public int gcd(int num1, int num2) {
+        while (num2 != 0) {
+            int temp = num1;
+            num1 = num2;
+            num2 = temp % num2;
+        }
+        return num1;
+    }
+}
+```
+### 代码
+```java
+class Solution {
+    public int countDifferentSubsequenceGCDs(int[] nums) {
+        int max = 0;
+        for (int num : nums) {
+            max = Math.max(max, num);
+        }
+        boolean[] hasNum = new boolean[max + 1];
+        for (int num : nums) {
+            hasNum[num] = true;
+        }
+
+        int ans = 0;
+        for (int i = 1; i <= max; i++) {
+            int gcd = 0;
+            for (int j = i; j <= max; j += i) {
+                if (!hasNum[j]) {
+                    continue;
+                }
+
+                if (gcd == 0) {
+                    gcd = j;
+                } else {
+                    gcd = gcd(j, gcd);
+                }
+
+                if (gcd == i) {
+                    ans++;
+                    break;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private int gcd(int x, int y) {
+        return y == 0 ? x : gcd(y, x % y);
+    }
+}
+```
