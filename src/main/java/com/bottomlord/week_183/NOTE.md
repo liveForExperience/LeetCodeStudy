@@ -1,10 +1,125 @@
 # [LeetCode_749_隔离病毒](https://leetcode.cn/problems/contain-virus/)
 ## 解法
 ### 思路
-
+bfs模拟
+- 遍历二维数组，找到第一个标记为1的，被感染的坐标，从该点开始广度优先搜索
+- 开始遍历前
+  - 将当前找到的坐标标记为-idx，idx代表当前找到的区块的个数
+  - 初始化一个set集合，该集合用于记录与感染坐标相邻的未感染的坐标值
+  - 因为需要用set来记录坐标，且坐标值不会大于2的16次方，所以，可以通过二进制位移的方式，将x存储在整数的高16位，y存储在整数的低16位
+- 搜索过程中做如下几件事：
+  - 如果遇到相邻被感染的坐标，就放入bfs驱动队列，并将当前坐标标记为-idx
+  - 如果遇到相邻未被感染的坐标，就将其放入set集合中，放入前做一下坐标值处理
+- 二维数组中的所有区块都遍历过以后
+  - 将set集合中set大小最大的那个区块大小累加到隔离栏数中，并将该set中的坐标的值改为2，代表被隔离了
+  - 将set集合中其他set中的坐标还原为1，用于在下一次bfs处理中判断
+- 退出条件：
+  - 如果set集合的长度为0，代表找不到没有被隔离的感染区块了
+  - 如果set集合的长度为1，代表处理本次被隔离的感染区块外，没有其他未被隔离的感染区块了
 ### 代码
 ```java
+class Solution {
 
+    private final int[][] dirs = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+    public int containVirus(int[][] isInfected) {
+        int ans = 0, r = isInfected.length, c = isInfected[0].length;
+
+        while (true) {
+            List<Set<Integer>> neighbourhoods = new ArrayList<>();
+            List<Integer> qList = new ArrayList<>();
+            int idx;
+
+            for (int i = 0; i < r; i++) {
+                for (int j = 0; j < c; j++) {
+                    if (isInfected[i][j] != 1) {
+                        continue;
+                    }
+                    idx = -(neighbourhoods.size() + 1);
+                    int q = 0;
+                    Set<Integer> neighbourhood = new HashSet<>();
+
+                    Queue<int[]> queue = new ArrayDeque<>();
+                    queue.offer(new int[]{i, j});
+                    isInfected[i][j] = idx;
+
+                    while (!queue.isEmpty()) {
+                        int[] arr = queue.poll();
+                        if (arr == null) {
+                            continue;
+                        }
+
+                        int x = arr[0], y = arr[1];
+
+                        for (int[] dir : dirs) {
+                            int nx = dir[0] + x, ny = dir[1] + y;
+                            if (nx < 0 || nx >= r || ny < 0 || ny >= c || isInfected[nx][ny] < 0) {
+                                continue;
+                            }
+
+                            if (isInfected[nx][ny] == 1) {
+                                queue.offer(new int[]{nx, ny});
+                                isInfected[nx][ny] = idx;
+                            } else if (isInfected[nx][ny] == 0) {
+                                neighbourhood.add(getHash(nx, ny));
+                                q++;
+                            }
+                        }
+                    }
+
+                    neighbourhoods.add(neighbourhood);
+                    qList.add(q);
+                }
+            }
+
+            if (neighbourhoods.size() == 0) {
+                break;
+            }
+
+            idx = -1;
+            int maxLen = 0;
+            for (int i = 0; i < neighbourhoods.size(); i++) {
+                Set<Integer> neighbourhood = neighbourhoods.get(i);
+                if (neighbourhood.size() > maxLen) {
+                    idx = -i - 1;
+                    maxLen = neighbourhood.size();
+                }
+            }
+
+            ans += qList.get(-idx - 1);
+
+            if (neighbourhoods.size() == 1) {
+                break;
+            }
+
+            for (int i = 0; i < neighbourhoods.size(); i++) {
+                if (i == -idx - 1) {
+                    continue;
+                }
+
+                for (Integer num : neighbourhoods.get(i)) {
+                    isInfected[num >> 16][num & ((1 << 16) - 1)] = 1;
+                }
+            }
+
+            for (int i = 0; i < r; i++) {
+                for (int j = 0; j < c; j++) {
+                    if (isInfected[i][j] == idx) {
+                        isInfected[i][j] = 2;
+                    } else if (isInfected[i][j] < 0) {
+                        isInfected[i][j] = 1;
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private int getHash(int x, int y) {
+        return (x << 16) ^ y;
+    }
+}
 ```
 # [LeetCode_940_不同子序列](https://leetcode.cn/problems/distinct-subsequences-ii/)
 ## 解法
