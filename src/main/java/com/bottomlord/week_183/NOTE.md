@@ -121,14 +121,6 @@ class Solution {
     }
 }
 ```
-# [LeetCode_940_不同子序列](https://leetcode.cn/problems/distinct-subsequences-ii/)
-## 解法
-### 思路
-
-### 代码
-```java
-
-```
 # [LeetCode_1806_还原排列的最少操作步数](https://leetcode.cn/problems/minimum-number-of-operations-to-reinitialize-a-permutation/)
 ## 解法
 ### 思路
