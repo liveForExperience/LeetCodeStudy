@@ -6,7 +6,7 @@
 ```java
 
 ```
-# [LeetCode_1813_句子相似性](https://leetcode.cn/problems/sentence-similarity-iii/)
+# [LeetCode_1813_句子相似性III](https://leetcode.cn/problems/sentence-similarity-iii/)
 ## 解法
 ### 思路
 双指针：

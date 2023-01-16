@@ -6,7 +6,7 @@ import java.util.Objects;
  * @author chen yue
  * @date 2023-01-16 22:24:17
  */
-public class LeetCode_1813_1_句子相似性 {
+public class LeetCode_1813_1_句子相似性III {
     public boolean areSentencesSimilar(String sentence1, String sentence2) {
         int i = 0, j = 0;
 
