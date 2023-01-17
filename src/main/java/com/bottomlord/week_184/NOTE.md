@@ -35,3 +35,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1814_统计一个数组中好对子的数目](https://leetcode.cn/problems/count-nice-pairs-in-an-array/)
+## 解法
+### 思路
+- 题目要求：nums[i] + rev[nums[j]] == nums[j] + rev[nums[i]] 可以转化为 nums[i] - rev[nums[i]] == nums[j] - rev[nums[j]]
+- 又因为0 <= i < j < nums.length，所以计算出nums[i] - rev[nums[i]]之后，查看是否在之前有获得过一样的结果，就能知道有多少对好对子了
+- 而这个数据结构肯定是使用map比较合适，key是`nums[i] - rev[nums[i]]`的值，value是出现的次数
+- 遍历一次数组，计算`nums[i] - rev[nums[i]]`的值，并把出现次数累加在结果中，同时记得取模就可以了
+- 遍历结束，返回结果即可
+### 代码
+```java
+class Solution {
+    public int countNicePairs(int[] nums) {
+        int ans = 0, mod = 1000000007;
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for (int num : nums) {
+
+            int rev = 0, cur = num;
+            while (num > 0) {
+                rev = rev * 10 + num % 10;
+                num /= 10;
+            }
+
+            int key = cur - rev;
+            ans = (ans + map.getOrDefault(key, 0)) % mod;
+            map.put(key, map.getOrDefault(key, 0) + 1);
+        }
+
+        return ans;
+    }
+}
+```
