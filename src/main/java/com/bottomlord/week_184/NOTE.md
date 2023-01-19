@@ -1,10 +1,77 @@
 # [LeetCode_940_不同子序列II](https://leetcode.cn/problems/distinct-subsequences-ii/)
-## 解法
+## 失败解法
+### 原因
+超时
 ### 思路
-
+简单回溯
 ### 代码
 ```java
+class Solution {
+    public int distinctSubseqII(String s) {
+        Set<String> set = new HashSet<>();
+        backTrack(s, 0, new StringBuilder(), set);
+        return set.size();
+    }
+    
+    private void backTrack(String s, int index, StringBuilder sb, Set<String> memo) {
+        if (index >= s.length()) {
+            memo.add(sb.toString());
+            return;
+        }
+        
+        for (int i = index; i < s.length(); i++) {
+            int len = sb.length();
+            sb.append(s.charAt(i));
+            memo.add(sb.toString());
+            backTrack(s, i + 1, sb, memo);
+            sb.setLength(len);
+        }
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- dp方程：dp[i]，以第i个字符为结尾，能组成的不同非空子序列
+- 辅助参数：last[i]，长度26，用来记录26个小写字母最后一次出现的坐标位置
+- 状态转移方程：dp[i] = sum(dp[i] + dp[last[i]])
+- base case：
+  - dp[i] = 1，代表当前坐标位置字符本身
+  - last[i] = -1，代表还未遇到该字符
+- 结果是将26个字母为结尾的最大坐标作为查询坐标，到dp方程中找到值进行累加
+### 代码
+```java
+class Solution {
+    public int distinctSubseqII(String s) {
+        int n = s.length(), mod = 1000000007;
+        int[] last = new int[26], dp = new int[n];
+        Arrays.fill(last, -1);
+        Arrays.fill(dp, 1);
 
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < 26; j++) {
+                if (last[j] == -1) {
+                    continue;
+                }
+
+                dp[i] = (dp[i] + dp[last[j]]) % mod;
+            }
+                        
+            last[s.charAt(i) - 'a'] = i;
+        }
+
+        int ans = 0;
+        for (int i = 0; i < 26; i++) {
+            if (last[i] == -1) {
+                continue;
+            }
+
+            ans = (ans + dp[last[i]]) % mod;
+        }
+        
+        return ans;
+    }
+}
 ```
 # [LeetCode_1813_句子相似性III](https://leetcode.cn/problems/sentence-similarity-iii/)
 ## 解法
