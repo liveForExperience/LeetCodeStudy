@@ -233,3 +233,25 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2535_数组元素和与数字的绝对差](https://leetcode.cn/problems/difference-between-element-sum-and-digit-sum-of-an-array/)
+## 解法
+### 思路
+遍历并分别计算元素和与数字和，遍历结束返回两数差的绝对值
+### 代码
+```java
+class Solution {
+  public int differenceOfSum(int[] nums) {
+    int es = 0, ns = 0;
+    for (int num : nums) {
+      es += num;
+
+      while (num > 0) {
+        ns += num % 10;
+        num /= 10;
+      }
+    }
+
+    return Math.abs(es - ns);
+  }
+}
+```
