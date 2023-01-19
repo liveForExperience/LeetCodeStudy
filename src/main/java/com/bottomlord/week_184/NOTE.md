@@ -210,3 +210,26 @@ class MKAverage {
     }
 }
 ```
+# [LeetCode_2529_正整数和负整数的最大计数](https://leetcode.cn/problems/maximum-count-of-positive-integer-and-negative-integer/)
+## 解法
+### 思路
+遍历计数，返回正负整数计数值的最大值
+### 代码
+```java
+class Solution {
+    public int maximumCount(int[] nums) {
+        int positive = 0, negative = 0;
+        for (int num : nums) {
+            if (num < 0) {
+                negative++;
+            }
+            
+            if (num > 0) {
+                positive++;
+            }
+        }
+        
+        return Math.max(positive, negative);
+    }
+}
+```
