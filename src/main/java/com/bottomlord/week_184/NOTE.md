@@ -322,3 +322,41 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1817_查找用户活跃分钟数](https://leetcode.cn/problems/finding-the-users-active-minutes/)
+## 解法
+### 思路
+- 一个hash表mapping存储用户与操作时间set集合的映射关系
+- 一个set集合memo记录操作活跃分钟数超过k的用户id
+- 遍历一次二维数组，维护mapping，如果memo中存在当前id，那么就跳过，如果set集合的大小超过k，那么就记录到memo中，并将其从mapping中删除
+- 初始化一个k长度数组，遍历mapping，通过set长度找到数组坐标，然后累加
+- 遍历结束，返回数组
+### 代码
+```java
+class Solution {
+    public int[] findingUsersActiveMinutes(int[][] logs, int k) {
+        Map<Integer, Set<Integer>> mapping = new HashMap<>();
+        Set<Integer> memo = new HashSet<>();
+        for (int[] log : logs) {
+            Integer id = log[0];
+            if (memo.contains(id)) {
+                continue;
+            }
+            
+            mapping.computeIfAbsent(id, x -> new HashSet<>()).add(log[1]);
+            
+            if (mapping.get(id).size() > k) {
+                mapping.remove(id);
+                memo.add(id);
+            }
+        }
+        
+        int[] ans = new int[k];
+        for (Map.Entry<Integer, Set<Integer>> entry : mapping.entrySet()) {
+            int count = entry.getValue().size();
+            ans[count - 1]++;
+        }
+        
+        return ans;
+    }
+}
+```
