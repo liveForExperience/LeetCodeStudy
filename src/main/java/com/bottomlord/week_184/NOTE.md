@@ -360,3 +360,69 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1824_最少侧跳次数](https://leetcode.cn/problems/minimum-sideway-jumps/)
+## 解法
+### 思路
+动态规划：
+- dp[i][j]
+  - i代表第n个点
+  - j代表第x个道，x >= 1 && x <= 3
+  - dp方程表示到达第i个点的第j个道的最小侧跳次数
+- 初始化：除了青蛙初始化的位置，全部初始化为int的最大值-1
+- 状态转移方程
+  - dp[i][j] = min(dp[i - 1][j], min(dp[i][j + 1], min(dp[i][j - 1], dp[i][j]))); 
+  - 但是如上公式不能直接计算，需要拆分出来，需要判断特殊情况
+    - 如果当前位置的前一个点，有石头，那么min(dp[i - 1][j], dp[i][j])就不成立
+  - 如果在i点上的当前道上有石头，那么不做转移
+  - 因为可以从任意的道跳到当前道，所以需要遍历所有道来做状态转移
+- 遍历结束，返回n-1坐标上3个道最小侧跳次数的最小值
+### 代码
+```java
+class Solution {
+    public int minSideJumps(int[] obstacles) {
+        int n = obstacles.length;
+        int[][] dp = new int[n][5];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (j == 2 && i == 0) {
+                    continue;
+                }
+
+                dp[i][j] = Integer.MAX_VALUE - 1;
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 1; j <= 3; j++) {
+                if (obstacles[i] == j) {
+                    continue;
+                }
+
+                for (int k = 0; k < j; k++) {
+                    dp[i][j] = Math.min(dp[i][k] + 1, dp[i][j]);
+                }
+
+                if (i != 0 && obstacles[i - 1] != j) {
+                    dp[i][j] = Math.min(dp[i - 1][j], dp[i][j]);
+                }
+            }
+
+            for (int j = 3; j >= 1; j--) {
+                if (obstacles[i] == j) {
+                    continue;
+                }
+
+                for (int k = 4; k > j; k--) {
+                    dp[i][j] = Math.min(dp[i][k] + 1, dp[i][j]);
+                }
+
+                if (i != 0 && obstacles[i - 1] != j) {
+                    dp[i][j] = Math.min(dp[i - 1][j], dp[i][j]);
+                }
+            }
+        }
+
+        return Math.min(Math.min(dp[n - 1][1], dp[n - 1][2]), dp[n - 1][3]);
+    }
+}
+```
