@@ -68,3 +68,34 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1828_统计一个圆中点的数目](https://leetcode.cn/problems/queries-on-number-of-points-inside-a-circle/)
+## 解法
+### 思路
+暴力
+- 遍历queries，然后计算所有点与圆心的距离，看是否小于等于r，如果是就计数累加
+- 遍历结束，返回结果
+### 代码
+```java
+class Solution {
+    public int[] countPoints(int[][] points, int[][] queries) {
+        int[] ans = new int[queries.length];
+        for (int i = 0; i < queries.length; i++) {
+            int[] query = queries[i];
+            int[] center = new int[]{query[0], query[1]};
+            int r = query[2];
+
+            for (int[] point : points) {
+                if (distance(point, center) <= r * r) {
+                    ans[i]++;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private int distance(int[] x, int[] y) {
+        return (x[0] - y[0]) * (x[0] - y[0]) + (x[1] - y[1]) * (x[1] - y[1]);
+    }
+}
+```
