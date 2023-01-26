@@ -99,3 +99,75 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1632_矩阵转换后的秩](https://leetcode.cn/problems/rank-transform-of-a-matrix/)
+## 解法
+### 思路
+暴力
+### 代码
+```java
+
+```
+# [LeetCode_1663_具有给定数值的最小字符串](https://leetcode.cn/problems/smallest-string-with-a-given-numeric-value/)
+## 失败解法
+### 原因
+超时
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+  public String getSmallestString(int n, int k) {
+    StringBuilder sb = new StringBuilder();
+    while (k > 0) {
+      if (k == n) {
+        for (int i = 0; i < n; i++) {
+          sb.insert(0, "a");
+        }
+
+        return sb.toString();
+      }
+
+      n--;
+      int cur = k - n;
+
+      if (cur > 26) {
+        k -= 26;
+        sb.insert(0, "z");
+      } else {
+        k -= cur;
+        sb.insert(0, (char)('a' + cur - 1));
+      }
+    }
+
+    return sb.toString();
+  }
+}
+```
+## 解法二
+### 思路
+- 观察可得，答案字符串一定只包含a和z以及至多一个其他字母
+- 所以可以通过n和k得到如下内容
+  - 先初始化一个char数组，用a填充，相当于k - n
+  - 然后算出z的个数：(k - n) / 25，除25是因为不知道z有多少个，当假设全部是1的时候，剩下的n需要使用26来填充，又因为每位都已经填充了1，所以就是26-1
+  - 然后计算出至多1个的其他字母：(k - n) % 25，道理相同，如果z个数计算的过程中无法整除，也就说明有一个1需要变成更大的其他字母才能最终相加得到k
+- 最后通过z和其他字母将初始化的char数组更新即可
+### 代码
+```java
+class Solution {
+  public String getSmallestString(int n, int k) {
+    char[] cs = new char[n];
+    Arrays.fill(cs, 'a');
+    int z = (k - n) / 25;
+    int notAorZ = (k - n) % 25;
+    if (n - z - 1 >= 0) {
+      cs[n - z - 1] += notAorZ;
+    }
+
+    for (int i = n - 1; i >= n - z; i--) {
+      cs[i] = 'z';
+    }
+
+    return new String(cs);
+  }
+}
+```
