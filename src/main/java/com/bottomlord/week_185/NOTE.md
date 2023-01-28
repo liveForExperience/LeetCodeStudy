@@ -171,3 +171,63 @@ class Solution {
   }
 }
 ```
+# [LeetCode_生成平衡数组的方案数](https://leetcode.cn/problems/ways-to-make-a-fair-array/)
+## 解法
+### 思路
+前缀和
+- 维护两个前缀和数组，分别存储奇数和偶数的前缀和
+- 这里可以不用特别判断奇偶性，而是将数组长度都设置为nums的长度n，然后在奇数前缀和中，当坐标是奇数的时候累加，在偶数的时候不累加，偶数前缀和数组同样
+- 然后判断如下等式是否成立：
+  - 奇数前置前缀和 + 偶数后置前缀和 == 偶数前置前缀和 + 奇数后置前缀和
+### 代码
+```java
+class Solution {
+    public int waysToMakeFair(int[] nums) {
+        int n = nums.length;
+        int[] odds = new int[n + 1], evens = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            if (i % 2 == 0) {
+                evens[i] = evens[i - 1] + nums[i - 1];
+                odds[i] = odds[i - 1];
+            } else {
+                evens[i] = evens[i - 1];
+                odds[i] = odds[i - 1] + nums[i - 1];
+            }
+        }
+
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            int leftOdd = odds[i], rightOdd = odds[n] - odds[i + 1],
+                leftEven = evens[i], rightEven = evens[n] - evens[i + 1];
+
+            if (leftOdd + rightEven == leftEven + rightOdd) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+}
+```
+## 解法二
+### 思路
+基于解法一，做一下状态的压缩：
+- 根据观察可以看到，判断的过程是单向的，每次做计算就是基于前缀和与当前元素之间的值的改动来处理
+- 如果判断的元素从数组头部开始移动，那么4个前缀和的状态应该是这样的
+  - 初始
+    - 前置preOdd前缀和初始为0
+    - 前置preEven前缀和初始为0
+    - 后置奇数前缀和初始为sufOdd（奇数总和）
+    - 后置偶数前缀和初始为sufEven（偶数总和）
+  - 移动
+    - 如果是当前坐标i是奇数：
+      - preOdd + sufEven
+      - preEven + sufOdd - nums[i]
+      - 然后两个公式做等号计算
+      - 然后根据再根据i的奇偶性判断是 preOdd + nums[i]还是preEven + nums[i]
+    - 偶数也是同理
+  - 然后根据等式来累加个数
+### 代码
+```java
+
+```
