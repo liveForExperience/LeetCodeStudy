@@ -99,14 +99,6 @@ class Solution {
     }
 }
 ```
-# [LeetCode_1632_矩阵转换后的秩](https://leetcode.cn/problems/rank-transform-of-a-matrix/)
-## 解法
-### 思路
-暴力
-### 代码
-```java
-
-```
 # [LeetCode_1663_具有给定数值的最小字符串](https://leetcode.cn/problems/smallest-string-with-a-given-numeric-value/)
 ## 失败解法
 ### 原因
@@ -229,5 +221,38 @@ class Solution {
   - 然后根据等式来累加个数
 ### 代码
 ```java
+class Solution {
+  public int waysToMakeFair(int[] nums) {
+    int n = nums.length;
+    int preOdd = 0, preEven = 0, sufOdd = 0, sufEven = 0;
+    for (int i = 0; i < n; i++) {
+      int num = nums[i];
+      if (i % 2 == 1) {
+        sufOdd += num;
+      } else {
+        sufEven += num;
+      }
+    }
 
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+      boolean isOdd = i % 2 == 1;
+      if (isOdd) {
+        sufOdd -= nums[i];
+      } else {
+        sufEven -= nums[i];
+      }
+
+      count += preOdd + sufEven == preEven + sufOdd ? 1 : 0;
+
+      if (isOdd) {
+        preOdd += nums[i];
+      } else {
+        preEven += nums[i];
+      }
+    }
+
+    return count;
+  }
+}
 ```

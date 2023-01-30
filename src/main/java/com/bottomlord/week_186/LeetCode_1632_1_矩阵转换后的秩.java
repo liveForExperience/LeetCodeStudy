@@ -1,4 +1,4 @@
-package com.bottomlord.week_185;
+package com.bottomlord.week_186;
 
 /**
  * @author chen yue
@@ -6,6 +6,6 @@ package com.bottomlord.week_185;
  */
 public class LeetCode_1632_1_矩阵转换后的秩 {
     public int[][] matrixRankTransform(int[][] matrix) {
-
+        return null;
     }
 }
