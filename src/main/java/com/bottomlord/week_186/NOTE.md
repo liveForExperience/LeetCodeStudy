@@ -78,3 +78,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2544_交替数字和](https://leetcode.cn/problems/alternating-digit-sum/)
+## 解法
+### 思路
+- 计算得到数字长度
+- 根据长度定义数组
+- 计算填充数组
+- 根据数组获取数值
+### 代码
+```java
+class Solution {
+    public int alternateDigitSum(int n) {
+        int len = 0, num = n;
+        while (num > 0) {
+            len++;
+            num /= 10;
+        }
+        
+        int[] arr = new int[len];
+        int index = 0;
+        while (n > 0) {
+            arr[index++] = n % 10;
+            n /= 10;
+        }
+        
+        boolean flag = true;
+        int sum = 0;
+        for (int i = len - 1; i >= 0; i--) {
+            sum = flag ? sum + arr[i] : sum - arr[i];
+            flag = !flag;
+        }
+        
+        return sum;
+    }
+}
+```
