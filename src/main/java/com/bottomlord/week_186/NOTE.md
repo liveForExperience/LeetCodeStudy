@@ -113,3 +113,16 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2549_统计桌面上的不同数字](https://leetcode.cn/problems/count-distinct-numbers-on-board/)
+## 解法
+### 思路
+- n-1一定满足要求，不断循环后，[2,n]一定都会在桌面上
+- 1是一个特例，本身就放在桌上，直接返回1
+### 代码
+```java
+class Solution {
+    public int distinctIntegers(int n) {
+        return n == 1 ? 1 : n - 1;
+    }
+}
+```
