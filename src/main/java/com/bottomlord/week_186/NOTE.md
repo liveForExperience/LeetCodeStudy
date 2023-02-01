@@ -158,3 +158,46 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+在解法1的基础上，尽量再缩小边界
+### 代码
+```java
+class Solution {
+    public int search(ArrayReader reader, int target) {
+        if (reader.get(0) == target) {
+            return 0;
+        }
+
+        int head = 1, tail = 1;
+        while (reader.get(tail) < target) {
+            head = tail;
+            tail <<= 1;
+        }
+        
+        if (reader.get(head) == Integer.MAX_VALUE) {
+            return -1;
+        }
+
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+            int num = reader.get(mid);
+
+            if (num == Integer.MAX_VALUE) {
+                tail = mid - 1;
+                continue;
+            }
+            
+            if (num == target) {
+                return mid;
+            } else if (num < target) {
+                head = mid + 1;
+            } else {
+                tail = mid - 1;
+            }
+        }
+
+        return -1;
+    }
+}
+```
