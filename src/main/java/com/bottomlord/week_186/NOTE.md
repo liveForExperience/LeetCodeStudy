@@ -126,3 +126,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_702_搜索长度未知的有序数组](https://leetcode.cn/problems/search-in-a-sorted-array-of-unknown-size/)
+## 解法
+### 思路
+二分查找
+### 代码
+```java
+class Solution {
+    public int search(ArrayReader reader, int target) {
+        int head = 0, tail = 9999;
+
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+            int num = reader.get(mid);
+            
+            if (num == Integer.MAX_VALUE) {
+                tail--;
+                continue;
+            }
+            
+            if (num == target) {
+                return mid;
+            } else if (num > target) {
+                tail = mid - 1;
+            } else {
+                head = mid + 1;
+            }
+        }
+        
+        return -1;
+    }
+}
+```
