@@ -319,3 +319,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1145_二叉树着色游戏](https://leetcode.cn/problems/binary-tree-coloring-game/)
+## 解法
+### 思路
+- 选手1选择的x点，会将整棵树拆分成3个部分
+  - left
+  - right
+  - n - (left + right) - 1
+- 当某一部分大于n的一半时候，就说明选手2能够获胜
+- 计算节点数，使用dfs
+### 代码
+```java
+class Solution {
+    private int left = 0, right = 0;
+    public boolean btreeGameWinningMove(TreeNode root, int n, int x) {
+        return count(root, x) / 2 < Math.max(Math.max(left, right), n - (left + right) - 1);
+    }
+
+    private int count(TreeNode node, int num) {
+        if (node == null) {
+            return 0;
+        }
+
+        int left = count(node.left, num), right = count(node.right, num);
+        if (node.val == num) {
+            this.left = left;
+            this.right = right;
+        }
+
+        return left + right + 1;
+    }
+}
+```
