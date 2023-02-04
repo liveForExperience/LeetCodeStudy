@@ -489,3 +489,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1798_你能构造出的连续值的最大数目](https://leetcode.cn/problems/maximum-number-of-consecutive-values-you-can-make/)
+## 解法
+### 思路
+- 然后思考：当x不断增大的过程中，如果将增大前的x称为px，那么新的x其实可以拆分成px + coin，在将coins非降序排列后，因为px一定能保证从0到px的每一个数都能够使用coin之前的所有元素构造出来，所以，如果coin小于等于px+1，那么x一定也能被全部构造出来，如果大于px+1，那么至少px+1这个数就构造不出来了
+- 所以解题就变得很简单
+- x初始化为0，因为其不需要元素就能构造
+- 将coins非降序排列
+- 遍历coins，判断当前coins元素coin是否满足：coin <= x + 1，如果满足，则x更新为：x = x + coin
+- 循环结束，返回暂存的x即可
+### 代码
+```java
+class Solution {
+    public int getMaximumConsecutive(int[] coins) {
+        Arrays.sort(coins);
+        int x = 0;
+        for (int coin : coins) {
+            if (coin <= x + 1) {
+                x = coin + x;
+            }
+        }
+        
+        return x + 1;
+    }
+}
+```
