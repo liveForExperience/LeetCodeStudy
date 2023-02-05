@@ -514,3 +514,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_708_循环有序列表的插入](https://leetcode.cn/problems/insert-into-a-sorted-circular-linked-list/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public Node insert(Node head, int insertVal) {
+        if (head == null) {
+            Node node = new Node(insertVal);
+            node.next = node;
+            return node;
+        }
+
+        Node pre = head, node = head.next;
+        if (node == pre) {
+            pre.next = new Node(insertVal);
+            pre.next.next = pre;
+            return pre;
+        }
+
+        while (node != null) {
+            if ((insertVal >= pre.val && insertVal <= node.val) ||
+                (insertVal <= pre.val && insertVal <= node.val && node.val < pre.val) ||
+                (insertVal >= pre.val && insertVal >= node.val && node.val < pre.val) ||
+                node == head) {
+                pre.next = new Node(insertVal);
+                pre.next.next = node;
+                return head;
+            }
+
+            pre = node;
+            node = node.next;
+        }
+
+        return null;
+    }
+}
+```
