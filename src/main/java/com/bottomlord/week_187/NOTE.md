@@ -131,3 +131,10 @@ public List<String> alertNames(String[] keyName, String[] keyTime) {
     }
 }
 ```
+## 解法二
+### 思路
+在解法一的基础上做优化，减少没必要的操作
+### 代码
+```java
+
+```
