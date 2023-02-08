@@ -373,3 +373,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2558_从数量最多的堆取走礼物](https://leetcode.cn/problems/take-gifts-from-the-richest-pile/)
+## 解法
+### 思路
+大顶堆
+### 代码
+```java
+class Solution {
+    public long pickGifts(int[] gifts, int k) {
+        PriorityQueue<Integer> queue = new PriorityQueue<>((x, y) -> y - x);
+        for (int gift : gifts) {
+            queue.offer(gift);
+        }
+
+        while (k-- > 0 && !queue.isEmpty()) {
+            Integer num = queue.poll();
+            queue.offer((int)Math.sqrt(num));
+        }
+
+        long sum = 0;
+        for (Integer num : queue) {
+            sum += num;
+        }
+        return sum;
+    }
+}
+```
