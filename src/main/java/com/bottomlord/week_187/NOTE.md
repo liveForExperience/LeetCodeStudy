@@ -286,3 +286,90 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2553_分割数组中数字的数位](https://leetcode.cn/problems/separate-the-digits-in-an-array/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] separateDigits(int[] nums) {
+        List<Integer> all = new LinkedList<>();
+        for (int num : nums) {
+            List<Integer> list = new ArrayList<>();
+            while (num > 0) {
+                list.add(num % 10);
+                num /= 10;
+            }
+            
+            reverse(list);
+            all.addAll(list);
+        }
+        
+        int[] ans = new int[all.size()];
+        for (int i = 0; i < all.size(); i++) {
+            ans[i] = all.get(i);
+        }
+        return ans;
+    }
+    
+    private void reverse(List<Integer> list) {
+        int head = 0, tail = list.size() - 1;
+        while (head < tail) {
+            int tmp = list.get(tail);
+            list.set(tail, list.get(head));
+            list.set(head, tmp);
+            
+            head++;
+            tail--;
+        }
+    }
+}
+```
+## 解法二
+### 思路
+使用链表替换
+### 代码
+```java
+class Solution {
+    public int[] separateDigits(int[] nums) {
+        List<Integer> all = new LinkedList<>();
+        for (int num : nums) {
+            LinkedList<Integer> list = new LinkedList<>();
+            while (num > 0) {
+                list.addFirst(num % 10);
+                num /= 10;
+            }
+
+            all.addAll(list);
+        }
+
+        int[] ans = new int[all.size()];
+        for (int i = 0; i < all.size(); i++) {
+            ans[i] = all.get(i);
+        }
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+使用字符串拼接
+### 代码
+```java
+class Solution {
+    public int[] separateDigits(int[] nums) {
+        StringBuilder sb = new StringBuilder();
+        for (int num : nums) {
+            sb.append(num);
+        }
+        
+        char[] cs = sb.toString().toCharArray();
+        int[] ans = new int[cs.length];
+        for (int i = 0; i < cs.length; i++) {
+            ans[i] = cs[i] - '0';
+        }
+        return ans;
+    }
+}
+```
