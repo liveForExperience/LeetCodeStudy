@@ -629,3 +629,54 @@ public int[][] candyCrush(int[][] board) {
     }
 }
 ```
+# [LeetCode_1223_掷骰子模拟](https://leetcode.cn/problems/dice-roll-simulation/)
+## 解法
+### 思路
+动态规划
+- dp[i][j]：在第i次投掷时候掷出数字j+1的可能数
+- 状态转移方程：
+  - 不考虑rowMax：dp[i][j] = sum(dp[i - 1][j])，j = 0,1,2,3,4,5
+  - 考虑rowMax：那么就应该去除掉连续当前如果不投掷j + 1，从i - rowMax[j]到 i-1区间内连续投掷出j+1，然后i - rowMax[j] - 1次投掷出非j+1的所有可能性，这些可能就是连续投掷出rowMax[j] + 1次这种不合法情况的可能性
+  - 所以需要将如上两部分相继转移完成，并使用mod进行取模
+- 初始状态：dp[1][j] = 1
+- 返回结果：sum(dp[n][j])
+### 代码
+```java
+class Solution {
+    private int mod = 1000000007;
+    public int dieSimulator(int n, int[] rollMax) {
+        int[][] dp = new int[n + 1][6];
+        for (int i = 0; i < 6; i++) {
+            dp[1][i] = 1;
+        }
+
+        for (int i = 2; i <= n; i++) {
+            for (int j = 0; j < 6; j++) {
+                long ans = 0;
+                for (int k = 0; k < 6; k++) {
+                    dp[i][j] = (dp[i][j] + dp[i - 1][k]) % mod;
+                }
+                
+                int index = i - rollMax[j] - 1;
+                if (index > 0) {
+                    for (int k = 0; k < 6; k++) {
+                        if (k == j) {
+                            continue;
+                        }
+                        
+                        dp[i][j] = (dp[i][j] - dp[index][k] + mod) % mod;
+                    }
+                } else if (index == 0) {
+                    dp[i][j]--;
+                }
+            }
+        }
+        
+        long ans = 0;
+        for (int i = 0; i < 6; i++) {
+            ans = (ans + dp[n][i]) % mod;
+        }
+        return (int) ans;
+    }
+}
+```
