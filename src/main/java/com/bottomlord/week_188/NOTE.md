@@ -134,3 +134,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1250_检查好数组](https://leetcode.cn/problems/check-if-it-is-a-good-array/)
+## 解法
+### 思路
+裴蜀定理
+- 计算所有元素的最大公约数
+- 如果最大公约数是1就返回true
+### 代码
+```java
+class Solution {
+    public boolean isGoodArray(int[] nums) {
+        int g = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            g = gcd(g, nums[i]);
+        }
+
+        return g == 1;
+    }
+
+    private int gcd(int x, int y) {
+        return y == 0 ? x : gcd(y, x % y);
+    }
+}
+```
