@@ -157,3 +157,61 @@ class Solution {
     }
 }
 ```
+# [LeetCode_742_二叉树最近的叶节点](https://leetcode.cn/problems/closest-leaf-in-a-binary-tree/)
+## 解法
+### 思路
+- dfs整颗树，将树转成图
+- bfs图，找到第一个叶子结点，也就是图中只有1个出度的节点
+### 代码
+```java
+class Solution {
+    public int findClosestLeaf(TreeNode root, int k) {
+        Map<TreeNode, List<TreeNode>> graph = new HashMap<>();
+        dfs(graph, root, null);
+
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        Set<TreeNode> seen = new HashSet<>();
+        for (TreeNode treeNode : graph.keySet()) {
+            if (treeNode != null && treeNode.val == k) {
+                queue.offer(treeNode);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if (node == null) {
+                continue;
+            }
+
+            List<TreeNode> nodes = graph.getOrDefault(node, new ArrayList<>());
+
+            if (nodes.size() <= 1) {
+                return node.val;
+            } else {
+                for (TreeNode treeNode : nodes) {
+                    if (seen.contains(treeNode) || treeNode == null) {
+                        continue;
+                    }
+
+                    queue.offer(treeNode);
+                    seen.add(node);
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    private void dfs(Map<TreeNode, List<TreeNode>> graph, TreeNode node, TreeNode parent) {
+        if (node == null) {
+            return;
+        }
+
+        graph.computeIfAbsent(node, x -> new ArrayList<>()).add(parent);
+        graph.computeIfAbsent(parent, x -> new ArrayList<>()).add(node);
+
+        dfs(graph, node.left, node);
+        dfs(graph, node.right, node);
+    }
+}
+```
