@@ -261,3 +261,72 @@ class Solution {
     }
 }
 ```
+# [LeetCode_750_角矩形的数量](https://leetcode.cn/problems/number-of-corner-rectangles/)
+## 解法
+### 思路
+4层循环
+- 从左上方开始向右下方开始遍历矩阵
+- 找到可能得矩阵个数
+- 搜索和判断都是单向的，避免重复
+### 代码
+```java
+class Solution {
+    public int countCornerRectangles(int[][] grid) {
+        int ans = 0;
+        int r = grid.length, c = grid[0].length;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (grid[i][j] != 1) {
+                    continue;
+                }
+                
+                for (int i1 = 1; i1 < r - i; i1++) {
+                    for (int i2 = 1; i2 < c - j; i2++) {
+                        if (grid[i + i1][j + i2] == 1 &&
+                                grid[i][j + i2] == 1 &&
+                                grid[i + i1][j] == 1) {
+                            ans++;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 解法一是4层循环，而且每次都会重复探索右下方的内容
+- 为了省去重复的内容，我们可以将探索转变为从左上方向右下方确定矩形的右下角，然后将左上方的内容通过记事本记录下来
+- 记录的方式
+  - 如果基于右下方的点，确定矩形下方的边，保证边的两个顶点是1，那么主要确定记事本中是否有记录同样这两个点都是1的行，如果有，累加起来就可以了
+  - 所以这个解题过程就变成了解决重复子问题，通过记事本记录左下和右下2个点为1的行的个数
+### 代码
+```java
+class Solution {
+    public int countCornerRectangles(int[][] grid) {
+        int c = grid[0].length, ans = 0;
+        int[][] memo = new int[c][c];
+        for (int[] row : grid) {
+            for (int bottomRight = 0; bottomRight < c; bottomRight++) {
+                if (row[bottomRight] == 0) {
+                    continue;
+                }
+
+                for (int bottomLeft = 0; bottomLeft < bottomRight; bottomLeft++) {
+                    if (row[bottomLeft] == 0) {
+                        continue;
+                    }
+
+                    ans += memo[bottomLeft][bottomRight];
+                    memo[bottomLeft][bottomRight]++;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
