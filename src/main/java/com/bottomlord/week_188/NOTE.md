@@ -215,3 +215,49 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1270_找出给定方程的正整数解](https://leetcode.cn/problems/find-positive-integer-solution-for-a-given-equation/)
+## 解法
+### 思路
+二分查找
+- 题目x和y的取值区间是1-1000，所以二分查找的区间是[1,1000]
+- 然后就在确定x的情况下，去根据z和function去找到y的值，找的方式就是二分查找
+- 需要注意，如果返回的是0，那就说明x太大，因为function的返回是单调递增的，这个时候就可以提前结束对x的取值循环，直接返回了
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> findSolution(CustomFunction customfunction, int z) {
+        List<List<Integer>> ans = new ArrayList<>();
+
+        for (int i = 1; i <= 1000; i++) {
+            int j = binarySearch(i, customfunction, z);
+            if (j == 0) {
+                return ans;
+            } else if (j != -1) {
+                List<Integer> list = new ArrayList<>();
+                list.add(i);
+                list.add(j);
+                ans.add(list);
+            }
+        }
+
+        return ans;
+    }
+
+    private int binarySearch(int x, CustomFunction function, int z) {
+        int head = 1, tail = 1000;
+        while (head <= tail) {
+            int mid = (head + tail) >> 1;
+            int r = function.f(x, mid);
+            if (r < z) {
+                head = mid + 1;
+            } else if (r > z) {
+                tail = mid - 1;
+            } else {
+                return mid;
+            }
+        }
+
+        return tail == 0 ? 0 : -1;
+    }
+}
+```
