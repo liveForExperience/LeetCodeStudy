@@ -45,3 +45,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_755_倒水](https://leetcode.cn/problems/pour-water/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] pourWater(int[] heights, int volume, int k) {
+        while (volume-- > 0) {
+            int choice = k;
+            for (int i = k - 1; i >= 0; i--) {
+                if (heights[i] < heights[i + 1]) {
+                    choice = i;
+                } else if (heights[i] > heights[i + 1]) {
+                    break;
+                }
+            }
+            
+            if (choice != k) {
+                heights[choice]++;
+                continue;
+            }
+            
+            for (int i = k + 1; i < heights.length; i++) {
+                if (heights[i] < heights[i - 1]) {
+                    choice = i;
+                } else if (heights[i] > heights[i - 1]) {
+                    break;
+                }
+            }
+            
+            heights[choice]++;
+        }
+        
+        return heights;
+    }   
+}
+```
