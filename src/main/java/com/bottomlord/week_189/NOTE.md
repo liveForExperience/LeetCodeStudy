@@ -285,3 +285,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_823_带因子的二叉树](https://leetcode.cn/problems/binary-trees-with-factors/)
+## 解法
+### 思路
+hash表+动态规划
+- 对数组arr排序，使其非降序排列
+- 用hash表记录arr元素为根节点的树的个数
+- 然后通过观察就能发现这个问题可以被分解成连续子问题，每一个值作为根节点可以组成的树的个数，都可以通过其因子值的树个数来推倒
+- 推导方程：`dp[i] = dp[j] * dp[k] + dp[i]`，`j * k == i`
+- 初始的状态就是`dp[i] = 1`
+- 最终对所有dp进行累加就可以了
+### 代码
+```java
+class Solution {
+    public int numFactoredBinaryTrees(int[] arr) {
+        int mod = (int)1e9 + 7;
+        long sum = 0;
+        Map<Long, Long> map = new HashMap<>(arr.length);
+        for (int num : arr) {
+            map.put((long) num, 1L);
+        }
+        Arrays.sort(arr);
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j <= i; j++) {
+                long multi = (long)arr[i] * arr[j];
+                if (!map.containsKey(multi)) {
+                    continue;
+                }
+
+                long timeValue = map.get((long)arr[i]) * map.get((long)arr[j]);
+                if (arr[i] == arr[j]) {
+                    map.put(multi, map.get(multi) + timeValue);
+                } else {
+                    map.put(multi, map.get(multi) + 2 * timeValue);
+                }
+            }
+            
+            sum += map.get(arr[i]) % mod;
+        }
+
+        return (int) sum;
+    }
+}
+```
