@@ -122,3 +122,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1255_得分最高的单词集合](https://leetcode.cn/problems/maximum-score-words-formed-by-letters/)
+## 解法
+### 思路
+状态压缩
+- 因为单词个数只有14，所以通过一个32位的整数就可以表示单词是否被选择的状态
+- 遍历所有状态，然后统计即可
+### 代码
+```java
+class Solution {
+    public int maxScoreWords(String[] words, char[] letters, int[] score) {
+        int n = words.length, sum = 0;
+        int[] count = new int[26];
+        for (char letter : letters) {
+            count[letter - 'a']++;
+        }
+        
+        for (int i = 1; i <= (1 << n); i++) {
+            int[] curCount = new int[26];
+            for (int j = 0; j < n; j++) {
+                if (((1 << j) & i) == 0) {
+                    continue;
+                }
+                
+                String word = words[j];
+                for (char c : word.toCharArray()) {
+                    curCount[c - 'a']++;
+                }
+            }
+            
+            boolean flag = true;
+            int curSum = 0;
+            for (int j = 0; j < 26; j++) {
+                if (curCount[j] > count[j]) {
+                    flag = false;
+                    break;
+                }
+                
+                curSum += curCount[j] * score[j];
+            }
+            
+            if (flag) {
+                sum = Math.max(sum, curSum);
+            }
+        }
+        
+        return sum;
+    }
+}
+```
