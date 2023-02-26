@@ -171,3 +171,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_779_第K个语法符号](https://leetcode.cn/problems/k-th-symbol-in-grammar/)
+## 解法
+### 思路
+- 根据模拟可以发现，当前层与上一层的关系是：
+  - 当前层平均分成前后2段
+  - 前一段和前一层完全相同
+  - 后一段与前一段每一位都完全相反
+- 所以这是一个连续子问题，每一层都去判断k是否属于前半段还是后半段，如果属于前半段，就和上一层返回的数值相等，否则就是相反值（0变1，1变0，可以使用^1来处理）
+### 代码
+```java
+class Solution {
+    public int kthGrammar(int n, int k) {
+        if (n == 1 || k == 1) {
+            return 0;
+        }
+
+        int mid = (int) Math.pow(2, n - 2);
+        if (k <= mid) {
+            return kthGrammar(n - 1, k);
+        }
+
+        return kthGrammar(n - 1, k - mid) ^ 1;
+    }
+}
+```
