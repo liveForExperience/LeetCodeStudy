@@ -25,3 +25,66 @@ class Solution {
     }
 }
 ```
+# [LeetCode_826_安排工作已达到最大收益](https://leetcode.cn/problems/most-profit-assigning-work/)
+## 解法
+### 思路
+贪心：
+- 生成坐标数组is，根据profit数组从大到小排序
+- O(N^2)复杂度的2层迭代，外层遍历work数组，内层遍历is，然后比较当前difficulty元素是否小于等于work元素值，如果是就累加profit并终止当前work的计算
+### 代码
+```java
+class Solution {
+    public int maxProfitAssignment(int[] difficulty, int[] profit, int[] worker) {
+        int n = difficulty.length;
+        Integer[] is = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            is[i] = i;
+        }
+        
+        Arrays.sort(is, (x, y) -> profit[y] - profit[x]);
+
+        int sum = 0;
+        for (int w : worker) {
+            for (Integer i : is) {
+                if (w >= difficulty[i]) {
+                    sum += profit[i];
+                    break;
+                }
+            }
+        }
+        
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+根据解法一分析，解法一中的worker如果可以升序排列，难度也可以升序排列，那么低worker值的元素遍历过后得到的最大利润值，也一定是当前worker还没开始继续往后遍历时候的最大利润值，这也就意味着之前的遍历无需重复计算了。
+### 代码
+```java
+class Solution {
+    public int maxProfitAssignment(int[] difficulty, int[] profit, int[] worker) {
+        int n = difficulty.length;
+        int[][] arr = new int[n][2];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i][0] = difficulty[i];
+            arr[i][1] = profit[i];
+        }
+
+        Arrays.sort(arr, Comparator.comparingInt(x -> x[0]));
+        Arrays.sort(worker);
+
+        int i = 0, bestProfit = 0, ans = 0;
+        for (int skill : worker) {
+            while (i < n && skill >= arr[i][0]) {
+                bestProfit = Math.max(bestProfit, arr[i][1]);
+                i++;
+            }
+
+            ans += bestProfit;
+        }
+
+        return ans;
+    }
+}
+```
