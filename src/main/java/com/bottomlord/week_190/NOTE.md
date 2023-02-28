@@ -130,3 +130,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2574_左右元素和的差值](https://leetcode.cn/problems/left-and-right-sum-differences/)
+## 解法
+### 思路
+前缀和
+### 代码
+```java
+class Solution {
+    public int[] leftRightDifference(int[] nums) {
+        int n = nums.length;
+        int[] sum = new int[n];
+        int preSum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum[i] = preSum + nums[i];
+            preSum = sum[i];
+        }
+        
+        int[] ans = new int[n];
+        for (int i = 0; i < ans.length; i++) {
+            ans[i] = Math.abs(sum[i] - nums[i] - sum[n - 1] + sum[i]);
+        }
+        
+        return ans;
+    }
+}
+```
