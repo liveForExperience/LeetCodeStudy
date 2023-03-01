@@ -155,3 +155,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1326_灌溉花园的最少龙头数目](https://leetcode.cn/problems/minimum-number-of-taps-to-open-to-water-a-garden/)
+## 解法
+### 思路
+- 初始化数组rights，用于记录区间左边界坐标对应的最大的右边界坐标值
+- 从0开始遍历n+1个元素，通过range数组中对应的元素，计算出左右边界并维护出rights数组
+- 从0开始循环驱动计算区间的覆盖情况
+  - 退出条件时坐标idx>=n越界，或者右边界已经覆盖了所有区间
+  - 初始化左右边界为0
+  - 如果当前坐标小于等于上一个区间的左边界，那么就更新当前覆盖状态的最大右边界，坐标右移一位继续判断
+  - 如果当前坐标大于上一个区间的左边界，说明新的区间可能与上一个区间交叉或者大于右边界
+    - 如果大于右边界了，说明有空隙，返回-1
+    - 如果小于等于右边界，那么就更新上一个区间的左边界为当前的右边界，然后继续做判断，更新新的区间的右边界
+### 代码
+```java
+class Solution {
+    public int minTaps(int n, int[] ranges) {
+        int[] rights = new int[n + 1];
+        for (int i = 0; i <= n; i++) {
+            int l = Math.max(i - ranges[i], 0);
+            rights[l] = Math.max(rights[l], i + ranges[i]);
+        }
+
+        int l = 0, r = 0, idx = 0, ans = 0;
+        while (idx <= n && r < n) {
+            if (idx <= l) {
+                r = Math.max(r, rights[idx]);
+                idx++;
+            } else {
+                if (idx > r) {
+                    return -1;
+                } else {
+                    l = r;
+                    ans++;
+                }
+            }
+        }
+
+        return r >= n ? ans + 1 : -1;
+    }
+}
+```
