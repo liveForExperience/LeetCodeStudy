@@ -232,3 +232,28 @@ class Solution {
     }
 }
 ```
+# [LeetCode_848_字母移位]()
+## 解法
+### 思路
+后缀和
+### 代码
+```java
+class Solution {
+    public String shiftingLetters(String s, int[] shifts) {
+        int n = shifts.length;
+        int[] sum = new int[n];
+        int pre = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            sum[i] = (shifts[i] + pre) % 26;
+            pre = sum[i];
+        }
+
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            cs[i] = (char)((((s.charAt(i) - 'a') + sum[i]) % 26) + 'a');
+        }
+        
+        return String.valueOf(cs);
+    }
+}
+```
