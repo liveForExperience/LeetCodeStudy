@@ -196,3 +196,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_833_字符串中的查找与替换](https://leetcode.cn/problems/find-and-replace-in-string/)
+## 解法
+### 思路
+模拟
+- 用数组arr作为桶，记录indices中的坐标值，arr表示s坐标位置需要做处理，处理的内容根据arr元素值到3个数组中查找
+- arr的其他元素都记录为-1，用于表示这个坐标的字符不需要处理
+### 代码
+```java
+class Solution {
+    public String findReplaceString(String s, int[] indices, String[] sources, String[] targets) {
+                int n = s.length();
+        int[] arr = new int[n];
+        Arrays.fill(arr, -1);
+        for (int i = 0; i < indices.length; i++) {
+            arr[indices[i]] = i;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            int index = arr[i];
+            if (index == -1) {
+                sb.append(s.charAt(i));
+            } else {
+                if (s.startsWith(sources[index], indices[index])) {
+                    sb.append(targets[index]);
+                    i += sources[index].length() - 1;
+                } else {
+                    sb.append(s.charAt(i));
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+}
+```
