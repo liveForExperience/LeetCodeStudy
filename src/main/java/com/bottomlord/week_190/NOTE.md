@@ -274,43 +274,28 @@ class Solution {
 ### 代码
 ```java
 class Solution {
-    public int carFleet(int target, int[] position, int[] speed) {
-        Map<Integer, Integer> map = new HashMap<>();
-        int n = position.length;
-        for (int i = 0; i < n; i++) {
-            map.put(position[i], speed[i]);
-        }
-        
-        return recurse(target, map);
+  public int carFleet(int target, int[] position, int[] speed) {
+    int n = position.length;
+    double[][] arr = new double[n][2];
+    for (int i = 0; i < n; i++) {
+      arr[i][0] = position[i];
+      arr[i][1] = (target - position[i]) / (double)speed[i];
     }
-    
-    private int recurse(int target, Map<Integer, Integer> map) {
-        if (map.isEmpty()) {
-            return 0;
-        }
-        
-        int count = 0;
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            if (entry.getKey() >= target) {
-                count++;
-            }
-        }
-        
-        map.entrySet().removeIf(x -> x.getKey() >= target);
 
-        Map<Integer, Integer> newMap = new HashMap<>();
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            int position = entry.getKey(), speed = entry.getValue(),
-                newPos =position + speed;
-            if (!newMap.containsKey(newPos)) {
-                newMap.put(newPos, speed);
-            } else {
-                int preSpeed = newMap.get(newPos);
-                newMap.put(newPos, Math.min(preSpeed, speed));
-            }
-        }
-        
-        return count + recurse(target, newMap);
+    Arrays.sort(arr, (x, y) -> (int) (x[0] - y[0]));
+
+    Stack<Double> stack = new Stack<>();
+    for (int i = 0; i < n; i++) {
+      double time = arr[i][1];
+
+      while (!stack.isEmpty() && time >= stack.peek()) {
+        stack.pop();
+      }
+
+      stack.push(time);
     }
+
+    return stack.size();
+  }
 }
 ```
