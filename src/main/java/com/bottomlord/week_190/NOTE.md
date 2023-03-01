@@ -257,3 +257,60 @@ class Solution {
     }
 }
 ```
+# [LeetCode_853_车队](https://leetcode.cn/problems/car-fleet/)
+## 解法
+### 思路
+单调栈
+- 如果计算出从出发点到target的耗时
+  - 那么距离长耗时短的能追上距离短耗时长的
+  - 但是距离更短的，如果耗时短，那么肯定不能相遇
+- 通过二维数组对position和time进行合并
+- 然后对position进行非降序排序，是的距离长的在前面
+- 初始化一个stack用来存储从距离长的开始的所有车
+- 循环的时候从栈顶获取元素，与当前元素的耗时进行比较
+  - 如果当前元素耗时比栈顶的大或者等于，说明距离更短的耗时却比栈顶的长，那么栈顶的车一定能追上当前车，所以会合并，也就从栈里弹出
+  - 如果当前元素耗时比栈顶的小，那么说明当前车到target的时候，栈顶的车还没有到，而那些比栈顶元素快，耗时少的车会优先和栈顶元素合并，而那些更慢的车又不能和当前车合并，所以就无需再处理了。
+- 遍历结束后，返回栈内的元素个数即可
+### 代码
+```java
+class Solution {
+    public int carFleet(int target, int[] position, int[] speed) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int n = position.length;
+        for (int i = 0; i < n; i++) {
+            map.put(position[i], speed[i]);
+        }
+        
+        return recurse(target, map);
+    }
+    
+    private int recurse(int target, Map<Integer, Integer> map) {
+        if (map.isEmpty()) {
+            return 0;
+        }
+        
+        int count = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getKey() >= target) {
+                count++;
+            }
+        }
+        
+        map.entrySet().removeIf(x -> x.getKey() >= target);
+
+        Map<Integer, Integer> newMap = new HashMap<>();
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            int position = entry.getKey(), speed = entry.getValue(),
+                newPos =position + speed;
+            if (!newMap.containsKey(newPos)) {
+                newMap.put(newPos, speed);
+            } else {
+                int preSpeed = newMap.get(newPos);
+                newMap.put(newPos, Math.min(preSpeed, speed));
+            }
+        }
+        
+        return count + recurse(target, newMap);
+    }
+}
+```
