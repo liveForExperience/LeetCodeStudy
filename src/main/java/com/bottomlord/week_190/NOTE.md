@@ -299,3 +299,48 @@ class Solution {
   }
 }
 ```
+# [LeetCode_866_回文素数](https://leetcode.cn/problems/prime-palindrome/)
+## 解法
+### 思路
+暴力
+- 注意因为8位数没有素数，所以需要跳过
+### 代码
+```java
+class Solution {
+    public int primePalindrome(int n) {
+        while (true) {
+            if (reverse(n) == n && isPrime(n)) {
+                return n;
+            }
+            n++;
+
+            if (n >= 10_000_000 && n <= 100_000_000) {
+                n = 100_000_000;
+            }
+        }
+    }
+    
+    private boolean isPrime(int num) {
+        if (num == 1) {
+            return false;
+        }
+
+        int target = (int)Math.sqrt(num);
+        for (int i = 2; i <= target; i++) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private int reverse(int num) {
+        int reverse = 0;
+        while (num > 0) {
+            reverse = reverse * 10 + num % 10;
+            num /= 10;
+        }
+        return reverse;
+    }
+}
+```
