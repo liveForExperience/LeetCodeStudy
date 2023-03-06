@@ -410,3 +410,55 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1599_经营摩天轮的最大利润](https://leetcode.cn/problems/maximum-profit-of-operating-a-centennial-wheel/)
+## 解法
+### 思路
+- 根据题目要求，基于每次上限为4的限制，重新生成数组
+- 遍历数组然后依次计算利润值
+- 找到最大值并记录对应产生的坐标
+- 如果利润为负数，返回-1
+### 代码
+```java
+class Solution {
+    public int minOperationsMaxProfit(int[] customers, int boardingCost, int runningCost) {
+        int left = 0, n = customers.length;
+        for (int i = 0; i < customers.length; i++) {
+            if (customers[i] > 4) {
+                left = customers[i] - 4;
+                customers[i] = 4;
+            }
+
+            if (i < customers.length - 1) {
+                customers[i + 1] += left;
+                left = 0;
+            }
+        }
+        
+        int add = left / 4 + (left % 4 == 0 ? 0 : 1);
+        int[] cs = new int[n + add];
+        System.arraycopy(customers, 0, cs, 0, n);
+        for (int i = n; i < n + add; i++) {
+            if (left > 4) {
+                cs[i] = 4;
+                left -= 4;
+            } else {
+                cs[i] = left;
+            }
+        }
+
+        int profit = 0, max = Integer.MIN_VALUE, ans = 0;
+        int[] profits = new int[cs.length];
+        for (int i = 0; i < profits.length; i++) {
+            profits[i] = cs[i] * boardingCost - runningCost;
+            profit += profits[i];
+            
+            if (profit > max) {
+                ans = i;
+                max = profit;
+            }
+        }
+
+        return max > 0 ? ans + 1 : -1;
+    }
+}
+```
