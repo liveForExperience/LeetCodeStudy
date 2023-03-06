@@ -379,3 +379,34 @@ class Solution {
     }
 }
 ```
+# [LeetCode_982_按位与为0的三元组]()
+## 解法
+### 思路
+桶计数
+- 三元组遍历，拆分为2次的O(N^2)复杂度的遍历
+- 先进行一次O(N^2)复杂度的遍历，用桶记录
+- 然后再遍历桶和元素数组，找到相与的结果并累加
+### 代码
+```java
+class Solution {
+    public int countTriplets(int[] nums) {
+        int[] arr = new int[1 << 16];
+        for (int a : nums) {
+            for (int b : nums) {
+                arr[a & b]++;
+            }
+        }
+
+        int ans = 0;
+        for (int num : nums) {
+            for (int i = 0; i < (1 << 16); i++) {
+                if ((i & num) == 0) {
+                    ans += arr[i];
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
