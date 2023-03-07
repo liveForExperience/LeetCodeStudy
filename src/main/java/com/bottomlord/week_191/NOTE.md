@@ -175,3 +175,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2582_递枕头](https://leetcode.cn/problems/pass-the-pillow/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int passThePillow(int n, int time) {
+        int cur = 1;
+        boolean flag = true;
+        while (time-- > 0) {
+            if (flag) {
+                cur++;
+                if (cur == n) {
+                    flag = false;
+                }
+            } else {
+                cur--;
+                
+                if (cur == 1) {
+                    flag = true;
+                }
+            }
+        }
+        
+        return cur;
+    }
+}
+```
