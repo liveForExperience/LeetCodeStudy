@@ -326,3 +326,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_880_索引处的解码字符串](https://leetcode.cn/problems/decoded-string-at-index/)
+## 解法
+### 思路
+- 通过表达式计算出总长度cnt，注意int值会越界，需要使用long
+- 可以将字符串拆分为2部分：[str][num]
+- 这样的话从表达式的尾部开始遍历，如果字符是数字，cnt/num，模拟出str的长度，然后再处理k，k %= cnt
+  - 比如，cnt是9，num是3，k是7，当cnt/num后得到了3，这样cnt/num得到的值就比k小了，但其实没关系，因为9是被平均分成3个部分的，所以7其实通过与cnt（3）取模得到1以后，得到就是7在原来没有/num的时候得到的字符串是一样的
+- 如果字符是字母，那么看看k % cnt == 0 是否成立，如果成立，那么当前字符就是目标字符，否则就cnt--，并继续遍历
+### 代码
+```java
+class Solution {
+  public String decodeAtIndex(String s, int k) {
+    long cnt = 0;
+    for (int i = 0; i < s.length(); i++) {
+      if (Character.isDigit(s.charAt(i))) {
+        cnt = cnt * (s.charAt(i) - '0');
+      } else {
+        cnt++;
+      }
+    }
+
+    for (int i = s.length() - 1; i >= 0; i--) {
+      char c = s.charAt(i);
+      if (Character.isDigit(c)) {
+        cnt /= (c - '0');
+        k %= cnt;
+      } else {
+        if (k % cnt == 0) {
+          return s.charAt(i) + "";
+        }
+
+        cnt--;
+      }
+    }
+
+    return "";
+  }
+}
+```
