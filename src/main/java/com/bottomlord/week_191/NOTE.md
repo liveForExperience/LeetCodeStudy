@@ -365,3 +365,66 @@ class Solution {
   }
 }
 ```
+# [LeetCode_898_子数组按位或操作](https://leetcode.cn/problems/bitwise-ors-of-subarrays/)
+## 失败解法
+### 原因
+超时
+### 思路
+2层for循环，使用mask做减枝
+### 代码
+```java
+class Solution {
+  public int subarrayBitwiseORs(int[] arr) {
+    int max = Integer.MIN_VALUE;
+    for (int num : arr) {
+      max = Math.max(num, max);
+    }
+
+    int mask = 1;
+    while (max >= mask) {
+      mask <<= 1;
+    }
+
+    Set<Integer> set = new HashSet<>();
+    for (int i = 0; i < arr.length; i++) {
+      int cur = arr[i];
+      set.add(cur);
+
+      for (int j = i + 1; j < arr.length && cur != mask; j++) {
+        cur |= arr[j];
+        set.add(cur);
+      }
+    }
+
+    return set.size();
+  }
+}
+```
+## 解法
+### 思路
+- 2层循环
+- 外层确定坐标i，
+- 内层生成所有以外层i为结尾的子数组
+- 所有子数组都可以基于i-1为结尾的子数组+当前元素，就可以得到
+- 所以可以通过set集合来存储上一批子数组，从而减少重复
+- 因为每一批次的子数组生成的元素都会变化，所以需要在每次外层循环的时候更新这个set集合
+### 代码
+
+```java
+class Solution {
+  public int subarrayBitwiseORs(int[] arr) {
+    Set<Integer> ans = new HashSet<>(), cur = new HashSet<>();
+    for (int i : arr) {
+      Set<Integer> tmp = new HashSet<>();
+      cur.add(i);
+      for (Integer num : cur) {
+        tmp.add(num | i);
+      }
+      cur = tmp;
+      ans.addAll(cur);
+    }
+
+    return ans.size();
+  }
+}
+```
