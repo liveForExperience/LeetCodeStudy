@@ -409,7 +409,6 @@ class Solution {
 - 所以可以通过set集合来存储上一批子数组，从而减少重复
 - 因为每一批次的子数组生成的元素都会变化，所以需要在每次外层循环的时候更新这个set集合
 ### 代码
-
 ```java
 class Solution {
   public int subarrayBitwiseORs(int[] arr) {
@@ -426,5 +425,95 @@ class Solution {
 
     return ans.size();
   }
+}
+```
+# [LeetCode_2289_使数组按非递减顺序排序](https://leetcode.cn/problems/steps-to-make-array-non-decreasing/)
+## 失败解法
+### 原因
+超时
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int totalSteps(int[] nums) {
+        List<Integer> list = new ArrayList<>();
+        for (int num : nums) {
+            list.add(num);
+        }
+        
+        boolean flag = true;
+        int count = 0;
+        while (flag) {
+            flag = false;
+            List<Integer> cur = new ArrayList<>();
+            cur.add(list.get(0));
+            
+            for (int i = 1; i < list.size(); i++) {
+                if (list.get(i) >= list.get(i - 1)) {
+                    cur.add(list.get(i));
+                } else {
+                    flag = true;
+                }
+            }
+            
+            if (flag) {
+                count++;
+            }
+            
+            list = cur;
+        }
+        
+        return count;
+    }
+}
+```
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1590_使数组和能被P整除](https://leetcode.cn/problems/make-sum-divisible-by-p/)
+## 解法
+### 思路
+- 求数组总和，与p取余得到余数
+- 生成前缀和数组
+- 在前缀和数组中找到sum[r] - sum[l] === sum (mod p)
+- 转换如上公式：sum[r] - x === sum[l] (mod p)
+- 处理好负数：((sum[r] - x) mod p + p) mod p == sum[l] mod p
+- 再转换公式得：(sum[r] mod p - x mod p + p) mod p == sum[l] mod p
+- 通过如上公式可以得出代码逻辑：
+  - 遍历前缀和数组，并使用map记录sum[l] mod p的值和坐标
+  - 遍历前缀和数组，判断map中是否包含(sum[r] mod p - x mod p + p) mod p
+### 代码
+```java
+class Solution {
+    public int minSubarray(int[] nums, int p) {
+        int n = nums.length;
+        int[] sums = new int[n + 1];
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 1; i <= n; i++) {
+            sums[i] = (sums[i - 1] + nums[i - 1]) % p;
+        }
+        
+        if (sums[n] == 0) {
+            return 0;
+        }
+
+        int sum = sums[n];
+
+        int ans = Integer.MAX_VALUE;
+        for (int i = 0; i <= n; i++) {
+            map.put(sums[i], i);
+            int val = (sums[i] - sum + p) % p;
+            if (map.containsKey(val)) {
+                ans = Math.min(i - map.get(val), ans);
+            }
+        }
+
+        return ans == Integer.MAX_VALUE || ans == n ? -1 : ans;
+    }
 }
 ```
