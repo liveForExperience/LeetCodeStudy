@@ -471,7 +471,6 @@ class Solution {
 ## 解法
 ### 思路
 单调栈
-
 ### 代码
 ```java
 class Solution {
@@ -573,5 +572,61 @@ class Solution {
 
         return len == 0 ? new String[0] : Arrays.copyOfRange(array, start, end);
     }
+}
+```
+# [LeetCode_1245_树形dp](https://leetcode.cn/problems/tree-diameter/)
+## 解法
+### 思路
+2次bfs
+- 第一次从任意节点找到最远节点a
+- 第二次从最远节点a到从其出发的最远节点b
+- a和b节点的距离就是直径
+### 代码
+```java
+class Solution {
+  public int treeDiameter(int[][] edges) {
+    int n = edges.length + 1;
+    Map<Integer, List<Integer>> map = new HashMap<>();
+    for (int[] edge : edges) {
+      map.computeIfAbsent(edge[0], x -> new ArrayList<>()).add(edge[1]);
+      map.computeIfAbsent(edge[1], x -> new ArrayList<>()).add(edge[0]);
+    }
+
+    return bfs(bfs(0, map, n)[0], map, n)[1];
+  }
+
+  private int[] bfs(int x, Map<Integer, List<Integer>> map, int n) {
+    Queue<Integer> queue = new ArrayDeque<>();
+    queue.offer(x);
+    int distance = 0;
+    int[] memo = new int[n];
+    Arrays.fill(memo, -1);
+    while (!queue.isEmpty()) {
+      int size = queue.size();
+      while (size-- > 0) {
+        Integer v = queue.poll();
+        if (v == null || memo[v] != -1) {
+          continue;
+        }
+
+        memo[v] = distance;
+
+        for (Integer next : map.getOrDefault(v, new ArrayList<>())) {
+          queue.offer(next);
+        }
+      }
+      distance++;
+    }
+
+    int max = 0, index = x;
+    for (int i = 0; i < memo.length; i++) {
+      if (memo[i] > max) {
+        max = memo[i];
+        index = i;
+      }
+    }
+
+    return new int[]{index, max};
+  }
 }
 ```
