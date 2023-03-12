@@ -470,10 +470,31 @@ class Solution {
 ```
 ## 解法
 ### 思路
+单调栈
 
 ### 代码
 ```java
+class Solution {
+    public int totalSteps(int[] nums) {
+        Stack<Integer> stack = new Stack<>();
+        int n = nums.length, ans = 0;
+        int[] dp = new int[n];
+        for (int i = 0; i < n; i++) {
+            int cur = 0;
+            while (!stack.isEmpty() && nums[i] >= nums[stack.peek()]) {
+                int index = stack.pop();
+                cur = Math.max(dp[index], cur);
+            }
 
+            cur = stack.isEmpty() ? 0 : cur + 1;
+            dp[i] = Math.max(dp[i], cur);
+            ans = Math.max(ans, dp[i]);
+            stack.push(i);
+        }
+        
+        return ans;
+    }
+}
 ```
 # [LeetCode_1590_使数组和能被P整除](https://leetcode.cn/problems/make-sum-divisible-by-p/)
 ## 解法
