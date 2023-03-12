@@ -706,3 +706,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_900_RLE迭代器](https://leetcode.cn/problems/rle-iterator/)
+## 解法
+### 思路
+指针模拟
+### 代码
+```java
+class RLEIterator {
+    private int index = 0;
+    private int[] encoding;
+
+    public RLEIterator(int[] encoding) {
+        this.encoding = encoding;
+    }
+
+    public int next(int n) {
+        if (index >= encoding.length) {
+            return -1;
+        }
+
+        while (n > 0) {
+            if (encoding[index] >= n) {
+                encoding[index] -= n;
+                return encoding[index + 1];
+            } else {
+                n -= encoding[index];
+                index += 2;
+
+                if (index >= encoding.length) {
+                    return -1;
+                }
+            }
+        }
+
+        return -1;
+    }
+}
+```
