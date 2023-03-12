@@ -6,7 +6,7 @@ import java.util.*;
  * @author chen yue
  * @date 2023-03-12 13:57:25
  */
-public class LeetCode_1245_1_树形dp {
+public class LeetCode_1245_1_树的直径 {
     public int treeDiameter(int[][] edges) {
         int n = edges.length + 1;
         Map<Integer, List<Integer>> map = new HashMap<>();
