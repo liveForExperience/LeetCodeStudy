@@ -103,3 +103,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_910_最小差值II](https://leetcode.cn/problems/smallest-range-ii/)
+## 解法
+### 思路
+- 数组排序
+- 将数组以某个中心点拆分成2部分
+  - 该中心点左侧所有元素加上k更趋近于中心值，那么这个子数组的最右侧，也即中心点元素就是可能的最大值，这个值与最大值-k比较获得处理后的最大值
+  - 该中心点右侧的逻辑和如上类似
+- 先求出最大和最小值处理k后的差值
+- 然后遍历，假设每一个坐标都是可能的中心点，然后更新最大最小值，计算可能的最小分数
+- 遍历结束后返回结果
+### 代码
+```java
+class Solution {
+    public int smallestRangeII(int[] nums, int k) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        int ans = nums[n - 1] - nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            int min = Math.min(nums[0] + k, nums[i] - k),
+                max = Math.max(nums[n - 1] - k, nums[i - 1] + k);
+            ans = Math.min(ans, max - min);
+        }
+        return ans;
+    }
+}
+```
