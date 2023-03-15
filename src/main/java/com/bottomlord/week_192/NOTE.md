@@ -164,3 +164,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_916_单词子集](https://leetcode.cn/problems/word-subsets/)
+## 解法
+### 思路
+- 求出words2中所有单词各自的字母出现次数，然后求出每个字母出现的最大次数
+- 遍历words1的所有单词，如果words2算出的最大次数任意大于words1的字母个数，就不作为结果，否则放入结果中
+### 代码
+```java
+class Solution {
+    public List<String> wordSubsets(String[] words1, String[] words2) {
+        int[] cnt = new int[26];
+        for (String word : words2) {
+            int[] cur = new int[26];
+            for (char c : word.toCharArray()) {
+                cur[c - 'a']++;
+            }
+
+            for (int i = 0; i < cnt.length; i++) {
+                cnt[i] = Math.max(cnt[i], cur[i]);
+            }
+        }
+
+        List<String> ans = new ArrayList<>();
+        for (String word : words1) {
+            int[] cur = new int[26];
+            for (char c : word.toCharArray()) {
+                cur[c - 'a']++;
+            }
+            
+            boolean flag = true;
+            for (int i = 0; i < cnt.length; i++) {
+                if (cur[i] < cnt[i]) {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if (flag) {
+                ans.add(word);
+            }
+        }
+        
+        return ans; 
+    }
+}
+```
