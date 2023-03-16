@@ -238,3 +238,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_923_三数之和的多种可能](https://leetcode.cn/problems/3sum-with-multiplicity/)
+## 解法
+### 思路
+三指针：
+- 对数组进行排序
+- 遍历数组，确定一个指针对应的元素值
+- 内层确定2个头尾指针，根据这两个指针的总和来判断如何移动双指针
+- 因为有重复元素，所以需要做好重复元素的计算
+- 如果双指针指向相同值的元素，那么就通过(n *(n - 1)) / 2来获得个数
+### 代码
+```java
+class Solution {
+    public int threeSumMulti(int[] arr, int target) {
+        Arrays.sort(arr);
+        int mod = (int) (1e9 + 7), n = arr.length;
+        long ans = 0L;
+        for (int i = 0; i < n; i++) {
+            int t = target - arr[i];
+            int l = i + 1, r = n - 1;
+
+            while (l < r) {
+                int sum = arr[l] + arr[r];
+                if (sum < t) {
+                    l++;
+                } else if (sum > t) {
+                    r--;
+                } else if (arr[l] != arr[r]) {
+                    long left = 1L, right = 1L;
+
+                    while (l + 1 < r && arr[l] == arr[l + 1]) {
+                        left++;
+                        l++;
+                    }
+
+                    while (r - 1 > l && arr[r] == arr[r - 1]) {
+                        right++;
+                        r--;
+                    }
+
+                    ans += left * right;
+                    ans %= mod;
+                    l++;
+                    r--;
+                } else {
+                    ans += (r - l + 1) * (r - l) / 2;
+                    ans %= mod;
+                    break;
+                }
+            }
+        }
+
+        return (int)ans;
+    }
+}
+```
