@@ -209,3 +209,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_918_环形子数组的最大和](https://leetcode.cn/problems/maximum-sum-circular-subarray/)
+## 解法
+### 思路
+- 可以将问题分成2种情况
+  - 不需要跨越边界，求子数组的最大和
+  - 需要跨越边界，求子数组的最小和，通过sum - 最小和获得结果
+- 求最大和最小和都可以通过动态规划来求
+- 如果最大值小于0，说明所有元素都小于0，这个时候就不需要求跨越边界的情况，找到最大的那个元素就可以
+### 代码
+```java
+class Solution {
+    public int maxSubarraySumCircular(int[] nums) {
+        int sum, max, min, curMax, curMin;
+        sum = max = min = curMin = curMax = nums[0];
+        
+
+        for (int i = 1; i < nums.length; i++) {
+            sum += nums[i];
+            curMax = Math.max(curMax + nums[i], nums[i]);
+            max = Math.max(max, curMax);
+            
+            curMin = Math.min(curMin + nums[i], nums[i]);
+            min = Math.min(min, curMin);
+        }
+        
+        return max < 0 ? max : Math.max(sum - min, max);
+    }
+}
+```
