@@ -296,10 +296,53 @@ class Solution {
 # [LeetCode_2488_统计中位数为K的子数组](https://leetcode.cn/problems/count-subarrays-with-median-k/)
 ## 解法
 ### 思路
-
+- 将数组中的元素分成3部分：
+  - 大于k的，用1来表示
+  - 小于k的，用-1来表示
+  - 等于k的，用0来表示
+- 根据数组生成前缀和，这样前缀和为0和1的数组就是中位数为k的数组
+- 先遍历数组找到值为k的坐标位置index
+- 从index的左右开始遍历
+  - 如果先从右边开始遍历，那么结果为0或1的前缀和就意味着中位数是k，可以累加到结果值中
+  - 同时将所有结果值存储到map中
+  - 然后从index的左边开始遍历，如果结果是0或1，那么也意味着中位数是k
+  - 同时如果当前前缀和的结果在map中能找到相加是0或者1的key，那么就把存储的key对应的value也累加到结果中
+- 遍历结束，返回结果
 ### 代码
 ```java
-
+class Solution {
+    public int countSubarrays(int[] nums, int k) {
+        int index = 0, n = nums.length;
+        for (; index < n; index++) {
+            if (k == nums[index]) {
+                break;
+            }
+        }
+        
+        int sum = 0, ans = 1;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = index + 1; i < n; i++) {
+            sum += nums[i] > k ? 1 : -1;
+            if (sum == 0 || sum == 1) {
+                ans++;
+            }
+            
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+        
+        sum = 0;
+        for (int i = index - 1; i >= 0; i--) {
+            sum += nums[i] > k ? 1 : -1;
+            if (sum == 0 || sum == 1) {
+                ans++;
+            }
+            
+            ans += map.getOrDefault(-sum, 0) + map.getOrDefault(1 - sum, 0);
+        }
+        
+        return ans;
+    }
+}
 ```
 # [LeetCode_1616_分割两个字符串获得回文串](https://leetcode.cn/problems/split-two-strings-to-make-palindrome/)
 ## 失败解法
