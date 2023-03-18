@@ -250,46 +250,133 @@ class Solution {
 ### 代码
 ```java
 class Solution {
-    public int threeSumMulti(int[] arr, int target) {
-        Arrays.sort(arr);
-        int mod = (int) (1e9 + 7), n = arr.length;
-        long ans = 0L;
-        for (int i = 0; i < n; i++) {
-            int t = target - arr[i];
-            int l = i + 1, r = n - 1;
+  public int threeSumMulti(int[] arr, int target) {
+    Arrays.sort(arr);
+    int mod = (int) (1e9 + 7), n = arr.length;
+    long ans = 0L;
+    for (int i = 0; i < n; i++) {
+      int t = target - arr[i];
+      int l = i + 1, r = n - 1;
 
-            while (l < r) {
-                int sum = arr[l] + arr[r];
-                if (sum < t) {
-                    l++;
-                } else if (sum > t) {
-                    r--;
-                } else if (arr[l] != arr[r]) {
-                    long left = 1L, right = 1L;
+      while (l < r) {
+        int sum = arr[l] + arr[r];
+        if (sum < t) {
+          l++;
+        } else if (sum > t) {
+          r--;
+        } else if (arr[l] != arr[r]) {
+          long left = 1L, right = 1L;
 
-                    while (l + 1 < r && arr[l] == arr[l + 1]) {
-                        left++;
-                        l++;
-                    }
+          while (l + 1 < r && arr[l] == arr[l + 1]) {
+            left++;
+            l++;
+          }
 
-                    while (r - 1 > l && arr[r] == arr[r - 1]) {
-                        right++;
-                        r--;
-                    }
+          while (r - 1 > l && arr[r] == arr[r - 1]) {
+            right++;
+            r--;
+          }
 
-                    ans += left * right;
-                    ans %= mod;
-                    l++;
-                    r--;
-                } else {
-                    ans += (r - l + 1) * (r - l) / 2;
-                    ans %= mod;
-                    break;
-                }
+          ans += left * right;
+          ans %= mod;
+          l++;
+          r--;
+        } else {
+          ans += (long) (r - l + 1) * (r - l) / 2;
+          ans %= mod;
+          break;
+        }
+      }
+    }
+
+    return (int) ans;
+  }
+}
+```
+# [LeetCode_2488_统计中位数为K的子数组](https://leetcode.cn/problems/count-subarrays-with-median-k/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1616_分割两个字符串获得回文串](https://leetcode.cn/problems/split-two-strings-to-make-palindrome/)
+## 失败解法
+### 原因
+超时
+### 思路
+嵌套循环
+- 外层确定分割点
+- 内层判断是否是回文串
+### 代码
+```java
+class Solution {
+    public boolean checkPalindromeFormation(String a, String b) {
+        for (int i = 0; i <= a.length(); i++) {
+            boolean ok = exe(a, b, i) || exe(b, a, i);
+            if (ok) {
+                return true;
             }
         }
 
-        return (int)ans;
+        return false;
+    }
+    
+    private boolean exe(String a, String b, int target) {
+        int l = 0, r = a.length() - 1;
+        String ls = a, rs = b;
+        while (l < r) {
+            if (l + 1 == target) {
+                ls = b;
+            }
+
+            if (r == target) {
+                rs = a;
+            }
+
+            if (ls.charAt(l++) != rs.charAt(r--)) {
+               return false;
+            }
+        }
+     
+        return true;
+    }
+}
+```
+## 解法
+### 思路
+递归模拟
+### 代码
+```java
+class Solution {
+    public boolean checkPalindromeFormation(String a, String b) {
+        return doCheck(a, b, 0, a.length() - 1, false) || doCheck(b, a, 0, b.length() - 1, false);
+    }
+
+    private boolean doCheck(String a, String b, int ai, int bi, boolean changed) {
+        int l = ai, r = bi;
+        boolean flag = true;
+        while (l < r) {
+            if (a.charAt(l) == b.charAt(r)) {
+                l++;
+                r--;
+                continue;
+            }
+
+            if (changed) {
+                return false;
+            }
+
+            flag = false;
+            break;
+        }
+
+        if (flag) {
+            return true;
+        }
+
+        return doCheck(a, a, l, r, true) || doCheck(b, b, l, r, true);
     }
 }
 ```
