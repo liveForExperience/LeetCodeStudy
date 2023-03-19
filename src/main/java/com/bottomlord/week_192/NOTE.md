@@ -423,3 +423,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1625_执行操作后字典序最小的字符串](https://leetcode.cn/problems/lexicographically-smallest-string-after-applying-operations/)
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+    public String findLexSmallestString(String s, int a, int b) {
+        Queue<String> queue = new ArrayDeque<>();
+        queue.offer(s);
+        String ans = s;
+        Set<String> set = new HashSet<>();
+        set.add(ans);
+        int n = s.length();
+        while (!queue.isEmpty()) {
+            String cur = queue.poll();
+            if (cur.compareTo(ans) < 0) {
+                ans = cur;
+            }
+
+            char[] cs = cur.toCharArray();
+            for (int i = 1; i < n; i+=2) {
+                cs[i] = (char)(((cs[i] - '0') + a) % 10 + '0');
+            }
+            
+            String s1 = String.valueOf(cs);
+            String s2 = cur.substring(cur.length() - b) + cur.substring(0, cur.length() - b);
+            
+            if (set.add(s1)) {
+                queue.offer(s1);
+            }
+            
+            if (set.add(s2)) {
+                queue.offer(s2);
+            }
+        }
+
+        return ans;
+    }
+}
+```
