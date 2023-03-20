@@ -86,3 +86,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2595_奇偶位数](https://leetcode.cn/problems/number-of-even-and-odd-bits/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] evenOddBit(int n) {
+        int[] ans = new int[2];
+        for (int i = 0; i < 32; i++) {
+            int index = i % 2 == 0 ? 0 : 1;
+            if ((1 << i & n) != 0) {
+                ans[index]++;
+            }
+        }
+        return ans;
+    }
+}
+```
