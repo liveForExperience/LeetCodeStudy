@@ -105,3 +105,168 @@ class Solution {
     }
 }
 ```
+# [LeetCode_939_最小面积矩形](https://leetcode.cn/problems/minimum-area-rectangle/)
+## 解法
+### 思路
+回溯+记忆化+减枝
+### 代码
+```java
+class Solution {
+    private int min = Integer.MAX_VALUE;
+    private Map<Integer, List<Integer>> rmap = new HashMap<>(), cmap = new HashMap<>();
+    private Set<String> memo = new HashSet<>();
+
+
+    public int minAreaRect(int[][] points) {
+        for (int[] point : points) {
+            rmap.computeIfAbsent(point[0], x -> new ArrayList<>()).add(point[1]);
+            cmap.computeIfAbsent(point[1], x -> new ArrayList<>()).add(point[0]);
+        }
+
+        for (int[] point : points) {
+            LinkedList<int[]> list = new LinkedList<>();
+            list.add(point);
+            String key = getKey(point[0], point[1]);
+            memo.add(key);
+            backTrack(1, point[1], false, list);
+            memo.remove(key);
+        }
+        
+        return min == Integer.MAX_VALUE ? 0 : min;
+    }
+
+    private void backTrack(int index, int target, boolean isR, LinkedList<int[]> list) {
+        if (index == 4) {
+            if (list.get(0)[0] == list.get(3)[0]) {
+                min = Math.min(min, square(list));
+            }
+            return;
+        }
+
+        if (index == 3 && min <= square(list)) {
+            return;
+        }
+
+        List<Integer> candidates = isR ? rmap.getOrDefault(target, new ArrayList<>()) : cmap.getOrDefault(target, new ArrayList<>());
+        for (Integer candidate : candidates) {
+            int nextr = isR ? target : candidate, nextc = isR ? candidate : target;
+            String key = getKey(nextr, nextc);
+            if (memo.contains(key)) {
+                continue;
+            }
+            
+            memo.add(key);
+            list.addFirst(new int[]{nextr, nextc});
+            backTrack(index + 1, candidate, !isR, list);
+            memo.remove(key);
+            list.removeFirst();
+        }
+    }
+    
+    private String getKey(int x, int y) {
+        return x + "::" + y;
+    }
+
+    private int square(List<int[]> list) {
+        int maxr, minr, maxc, minc;
+        maxr = maxc = Integer.MIN_VALUE;
+        minr = minc = Integer.MAX_VALUE;
+        for (int[] arr : list) {
+            maxr = Math.max(maxr, arr[0]);
+            minr = Math.min(minr, arr[0]);
+            maxc = Math.max(maxc, arr[1]);
+            minc = Math.min(minc, arr[1]);
+        }
+
+        return (maxr - minr) * (maxc - minc);
+    }
+}
+```
+## 解法二
+### 思路
+哈希表
+- 将行与列之间的关系存储在map中，value是一个list，key存的行，value存的列
+- 遍历生成的map，根据行，获取列的列表
+- 根据列的列表，选出其中的2个，组成一个唯一key，然后到另一个map中查找这个key对应的行
+- 如果有，就用2组行和列，求出差值的乘积，并与暂存的最小值进行更小值的比较
+- 并将当前的唯一key放入这另一个map中保存
+### 代码
+```java
+class Solution {
+
+    public int minAreaRect(int[][] points) {
+        Map<Integer, List<Integer>> colMap = new TreeMap<>();
+        for (int[] point : points) {
+            colMap.computeIfAbsent(point[0], x -> new ArrayList<>()).add(point[1]);
+        }
+
+        Map<Integer, Integer> lastX = new HashMap<>();
+        int min = Integer.MAX_VALUE;
+        for (Integer row : colMap.keySet()) {
+            List<Integer> cols = colMap.get(row);
+            Collections.sort(cols);
+            for (int i = 0; i < cols.size(); i++) {
+                for (int j = i + 1; j < cols.size(); j++) {
+                    int c1 = cols.get(i), c2 = cols.get(j);
+                    int key = c1 * 40001 + c2;
+                    if (lastX.containsKey(key)) {
+                        min = Math.min(min, (row - lastX.get(key)) * (c2 - c1));
+                    }
+                    lastX.put(key, row);
+                }
+            }
+        }
+        
+        return min == Integer.MAX_VALUE ? 0 : min;
+    }
+}
+```
+# [LeetCode_1626_无矛盾的最佳球队](https://leetcode.cn/problems/best-team-with-no-conflicts/)
+## 解法
+### 思路
+排序+动态规划
+- 将2个数组内容包装在
+- dp[i] = max{dp[j]} + score[i](j < i && age[i] > age[j])
+- 返回dp数组中的最大值
+### 代码
+```java
+class Solution {
+    public int bestTeamScore(int[] scores, int[] ages) {
+        int n = scores.length;
+        int[][] peoples = new int[n][2];
+
+        for (int i = 0; i < n; i++) {
+            peoples[i][0] = ages[i];
+            peoples[i][1] = scores[i];
+        }
+
+        Arrays.sort(peoples, (a, b) -> {
+            if (a[1] == b[1]) {
+                return a[0] - b[0];
+            }
+
+            return a[1] - b[1];
+        });
+
+        int[] dp = new int[n];
+        for (int i = 0; i < peoples.length; i++) {
+            dp[i] = peoples[i][1];
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i - 1; j >= 0; j--) {
+                if (peoples[i][0] >= peoples[j][0]) {
+                    dp[i] = Math.max(dp[i], dp[j] + peoples[i][1]);
+                }
+            }
+        }
+
+        int max = Integer.MIN_VALUE;
+        for (int num : dp) {
+            max = Math.max(max, num);
+        }
+
+        return max;
+    }
+}
+```
