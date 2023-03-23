@@ -300,3 +300,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_948_令牌放置](https://leetcode.cn/problems/bag-of-tokens/)
+## 解法
+### 思路
+排序+双指针模拟
+- 对数组排序
+- 双指针相向遍历数组
+- 左指针翻正面累加积分，减能量
+- 右指针翻背面消耗积分，加能量
+### 代码
+```java
+class Solution {
+    public int bagOfTokensScore(int[] tokens, int power) {
+        Arrays.sort(tokens);
+        int ans = 0, c = 0;
+        
+        int l = 0, r = tokens.length - 1;
+        while (l <= r) {
+            int cost = tokens[l];
+            if (power >= cost) {
+                ans -= c;
+                c = 0;
+                power -= cost;
+                ans++;
+                l++;
+                continue;
+            }
+            
+            if (ans > 0 && ans >= c) {
+                power += tokens[r--];
+                c++;
+                continue;
+            }
+
+            break;
+        }
+        
+        return ans;
+    }
+}
+```
