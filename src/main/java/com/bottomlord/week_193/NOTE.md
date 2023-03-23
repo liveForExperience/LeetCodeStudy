@@ -270,3 +270,33 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1630_等差子数组](https://leetcode.cn/problems/arithmetic-subarrays/)
+## 解法
+### 思路
+暴力迭代
+### 代码
+```java
+class Solution {
+    public List<Boolean> checkArithmeticSubarrays(int[] nums, int[] l, int[] r) {
+        int n = l.length;
+        List<Boolean> ans = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            int start = l[i], end = r[i];
+            int[] sub = Arrays.copyOfRange(nums, start, end + 1);
+            Arrays.sort(sub);
+
+            int diff = sub[1] - sub[0];
+            boolean flag = true;
+            for (int j = 2; j <= end - start; j++) {
+                if (sub[j] - sub[j - 1] != diff) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            ans.add(flag);
+        }
+        return ans;
+    }
+}
+```
