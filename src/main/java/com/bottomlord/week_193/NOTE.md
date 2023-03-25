@@ -406,6 +406,48 @@ class StreamChecker {
     }
 }
 ```
+# [LeetCode_1754_删除最短的子数组使剩余数组有序](https://leetcode.cn/problems/shortest-subarray-to-be-removed-to-make-array-sorted/)
+## 解法
+### 思路
+双指针
+- 题目要求确定1个删除子数组，所以整个数组可以有如下几种情况:
+  - 整个数组是非递减序列，这时候的删除长度就是0
+  - 数组分成3部分
+    - 左侧非递减序列，长度可能为0
+    - 中间不是非递减的序列
+    - 右侧非递减序列，长度可能为0
+- 使用2个指针分别对应数组的头尾坐标
+- 遍历尾指针，向数组头部遍历，如果遍历到坐标0的位置，说明整个数组是非递减序列，直接返回0
+- 否则，开始嵌套遍历，外层确定头指针的起始位置，头指针需要符合2种情况中的任意一种
+  - 坐标0
+  - 是当前外层遍历到的，从坐标0开始的，非递减序列的最后一个坐标
+- 内层向右移动尾指针，从之前确定的右侧的非递减序列的最左侧坐标开始，向右遍历，遍历的规则是，找到最小的那个大于头指针对应元素的尾指针位置，然后求头尾指针之间的区间长度，与最小值做比较，进行更新
+### 代码
+```java
+class Solution {
+  public int findLengthOfShortestSubarray(int[] arr) {
+    int n = arr.length,  r = n - 1;
+    while (r > 0 && arr[r] >= arr[r - 1]) {
+      r--;
+    }
+
+    if (r == 0) {
+      return 0;
+    }
+
+    int ans = r;
+    for (int l = 0; l == 0 || arr[l - 1] <= arr[l]; l++) {
+      while (r < n && arr[r] < arr[l]) {
+        r++;
+      }
+
+      ans = Math.min(ans, r - l - 1);
+    }
+
+    return ans;
+  }
+}
+```
 # [LeetCode_955_删列造序II](https://leetcode.cn/problems/delete-columns-to-make-sorted-ii/)
 ## 解法
 ### 思路
