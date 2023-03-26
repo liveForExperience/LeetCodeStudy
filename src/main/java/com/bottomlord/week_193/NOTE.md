@@ -451,8 +451,59 @@ class Solution {
 # [LeetCode_955_删列造序II](https://leetcode.cn/problems/delete-columns-to-make-sorted-ii/)
 ## 解法
 ### 思路
-
+哈希表+模拟：
+- 问题可以这么分析，比较字典序，实际就是相邻2个字符串的相同列的比较
+  - 如果当前列的字典序是升序的，那么就不用考虑之后的列了
+  - 如果当前列的字典序是相同的，那么就要考虑之后一列
+  - 我们可以用一个哈希集合来记录当前列，需要被判断的字符串，每一列遍历判断的时候，更新这个哈希集合，集合中就存储相邻字符串字典序相等的字符坐标，两两比较的时候，可以只记录前一个坐标
+- 过程：2层遍历
+  - 外层遍历确定需要判断的字符列数
+  - 内层遍历所有的字符串，通过哈希集合做过滤
+- 哈希集合保存字典序相等字符串坐标，并初始化的填充所有字符串数组的坐标值
+- 内层遍历的时候：
+  - 如果相邻字符的字典序是降序，则累加删除数，并直接跳到下一列
+  - 如果相邻字符字典序是相等的，则将当前坐标记录到哈希集合中
+- 内层遍历完后，如果没有发现降序的，同时也没有记录到字典序相等的情况，那么说明当前已经处理完成了，字典序已经是非降序的了，终止循环返回记录的操作数即可
 ### 代码
 ```java
+class Solution {
+    public int minDeletionSize(String[] strs) {
+        int n = strs[0].length(), ans = 0;
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < strs.length - 1; i++) {
+            set.add(i);
+        }
 
+        for (int i = 0; i < n; i++) {
+            boolean flag = true;
+            Set<Integer> curSet = new HashSet<>();
+            for (int j = 0; j < strs.length - 1; j++) {
+                if (!set.contains(j)) {
+                    continue;
+                }
+
+                int diff = strs[j].charAt(i) - strs[j + 1].charAt(i);
+                if (diff > 0) {
+                    flag = false;
+                    break;
+                } else if (diff == 0) {
+                    curSet.add(j);
+                }
+            }
+
+            if (!flag) {
+                ans++;
+                continue;
+            }
+
+            set = curSet;
+            if (set.isEmpty()) {
+                break;
+            }
+
+        }
+
+        return ans;
+    }
+}
 ```
