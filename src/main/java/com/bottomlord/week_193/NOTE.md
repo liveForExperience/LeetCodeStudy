@@ -507,3 +507,75 @@ class Solution {
     }
 }
 ```
+# [LeetCode_957_N天后的牢房](https://leetcode.cn/problems/prison-cells-after-n-days/)
+## 失败解法
+### 原因
+超时
+### 思路
+暴力模拟
+### 代码
+```java
+class Solution {
+    public int[] prisonAfterNDays(int[] cells, int n) {
+        int[] pre = cells;
+        while (n-- > 0) {
+            int[] cur = new int[8];
+            for (int i = 0; i < 8; i++) {
+                if (i == 0 || i == 7) {
+                    cur[i] = 0;
+                    continue;
+                }
+                
+                if (pre[i - 1] != pre[i + 1]) {
+                    cur[i] = 0;
+                } else {
+                    cur[i] = 1;
+                }
+            }
+            
+            pre = cur;
+        }
+        
+        return pre;
+    }
+}
+```
+## 解法
+### 思路
+数组长度有限，是不是可以枚举，使用hash表记录当前数组对应的下一个数组的状态
+### 代码
+```java
+
+```
+# [LeetCode_1638_统计只差一个字符的子串数目](https://leetcode.cn/problems/count-substrings-that-differ-by-one-character/)
+## 解法
+### 思路
+暴力模拟
+- 3层循环
+  - 外2层确定s和t子串的起始坐标
+  - 第3层从确定的坐标开始，向右同时移动，找到差异个数为1的最大长度，并累加所有个数为1的情况
+- 循环结束返回累加值
+### 代码
+```java
+class Solution {
+    public int countSubstrings(String s, String t) {
+        int sn = s.length(), tn = t.length(), ans = 0;
+        for (int i = 0; i < sn; i++) {
+            for (int j = 0; j < tn; j++) {
+                int cnt = 0;
+                int offset = 0;
+                while (cnt < 2 && i + offset < sn && j + offset < tn) {
+                    char sc = s.charAt(i + offset), tc = t.charAt(j + offset);
+                    cnt += sc == tc ? 0 : 1;
+                    if (cnt == 1) {
+                        ans++;
+                    }
+                    offset++;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
