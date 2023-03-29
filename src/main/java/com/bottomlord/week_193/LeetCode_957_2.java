@@ -9,20 +9,28 @@ import java.util.Map;
  */
 public class LeetCode_957_2 {
     public int[] prisonAfterNDays(int[] cells, int n) {
-        int mask = arr2Mask(cells);
-        Map<Integer, Integer> map = new HashMap<>();
+        int index = 0, cnt = n;
+        Map<Integer, Integer> map = new HashMap<>(), indexMap = new HashMap<>();
         int[] pre = cells;
 
-        while (n-- > 0) {
+        while (cnt-- > 0) {
             int[] cur = transfer(pre);
             int curMask = arr2Mask(cur);
             if (map.containsKey(curMask)) {
-
+                break;
             }
 
-            map.put(mask, curMask);
+            map.put(curMask, index);
+            indexMap.put(index, curMask);
+            pre = cur;
+            index++;
         }
-        return null;
+
+        if (cnt == 0) {
+            return pre;
+        }
+
+        return mask2Arr(indexMap.get(n % index));
     }
 
     private int[] transfer(int[] pre) {
@@ -44,10 +52,19 @@ public class LeetCode_957_2 {
     }
 
     private int arr2Mask(int[] arr) {
-        return 1;
+        int mask = 0;
+        for (int i = 0; i < 8; i++) {
+            mask |= (arr[i] << (7 - i));
+        }
+
+        return mask;
     }
 
     private int[] mask2Arr(int mask) {
-        return null;
+        int[] arr = new int[8];
+        for (int i = 0; i < 8; i++) {
+            arr[i] = (mask & (1 << (7 - i))) == 0 ? 0 : 1;
+        }
+        return arr;
     }
 }

@@ -553,7 +553,7 @@ class Solution {
 暴力模拟
 - 3层循环
   - 外2层确定s和t子串的起始坐标
-  - 第3层从确定的坐标开始，向右同时移动，找到差异个数为1的最大长度，并累加所有个数为1的情况
+  - 第3层，从确定的坐标开始，向右同时移动，找到差异个数为1的最长子串，并累加所有个数为1的情况
 - 循环结束返回累加值
 ### 代码
 ```java
@@ -576,6 +576,92 @@ class Solution {
         }
         
         return ans;
+    }
+}
+```
+# [LeetCode_1092_最短公共超序列](https://leetcode.cn/problems/shortest-common-supersequence/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1641_统计字典序元音字符串的数目](https://leetcode.cn/problems/count-sorted-vowel-strings/)
+## 解法
+### 思路
+递归搜索
+### 代码
+```java
+class Solution {
+  private int cnt;
+
+  public int countVowelStrings(int n) {
+    dfs(0, 0, n);
+    return cnt;
+  }
+
+  private void dfs(int index, int len, int n) {
+    if (len == n) {
+      cnt++;
+      return;
+    }
+
+    for (int i = index; i < 5; i++) {
+      dfs(i, len + 1, n);
+    }
+  }
+}
+```
+## 解法二
+### 思路
+动态规划
+- dp[i][j]：
+  - 长度为i+1的字符串
+  - 数组[a,e,i,o,u]的坐标
+- 状态转移方程
+  - dp[i][j] = sum(dp[i - 1][k]), k <= j
+### 代码
+```java
+class Solution {
+  public int countVowelStrings(int n) {
+    int[][] dp = new int[n][5];
+    Arrays.fill(dp[0], 1);
+
+    for (int i = 1; i < n; i++) {
+      for (int j = 0; j < 5; j++) {
+        for (int k = 0; k <= j; k++) {
+          dp[i][j] += dp[i - 1][k];
+        }
+      }
+    }
+
+    int sum = 0;
+    for (int i = 0; i < 5; i++) {
+      sum += dp[n - 1][i];
+    }
+
+    return sum;
+  }
+}
+```
+## 解法三
+### 思路
+在解法二的基础上做状态压缩
+### 代码
+```java
+class Solution {
+    public int countVowelStrings(int n) {
+        int a = 1, e = 1, i = 1, o = 1, u = 1;
+        for (int j = 1; j < n; j++) {
+            a = a + e + i + o + u;
+            e = e + i + o + u;
+            i = i + o + u;
+            o = o + u;
+            u = u;
+        }
+
+        return a + e + i + o + u;
     }
 }
 ```
