@@ -783,6 +783,52 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 假设数组从小到大排序，那么排序数组中相邻元素的差值可以表示为nums[i] - nums[i - 1]
+- 假设最大的相邻间距是maxGap
+- 又因为数组的最大间距是nums[n - 1] - nums[0]
+- 那么就可以得到这样一个公式nums[n - 1] - nums[0] = sum(nums[i] - nums[i - 1]) <= maxGap * (n - 1)，i ∈ [1, n - 1]
+- 转换一下就可以得到：maxGap >= nums[n - 1] - nums[0] / (n - 1)，这表示maxGap一定不小于数组最大间距除以间距个数的值
+- 而数组最大间距maxN除以间距个数cnt的值x，就相当于得到了cnt个长度为x的桶，在桶中的所有坐标点，互相之间的间距一定小于maxGap，所以maxGap不会出现在桶里的这些坐标对里，一定出现在相邻的桶之间
+- 那么就可以通过将坐标放入桶中，然后维护桶的最大和最小横坐标点，来求maxGap，从而使时间复杂度从O(nlogn)降低到O(n)
+### 代码
+```java
+class Solution {
+    public int maxWidthOfVerticalArea(int[][] points) {
+        int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE, n = points.length;
+        for (int[] point : points) {
+            max = Math.max(max, point[0]);
+            min = Math.min(min, point[0]);
+        }
+
+        int maxN = max - min, bucketLen = Math.max(1, maxN / (n - 1)), bucketCount = maxN / bucketLen + 1;
+        int[][] gaps = new int[bucketCount + 1][2];
+        for (int[] gap : gaps) {
+            gap[0] = Integer.MAX_VALUE;
+            gap[1] = Integer.MIN_VALUE;
+        }
+
+        for (int[] point : points) {
+            int index = (point[0] - min) / bucketLen;
+            gaps[index][0] = Math.min(point[0], gaps[index][0]);
+            gaps[index][1] = Math.max(point[0], gaps[index][1]);
+        }
+
+        int ans = 0, pre = Integer.MAX_VALUE;
+        for (int[] gap : gaps) {
+            if (gap[0] > gap[1]) {
+                continue;
+            }
+
+            ans = Math.max(ans, gap[0] - pre);
+            pre = gap[1];
+        }
+
+        return ans;
+    }
+}
+```
 # [LeetCode_1039_多边形三角剖分的最低得分](https://leetcode.cn/problems/minimum-score-triangulation-of-polygon/)
 ## 解法
 ### 思路
