@@ -665,3 +665,89 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1637_两点之间不包含任何点的最宽垂直区域](https://leetcode.cn/problems/widest-vertical-area-between-two-points-containing-no-points/)
+## 解法
+### 思路
+- 根据横坐标排序
+- 遍历数组，比较相邻两个横坐标的差值，暂存最大值
+- 遍历结束，返回结果即可
+### 代码
+```java
+class Solution {
+    public int maxWidthOfVerticalArea(int[][] points) {
+        Arrays.sort(points, Comparator.comparingInt(x -> x[0]));
+        int ans = 0;
+        for (int i = 0; i < points.length - 1; i++) {
+            ans = Math.max(points[i + 1][0] - points[i][0], ans);
+        }
+        return ans;
+    }
+}
+```
+# [LeetCode_1039_多边形三角剖分的最低得分](https://leetcode.cn/problems/minimum-score-triangulation-of-polygon/)
+## 解法
+### 思路
+记忆化搜索：
+- 确定2个顶点i,j，然后遍历搜索第3个顶点k
+- 这样就将多边形拆分成了3部分：
+  - ijk组成的三角形
+  - 以i，k为范围的凸多边形
+  - 以k，j位范围的凸多边形
+- 通过上面3部分中的后2部分，可以明显的看出，后两部分是2个当前问题的子问题
+- 这个明显的地递归过程，其退出条件就是凸多边形无法构成，也就是i与k或k与j相邻，意味着只有2个顶点，而当一个部分无法形成的时候，也就说明其实多边形被切分成了2部分，一个三角形ijk，和另一个多边形
+- 整个过程也很简单，就是遍历所有的k，通过`dfs(i,k)+dfs(k,j)+values[i] * values[j] * values[k]`中的最小值作为结果
+- 为了提速，就通过memo来进行减枝
+### 代码
+```java
+class Solution {
+    public int minScoreTriangulation(int[] values) {
+        int n = values.length;
+        return dfs(0, n - 1, values, new Integer[n][n]);
+    }
+    
+    private int dfs(int i, int j, int[] values, Integer[][] memo) {
+        if (i + 1 == j) {
+            return 0;
+        }
+        
+        if (memo[i][j] != null) {
+            return memo[i][j];
+        }
+        
+        int ans = Integer.MAX_VALUE;
+        for (int k = i + 1; k < j; k++) {
+            ans = Math.min(dfs(i, k, values, memo) + dfs(k, j, values, memo) + values[i] * values[j] * values[k], ans);
+        }
+        
+        return memo[i][j] = ans;
+    }
+}
+```
+## 解法二
+### 思路
+动态规划：
+- 通过解法一可以发现，解法中发现了子问题，使用了记事本，那么其实这个问题就可以通过动态规划来解决
+- dp[i][j]：代表区间为i和j的凸多边形的最小值
+- 状态转移方程：dp[i][j] = min(dp[i][k] + dp[k][j] + values[i] * values[k] * values[j]), i < k < j
+- 最后结果返回dp[0][n - 1]
+### 代码
+```java
+class Solution {
+    public int minScoreTriangulation(int[] values) {
+        int n = values.length;
+        int[][] dp = new int[n][n];
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = i + 2; j < n; j++) {
+                int ans = Integer.MAX_VALUE;
+                for (int k = i + 1; k < j; k++) {
+                    ans = Math.min(dp[i][k] + dp[k][j] + values[i] * values[k] * values[j], ans);
+                }
+                dp[i][j] = ans;
+            }
+        }
+        
+        return dp[0][n - 1];
+    }
+
+}
+```
