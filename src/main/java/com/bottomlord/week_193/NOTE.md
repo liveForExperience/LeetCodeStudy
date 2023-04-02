@@ -580,12 +580,111 @@ class Solution {
 }
 ```
 # [LeetCode_1092_最短公共超序列](https://leetcode.cn/problems/shortest-common-supersequence/)
-## 解法
+## 失败解法
+### 原因
+内存超限，记忆化搜索时候存储的字符串过大
 ### 思路
-
+记忆化搜索
+- 整个搜索过程可以分成3种路径
+  - 如果2个字符串的最后一个字符相等，那么就相当于求两个字符串剔除最后一个字符后的子字符串的超序列，成为了一个新的子问题
+  - 如果2个字符串的最后一个字符不相等
+    - 那么势必需要在2个字符串的最后一个字符中选择一个作为结果中当前坐标的最后一个字符
+    - 然后再求选中的那个字符串剔除掉最后一个字符后，和没有选中的那个字符串之间的的超序列，在2种情况下找到最短的那个作为结果
+- 求解过程中，根据字符串最后一个字符的坐标来进行递归，退出条件就是坐标越界
+- 然后可以通过记事本来记录字符串，从而做到减枝
 ### 代码
 ```java
+class Solution {
+    public String shortestCommonSupersequence(String str1, String str2) {
+        return dfs(str1, str2, new String[str1.length()][str2.length()]);
+    }
 
+    private String dfs(String str1, String str2, String[][] memo) {
+        if (str1.isEmpty()) {
+            return str2;
+        }
+
+        if (str2.isEmpty()) {
+            return str1;
+        }
+
+        int n1 = str1.length(), n2 = str2.length();
+        if (memo[n1 - 1][n2 - 1] != null) {
+            return memo[n1 - 1][n2 - 1];
+        }
+
+        char c1 = str1.charAt(n1 - 1), c2 = str2.charAt(n2 - 1);
+        String ns1 = str1.substring(0, n1 - 1), ns2 = str2.substring(0, n2 - 1);
+
+        if (c1 == c2) {
+            return memo[n1 - 1][n2 - 1] = dfs(ns1, ns2, memo) + c1;
+        } else {
+            String x = dfs(ns1, str2, memo),
+                    y = dfs(str1, ns2, memo);
+
+            return memo[n1 - 1][n2 - 1] = (x.length() < y.length() ? x + c1 : y + c2);
+        }
+    }
+}
+```
+## 解法
+### 思路
+- 解法一失败的原因是记录了太多没有必要存在的字符串作为记事本中的内容
+- 如果先通过递归找到长度短的那个选择路径，然后再进行搜索，生成字符串，从而就能够减少对不必要的字符串的生成操作
+### 代码
+```java
+class Solution {
+    private String s1, s2;
+    private int[][] memo;
+
+    public String shortestCommonSupersequence(String str1, String str2) {
+        s1 = str1;
+        s2 = str2;
+        memo = new int[s1.length()][s2.length()];
+        return dfs2(s1.length() - 1, s2.length() - 1);
+    }
+
+    private int dfs(int i, int j) {
+        if (i < 0) {
+            return j + 1;
+        }
+
+        if (j < 0) {
+            return i + 1;
+        }
+
+        if (memo[i][j] > 0) {
+            return memo[i][j];
+        }
+
+        if (s1.charAt(i) == s2.charAt(j)) {
+            return memo[i][j] = dfs(i - 1, j - 1) + 1;
+        } else {
+            int len1 = dfs(i - 1, j), len2 = dfs(i, j - 1);
+            return memo[i][j] = len1 <= len2 ? len1 + 1 : len2 + 1;
+        }
+    }
+
+    private String dfs2(int i, int j) {
+        if (i < 0) {
+            return s2.substring(0, j + 1);
+        }
+
+        if (j < 0) {
+            return s1.substring(0, i + 1);
+        }
+
+        if (s1.charAt(i) == s2.charAt(j)) {
+            return dfs2(i - 1, j - 1) + s1.charAt(i);
+        }
+
+        if (dfs(i - 1, j) <= dfs(i, j - 1)) {
+            return dfs2(i - 1, j) + s1.charAt(i);
+        } else {
+            return dfs2(i, j - 1) + s2.charAt(j);
+        }
+    }
+}
 ```
 # [LeetCode_1641_统计字典序元音字符串的数目](https://leetcode.cn/problems/count-sorted-vowel-strings/)
 ## 解法
