@@ -160,3 +160,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2609_最长平衡字符串](https://leetcode.cn/problems/find-the-longest-balanced-substring-of-a-binary-string/)
+## 解法
+### 思路
+- 外层循环遍历字符串
+- 内层分成2次循环
+  - 先遍历为0的字符，记录个数
+  - 再遍历为1的字符，记录个数
+- 取0和1个数的最小值，乘以2以后作为当前平衡字符串的长度，再和之前记录的平衡字符串长度进行比较，取较大值
+- 遍历结束，返回暂存最大值作为结果
+### 代码
+```java
+class Solution {
+    public int findTheLongestBalancedSubstring(String s) {
+        int zero = 0, one = 0, ans = 0, index = 0, n = s.length();
+        while (index < n) {
+            while (index < n && s.charAt(index) == '0') {
+                zero++;
+                index++;
+            }
+            
+            while (index < n && s.charAt(index) == '1') {
+                one++;
+                index++;
+            }
+            
+            ans = Math.max(ans, Math.min(zero, one) * 2);
+            
+            zero = 0;
+            one = 0;
+        }
+        
+        return ans;
+    }
+}
+```
