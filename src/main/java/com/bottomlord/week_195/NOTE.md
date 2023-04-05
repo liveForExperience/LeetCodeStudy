@@ -106,3 +106,22 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2600_K件物品的最大和](https://leetcode.cn/problems/k-items-with-the-maximum-sum/)
+## 解法
+### 思路
+模拟：
+- 依次根据1，0，-1所对应的变量值，也就是其个数，对k做累减，直到k为0为止
+- 并根据不同变量所对应的值，进行累加
+- 当k为0时，返回累加值即可
+### 代码
+```java
+class Solution {
+    public int kItemsWithMaximumSum(int numOnes, int numZeros, int numNegOnes, int k) {
+        int sum = 0;
+        sum += numOnes = Math.min(k, numOnes);
+        k -= numOnes;
+        k -= Math.min(k, numZeros);
+        return sum -= numNegOnes = Math.min(k, numNegOnes);
+    }
+}
+```
