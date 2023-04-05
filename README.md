@@ -2,7 +2,7 @@
 > 题目来源：力扣（LeetCode）
 ## 练习
 |周数|日期|                                                    解题数                                                     |笔记|未解题|未理解解法|心情|全站排名|
-|:-:|:-:|:----------------------------------------------------------------------------------------------------------:|:-:|:-:|:-:|:-:|:-:|
+|::|:-:|:----------------------------------------------------------------------------------------------------------:|:-:|:-:|:-:|:-:|:-:|
 |1|2019/7/8 - 2019/7/14| [22](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_001) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_001/NOTE.md) | - | - |:smile:|31262|
 |2|2019/7/15 - 2019/7/21| [25](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_002) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_002/NOTE.md) | - | - |:satisfied:|16163|
 |3|2019/7/22 - 2019/7/28| [28](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_003) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_003/NOTE.md) | - | - |:blush:|10918|
@@ -196,6 +196,8 @@
 |191|2023/3/6 - 2023/3/12| [12](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_191) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_191/NOTE.md) | - | - |:mask:|399|
 |192|2023/3/13 - 2023/3/19| [12](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_192) |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_192/NOTE.md) | - | - |:mask:|399|
 |193|2023/3/20 - 2023/3/26| [16](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_193)  |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_193/NOTE.md) | - | - |:mask:|381|
+|194|2023/3/27 - 2023/4/2| [1](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_194)  |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_194/NOTE.md) | - | - |:mask:|381|
+|195|2023/4/3 - 2023/4/9| [2](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_195)  |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_195/NOTE.md) | - | - |:mask:|381|
 ## 竞赛
 <table>
     <tr align="center">

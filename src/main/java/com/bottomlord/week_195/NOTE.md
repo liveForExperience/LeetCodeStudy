@@ -1,0 +1,108 @@
+# [LeetCode_1053_交换一次的先前排列](https://leetcode.cn/problems/previous-permutation-with-one-swap/)
+## 解法
+### 思路
+- 从低位开始找到第一个和前一个元素组成升序的序列
+- 然后从当前位置向前，找到比当前元素小的最大元素（因为之前是降序，所以也就是尽可能的低位）
+- 需要注意，在内层找到升序后，开始向前查找时候，因为题目要求的是最大的小于arr序列的数，所以如果出现[3,1,1,3]这样的序列，最高位的3应该和第一个1交换，而不能同第二个1交换，所以还需要在遍历过程中记录最大值，当出现相等的值时候，不使用后续找到的坐标
+### 代码
+```java
+class Solution {
+    public int[] prevPermOpt1(int[] arr) {
+        int n = arr.length;
+        for (int i = n - 2; i >= 0; i--) {
+            if (arr[i] > arr[i + 1]) {
+                boolean find = false;
+                int index = -1, maxValue = 0;
+                for (int j = i + 1; j < n; j++) {
+                    if (arr[i] > arr[j] && arr[j] > maxValue) {
+                        find = true;
+                        maxValue = arr[j];
+                        index = j;
+                    }
+                }
+
+                if (find) {
+                    int tmp = arr[index];
+                    arr[index] = arr[i];
+                    arr[i] = tmp;
+                    return arr;
+                }
+            }
+        }
+        return arr;
+    }
+}
+```
+# [LeetCode_1000_合并石头的最低成本](https://leetcode.cn/problems/minimum-cost-to-merge-stones/)
+## 解法
+### 思路
+- 假设石头有7块，成本总数是sum，k为3
+- 那么相当于在最后一次的合并的时候，会有3堆相加总数为sum的石头堆
+- 这3堆中的第一堆可以通过如下的3种情况得到：
+    - stone[0]
+    - sum(stone[i])，i = [0, 2]
+    - dfs(i, j, p)，i = 0，j = 4，p = 1
+- 其中dfs(i,j,p)代表通过把stone[i]到stone[j]的石头合并成p堆的最小成本
+- 基于这个定义，那么dfs(0, 6, 1)就是这道题的答案定义
+- 通过定义可以知道，这个函数可以把上面的过程通过如下的等式表示出来：
+    - dfs(0, 6, 1) = dfs(0, 6, 3) + sum(stone[i])（i = [0, 6]）
+    - 而dfs(0, 6, 3)又可以通过如下的3种情况得到，它们通过表达式可以表示为：
+        - dfs(0, 0, 1) + dfs(1, 6, 2)
+        - dfs(0, 2, 1) + dfs(3, 6, 2)
+        - dfs(0, 4, 1) + dfs(5, 6, 2)
+    - 而dfs(0, 6, 3)则从如上的3种情况下的最小值中得到
+- 继续看这个表达式，我们可以对表达式的一些情况做初始化，然后基于上面推演的状态转移方程来做动态规划
+- 那么上面的3种情况，可以分析得到这样的情况，就是通过k-1的步长，将数组拆分成2部分，使得问题变成一个递推子问题来进行处理，这里驱动的逻辑就是找到分拆的点，这个点基于步长来获取
+- 初始化的状态是：
+    - dp(i，i，1) = 0，代表一块石头为一堆，不需要什么成本
+- 还需要考虑特殊情况，也就是无法合并的情况：
+    - 答案需要堆数从n变为1，也就是减少n-1堆，而每次合并的时候都会减少k-1堆，那么总的减少数必须是每次减少数量的倍数，否则就无法合并
+    - 也就是说，(n - 1) % (k - 1) == 0
+- 在计算过程中有提到：dfs(0, 6, 1) = dfs(0, 6, 3) + sum(stone[i])（i = [0, 6]），这个sum可以通过前缀和来简化，所以可以提前准备一个前缀和
+### 代码
+```java
+class Solution {
+
+    private int[][][] memo;
+    private int[] sums;
+    private int k;
+
+    public int mergeStones(int[] stones, int k) {
+        int n = stones.length;
+        if ((n - 1) % (k - 1) != 0) {
+            return -1;
+        }
+
+        this.memo = new int[n][n][k + 1];
+        this.sums = new int[n + 1];
+        this.k = k;
+        for (int i = 0; i < n; i++) {
+            sums[i + 1] = sums[i] + stones[i];
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                Arrays.fill(memo[i][j], -1);
+            }
+        }
+
+        return dfs(0, n - 1, 1);
+    }
+
+    private int dfs(int i, int j, int p) {
+        if (memo[i][j][p] != -1) {
+            return memo[i][j][p];
+        }
+
+        if (p == 1) {
+            return memo[i][j][p] = i == j ? 0 : dfs(i, j, k) + sums[j + 1] - sums[i];
+        }
+
+        int ans = Integer.MAX_VALUE;
+        for (int index = i; index < j; index += k - 1) {
+            ans = Math.min(ans, dfs(i, index, 1) + dfs(index + 1, j, p - 1));
+        }
+        return memo[i][j][p] = ans;
+    }
+}
+```
