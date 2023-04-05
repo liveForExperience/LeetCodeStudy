@@ -125,3 +125,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2605_从两个数字数组里生成最小数字](https://leetcode.cn/problems/form-smallest-number-from-two-digit-arrays/)
+## 解法
+### 思路
+模拟
+- 从2个数组中分别找到最小值
+- 然后从2个数字中选择较小值为10位，较大值为个位
+- 还需要当心2个数组中有相同数字的情况，如果出现这种情况，就返回相同数中最小的那个即可
+- 返回这个结果
+### 代码
+```java
+class Solution {
+    public int minNumber(int[] nums1, int[] nums2) {
+        boolean[] memo = new boolean[10];
+
+        int a = 10, b = 10, c = 10;
+        for (int num : nums1) {
+            memo[num] = true;
+            a = Math.min(num, a);
+        }
+
+        for (int num : nums2) {
+            if (memo[num]) {
+                c = Math.min(c, num);
+            }
+            b = Math.min(num, b);
+        }
+
+        if (c != 10) {
+            return c;
+        }
+        
+        return Math.min(a, b) * 10 + Math.max(a, b);
+    }
+}
+```
