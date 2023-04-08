@@ -239,3 +239,51 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1040_移动石子直到连续II](https://leetcode.cn/problems/moving-stones-until-consecutive-ii/)
+## 解法
+### 思路
+- 题目的含义其实可以理解为，将一个有空隙的数组，通过不断的向内移动一侧的端点，使得数组不断的缩小，直到数组之间相邻
+- 这道题需要考虑2种情况，即最大移动次数和最小移动次数
+- 最大移动次数
+  - 相当于每次都以尽可能小的缩小窗口，本来看上去像是一个递归子问题，但是试想一下，第一次缩短的时候，其实就是考虑stones[0]和stones[n-1]，到底移动哪个。而如果比如移动了stones[0]，那么就相当于stones[0]和stones[1]区间内容的空隙都会被舍弃，同理，选择stones[n - 1]，相当于舍弃了stones[n - 1]到stones[n - 2]的区间空隙，那么，很简单，就是选择一个尽可能小的区间
+  - 等选择好了一个区间后，将这一侧的端点尽可能的贴近一侧端点放置，其实这样的话，就不需要通过子问题来处理了，因为每次都是只消耗1个空隙的方式来缩小区间
+  - 那么问题就变成了，在选择一个端点后，计算出缩小后的区间中到底有多少个空隙的问题，这些空隙就是之后要移动的次数
+  - 从而得到的选择2个不同端点时候的表达式：
+    - stones[n - 1] - stones[1] + 1 - (n - 1)
+    - stones[n - 2] - stones[0] + 1 - (n - 1)
+    - 取2个表达式的最大值即可
+- 移动最小次数
+  - 试想一下，最少的移动次数相当于每次都往同一个能放满n个数字的区间里塞数字
+  - 然后其实就是2种情况
+    - 要么是1个元素脱离在外，其他已经是一个连续的数组了，这个时候需要2次移动
+    - 要么就是找到一个小于n的区间，然后需要移动的次数，就是n - 区间的元素个数
+  - 需要做的就是遍历所有可能得区间，更新最小值即可
+### 代码
+```java
+class Solution {
+    public int[] numMovesStonesII(int[] stones) {
+        Arrays.sort(stones);
+        int n = stones.length;
+        int[] ans = new int[2];
+        ans[1] = Math.max(stones[n - 1] - stones[1] + 1 - (n - 1), stones[n - 2] - stones[0] + 1 - (n - 1));
+
+        int left = 0, right = 0;
+        ans[0] = Integer.MAX_VALUE;
+        while (right < n) {
+            while (stones[right] - stones[left] + 1 > n) {
+                left++;
+            }
+            
+            if (right - left + 1 == n - 1 && stones[right] - stones[left] + 1 == n - 1) {
+                ans[0] = Math.min(ans[0], 2);
+            } else {
+                ans[0] = Math.min(ans[0], n - (right - left + 1));
+            }
+            
+            right++;
+        }
+        
+        return ans;
+    }
+}
+```
