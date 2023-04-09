@@ -287,3 +287,66 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1125_最小的必要团队](https://leetcode.cn/problems/smallest-sufficient-team/)
+## 解法
+### 思路
+动态规划
+- 集合形式的01背包问题
+- 将需要的技能，通过reqSkills中技能对应的坐标进行映射并记录到map中
+- 将people数组的值也通过map中映射的坐标记录成二进制值
+- 然后将reqSkills当做背包，people[i]当做物品
+- 因为题目需要返回选了哪些员工的具体情况，所以在递推的时候需要通过二进制记录选择的员工，位数对应坐标，01代表是否被选择
+- 通过递归的方式，入参是2个元素，第一个元素i，代表选择到了第i个people，j代表当前的reqSkills被满足的状态，当j为0的时候，代表所有需求都满足了
+### 代码
+```java
+class Solution {
+    private long all;
+    private long[][] memo;
+    private int[] mask;
+    public int[] smallestSufficientTeam(String[] req_skills, List<List<String>> people) {
+        int n = req_skills.length, m = people.size();
+        all = (1L << m) - 1;
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < req_skills.length; i++) {
+            map.put(req_skills[i], i);
+        }
+        
+        memo = new long[m][1 << n];
+        for (long[] arr : memo) {
+            Arrays.fill(arr, -1);
+        }
+        mask = new int[m];
+        for (int i = 0; i < m; i++) {
+            for (String skill : people.get(i)) {
+                mask[i] |= 1 << map.get(skill);
+            }
+        }
+        
+        long res = dfs(m - 1, (1 << n) - 1);
+        int[] ans = new int[Long.bitCount(res)];
+        for (int i = 0, j = 0; i < m; i++) {
+            if (((res >> i) & 1) != 0) {
+                ans[j++] = i;
+            }
+        }
+        return ans;
+    }
+
+    private long dfs(int i, int j) {
+        if (j == 0) {
+            return 0;
+        }
+
+        if (i < 0) {
+            return all;
+        }
+        
+        if (memo[i][j] != -1) {
+            return memo[i][j];
+        }
+
+        long a = dfs(i - 1, j), b = dfs(i - 1, j & ~mask[i]) | (1L << i);
+        return memo[i][j] = Long.bitCount(a) < Long.bitCount(b) ? a : b;
+    }
+}
+```
