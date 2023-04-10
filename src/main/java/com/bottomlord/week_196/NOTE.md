@@ -41,3 +41,49 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2614_对角线上的质数](https://leetcode.cn/problems/prime-in-diagonal/)
+## 解法
+### 思路
+模拟，复习一下质数的判断逻辑
+### 代码
+```java
+class Solution {
+    public int diagonalPrime(int[][] nums) {
+        int max = 0;
+
+        int n = nums.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i != j && n - i - 1 != j) {
+                    continue;
+                }
+                
+                int num = nums[i][j];
+                if (isPrime(num)) {
+                    max = Math.max(max, num);
+                }
+            }
+        }
+
+        return max;
+    }
+
+    private boolean isPrime(int num) {
+        if (num == 2) {
+            return true;
+        }
+
+        if (num < 2 || num % 2 == 0) {
+            return false;
+        }
+
+        for (int i = 3; i <= Math.sqrt(num); i += 2) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```
