@@ -87,3 +87,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1042_不邻接植花](https://leetcode.cn/problems/flower-planting-with-no-adjacent/)
+## 解法
+### 思路
+领接表
+- 声明一个List<List<Integer>>结构的动态列表
+- 遍历paths生成领接表
+- 初始化一个ans数组，长度为n
+- 遍历n个元素，依次根据当前坐标领接的花的值，确定当前ans坐标的值
+- 具体就是每遍历一个坐标，就初始化一个有4个元素的set，使用set是为了能够利用其hash特性快速删除领接中的花的值
+- 等去除了领接的花，在剩余的花中选择第一个作为当前坐标的花即可
+- 遍历结束，返回ans数组
+### 代码
+```java
+class Solution {
+    public int[] gardenNoAdj(int n, int[][] paths) {
+        List<List<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        for (int[] path : paths) {
+            int x = path[0] - 1, y = path[1] - 1;
+            graph.get(x).add(y);
+            graph.get(y).add(x);
+        }
+
+        int[] ans = new int[n];
+        Arrays.fill(ans, 0);
+        for (int i = 0; i < n; i++) {
+            Set<Integer> set = new HashSet<>();
+            set.add(1);
+            set.add(2);
+            set.add(3);
+            set.add(4);
+
+            List<Integer> list = graph.get(i);
+            for (Integer index : list) {
+                set.remove(ans[index]);
+            }
+            
+            ans[i] = set.iterator().next();
+        }
+        
+        return ans;
+    }
+}
+```
