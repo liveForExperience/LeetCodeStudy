@@ -134,3 +134,16 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2619_数组原型对象的最后一个元素](https://leetcode.cn/problems/array-prototype-last/)
+## 解法
+### 思路
+模拟
+### 代码
+```js
+Array.prototype.last = function() {
+    if (this.length == 0) {
+        return -1;
+    }
+    return this[this.length - 1];
+};
+```
