@@ -139,11 +139,30 @@ class Solution {
 ### 思路
 模拟
 ### 代码
-```js
+```javascript
 Array.prototype.last = function() {
     if (this.length == 0) {
         return -1;
     }
     return this[this.length - 1];
+};
+```
+# [LeetCode_2620_计数器](https://leetcode.cn/problems/counter/)
+## 解法
+### 思路
+模拟
+### 代码
+```javascript
+/**
+ * @param {number} n
+ * @return {Function} counter
+ */
+var createCounter = function(n) {
+    let num = n;
+    return function() {
+        const r = num;
+        num = r + 1;
+        return r;
+    };
 };
 ```
