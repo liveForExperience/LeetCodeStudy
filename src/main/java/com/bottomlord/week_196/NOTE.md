@@ -166,3 +166,13 @@ var createCounter = function(n) {
     };
 };
 ```
+# [LeetCode_2621_睡眠函数](https://leetcode.cn/problems/sleep/)
+## 解法
+### 思路
+模拟
+### 代码
+```javascript
+async function sleep(millis) {
+    await new Promise(resolve => setTimeout(resolve, millis));
+}
+```
