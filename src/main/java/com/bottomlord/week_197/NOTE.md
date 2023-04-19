@@ -123,3 +123,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_26236_数组归约运算](https://leetcode.cn/problems/array-reduce-transformation/)
+## 解法
+### 思路
+模拟
+### 代码
+```javascript
+var reduce = function(nums, fn, init) {
+    if (nums.length > 0) {
+        for (let i = 0; i < nums.length; i++) {
+            init = fn(init, nums[i]);
+        }
+    }
+
+    return init;
+};
+```
+# [LeetCode_2629_复合函数](https://leetcode.cn/problems/function-composition/)
+## 解法
+### 思路
+模拟
+### 代码
+```javascript
+var compose = function(functions) {
+	return function(x) {
+        if (functions.length == 0 ) {
+            return x;
+        }
+
+        for (let i = functions.length - 1; i >= 0; i--) {
+            x = functions[i](x);
+        }
+
+        return x;
+    }
+};
+```
