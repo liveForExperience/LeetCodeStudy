@@ -188,3 +188,22 @@ var map = function(arr, fn) {
     return arr;
 };
 ```
+# [LeetCode_2637_有时间限制的Promise对象](https://leetcode.cn/problems/promise-time-limit/
+## 解法
+### 思路
+使用Promise的race函数，传入fn和另一个Promise，新的promise中传入一个setTimeout定时器，设置要求的t毫秒，看哪个先返回，新的promise种使用reject回调来实现题目要求的错误提示。
+### 代码
+```javascript
+var timeLimit = function(fn, t) {
+	return async function(...args) {
+        return Promise.race([
+            fn(...args),
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject('Time Limit Exceeded');
+                }, t);
+            })
+        ]);
+    }
+};
+```
