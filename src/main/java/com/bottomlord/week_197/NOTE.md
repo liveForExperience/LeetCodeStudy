@@ -297,3 +297,24 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2648_生成斐波那契数列](https://leetcode.cn/problems/generate-fibonacci-sequence/)
+## 解法
+### 思路
+模拟
+- 使用pre和cur变量记录斐波那契数列的前两个元素
+- 初始化pre=0，cur=1
+- 通过死循环来保证生成器通过next函数能不断获得新的值
+- 通过yield关键字来输出暂停后的cur值，这个cur值是通过之前的pre+cur获得，之前的pre则赋值为之前的cur
+### 代码
+```javascript
+var fibGenerator = function*() {
+    let pre = 0;
+    let cur = 1;
+    yield pre;
+    yield cur;
+    while(true) {
+        [cur, pre] = [pre + cur, cur];
+        yield cur;
+    };
+};
+```
