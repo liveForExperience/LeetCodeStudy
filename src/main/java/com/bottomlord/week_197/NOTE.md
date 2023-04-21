@@ -175,3 +175,16 @@ var filter = function(arr, fn) {
     return newArr;
 };
 ```
+# [LeetCode_2635_转换数组中的每个元素](https://leetcode.cn/problems/apply-transform-over-each-element-in-array/)
+## 解法
+### 思路
+模拟
+### 代码
+```javascript
+var map = function(arr, fn) {
+    for (let i = 0; i < arr.length; i++) {
+        arr[i] = fn(arr[i], i);
+    }
+    return arr;
+};
+```
