@@ -237,5 +237,24 @@ class Solution {
 - 遍历结束返回结果数组
 ### 代码
 ```java
-
+class Solution {
+    public int[] rowAndMaximumOnes(int[][] mat) {
+        int[] ans = new int[]{0, 0};
+        for (int i = 0; i < mat.length; i++) {
+            int cnt = 0;
+            for (int j = 0; j < mat[0].length; j++) {
+                if (mat[i][j] == 1) {
+                    cnt++;
+                }
+            }
+            
+            if (cnt > ans[1]) {
+                ans[0] = i;
+                ans[1] = cnt;
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
