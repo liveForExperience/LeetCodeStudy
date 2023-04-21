@@ -207,3 +207,24 @@ var timeLimit = function(fn, t) {
     }
 };
 ```
+# [LeetCode_2639_查询网格图中每一列的宽度](https://leetcode.cn/problems/find-the-width-of-columns-of-a-grid/)
+## 解法
+### 思路
+- 初始化结果数组，长度为列的长度
+- 遍历矩阵，通过Integer的toStringAPI获取长度，并更新结果数组
+- 遍历结束后返回结果数组
+### 代码
+```java
+class Solution {
+    public int[] findColumnWidth(int[][] grid) {
+        int c = grid[0].length;
+        int[] ans = new int[c];
+        for (int[] arr : grid) {
+            for (int j = 0; j < c; j++) {
+                ans[j] = Math.max(ans[j], Integer.toString(arr[j]).length());
+            }
+        }
+        return ans;
+    }
+}
+```
