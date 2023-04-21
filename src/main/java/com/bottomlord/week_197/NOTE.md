@@ -228,3 +228,14 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2643_一最多的行](https://leetcode.cn/problems/row-with-maximum-ones/)
+## 解法
+### 思路
+模拟
+- 遍历矩阵并计算每一行的1的个数
+- 每一行结束，讲统计值与暂存的最大值进行比较，如果更大，就更新最大值和行坐标
+- 遍历结束返回结果数组
+### 代码
+```java
+
+```
