@@ -159,3 +159,19 @@ var compose = function(functions) {
     }
 };
 ```
+# [LeetCode_2634_过滤数组中的元素](https://leetcode.cn/problems/filter-elements-from-array/)
+## 解法
+### 思路
+模拟，fn中传入元素和坐标
+### 代码
+```javascript
+var filter = function(arr, fn) {
+    let newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+        if (fn(arr[i], i)) {
+            newArr.push(arr[i]);
+        }
+    }
+    return newArr;
+};
+```
