@@ -258,3 +258,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2644_找出可整除性得分最大的整数](https://leetcode.cn/problems/find-the-maximum-divisibility-score/)
+## 解法
+### 思路
+模拟
+- 嵌套循环
+  - 外层遍历divisors
+  - 内层遍历nums
+- 每一个divisor都与内层的num做取模运算，判断是否能整除遍历到的num，如果能就累加个数
+- 内层遍历结束，统计的个数与暂存的最大值比较
+  - 如果大于最大值，就更新最大值和结果值为当前divisor
+  - 如果等于最大值，就将当前divisor与结果值作比较，取较小值
+- 遍历结束，返回结果值
+### 代码
+```java
+class Solution {
+    public int maxDivScore(int[] nums, int[] divisors) {
+        int max = 0, ans = Integer.MAX_VALUE;
+        for (int divisor : divisors) {
+            int cnt = 0;
+            for (int num : nums) {
+                if (num % divisor == 0) {
+                    cnt++;
+                }
+            }
+
+            if (cnt > max) {
+                max = cnt;
+                ans = divisor;
+            }
+
+            if (cnt == max) {
+                ans = Math.min(divisor, ans);
+            }
+        }
+
+        return ans;
+    }
+}
+```
