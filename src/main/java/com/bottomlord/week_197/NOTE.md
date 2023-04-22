@@ -318,3 +318,36 @@ var fibGenerator = function*() {
     };
 };
 ```
+# [LeetCode_1027_最长等差数列](https://leetcode.cn/problems/longest-arithmetic-subsequence/)
+## 解法
+### 思路
+动态规划
+- dp[i][j]：
+  - 此处的二维数组，因为第二位的大小不定，所以实际使用Map[]来表示
+  - dp[i][j]的含义是，以i坐标为结尾的子序列，等差值为j的情况下的最长子序列长度
+- 状态转移方程：dp[i][j] = dp[k][j] + 1，k < i & nums[i] - nums[k] == j
+- 结果取转移过程中获取的最大值
+### 代码
+```java
+class Solution {
+    public int longestArithSeqLength(int[] nums) {
+        int n = nums.length;
+        Map[] dp = new HashMap[n];
+        for (int i = 0; i < n; i++) {
+            dp[i] = new HashMap();
+        }
+        
+        int max = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                int diff = nums[i] - nums[j];
+                int cur = ((Integer)dp[j].getOrDefault(diff, 0)) + 1;
+                dp[i].put(diff, cur);
+                max = Math.max(max, cur);
+            }
+        }
+        
+        return max + 1;
+    }
+}
+```
