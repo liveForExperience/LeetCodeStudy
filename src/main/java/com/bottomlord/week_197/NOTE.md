@@ -351,3 +351,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1105_填充书架](https://leetcode.cn/problems/filling-bookcase-shelves/)
+## 解法
+### 思路
+动态规划：
+- dp[i]：前i本书所需要的最小的书架高度
+- 状态转移方程：
+  - dp[i] = Math.min(dp[i], dp[j] + k)，0 < j <= k <= i，sum(width[j]) <= k
+  - 假设前j本书都放置在最高的一层，剩余的书放置在新的一层，计算剩余的书需要的书架高度k
+- 返回dp[n]作为结果
+### 代码
+```java
+class Solution {
+    public int minHeightShelves(int[][] books, int shelfWidth) {
+        int n = books.length;
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, 1000000);
+        dp[0] = 0;
+        for (int i = 1; i <= n; i++) {
+            int width = 0, maxHeight = 0;
+            for (int j = i - 1; j >= 0; j--) {
+                width += books[j][0];
+                if (width > shelfWidth) {
+                    break;
+                }
+                maxHeight = Math.max(books[j][1], maxHeight);
+                dp[i] = Math.min(dp[i], dp[j] + maxHeight);
+            }
+        }
+        return dp[n];
+    }
+}
+```
