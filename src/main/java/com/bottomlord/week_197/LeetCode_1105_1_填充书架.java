@@ -13,15 +13,15 @@ public class LeetCode_1105_1_填充书架 {
         Arrays.fill(dp, 1000000);
         dp[0] = 0;
         for (int i = 1; i <= n; i++) {
-            int width = 0;
-            for (int j = i - 1; j >= 0; j--) {
-                int maxHeight = books[j][1];
-                width += books[j][0];
+            int width = 0, maxHeight = 0;
+            for (int j = i; j > 0; j--) {
+                width += books[j - 1][0];
                 if (width > shelfWidth) {
                     break;
                 }
 
-                dp[i] = Math.min(dp[i], dp[j] + maxHeight);
+                maxHeight = Math.max(maxHeight, books[j - 1][1]);
+                dp[i] = Math.min(dp[i], dp[j - 1] + maxHeight);
             }
         }
         return dp[n];
