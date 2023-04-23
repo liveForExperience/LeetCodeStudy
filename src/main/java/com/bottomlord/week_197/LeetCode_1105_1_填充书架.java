@@ -21,7 +21,7 @@ public class LeetCode_1105_1_填充书架 {
                     break;
                 }
 
-                dp[i] = Math.min(dp[i], dp[j + 1] + maxHeight);
+                dp[i] = Math.min(dp[i], dp[j] + maxHeight);
             }
         }
         return dp[n];
