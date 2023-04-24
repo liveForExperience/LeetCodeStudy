@@ -1,6 +1,7 @@
 # [LeetCode_1163_按字典序排在最后的子串](https://leetcode.cn/problems/last-substring-in-lexicographical-order/)
 ## 解法
 ### 思路
+双指针
 - 字符串中的前缀子串，一定不是字典序排在最后的子串，因为任何一个基于前缀子串延伸的子串，都比该前缀子串字典序大
 - 初始化2个坐标，i和j
   - 坐标i代表以i为起始坐标的后缀子串，且该子串应是当前判断过程中字典序最大的
