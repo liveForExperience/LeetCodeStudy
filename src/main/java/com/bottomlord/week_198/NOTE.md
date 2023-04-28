@@ -40,3 +40,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1048_最长字符串链]()
+## 解法
+### 思路
+dfs+记忆化搜索
+- 假设s作为字符串链的最后一个字符串，该链的长度为dfs(s)
+- 那么根据题意，应有字符串t，比s少一个字符，其对应链为dfs(t)，且dfs(s) = dfs(t) + 1
+- 如上可知，该问题可以拆分成连续子问题，故可以通过递归来解决
+- 为了方便计算，并避免重复计算相同情况下的t，比如aca和aba，减去中间的字符都是aa，所以可以通过map来减枝这种情况
+- 递归
+  - 退出条件：字符串长度为0 | 记事本中已记录
+  - 过程：遍历字符串，依次尝试删除字符，然后向下递归，返回时候通过表达式计算出当前层字符串的最大长度`dfs(s) = dfs(t) + 1`
+  - 将遍历得到的最大长度值存储到记事本中，并作为当前层结果返回
+- 最外层，遍历words数组，依次将每个字符串作为字符串链的字符串进行搜索，并记录返回的长度，与暂存的最大值进行比较
+- 遍历结束后返回暂存的最大值作为结果返回即可
+### 代码
+```java
+class Solution {
+    public int longestStrChain(String[] words) {
+        int max = 0;
+        Map<String, Integer> memo = new HashMap<>();
+        for (String word : words) {
+            memo.put(word, 0);
+        }
+        
+        for (String word : words) {
+            max = Math.max(max, dfs(word, memo));
+        }
+
+        return max;
+    }
+
+    private int dfs(String s, Map<String, Integer> memo) {
+        if (s.length() == 0) {
+            return 0;
+        }
+
+        if (memo.get(s) > 0) {
+            return memo.get(s);
+        }
+
+        int max = 1;
+        for (int i = 0; i < s.length(); i++) {
+            String t = s.substring(0, i) + s.substring(i + 1);
+            if (!memo.containsKey(t)) {
+                continue;
+            }
+            
+            max = Math.max(max, dfs(t, memo) + 1);
+        }
+
+        memo.put(s, max);
+        return max;
+    } 
+}
+```
