@@ -95,3 +95,95 @@ class Solution {
     } 
 }
 ```
+# [LeetCode_2423_删除字符使频率相同](https://leetcode.cn/problems/remove-letter-to-equalize-frequency/)
+## 解法
+### 思路
+桶计数+嵌套循环
+- 遍历字符串，初始化桶
+- 外层遍历桶元素，跳过个数为0的元素
+- 内层模拟当前元素个数减1的情况，再次遍历桶，看是否只有1种个数情况，如果是就返回true
+- 外层遍历结束如果还没有返回，就返回false
+### 代码
+```java
+class Solution {
+    public boolean equalFrequency(String word) {
+        int[] bucket = new int[26];
+        for (char c : word.toCharArray()) {
+            bucket[c - 'a']++;
+        }
+
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+            
+            bucket[i]--;
+            
+            Set<Integer> set = new HashSet<>();
+            for (int num : bucket) {
+                if (num == 0) {
+                    continue;
+                }
+
+                set.add(num);
+            }
+            
+            if (set.size() == 1) {
+                return true;
+            }
+            
+            bucket[i]++;
+        }
+        
+        return false;
+    }
+}
+```
+## 解法二
+### 思路
+桶计数，2个桶
+- 初始化字符与频率的桶bucket
+- 初始化频率与个数的桶map，因为该桶的长度不定，所以使用哈希表来表示
+- 遍历bucket，模拟当前频率减1的情况
+  - 原来频率的个数-1，且判断是否为0，如果为零要从map中去除掉
+  - 频率-1如果大于0，则该频率的个数+1
+  - 判断map的大小是否为1，如果是就返回true
+  - 恢复频率的个数
+  - 恢复频率-1大于0的情况下，频率-1的个数
+- 遍历结束，则返回false
+### 代码
+```java
+class Solution {
+    public boolean equalFrequency(String word) {
+        int[] bucket = new int[26];
+        for (char c : word.toCharArray()) {
+            bucket[c - 'a']++;
+        }
+
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+            
+            bucket[i]--;
+            
+            Set<Integer> set = new HashSet<>();
+            for (int num : bucket) {
+                if (num == 0) {
+                    continue;
+                }
+
+                set.add(num);
+            }
+            
+            if (set.size() == 1) {
+                return true;
+            }
+            
+            bucket[i]++;
+        }
+        
+        return false;
+    }
+}
+```
