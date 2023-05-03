@@ -60,3 +60,11 @@ class Solution {
     }
 }
 ```
+# [LeetCode_970_强整数](https://leetcode.cn/problems/powerful-integers/)
+## 解法
+### 思路
+暴力枚举
+### 代码
+```java
+
+```
