@@ -212,3 +212,21 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2656_K哥元素的最大和](https://leetcode.cn/problems/maximum-sum-with-exactly-k-elements/)
+## 解法
+### 思路
+- 遍历找到最大值
+- 根据k和最大值max，求步长为1的等差数列之和：`(max + (max + k - 1)) * k / 2`
+### 代码
+```java
+class Solution {
+    public int maximizeSum(int[] nums, int k) {
+        int max = 0;
+        for (int num : nums) {
+            max = Math.max(num, max);
+        }
+        
+        return (max * 2 + k - 1) * k / 2;
+    }
+}
+```
