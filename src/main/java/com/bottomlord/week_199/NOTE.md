@@ -230,3 +230,11 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2660_保龄球游戏的获胜者](https://leetcode.cn/problems/determine-the-winner-of-a-bowling-game/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+
+```
