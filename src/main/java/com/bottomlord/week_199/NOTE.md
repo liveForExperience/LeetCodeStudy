@@ -236,5 +236,95 @@ class Solution {
 模拟
 ### 代码
 ```java
+class Solution {
+  public int isWinner(int[] player1, int[] player2) {
+    int x = 0, y = 0, n = player1.length;
+    for (int i = 0; i < n; i++) {
+      x += getScore(player1, i);
+      y += getScore(player2, i);
+    }
 
+    return x == y ? 0 : x > y ? 1 : 2;
+  }
+
+  private int getScore(int[] players, int index) {
+    if (index == 0) {
+      return players[index];
+    }
+
+    if (index == 1) {
+      return players[index - 1] == 10 ? 2 * players[index] : players[index];
+    }
+
+    return isTen(players[index - 1], players[index - 2]) ? 2 * players[index] : players[index];
+  }
+
+  private boolean isTen(int pre1, int pre2) {
+    return pre1 == 10 || pre2 == 10;
+  }
+}
+```
+# [LeetCode_LCP72_补给马车]()
+## 失败解法
+### 原因
+超时
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+    public int[] supplyWagon(int[] supplies) {
+        LinkedList<Integer> list = new LinkedList<>();
+        for (int supply : supplies) {
+            list.add(supply);
+        }
+
+        int n = supplies.length / 2;
+        while (list.size() > n) {
+            int min = Integer.MAX_VALUE, target = -1;
+            for (int i = 0; i < list.size() - 1; i++) {
+                int sum = list.get(i) + list.get(i + 1);
+                if (sum < min) {
+                    min = sum;
+                    target = i;
+                }
+            }
+
+            list.set(target, min);
+            list.remove(target + 1);
+        }
+
+        int[] ans = new int[n];
+        for (int i = 0; i < list.size(); i++) {
+            ans[i] = list.get(i);
+        }
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+使用数组，过程类似
+### 代码
+```java
+class Solution {
+  public int[] supplyWagon(int[] supplies) {
+    int n = supplies.length / 2;
+    for (int i = 0; i < supplies.length - n; i++) {
+      int index = 1, min = Integer.MAX_VALUE;
+      for (int j = 1; j < supplies.length - i; j++) {
+        int sum = supplies[j - 1] + supplies[j];
+        if (sum < min) {
+          index = j;
+          min = sum;
+        }
+      }
+
+      supplies[index - 1] = min;
+      System.arraycopy(supplies, index + 1, supplies, index, supplies.length - index - 1);
+    }
+
+    return Arrays.copyOfRange(supplies, 0, n);
+  }
+}
 ```
