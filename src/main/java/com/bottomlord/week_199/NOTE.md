@@ -182,3 +182,23 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2651_计算列车到站时间](https://leetcode.cn/problems/calculate-delayed-arrival-time/)
+## 解法
+### 思路
+模拟
+### 代码
+```java
+class Solution {
+  public int findDelayedArrivalTime(int arrivalTime, int delayedTime) {
+    return (arrivalTime + delayedTime) % 24;
+  }
+}
+```
+# [LeetCode_]()
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
