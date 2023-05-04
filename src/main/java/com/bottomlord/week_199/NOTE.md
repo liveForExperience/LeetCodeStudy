@@ -328,3 +328,32 @@ class Solution {
   }
 }
 ```
+# [LeetCode_962_最大宽度坡](https://leetcode.cn/problems/maximum-width-ramp/)
+## 解法
+### 思路
+- 初始化一个坐标数组indexes
+- 通过比较nums数组的大小值，来对对应的indexes数组进行排序
+- 然后遍历indexes数组，因为此时，越靠右的元素值一定是越大的，所以宽度变成了，不断更新当前坐标左边最小的坐标值和当前坐标的差，取这个差的最大值作为结果就可以
+- 遍历结束，返回暂存的最大值即可
+### 代码
+```java
+class Solution {
+    public int maxWidthRamp(int[] nums) {
+        int n = nums.length;
+        Integer[] indexes = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            indexes[i] = i;
+        }
+
+        Arrays.sort(indexes, Comparator.comparingInt(x -> nums[x]));
+
+        int min = n, ans = 0;
+        for (int i = 0; i < n; i++) {
+            ans = Math.max(ans, indexes[i] - min);
+            min = Math.min(min, indexes[i]);
+        }
+
+        return ans;
+    }
+}
+```
