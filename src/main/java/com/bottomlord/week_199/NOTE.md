@@ -357,3 +357,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2106_摘水果](https://leetcode.cn/problems/maximum-fruits-harvested-after-at-most-k-steps/)
+## 解法
+### 思路
+滑动窗口
+- 摘水果的区间就是一个滑动窗口，他的左右边界对应的坐标为l和r
+- startPosition与l及r的关系
+  - startPosition在l的左边，那么最小步数就是r - startPosition
+  - startPosition在r的右边，那么最小步数就是startPosition - l】
+  - startPosition在l和r之间，那么就有2种行动的选择：
+    - 先往l走，然后回过头往r走
+    - 先往r走，然后回过头往l走
+  - 这3种情况，都可以通过如下表达式来表示：`r - l + min(|startPosition - l|, |r - startPosition|)
+- 初始化l和r都为0，通过嵌套循环来移动滑动窗口
+  - 外层确定窗口的左边界，左边界只有在表达式值大于k的时候移动
+  - 内层确定窗口的右边界
+- 初始化一个变量sum用于记录窗口中的水果数量
+- 遍历结束，也就是r越界，则返回最大的sum作为结果
+### 代码
+```java
+class Solution {
+    public int maxTotalFruits(int[][] fruits, int startPos, int k) {
+        int ans = 0, sum = 0, n = fruits.length;
+        for (int l = 0, r = 0; r < n; r++) {
+            sum += fruits[r][1];
+            while (l <= r && fruits[r][0] - fruits[l][0] + Math.min(Math.abs(fruits[r][0] - startPos), Math.abs(startPos - fruits[l][0])) > k) {
+                sum -= fruits[l++][1];
+            }
+            
+            ans = Math.max(ans, sum);
+        }
+        
+        return ans;
+    }
+}
+```
