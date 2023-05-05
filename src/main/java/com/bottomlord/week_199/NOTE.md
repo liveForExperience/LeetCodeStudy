@@ -392,3 +392,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_966_元音拼写检查器](https://leetcode.cn/problems/vowel-spellchecker/)
+## 解法
+### 思路
+- 初始化3个hash表
+  - wordSet：用来存储wordList中的字符串元素
+  - lowercaseMap：用来存储小写处理后的word与原字符串之间的映射关系
+  - lowercaseNoVowelMap：用来存储小写处理，并将元音字符改成*后的字符串与原字符串之间的关系
+- 遍历query列表，分别在3个hash表中检查是否包含当前的query字符串，其中lowercaseNoVowelMap在检查时，需要先对query字符串的原因字符做处理
+### 代码
+```java
+class Solution {
+    private Set<String> wordSet = new HashSet<>();
+    private Map<String, String> lowercaseMap = new HashMap<>(), lowercaseNoVowelMap = new HashMap<>();
+    public String[] spellchecker(String[] wordlist, String[] queries) {
+
+        for (String word : wordlist) {
+            wordSet.add(word);
+            lowercaseMap.putIfAbsent(word.toLowerCase(), word);
+            lowercaseNoVowelMap.putIfAbsent(handleVowel(word.toLowerCase()), word);
+        }
+        
+        int n = queries.length;
+        String[] ans = new String[n];
+        for (int i = 0; i < queries.length; i++) {
+            ans[i] = solve(queries[i]);
+        }
+        return ans;
+    }
+    
+    private String solve(String word) {
+        if (wordSet.contains(word)) {
+            return word;
+        }
+        
+        if (lowercaseMap.containsKey(word.toLowerCase())) {
+            return lowercaseMap.get(word.toLowerCase());
+        }
+        
+        return lowercaseNoVowelMap.getOrDefault(handleVowel(word.toLowerCase()), "");
+    }
+    
+    private String handleVowel(String word) {
+        StringBuilder sb = new StringBuilder();
+        char[] cs = word.toCharArray();
+        for (char c : cs) {
+            sb.append(isVowel(c) ? '*' : c);
+        }
+        return sb.toString();
+    }
+    
+    private boolean isVowel(char c) {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+    }
+}
+```
