@@ -447,3 +447,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1010_总持续时间可被60整除的歌曲](https://leetcode.cn/problems/pairs-of-songs-with-total-durations-divisible-by-60/)
+## 解法
+### 思路
+- 先对times数组做取模60的操作，将判断数值的范围缩小到60个
+- 初始化2个hash表：
+  - map：存储times元素值与坐标的关系，value是一个列表，因为值会重复
+  - indexMap：存储判断过程中，map的value列表扫描到的坐标，因为i与j的关系是`i<j`，所以从左往右判断的时候，判断过的坐标元素就不再需要考虑了，通过这个映射关系可以省略重复的判断过程
+- 遍历times数组，初始化2个hash表
+  - map：通过times[i]元素，填充坐标到value列表
+  - indexMap：通过times[i]元素，初始化value为坐标0
+- 遍历times数组，通过`(60 - times[i]) % 60`的操作，获得目标值，然后在map中寻找是否存在目标值对应的坐标列表
+  - 如果不存在就跳过
+  - 如果存在，就从indexMap中找到起始坐标，开始遍历，寻找到第一个j>i的坐标，记录到indexMap中，并累加`list.size - j`的长度
+- 遍历结束后，返回累加的结果
+### 代码
+```java
+class Solution {
+    public int numPairsDivisibleBy60(int[] times) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        Map<Integer, Integer> indexMap = new HashMap<>();
+
+        for (int i = 0; i < times.length; i++) {
+            times[i] = times[i] % 60;
+            indexMap.put(times[i], 0);
+            map.computeIfAbsent(times[i], x -> new ArrayList<>()).add(i);
+        }
+
+        int ans = 0;
+        for (int i = 0; i < times.length; i++) {
+            int target = (60 - times[i]) % 60;
+            if (!map.containsKey(target)) {
+                continue;
+            }
+
+            List<Integer> indexes = map.get(target);
+            for (int j = indexMap.get(target); j < indexes.size(); j++) {
+                if (indexes.get(j) > i) {
+                    indexMap.put(target, j);
+                    ans += indexes.size() - j;
+                    break;
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
