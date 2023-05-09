@@ -91,3 +91,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_967_连续差相同的数字]()
+## 解法
+### 思路
+dfs，需要注意k为0的情况，不要重复搜索，其他就是简单的深度优先搜索即可
+### 代码
+```java
+class Solution {
+    private int k, n;
+    public int[] numsSameConsecDiff(int n, int k) {
+        this.k = k;
+        this.n = n;
+        List<Integer> list = new ArrayList<>();
+        for (int i = 1; i <= 9; i++) {
+            dfs(1, i, i, list);
+        }
+        
+        int[] ans = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            ans[i] = list.get(i);
+        }
+        return ans;
+    }
+
+    private void dfs(int index, int num, int pre, List<Integer> list) {
+        if (index >= n) {
+            list.add(num);
+            return;
+        }
+        
+        if (pre + k <= 9) {
+            dfs(index + 1, num * 10 + pre + k, pre + k, list);
+        }
+        
+        if (pre - k >= 0 && pre - k != pre + k) {
+            dfs(index + 1, num * 10 + pre - k, pre - k, list);
+        }
+    }
+}
+```
