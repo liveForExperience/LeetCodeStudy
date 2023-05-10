@@ -86,7 +86,7 @@ class Solution {
         return -1;
     }
 
-    private boolean ok(int x, int y) {
+    private boolean  ok(int x, int y) {
         return x >= 0 && x < r && y >= 0 && y < c && grid[x][y] != '#';
     }
 }
@@ -129,4 +129,37 @@ class Solution {
         }
     }
 }
+```
+# [LeetCode_1015_可被k整除的最小整数](https://leetcode.cn/problems/smallest-integer-divisible-by-k/)
+## 解法
+### 思路
+- 因为2和5肯定不能整除个位是1的数字，所以k能被这2个数整除，都可以直接返回-1
+- 通过模运算的交换律：`(a + b) % k` = `((a % k) + (b % k)) % k`，`(a * b) % k` = `((a % k) * (b % k)) % k` 
+- 可以得到：`(x * 10 + 1) % k` = `((x % k) * (10 % k) + 1 % k) % k` 
+- 所以在遍历1到n个1的过程中，可以通过`((x % k) * (10 % k) + 1 % k) % k`来进行值的转换
+- 使用一个set来记录是否存在已经遇到过的余数，因为如果没有除尽的情况下，遇到相同的余数，那就说明会进入一个死循环，所以直接返回-1
+- 循环更新x，直到x能被k整除，或者遇到相同的余数为止
+### 代码
+```java
+class Solution {
+    public int smallestRepunitDivByK(int k) {
+        if (k % 2 == 0 || k % 5 == 0) {
+            return -1;
+        }
+        
+        Set<Integer> set = new HashSet<>();
+        int x = 1;
+        for (int i = 1; ; i++) {
+            if (x % k == 0) {
+                return i;
+            }
+
+            x = (x % k) * 10 + 1;
+            if (!set.add(x)) {
+                return -1;
+            }
+        }
+    }
+}
+
 ```
