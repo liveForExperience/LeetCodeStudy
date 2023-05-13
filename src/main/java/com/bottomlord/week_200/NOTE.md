@@ -237,3 +237,78 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1330_翻转子数组得到最大的数组值](https://leetcode.cn/problems/reverse-subarray-to-maximize-array-value/)
+## 解法
+### 思路
+- [i, j]代表需要翻转的子数组区间
+- 通过观察可以发现，翻转后的数值和最大的情况，其实就是原数值和新数值和的差的最大值，而实际变化的就是子数组头尾两个元素与其相邻的非子数组元素的差
+  - 原来：|nums[i - 1] - nums[i]| + |nums[j] - nums[j + 1]|
+  - 现在：|nums[i - 1] - nums[j]| + |nums[i] - nums[j + 1]|
+- 如果a = nums[i], b = nums[i - 1], x = nums[j], y = nums[j + 1]，那么如上的表达式就是：
+    - 原来：|b - a| + |x - y|
+    - 现在：|b - x| + |a - y|
+    - 他们的差值就是|b - a| + |x - y| - |b - x| - |a - y|
+- 可以暴力枚举所有的子数组状态，然后求这个值，这样的时间复杂度是O(N2)
+- 但是如果能够能将`|b - a| + |x - y| - |b - x| - |a - y|`化简，就可以压缩到O(N)的时间复杂度
+- 观察可知：
+  - |a - b| = max(a,b) - min(a, b)
+  - a + b = max(a, b) + min(a, b)
+- 结合公式可推得：
+  - a + b - |a - b| = 2 * min(a, b)
+  - a + b + |a - b| = 2 * max(a, b)
+- a,b,x,y之间的大小关系，通过排列可以计算出共有4!=24个
+- 其中又可以分成3大类
+  - max(a,b) <= min(x,y), max(x,y) <= min(a,b)：
+    - =>|a - x| + |b - y| - |a - b| - |x - y|
+    - => x - a + y - b - |a - b| - |x - y|
+    - => (x + y - |x - y|) - (a + b + |a - b|)
+    - => 2 * min(x, y) - 2 * max(a, b)
+    - ∵ max(a,b) <= min(x,y)
+    - ∴ 2 * min(x, y) - 2 * max(a, b) >= 0
+    - 同理：2 * min(a,b) - 2 * max(x,y) >= 0
+  - max(a,x) <= min(b,y), max(b,y) <= min(a,x)
+    - =>|a - x| + |b - y| - |a - b| - |x - y|
+    - =>|a - x| + |b - y| - (b - a) - (y - x)
+    - =>|a - x| + |b - y| - (b + y) - (a + x)
+    - =>(a + x + |a - x|) - (b + y - |b - y|)
+    - =>2 * max(a, x) - 2 * min(b, y)
+    - ∵ max(a,x) <= min(b,y)
+    - ∴ 2 * min(a, y) - 2 * max(b, y) <= 0，对答案无影响
+    - 同理，2 * min(b, y) - 2 * max(a, x) <= 0，也对答案无影响
+  - max(a,y) <= min(b,x), max(a,y) <= min(b,x)
+    - 同样推倒：得到0，对答案无影响
+- 算法逻辑
+  - 根据如上公示及题目要求，需要求出如下几项的值
+    - 原来的数值和：base，这个通过遍历累加就可以得到
+    - max(a,b)和max(x,y)，这个通过遍历，并通过计算当前元素和前一个元素两个值的最小值，再取与历史数据的最大值即可，也就是在4个数中取最大的，再与历史上的取一个最小的
+    - min(x,y)和min(a,b)，这个和如上相同，通过计算当前元素和前一个元素两个值的最大值，再取与历史数据的最小值即可，也就是在4个数中取最小的，再与历史上的取一个最大的
+    - 还需要处理i=0和j=n-1这两个边界特殊情况，得到最大值d：
+      - i=0，就是|a - b| - |nums[0] - a|
+      - j=n-1，就是|a - b| - |nums[n - 1] - b|
+      - 将这两个值的最大值也维护在一个变量中，并在每次迭代的时候更新即可
+  - 那么要求的就是d，2 * (max - min)之间的最大值
+  - 最后返回base + max(d, 2 * (max - min))即可
+### 代码
+```java
+class Solution {
+    public int maxValueAfterReverse(int[] nums) {
+        int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE, n = nums.length,
+            d = 0, base = 0;
+
+        for (int i = 1; i < nums.length; i++) {
+            int a = nums[i], b = nums[i - 1], diff = Math.abs(a - b);
+            base += diff;
+            max = Math.max(max, Math.min(a, b)); 
+            min = Math.min(min, Math.max(a, b));
+            d = Math.max(d,
+                    Math.max(
+                            Math.abs(nums[0] - a) - diff,
+                            Math.abs(nums[n - 1] - b) - diff
+                    )
+            );
+        }
+
+        return base + Math.max(d, 2 * (max - min));
+    }
+}
+```
