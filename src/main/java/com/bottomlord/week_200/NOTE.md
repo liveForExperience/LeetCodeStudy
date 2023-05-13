@@ -312,3 +312,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2670_找出不同元素数目差数组](https://leetcode.cn/problems/find-the-distinct-difference-array/)
+## 解法
+### 思路
+- 初始化diff数组作为结果数组，存储前后子数组不同元素个数的差值
+- 初始化memo数组，用来记录遍历过程中元素出现的情况，方便在遍历过程中记录不同元素个数
+- 初始化变量cnt，用来记录[0,i]区间的不同元素个数
+- 2层嵌套循环
+  - 外层记录[0,i]区间的不同元素个数，配置memo数组进行判断
+  - 内层从i+1开始遍历，计算[i + 1, n - 1]区间的不同元素个数，配合另一个memo数组进行判断
+  - 内层循环结束后，cnt与内层计算的个数相减，得到的值存入diff对应位置即可
+- 循环结束，返回diff数组作为结果
+### 代码
+```java
+class Solution {
+  public int[] distinctDifferenceArray(int[] nums) {
+    int n = nums.length, cnt = 0;
+    int[] diff = new int[n];
+    boolean[] memo = new boolean[51];
+    for (int i = 0; i < n; i++) {
+      if (!memo[nums[i]]) {
+        memo[nums[i]] = true;
+        cnt++;
+      }
+
+      boolean[] innerMemo = new boolean[51];
+      int latterCnt = 0;
+      for (int j = i + 1; j < n; j++) {
+        if (!innerMemo[nums[j]]) {
+          latterCnt++;
+          innerMemo[nums[j]] = true;
+        }
+      }
+
+      diff[i] = cnt - latterCnt;
+    }
+
+    return diff;
+  }
+}
+```
