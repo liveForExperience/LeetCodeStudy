@@ -352,3 +352,30 @@ class Solution {
   }
 }
 ```
+# [LCP_77_符文储备](https://leetcode.cn/problems/W2ZX4X/)
+## 解法
+### 思路
+求最长连续子数组的长度
+- 排序后2层嵌套遍历
+- 内层嵌套循环，分段计数
+- 内层循环结束，与暂存的最大值比较，取较大值
+- 外层遍历结束，返回暂存的最大值即可
+### 代码
+```java
+class Solution {
+    public int runeReserve(int[] runes) {
+        Arrays.sort(runes);
+        int max = 0, n = runes.length;
+        for (int i = 0; i < n;) {
+            int pre = runes[i++], cnt = 1;
+            while (i < n && runes[i] - pre <= 1) {
+                pre = runes[i];
+                cnt++;
+                i++;
+            }
+            max = Math.max(max, cnt);
+        }
+        return max;
+    }
+}
+```
