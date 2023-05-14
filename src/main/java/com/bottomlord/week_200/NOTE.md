@@ -379,3 +379,56 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1054_距离相等的条形码](https://leetcode.cn/problems/distant-barcodes/)
+## 解法
+### 思路
+- 使用大顶堆，排序规则是数组元素的出现频率，大顶堆元素是一个长度为2的数组，第一个槽元素值，第二个槽存频率
+- 先遍历一次数组，计算出频率，因为样本空间有限，可以桶计数
+- 然后遍历桶，将非0元素存入大顶堆
+- 初始化结果数组
+- 循环处理大顶堆，退出条件是大顶堆为空
+- 每次循环，将前两个元素出队，放入数组中即可
+### 代码
+```java
+class Solution {
+    public int[] rearrangeBarcodes(int[] barcodes) {
+        int n = barcodes.length;
+        int[] bucket = new int[10001];
+        for (int barcode : barcodes) {
+            bucket[barcode]++;
+        }
+
+        PriorityQueue<int[]> queue = new PriorityQueue<>((x, y) -> y[1] - x[1]);
+        for (int i = 0; i < bucket.length; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+
+            queue.offer(new int[]{i, bucket[i]});
+        }
+
+        int[] ans = new int[n];
+        int i = 0;
+        while (!queue.isEmpty()) {
+            int[] one = queue.poll(), two = queue.poll();
+            ans[i++] = one[0];
+            one[1]--;
+            if (one[1] != 0) {
+                queue.offer(one);
+            }
+            
+            if (two == null) {
+                continue;
+            }
+
+            ans[i++] = two[0];
+            two[1]--;
+            if (two[1] != 0) {
+                queue.offer(two);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
