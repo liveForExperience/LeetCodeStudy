@@ -14,7 +14,7 @@ public class LeetCode_1054_1_距离相等的条形码 {
             bucket[barcode]++;
         }
 
-        PriorityQueue<int[]> queue = new PriorityQueue<>((x, y) -> y[1] - x[1])
+        PriorityQueue<int[]> queue = new PriorityQueue<>((x, y) -> y[1] - x[1]);
         for (int i = 0; i < bucket.length; i++) {
             if (bucket[i] == 0) {
                 continue;
