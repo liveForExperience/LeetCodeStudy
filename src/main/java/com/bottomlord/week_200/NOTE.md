@@ -432,3 +432,36 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1072_按列翻转得到最大值等行数](https://leetcode.cn/problems/flip-columns-for-maximum-number-of-equal-rows/)
+## 解法
+### 思路
+- 题目其实就是要看在翻转之后，最多有多少行，他们整行的元素是完全相等的，要么都是1，要么都是0
+- 等行的个数可以通过记录一行的每个元素是否反转的状态来判断
+- 如果有某2个行的翻转状态相等，那么就可以理解成在同样状态下他们是等行的
+- 那么就遍历每一行，假设所有元素都与第一个元素相等，那么就记录下为了相等需要翻转的状态，存到map里即可
+- 然后通过map来记录所有相同翻转状态的个数
+- 遍历结束后，找到map中个数最大的值，返回即可
+### 代码
+```java
+class Solution {
+    public int maxEqualRowsAfterFlips(int[][] matrix) {
+        Map<String, Integer> map = new HashMap<>();
+        int n = matrix[0].length;
+
+        for (int[] arr : matrix) {
+            char[] cs = new char[n];
+            for (int j = 0; j < n; j++) {
+                cs[j] = (char) ('0' + (arr[0] ^ arr[j]));
+            }
+            String key = new String(cs);
+            map.put(key, map.getOrDefault(key, 0) + 1);
+        }
+
+        int max = 0;
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            max = Math.max(max, entry.getValue());
+        }
+        return max;
+    }
+}
+```
