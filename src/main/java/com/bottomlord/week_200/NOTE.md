@@ -465,3 +465,26 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2678_老人的数目](https://leetcode.cn/problems/number-of-senior-citizens/)
+## 解法
+### 思路
+- 遍历字符串数组：
+  - 判断第11个字符是否大于6
+  - 或者等于6且第12个字符不等于0
+- 如果符合任意情况，计数累加
+- 遍历结束，返回计数值作为结果
+### 代码
+```java
+class Solution {
+    public int countSeniors(String[] details) {
+        int ans = 0;
+        for (String detail : details) {
+            char c = detail.charAt(11);
+            if (c - '6' > 0 || (c == '6' && detail.charAt(12) != '0')) {
+                ans++;
+            }
+        }
+        return ans;
+    }
+}
+```
