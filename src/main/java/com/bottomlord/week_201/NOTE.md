@@ -84,3 +84,38 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2682_找出转圈游戏输家](https://leetcode.cn/problems/find-the-losers-of-the-circular-game/)
+## 解法
+### 思路
+记事本加模拟
+### 代码
+```java
+class Solution {
+    public int[] circularGameLosers(int n, int k) {
+        boolean[] memo = new boolean[n];
+        int index = 0;
+        for (int i = 0;; i++) {
+            if (memo[index]) {
+                break;
+            }
+            memo[index] = true;
+            index = (index + (i + 1) * k) % n;
+        }
+
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < memo.length; i++) {
+            if (memo[i]) {
+                continue;
+            }
+            
+            list.add(i + 1);
+        }
+        
+        int[] ans = new int[list.size()];
+        for (int i = 0; i < ans.length; i++) {
+            ans[i] = list.get(i);
+        }
+        return ans;
+    }
+}
+```
