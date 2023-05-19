@@ -220,3 +220,54 @@ class Solution {
     }
 }
 ```
+# [LeetCode_984_不含aaa或bbb的字符串]()
+## 解法
+### 思路
+- 确定a和b谁多谁少，那么交替追加，一定能把少的消耗掉
+- 同时，多的部分与少的部分的差值，也就是交替追加后剩下的多的字符的个数diff，可以平均的插入到1个多字符和1个少字符组成的一个小组中
+- 以少的那个值作为循环的次数，在循环过程中：
+  - 先追加1个多的字符，然后多的字符个数累减1
+  - 然后判断diff是否为0，如果不是，就再追加一个多的字符，同时diff累减1，同时多的字符个数也累减1
+  - 再追加1个少的字符
+- 循环结束后，判断多的字符个数是否不为0，如果是，就继续讲剩下的多的字符追加到字符串里，因为题目保证一定有答案，所以不用担心会出现违反题目要求的情况
+- 追加完后，返回字符串即可
+### 代码
+```java
+class Solution {
+    public String strWithout3a3b(int a, int b) {
+                char maxC, minC;
+        int max, min;
+        if (a >= b) {
+            maxC = 'a';
+            minC = 'b';
+            max = a;
+            min = b;
+        } else {
+            maxC = 'b';
+            minC = 'a';
+            max = b;
+            min = a;
+        }
+
+        int diff = max - min;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < min; i++) {
+            sb.append(maxC);
+            max--;
+            if (diff-- > 0) {
+                sb.append(maxC);
+                max--;
+            }
+
+            sb.append(minC);
+        }
+
+        for (int i = 0; i < max; i++) {
+            sb.append(maxC);
+        }
+
+        return sb.toString();
+    }
+}
+```
