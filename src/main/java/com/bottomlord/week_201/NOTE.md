@@ -220,7 +220,7 @@ class Solution {
     }
 }
 ```
-# [LeetCode_984_不含aaa或bbb的字符串]()
+# [LeetCode_984_不含aaa或bbb的字符串](https://leetcode.cn/problems/string-without-aaa-or-bbb/)
 ## 解法
 ### 思路
 - 确定a和b谁多谁少，那么交替追加，一定能把少的消耗掉
@@ -269,5 +269,40 @@ class Solution {
 
         return sb.toString();
     }
+}
+```
+# [LeetCode_1079_活字印刷](https://leetcode.cn/problems/letter-tile-possibilities/)
+## 解法
+### 思路
+回溯，使用set记录字符串组合，并将结束回溯后的set的长度作为结果返回即可
+### 代码
+```java
+class Solution {
+  public int numTilePossibilities(String tiles) {
+    char[] cs = tiles.toCharArray();
+    Set<String> set = new HashSet<>();
+    backTrack(0, cs, new boolean[cs.length], new StringBuilder(), set);
+    return set.size();
+  }
+
+  private void backTrack(int index, char[] cs, boolean[] memo, StringBuilder sb, Set<String> set) {
+    if (index >= cs.length) {
+      return;
+    }
+
+    for (int i = 0; i < cs.length; i++) {
+      if (memo[i]) {
+        continue;
+      }
+
+      int len = sb.length();
+      memo[i] = true;
+      sb.append(cs[i]);
+      set.add(sb.toString());
+      backTrack(index + 1, cs, memo, sb, set);
+      sb.setLength(len);
+      memo[i] = false;
+    }
+  }
 }
 ```
