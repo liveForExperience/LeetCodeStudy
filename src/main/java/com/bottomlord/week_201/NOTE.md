@@ -306,3 +306,62 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1373_二叉搜索子树的最大键值和](https://leetcode.cn/problems/maximum-sum-bst-in-binary-tree/)
+## 解法
+### 思路
+- 定义一个子树类，其中包含如下属性
+  - 是否是二叉搜索树（bst）
+  - 最大值
+  - 最小值
+  - 总和
+- 如果子树为空：
+  - 最大值：int最小值
+  - 最小值：int最大值
+  - 总和为0
+  - 是bst
+- 递归判定当前节点是否为二叉搜索树的根节点
+- 然后更新最大值类变量
+- 搜索结束后返回暂存的最大值作为结果
+- 注意如果是二叉搜索子树根节点的话，在返回实体的时候，该子树的最大和最小值需要和当前节点的值进行大小的比较，因为在处理空的时候做了特殊处理，如果当前节点是叶子节点，那么不比较的话，会把特殊处理的值返回上去，导致所有节点都变成了二叉搜索子树，导致累加所有节点的值
+### 代码
+```java
+class Solution {
+  private int ans = 0;
+  public int maxSumBST(TreeNode root) {
+    dfs(root);
+    return ans;
+  }
+
+  private static class SubBst {
+    private boolean isBst;
+    private int max;
+    private int min;
+    private int sum;
+
+    public SubBst(boolean isBst, int max, int min, int sum) {
+      this.isBst = isBst;
+      this.max = max;
+      this.min = min;
+      this.sum = sum;
+    }
+  }
+
+  private SubBst dfs(TreeNode node) {
+    if (node == null) {
+      return new SubBst(true, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+    }
+
+    SubBst left = dfs(node.left), right = dfs(node.right);
+    if (left.isBst &&
+            right.isBst &&
+            left.max < node.val &&
+            right.min > node.val) {
+      int sum = left.sum + right.sum + node.val;
+      ans = Math.max(ans, sum);
+      return new SubBst(true, Math.max(right.max, node.val), Math.min(left.min, node.val), sum);
+    }
+
+    return new SubBst(false, 0, 0, 0);
+  }
+}
+```
