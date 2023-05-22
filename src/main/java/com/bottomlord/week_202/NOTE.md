@@ -1,0 +1,49 @@
+# [LeetCode_1080_根到叶路径上的不足节点](https://leetcode.cn/problems/insufficient-nodes-in-root-to-leaf-paths/)
+## 解法
+### 思路
+dfs
+- 如果节点是叶子节点，那么就要判断叶根路径上的总和是否小于limit，如果小于，那么这个节点就是不足节点，需要去除
+- 如果当前节点的左右子树都是不足节点，那么当前节点也需要被删除
+- 递归的退出条件： 当前节点是叶子节点
+- 递归的过程：
+  - 左子树不为空，递归左子树，返回当前左子树是否是不足节点
+  - 右子树不为空，递归右子树，返回当前右子树是否是不足节点
+- 递归返回：
+  - 左右子树是否为空的与条件（即，如果任意不为不足节点，那么这个节点就保留，否则就去除）
+### 代码
+```java
+class Solution {
+    public TreeNode sufficientSubset(TreeNode root, int limit) {
+        if (dfs(root, limit, 0)) {
+            return null;
+        }
+        
+        return root;
+    }
+
+    private boolean dfs(TreeNode node, int limit, int pre) {
+        if (node.left == null && node.right == null) {
+            return pre + node.val < limit;
+        }
+
+        boolean leftDel = true, rightDel = true;
+        if (node.left != null) {
+            leftDel = dfs(node.left, limit, pre + node.val);
+        }
+        
+        if (node.right != null) {
+            rightDel = dfs(node.right, limit, pre + node.val);
+        }
+        
+        if (leftDel) {
+            node.left = null;
+        }
+        
+        if (rightDel) {
+            node.right = null;
+        }
+        
+        return leftDel && rightDel;
+    }
+}
+```
