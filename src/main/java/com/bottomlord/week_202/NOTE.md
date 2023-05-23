@@ -71,3 +71,24 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2696_1_删除子串后的字符串最小长度](https://leetcode.cn/problems/minimum-string-length-after-removing-substrings/)
+## 解法
+### 思路
+使用String的contains函数进行模拟
+### 代码
+```java
+class Solution {
+  public int minLength(String s) {
+    final String ab = "AB", cd = "CD";
+    while (s.contains(ab) || s.contains(cd)) {
+      if (s.contains(ab)) {
+        s = s.substring(0, s.indexOf(ab)) + s.substring(s.indexOf(ab) + 2);
+      } else {
+        s = s.substring(0, s.indexOf(cd)) + s.substring(s.indexOf(cd) + 2);
+      }
+    }
+
+    return s.length();
+  }
+}
+```
