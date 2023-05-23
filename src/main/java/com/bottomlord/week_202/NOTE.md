@@ -47,3 +47,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2689_ExtractKthCharacterFromTheRopeTree](https://leetcode.cn/problems/extract-kth-character-from-the-rope-tree/)
+## 解法
+### 思路
+dfs模拟
+### 代码
+```java
+class Solution {
+  public char getKthCharacter(RopeTreeNode root, int k) {
+    return dfs(root).charAt(k - 1);
+  }
+
+  private String dfs(RopeTreeNode node) {
+    if (node == null) {
+      return "";
+    }
+
+    if (node.left == null && node.right == null) {
+      return node.val;
+    }
+
+    return dfs(node.left) + dfs(node.right);
+  }
+}
+```
