@@ -92,3 +92,49 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1377_T秒后青蛙的位置](https://leetcode.cn/problems/frog-position-after-t-seconds/)
+## 解法
+### 思路
+dfs
+- 如果在t秒到达target，返回1
+- 如果没有路径可走，返回0
+- 否则返回所有可能路径返回值的总和，并除以当前可达的路径个数
+### 代码
+```java
+class Solution {
+  public double frogPosition(int n, int[][] edges, int t, int target) {
+    List<Integer>[] graph = new ArrayList[n];
+    for (int i = 0; i < graph.length; i++) {
+      graph[i] = new ArrayList<>();
+    }
+
+    for (int[] edge : edges) {
+      graph[edge[0] - 1].add(edge[1] - 1);
+      graph[edge[1] - 1].add(edge[0] - 1);
+    }
+
+    boolean[] memo = new boolean[n];
+
+    return dfs(0, t, graph, memo, target);
+  }
+
+  private double dfs(int index, int t, List<Integer>[] graph, boolean[] memo, int target) {
+    int count = graph[index].size();
+    if (t == 0 || (count -= (index == 0 ? 0 : 1)) == 0) {
+      return index == target - 1 ? 1 : 0;
+    }
+
+    memo[index] = true;
+    double result = 0;
+    for (Integer nextIndex : graph[index]) {
+      if (memo[nextIndex]) {
+        continue;
+      }
+
+      result += dfs(nextIndex, t - 1, graph, memo, target);
+    }
+
+    return result / count;
+  }
+}
+```
