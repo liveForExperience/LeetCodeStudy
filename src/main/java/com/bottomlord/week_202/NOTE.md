@@ -138,3 +138,120 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1091_二进制矩阵的最短路径](https://leetcode.cn/problems/shortest-path-in-binary-matrix/)
+## 失败解法
+### 原因
+超时
+### 思路
+dfs
+### 代码
+```java
+class Solution {
+    private int n;
+    private boolean[][] memo;
+    private int[][] grid;
+    private int[][] dirs = new int[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    public int shortestPathBinaryMatrix(int[][] grid) {
+        this.n = grid.length;
+        this.memo = new boolean[n][n];
+        this.grid = grid;
+        if (!isValid(0, 0)) {
+            return -1;
+        }
+
+        memo[0][0] = true;
+        return backTrack(0, 0);
+    }
+
+    private int backTrack(int x, int y) {
+        if (x == n - 1 && y == n - 1) {
+            return 1;
+        }
+
+        int ans = Integer.MAX_VALUE;
+        for (int[] dir : dirs) {
+            int nx = x + dir[0], ny = y + dir[1];
+            if (!isValid(nx, ny)) {
+                continue;
+            }
+
+            memo[nx][ny] = true;
+            int path = backTrack(nx, ny);
+            memo[nx][ny] = false;
+
+            if (path == -1) {
+                continue;
+            }
+
+            ans = Math.min(path, ans);
+        }
+
+        return ans == Integer.MAX_VALUE ? -1 : ans + 1;
+    }
+
+    private boolean isValid(int x, int y) {
+        return in(x, y) && !memo[x][y] && grid[x][y] == 0;
+    }
+
+    private boolean in(int x, int y) {
+        return x >= 0 && x < n && y >= 0 && y < n;
+    }
+}
+```
+## 解法
+### 思路
+bfs
+### 代码
+```java
+class Solution {
+  private int[][] dirs = new int[][]{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+  private int n;
+  private boolean[][] memo;
+  private int[][] grid;
+  public int shortestPathBinaryMatrix(int[][] grid) {
+    this.memo = new boolean[n][n];
+    this.grid = grid;
+    this.n = grid.length;
+    if (isNotValid(0, 0)) {
+      return -1;
+    }
+
+    Queue<int[]> queue = new ArrayDeque<>();
+    queue.offer(new int[]{0, 0});
+
+    int path = 0;
+    while (!queue.isEmpty()) {
+      int cnt = queue.size();
+      while (cnt-- > 0) {
+        int[] arr = queue.poll();
+        int x = arr[0], y = arr[1];
+        for (int[] dir : dirs) {
+          int nx = x + dir[0], ny = y + dir[1];
+
+          if (nx == n - 1 && ny == n - 1) {
+            return path + 1;
+          }
+
+          if (isNotValid(nx, ny)) {
+            continue;
+          }
+
+          queue.offer(new int[]{nx, ny});
+          grid[nx][ny] = 1;
+        }
+      }
+      path++;
+    }
+
+    return -1;
+  }
+
+  private boolean isNotValid(int x, int y) {
+    return !in(x, y) || grid[x][y] != 0;
+  }
+
+  private boolean in(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < n;
+  }
+}
+```
