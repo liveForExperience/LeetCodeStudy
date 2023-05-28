@@ -319,3 +319,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1439_有序矩阵中的第K个最小数组和](https://leetcode.cn/problems/find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows/)
+## 解法
+### 思路
+模拟
+- 每2行的元素进行求和，求和完成后排序，截取最长k个元素作为新的2行中的一行，声明为变量pre
+- 然后继续遍历后一行，并与pre重复上述操作，直到遍历结束
+- 返回第k个元素即可
+### 代码
+```java
+class Solution {
+  public int kthSmallest(int[][] mat, int k) {
+    int m = mat.length, n = mat[0].length;
+    int[] pre = mat[0];
+    for (int i = 1; i < m; i++) {
+      int[] cur = mat[i];
+      int[] tmp = new int[pre.length * cur.length];
+
+      int index = 0;
+      for (int x : pre) {
+        for (int y : cur) {
+          tmp[index++] = x + y;
+        }
+      }
+
+      Arrays.sort(tmp);
+      if (tmp.length > k) {
+        tmp = Arrays.copyOfRange(tmp, 0, k);
+      }
+
+      pre = tmp;
+    }
+
+    return pre[k - 1];
+  }
+}
+```
