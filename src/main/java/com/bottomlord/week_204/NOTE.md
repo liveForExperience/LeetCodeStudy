@@ -68,3 +68,49 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2517_礼盒的最大甜蜜度](https://leetcode.cn/problems/maximum-tastiness-of-candy-basket/)
+## 解法
+### 思路
+- 遇到最小值求最大或者最大值求最小，可以直接反应使用二分查找
+- 此处对答案，即差值的最小绝对值进行二分查找
+- 初始确定答案的最大可能，即[0, max]，max是最小和最大元素差值的绝对值
+- 然后在这个区间中进行二分查找，确定一个可能答案
+  - 这个可能答案成立的条件：在数组中有至少k个差值大于等于当前值的元素对
+  - 所以为了能够在O(N)时间复杂度下获取到这个判断结果，可以先将数组进行排序，然后依次遍历数组元素，将两两差值大于可能答案的元素对个数记录下来
+  - 可以使用一个前置值变量，这个前置值代表了两两元素对的前一个较小元素，同时在统计完一对之后将较大值更新为较小值，继续判断
+  - 该值可以初始化为int最小值的一半，这样方便计算
+- 如果这个目标值成立，那么就往较大区间继续寻找，否则就往较小区间查找
+- 注意：取中间值时为了防止java整型向下取整的特性，所以需要额外+1
+### 代码
+```java
+class Solution {
+    public int maximumTastiness(int[] prices, int k) {
+        Arrays.sort(prices);
+        int tail = prices[prices.length - 1] - prices[0], head = 0;
+        
+        while (head < tail) {
+            int mid = (tail - head + 1) / 2 + head;
+            
+            if (check(prices, mid, k)) {
+                head = mid;
+            } else {
+                tail = mid - 1;
+            }
+        }
+        
+        return head;
+    }
+    
+    private boolean check(int[] prices, int target, int k) {
+        int pre = Integer.MIN_VALUE / 2, count = 0;
+        for (int price : prices) {
+            if (price - pre >= target) {
+                count++;
+                pre = price;
+            }
+        }
+        
+        return count >= k;
+    }
+}
+```
