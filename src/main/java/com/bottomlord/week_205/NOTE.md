@@ -44,3 +44,33 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2699_修改图中的边权](https://leetcode.cn/problems/modify-graph-edge-weights/)
+## 解法
+### 思路
+- 按照题目要求，如果是前缀一致，那么就代表除了[1,i]区间内的元素被翻转，其他元素都没有翻转
+- 那么，当我遍历到第i个位置，且只有[1,i]的这些元素被翻转了，是不是也意味着，我遍历过的所有元素的最大值只可能是i
+- 而这也就意味着：
+  - 比i大的元素没有翻转
+  - 比i小的元素都翻转了(为什么呢？因为我遍历了i个元素，最大值是i)
+- 所以代码就很好写了
+  - 维护一个max变量，用于暂存最大值
+  - 遍历flips数组，更新max变量
+  - 判断下max变量值是否与`当前坐标+1`相等(因为flips中存储的是1到n的元素值)，如果是就累加一次计数值count
+  - 遍历结束，返回count值即可
+### 代码
+```java
+class Solution {
+    public int numTimesAllBlue(int[] flips) {
+        int max = -1, count = 0;
+        for (int i = 0; i < flips.length; i++) {
+            max = Math.max(max, flips[i]);
+            
+            if (max == i + 1) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+}
+```
