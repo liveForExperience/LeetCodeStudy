@@ -74,3 +74,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1177_构建回文串检测](https://leetcode.cn/problems/can-make-palindrome-from-substring/)
+## 解法
+### 思路
+- 这道题在构建回文串的时候，有几个前提条件
+  - 可以重新排列，意味着一个子序列中，字母次数出现偶数次，那么这个字母就一定能形成回文串的一部分
+  - 最多替换k次，意味着我可以最多换掉k个出现奇数次的字母
+- 基于上面的条件及背后潜在的逻辑，如果模拟硬做，每次都基于queries数组来判断子序列，势必会造成重复计算，可以优化
+- 那么这种基于区间算个数的题目，首先就可以想到通过前缀和来维护一个记事本，通过这个记事本在遍历queries数组时对判断进行提速
+- 判断的逻辑：当前区间的奇数个数/2是否不大于k值（此处利用java中整数除法向下取整的特性，将奇数长度子序列允许有1个奇数个数的字母的特殊情况给覆盖掉，无需做特别的判断）
+- 前缀和应该是一个记录每一位坐标26个字母个数总和的二维数组
+- 代码逻辑就是：
+  - 遍历字符串，生成前缀和数组
+  - 遍历queries，判断是否能构建回文串，并记录结果
+  - 遍历结束，返回结果
+### 代码
+```java
+class Solution {
+    public List<Boolean> canMakePaliQueries(String s, int[][] queries) {
+        int n = s.length();
+        int[][] sums = new int[n + 1][26];
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < cs.length; i++) {
+            System.arraycopy(sums[i], 0, sums[i + 1], 0, 26);
+            sums[i + 1][cs[i] - 'a']++;
+        }
+        
+        List<Boolean> ans = new ArrayList<>();
+        for (int[] query : queries) {
+            int left = query[0], right = query[1] + 1;
+            int odd = 0;
+            for (int i = 0; i < 26; i++) {
+                if ((sums[right][i] - sums[left][i]) % 2 == 1) {
+                    odd++;
+                }
+            }
+
+            ans.add(odd / 2 <= query[2]);
+        }
+        
+        return ans;
+    }
+}
+```
