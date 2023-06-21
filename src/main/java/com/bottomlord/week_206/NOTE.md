@@ -97,3 +97,95 @@ class Solution {
   }
 }
 ```
+# [LeetCode_1595_连通两组点的最小成本](https://leetcode.cn/problems/minimum-cost-to-connect-two-groups-of-points/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_LCP41_黑白翻转棋](https://leetcode.cn/problems/fHi6rV/)
+## 解法
+### 思路
+- 这是道典型可以通过bfs来解题目
+- 遍历chessboard，在所有`.`上都做一次bfs搜索，计算出可以翻转的棋子个数，然后暂存最大值作为结果即可
+- 在bfs的过程中，核心是两件事：
+  - 如何判断当前落子后，可以翻转，这个通过对棋盘状态进行模拟就可以
+  - 如何处理题目要求的，一次翻转后仍可以继续翻转的问题，这个问题可以通过每次记录翻转的棋子坐标，并放入bfs的队列中来解决
+### 代码
+```java
+class Solution {
+    private int row, col;
+    private String[] chessboard;
+    private final int[][] dirs = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, -1}, {1, 1}, {-1, 1}, {-1, -1}};
+
+    public int flipChess(String[] chessboard) {
+        int ans = 0;
+        this.row = chessboard.length;
+        this.col = chessboard[0].length();
+        this.chessboard = chessboard;
+
+        for (int r = 0; r < row; r++) {
+            for (int c = 0; c < col; c++) {
+                if (chessboard[r].charAt(c) != '.') {
+                    continue;
+                }
+                ans = Math.max(ans, bfs(r, c));
+            }
+        }
+
+        return ans;
+    }
+
+    private int bfs(int i, int j) {
+        char[][] cs = new char[row][col];
+        for (int r = 0; r < row; r++) {
+            for (int c = 0; c < col; c++) {
+                cs[r][c] = chessboard[r].charAt(c);
+            }
+        }
+
+        int count = 0;
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.offer(new int[]{i, j});
+        cs[i][j] = 'X';
+
+        while (!queue.isEmpty()) {
+            int[] arr = queue.poll();
+            int x = arr[0], y = arr[1];
+            for (int[] dir : dirs) {
+                int nr = dir[0], nc = dir[1];
+                if (isValid(x, y, nr, nc, cs)) {
+                    int a = x + nr, b = y + nc;
+                    while (cs[a][b] != 'X') {
+                        queue.offer(new int[]{a, b});
+                        cs[a][b] = 'X';
+                        a += nr;
+                        b += nc;
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+    
+    private boolean isValid(int x, int y, int nr, int nc, char[][] cs) {
+        x += nr;
+        y += nc;
+        while (x >= 0 && x < row && y >= 0 && y < col) {
+            if (cs[x][y] == 'X') {
+                return true;
+            } else if (cs[x][y] == '.') {
+                return false;
+            }
+
+            x += nr;
+            y += nc;
+        }
+
+        return false;
+    }
+}
+```
