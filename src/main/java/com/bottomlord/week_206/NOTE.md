@@ -258,3 +258,59 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1401_圆和矩形是否有重叠](https://leetcode.cn/problems/circle-and-rectangle-overlapping/)
+## 解法
+### 思路
+- 分析圆心相对于矩形的位置关系：
+  - 左上：ccx < x1, ccy > y2，最近的点(x1,y2)
+  - 左侧：ccx < x1, y1 <= ccy <= y2，最近的点(x1,ccy)
+  - 左下：ccx < x1, ccy < y1，最近的点(x1, y1)
+  - 正下：x1 <= ccx <= x2, ccy < y1，最近的点(ccx, y1)
+  - 右下：ccx > x2, ccy < y1，最近的点(x2, y1)
+  - 右侧：ccx > x2, y1 <= ccy <= y2，最近的点(x2, ccy)
+  - 右上：ccx > x2, ccy > y2，最近的点(x2, y2)
+  - 正上：x1 <= ccx <= x2, ccy > y2，最近的点(ccx, y2)
+  - 其他：在矩形内，那一定有交集，直接返回true
+- 得到坐标之后，计算下圆心和最近坐标的距离，看是否小于等于半径即可
+- 注意计算距离的时候使用平方，不要开方，避免开方后的误差
+### 代码
+```java
+class Solution {
+    public boolean checkOverlap(int radius, int ccx, int ccy, int x1, int y1, int x2, int y2) {
+        int tx, ty;
+        if (ccx < x1 && ccy > y2) {
+            tx = x1;
+            ty = y2;
+        } else if (ccx < x1 && ccy >= y1) {
+            tx = x1;
+            ty = ccy;
+        } else if (ccx < x1) {
+            tx = x1;
+            ty = y1;
+        } else if (ccx <= x2 && ccy < y1) {
+            tx = ccx;
+            ty = y1;
+        } else if (ccx > x2 && ccy < y1) {
+            tx = x2;
+            ty = y1;
+        } else if (ccx > x2 && ccy <= y2) {
+            tx = x2;
+            ty = ccy;
+        } else if (ccx > x2) {
+            tx = x2;
+            ty = y2;
+        } else if (ccy > y2) {
+            tx = ccx;
+            ty = y2;
+        } else {
+            return true;
+        }
+        
+        return distance(tx, ty, ccx, ccy) <= radius * radius;
+    }
+
+    private double distance(double x1, double y1, double x2, double y2) {
+        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+    }
+}
+```
