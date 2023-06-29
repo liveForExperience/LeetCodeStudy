@@ -30,3 +30,54 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1253_重构2行二进制矩阵](https://leetcode.cn/problems/reconstruct-a-2-row-binary-matrix/)
+## 解法
+### 思路
+- 根据题目要求分情况贪心的去求解即可
+- 遍历colsum数组
+  - 如果元素是2，同时往2个列表中放入1
+  - 如果元素是0，同时往2个列表中放入0
+  - 如果是1，那么就看upper和lower这2个变量哪个值更大，然后就往哪个对应的列表中放入1，另一个则放入0
+- 每一次遍历，在判断完上述情况后，检查一下upper和lower的值是否小于0，如果是，则说明答案不存在，返回空列表
+- 在遍历结束后，检查upper和lower变量的值是否为0，如果不是，也代表没有答案，返回空列表
+- 否则就把2个列表返回即可
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> reconstructMatrix(int upper, int lower, int[] colsum) {
+        List<List<Integer>> ans = new ArrayList<>();
+        List<Integer> one = new ArrayList<>(), two = new ArrayList<>();
+        for (int num : colsum) {
+            if (num == 2) {
+                one.add(1);
+                two.add(1);
+                upper--;
+                lower--;
+            } else if (num == 0) {
+                one.add(0);
+                two.add(0);
+            } else if (upper >= lower) {
+                one.add(1);
+                two.add(0);
+                upper--;
+            } else {
+                one.add(0);
+                two.add(1);
+                lower--;
+            }
+                        
+            if (upper < 0 || lower < 0) {
+                return ans;
+            }
+        }
+
+        if (upper != 0 || lower != 0) {
+            return ans;
+        }
+
+        ans.add(one);
+        ans.add(two);
+        return ans;
+    }
+}
+```
