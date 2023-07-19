@@ -91,3 +91,48 @@ class Solution {
     }
 }
 ```
+# [LeetCode_874_模拟行走机器人](https://leetcode.cn/problems/walking-robot-simulation/)
+## 解法
+### 思路
+- 使用hash表来存储obstacles数组中的障碍坐标
+  - key：障碍的横坐标
+  - value：障碍的横坐标对应的纵坐标的集合，HashSet
+- 这题的难点是如何定义方向所对应的横纵坐标的移动值，根据题目中的要求，定义成如下的二维数组`{{0, 1}, {1, 0}, {0, -1}, {-1, 0}}`
+- 最后遍历commands数组来判断是左转还是右转或者向前，通过模拟的方式，在每次到达新的坐标时候，通过计算距离的平方和来更新最大值
+- 遍历结束后返回结果即可
+### 代码
+```java
+class Solution {
+    public int robotSim(int[] commands, int[][] obstacles) {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int[] obstacle : obstacles) {
+            map.computeIfAbsent(obstacle[0], x -> new HashSet<>()).add(obstacle[1]);
+        }
+
+        int[][] dirs = new int[][]{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        int dir = 0, x = 0, y = 0, max = 0;
+        for (int command : commands) {
+            if (command == -2) {
+                dir = (dir + 3) % 4;
+            } else if (command == -1) {
+                dir = (dir + 1) % 4;
+            } else {
+                for (int i = 0; i < command; i++) {
+                    int nx = x + dirs[dir][0], ny = y + dirs[dir][1];
+
+                    if (map.containsKey(nx) && map.get(nx).contains(ny)) {
+                        break;
+                    }
+
+                    x = nx;
+                    y = ny;
+                }
+
+                max = Math.max(max, x * x + y * y);
+            }
+        }
+
+        return max;
+    }
+}
+```
