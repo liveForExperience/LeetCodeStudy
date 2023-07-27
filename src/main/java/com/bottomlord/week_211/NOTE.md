@@ -60,3 +60,148 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2569_更新数组后处理求和查询](https://leetcode.cn/problems/handling-sum-queries-after-update/)
+## 解法
+### 思路
+- 题目的三个操作
+  - 1：讲nums1中[l,r]区间内的数进行反转
+  - 2：`nums2[i] += p * nums[i]`
+  - 3：求 nums2 的和
+- 根据题目要求，实际就是在要求维护 nums1 的区间和，区间和可以通过线段树来维护
+- 定义线段树的每个节点为Node，每个节点包含如下属性：
+  - l：节点的左端点，下标从1开始
+  - r：节点的右端点，下标从1开始
+  - s：区间的和
+  - lazy：节点的懒加载
+- 线段树的操作
+  - build(u,l,r)：建立线段树
+  - pushDown(u)：下传懒标记
+  - pushUp(u)：用子节点的信息更新父节点的信息
+  - modify(u, l, r)：修改区间和，本题中是反转区间中的每个数，所以区间和就是`s = r - l + 1 - s`
+  - query(u, l, r)：查询区间和
+- 主体逻辑：
+  - 先算出数组nums2的所有元素之和s
+  - 执行操作1的时候：调用modify(l, r)
+  - 执行操作2的时候：`s += p * query(1, n)`
+  - 执行操作3的时候：将s放入结果数组中
+### 代码
+```java
+class Solution {
+    public long[] handleQuery(int[] nums1, int[] nums2, int[][] queries) {
+        int num3 = 0;
+        for (int[] query : queries) {
+            if (query[0] == 3) {
+                num3++;
+            }
+        }
+
+        long[] ans = new long[num3];
+        int index = 0;
+
+        long sum = 0;
+        for (int num : nums2) {
+            sum += num;
+        }
+
+        SegmentTree tree = new SegmentTree(nums1);
+        for (int[] query : queries) {
+            int operator = query[0];
+            if (operator == 1) {
+                tree.modify(1, query[1] + 1, query[2] + 1);
+            } else if (operator == 2) {
+                sum += (long) query[1] * tree.query(1, 1, nums2.length);
+            } else {
+                ans[index++] = sum;
+            }
+        }
+
+        return ans;
+    }
+
+    private static class SegmentTree {
+        private Node[] nodes;
+        private int[]  nums;
+
+        public SegmentTree(int[] nums) {
+            int n = nums.length;
+            this.nums = nums;
+            nodes = new Node[n << 2];
+            for (int i = 0; i < nodes.length; i++) {
+                nodes[i] = new Node();
+            }
+            build(1, 1, n);
+        }
+
+        private void build(int u, int l, int r) {
+            nodes[u].l = l;
+            nodes[u].r = r;
+            if (l == r) {
+                nodes[u].s = nums[l - 1];
+                return;
+            }
+
+            int mid = (l + r) >> 1;
+            build(u << 1, l, mid);
+            build(u << 1 | 1, mid + 1, r);
+            pushUp(u);
+        }
+
+        private void modify(int u, int l, int r) {
+            if (nodes[u].l >= l && nodes[u].r <= r) {
+                nodes[u].lazy ^= 1;
+                nodes[u].s = nodes[u].r - nodes[u].l + 1 - nodes[u].s;
+                return;
+            }
+            pushDown(u);
+
+            int mid = (nodes[u].r + nodes[u].l) >> 1;
+            if (l <= mid) {
+                modify(u << 1, l, r);
+            }
+            if (r > mid) {
+                modify(u << 1 | 1, l, r);
+            }
+            pushUp(u);
+        }
+
+        private int query(int u, int l, int r) {
+            if (nodes[u].l >= l && nodes[u].r <= r) {
+                return nodes[u].s;
+            }
+
+            pushDown(u);
+            int mid = (nodes[u].l + nodes[u].r) >> 1;
+            int sum = 0;
+            if (l <= mid) {
+                sum += query(u << 1, l , r);
+            }
+
+            if (r > mid) {
+                sum += query(u << 1 | 1, l, r);
+            }
+            return sum;
+        }
+
+        private void pushDown(int u) {
+            if (nodes[u].lazy != 1) {
+                return;
+            }
+
+            int mid = (nodes[u].l + nodes[u].r) >> 1;
+            nodes[u << 1].s = mid - nodes[u].l + 1 - nodes[u << 1].s;
+            nodes[u << 1].lazy ^= 1;
+            nodes[u << 1 | 1].s = nodes[u].r - mid - nodes[u << 1 | 1].s;
+            nodes[u << 1 | 1].lazy ^= 1;
+            nodes[u].lazy ^= 1;
+        }
+
+        private void pushUp(int u) {
+            nodes[u].s = nodes[u << 1].s + nodes[u << 1 | 1].s;
+        }
+    }
+
+    private static class Node {
+        private int l, r, s, lazy;
+    }
+}
+```
