@@ -205,3 +205,61 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2050_并行课程III](https://leetcode.cn/problems/parallel-courses-iii/)
+## 解法
+### 思路
+- 拓扑排序的同时通过动态规划维护出完成所有课程的最小消耗实践
+- 主要逻辑：
+  - 初始化一个临界表edge
+    - key为节点
+    - value为出度列表
+  - 初始化一个入度的个数数组inDegrees
+  - 初始化一个队列queue，用于存储入度为零的节点
+  - 初始化一个dp数组，用于存储i课程上完需要的最少时间
+  - 初始化一个ans变量，用于暂存读完所有课程的最少时间
+  - 遍历relations，维护edge和inDegrees
+  - 遍历inDegrees数组，将入度为0的节点放入queue中
+  - 当queue不为空，取出队首元素i，根据邻接表获得出度列表，遍历出度列表，依次对元素节点j进行状态转移处理
+    - 状态转移方程：`dp[j] = max(dp[i] + time[j], dp[j])`
+  - 出度遍历结束后，将dp[j]累加到ans中
+  - queue处理结束，返回ans结果即可
+### 代码
+```java
+class Solution {
+    public int minimumTime(int n, int[][] relations, int[] time) {
+        int[] dp = new int[n + 1], inDegrees = new int[n + 1];
+        int ans = 0;
+        Map<Integer, List<Integer>> edge = new HashMap<>();
+        Queue<Integer> queue = new ArrayDeque<>();
+        for (int[] relation : relations) {
+            inDegrees[relation[1]]++;
+            edge.computeIfAbsent(relation[0], x -> new ArrayList<>()).add(relation[1]);
+        }
+
+        for (int i = 1; i < inDegrees.length; i++) {
+            if (inDegrees[i] == 0) {
+                queue.offer(i);
+                dp[i] = time[i - 1];
+                ans = Math.max(dp[i], ans);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            int i = queue.poll();
+            if (!edge.containsKey(i)) {
+                continue;
+            }
+
+            for (Integer j : edge.get(i)) {
+                dp[j] = Math.max(dp[j], dp[i] + time[j - 1]);
+                ans = Math.max(dp[j], ans);
+                if (--inDegrees[j] == 0) {
+                    queue.offer(j);
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
