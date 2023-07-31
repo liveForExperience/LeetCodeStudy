@@ -263,3 +263,60 @@ class Solution {
     }
 }
 ```
+# [LeetCode_834_树中距离之和](https://leetcode.cn/problems/sum-of-distances-in-tree/)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_142_环形链表II](https://leetcode.cn/problems/linked-list-cycle-ii/)
+## 解法
+### 思路
+- 使用快慢指针，如果有环，那么快慢指针一定会有相交点meet
+- 如果没有环，直接返回null即可
+- 因为快指针是慢指针速度的2倍，所以慢指针移动的距离是x，快指针移动的距离是2x
+- 也就是从meet开始移动x的距离，可以再次到达meet
+- 而从head开始移动，到达meet节点前，一定能遇到环的起始节点
+- 如果有2个指针，以相同的速度分别从meet和head开始移动，那么它们一定会在超过meet节点前相遇（最晚会在meet节点相遇），因为它们移动的速度和距离（都是x）相同，而它们相遇的点就是环的起始节点
+- 因为：它们都移动x长度，如果从环起始节点start到相遇节点meet的距离是a，那么：
+  - 如果从head开始移动的指针到达start的距离是b，那么到达meet经过的距离是`b + a`
+  - 如果从meet开始移动的指针到达start的距离是c，那么到达meet经过的距离是`c + a`
+  - 因为两个指针都经过x距离同时到达meet，所以`c + a = b + a` => `c = b`
+  - 因为速度相同，所以当两个指针相遇的时候，就是start的节点位置
+- 代码逻辑：
+  - 通过快慢指针找到meet，如果没有就返回null
+  - 在meet上初始化指针a
+  - 在head上初始化指针b
+  - a和b同时移动，首次相遇的位置就是答案节点start
+### 代码
+```java
+public class Solution {
+  public ListNode detectCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+    ListNode meet = null;
+    while (fast != null && fast.next != null) {
+      slow = slow.next;
+      fast = fast.next.next;
+
+      if (slow == fast) {
+        meet = slow;
+        break;
+      }
+    }
+
+    if (meet == null) {
+      return null;
+    }
+
+    ListNode a = meet, b = head;
+    while (a != b) {
+      a = a.next;
+      b = b.next;
+    }
+
+    return a;
+  }
+}
+```
