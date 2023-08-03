@@ -87,3 +87,101 @@ class Solution {
   }
 }
 ```
+# [LeetCode_722_删除注释](https://leetcode.cn/problems/remove-comments/description/)
+## 解法
+### 思路
+- 按照题目描述，在解析代码的时候，代码内容可以分成3种状态
+  - 正常
+  - 行级注释
+  - 块状注释
+- 题目就是按照如上不同状态做分类讨论
+- 主体逻辑
+  - 维护一个状态变量state
+  - 初始化一个StringBuilder对象用于存储有效代码内容
+  - 初始化一个结果列表，作为结果ans
+  - 循环代码列表
+  - 循环开始时如果当前状态不是块状代码（其实也就是正常代码，因为行级代码不可能跨行影响状态），那么就重新初始化StringBuilder
+  - 循环内部遍历字符串
+    - 如果当前是块状逻辑：
+      - 当前字符及后续字符是块状结尾，那么就已经坐标到当前i+2的位置，且恢复状态为正常
+    - 如果当前是行级状态，那么就直接返回到字符串结尾，且恢复状态到正常
+    - 如果当前是正常状态：
+      - 如果是块级状态开始，那么设置状态为块级状态，并返回i+2坐标
+      - 如果是行级状态开始，那么设置状态为行级状态，并返回字符串结尾
+      - 如果是正常字符串，就拼接到StringBuilder之后
+    - 内部循环结束，如果StringBuilder大于零，且不是块级别，那么就将StringBuilder放到列表中
+    - 列表循环结束，返回ans
+### 代码
+```java
+class Solution {
+    private int state = 0;
+    private static final int NORMAL = 0, LINE = 1, BLOCK = 2;
+    public List<String> removeComments(String[] source) {
+        StringBuilder sb = new StringBuilder();
+        List<String> ans = new ArrayList<>();
+        for (String s : source) {
+            if (!isBlock()) {
+                sb = new StringBuilder();
+            }
+
+            for (int i = 0; i < s.length();) {
+                i = execute(s, i, sb);
+            }
+
+            if (sb.length() > 0 && !isBlock()) {
+                ans.add(sb.toString());
+            }
+        }
+
+        return ans;
+    }
+
+    private int execute(String str, int index, StringBuilder sb) {
+        if (isBlock()) {
+            if (isBlockEnd(str, index)) {
+                state = NORMAL;
+                return index + 2;
+            }
+        } else if (isLine()) {
+            return str.length();
+        } else {
+            if (isBlockStart(str, index)) {
+                state = BLOCK;
+                return index + 2;
+            } else if (isLine(str, index)) {
+                return str.length();
+            } else {
+                sb.append(str.charAt(index));
+            }
+        }
+
+        return index + 1;
+    }
+
+    private boolean isBlock() {
+        return state == BLOCK;
+    }
+
+    private boolean isLine() {
+        return state == LINE;
+    }
+
+    private boolean isBlockStart(String str, int index) {
+        return doJudge(str, index, '/', '*');
+    }
+
+    private boolean isBlockEnd(String str, int index) {
+        return doJudge(str, index, '*', '/');
+    }
+
+    private boolean isLine(String str, int index) {
+        return doJudge(str, index, '/', '/');
+    }
+
+    private boolean doJudge(String str, int index, char first, char second) {
+        return str.charAt(index) == first &&
+                index + 1 < str.length() &&
+                str.charAt(index + 1) == second;
+    }
+}
+```
