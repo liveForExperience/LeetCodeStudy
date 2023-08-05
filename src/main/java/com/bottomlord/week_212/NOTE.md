@@ -185,3 +185,172 @@ class Solution {
     }
 }
 ```
+# [LeetCode_980_不同路径](https://leetcode.cn/problems/unique-paths-iii/)
+## 解法
+### 思路
+- 万事不决用回溯
+- 主体逻辑
+  - 遍历grid二维数组，获得如下数据
+    - 值为1的起始位置
+    - 累计值为0的元素个数target
+  - 遍历结束后
+    - 初始化一个布尔二维数组，用于做记事本，防止重复经过0坐标位置
+    - 初始化一个cnt的int整数，用于记录路过的0坐标个数，因为题目要求所有0位置都要走过
+    - 初始化一个类变量ans，用于记录路径个数作为答案
+    - 初始化一个代表方向的二维数组，用于模拟4个方向的移动
+  - 从之前记录的起始位置开始回溯
+  - 回溯过程中，先判断当前坐标是否合法，合法的条件
+    - 不越界
+    - 不为-1
+    - 记事本中未记录
+  - 如果当前元素值为0，则累加cnt
+  - memo记事本中记录当前坐标为true
+  - 判断当前坐标元素是否为2，如果是，且cnt与target值一致，则累加ans值。且无论是否一致，都直接返回，因为就算不一致，那么经过了2，也就不可能成为符合题目要求的路径了
+  - 循环4个方向，向下递归
+  - 循环结束，进行回溯动作
+    - 如果当前元素值为0，则累减cnt
+    - 讲当前坐标的memo值设置为false
+  - 递归返回后，返回ans值作为答案
+### 代码
+```java
+class Solution {
+    private final int[][] directions = new int[][]{{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+    private int[][] grid;
+    private boolean[][] memo;
+    private int ans, r, c, target = 0, cnt = 0;
+    public int uniquePathsIII(int[][] grid) {
+        this.ans = 0;
+        this.grid = grid;
+        this.r = grid.length;
+        this.c = grid[0].length;
+        this.memo = new boolean[r][c];
+        int startX = -1, startY = -1;
+
+        for (int x = 0; x < r; x++) {
+            for (int y = 0; y < c; y++) {
+                if (grid[x][y] == 1) {
+                    startX = x;
+                    startY = y;
+                } else if (grid[x][y] == 0) {
+                    target++;
+                }
+            }
+        }
+
+        backTrack(startX, startY);
+
+        return ans;
+    }
+
+    private void backTrack(int x, int y) {
+        if (!isValid(x, y)) {
+            return;
+        }
+
+        if (grid[x][y] == 0) {
+            cnt++;
+        }
+        
+        if (grid[x][y] == 2) {
+            if (cnt == target) {
+                ans++;
+            }
+            return;
+        }
+
+        memo[x][y] = true;
+
+        for (int[] direction : directions) {
+            int nx = direction[0], ny = direction[1];
+            backTrack(x + nx, y + ny);
+        }
+
+        memo[x][y] = false;
+        
+        if (grid[x][y] == 0) {
+            cnt--;
+        }
+    }
+
+    private boolean isValid(int x, int y) {
+        return x >= 0 && x < r && y >= 0 && y < c && grid[x][y] != -1 && !memo[x][y];
+    }
+}
+```
+## 解法二
+### 思路
+- 回溯+记事本+状态压缩
+- 回溯过程中，希望通过记事本，将已经走过的路径状态缓存起来，这样能够避免走重复的可能路径
+- 但是如果单单记录坐标，是无法准确描述当前状态的，因为曾经走过的路径不同，所以需要通过一个状态压缩变量来记录当前路径上曾经走过的状态
+- 可以通过使用整数的2进制位来记录已经经过的位置，然后因为题目设置的边界是r * c的长度不超过20，所以可以通过64位的整数，在低(r * c)位存储坐标访问状态，高(64 - r * c)位存储坐标，这样作为一个memo的key，把返回的路径数存储起来
+- 其他的逻辑和解法一类似
+### 代码
+```java
+class Solution {
+    private final int[][] directions = new int[][]{{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+    private int[][] grid;
+    private int r, c;
+    private final Map<Integer, Integer> memo = new HashMap<>();
+    public int uniquePathsIII(int[][] grid) {
+        this.grid = grid;
+        this.r = grid.length;
+        this.c = grid[0].length;
+        int startX = -1, startY = -1, status = 0;
+        for (int x = 0; x < r; x++) {
+            for (int y = 0; y < c; y++) {
+                if (grid[x][y] == 1) {
+                    startX = x;
+                    startY = y;
+                    status = mask(status, x, y);
+                } else if (grid[x][y] == 0 || grid[x][y] == 2) {
+                    status = mask(status, x, y);
+                }
+            }
+        }
+
+        return backTrack(startX, startY, status);
+    }
+
+    private int backTrack(int x, int y, int status) {
+        if (!isValid(status, x, y)) {
+            return 0;
+        }
+        
+        status = unmask(status, x, y);
+        
+        if (grid[x][y] == 2) {
+            return status == 0 ? 1 : 0;
+        }
+        
+        int key = ((x * c + y) << (r * c)) + status;
+        
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
+        
+        int ans = 0;
+        for (int[] direction : directions) {
+            int nx = direction[0], ny = direction[1];
+            ans += backTrack(x + nx, y + ny, status);
+        }
+        memo.put(key, ans);
+        return ans;
+    }
+
+    private boolean isValid(int status, int x, int y) {
+        return x >= 0 && x < r && y >= 0 && y < c  && !visited(status, x, y);
+    }
+
+    private boolean visited(int status, int x, int y) {
+        return (status & (1 << (x * c + y))) == 0;
+    }
+
+    private int mask(int status, int x, int y) {
+        return status | (1 << (x * c + y));
+    }
+    
+    private int unmask(int status, int x, int y) {
+        return status ^ (1 << (x * c + y));
+    }
+}
+```
