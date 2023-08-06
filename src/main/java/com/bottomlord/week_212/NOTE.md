@@ -354,3 +354,62 @@ class Solution {
     }
 }
 ```
+# [LeetCode_24_两两交换链表中的节点](https://leetcode.cn/problems/swap-nodes-in-pairs/)
+## 解法
+### 思路
+- 题目难点是对指针变化的模拟，和单向链表的反转类似，只不过需要注意到，题目要求两两反转，所以也就是反转操作是间隔着进行的，需要通过一个变量在遍历原链表时做行为的切换
+- 主体逻辑
+  - 初始化一个布尔变量flag，用于控制是否需要在当前节点操作反转
+    - true：翻转操作
+    - false：不操作
+  - 判断链表长度是否小于2，如果是，直接返回节点即可
+  - 定义一个递归函数，用来模拟反转过程，函数入参有3个
+    - 当前节点cur
+    - 前一个节点pre1
+    - 前二个节点pre2
+  - 递归的退出条件：当前节点为空
+  - 递归的主体逻辑：
+    - 如果flag为false，则直接跳过当前节点
+    - 如果flag为true，则开始反转
+  - 反转过程
+    - 使用tmp指针指向cur.next
+    - cur.next指针指向pre1
+    - pre1.next指向tmp
+    - pre2.next指向cur
+  - 递归结束后返回head.next指针（因为已经反转了，第二个节点才是新的头节点）
+### 代码
+```java
+class Solution {
+    private boolean flag;
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        flag = true;
+        ListNode ans = head.next;
+        recursion(head, null, null);
+        return ans;
+    }
+
+    private void recursion(ListNode cur, ListNode pre1, ListNode pre2) {
+        if (cur == null) {
+            return;
+        }
+
+        flag = !flag;
+
+        if (!flag) {
+            recursion(cur.next, cur, pre1);
+        } else {
+            ListNode next = cur.next;
+            cur.next = pre1;
+            pre1.next = next;
+            if (pre2 != null) {
+                pre2.next = cur;
+            }
+            recursion(next, pre1, cur);
+        }
+    }
+}
+```
