@@ -118,3 +118,47 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1289_下降路径最小和II](https://leetcode.cn/problems/minimum-falling-path-sum-ii/description/)
+## 解法
+### 思路
+- 动态规划
+- 逻辑过程是：
+  - 初始化一个记事本数组dp，数组每个坐标i代表当前行i列为路径最后位置的最短距离
+  - dp初始化为`grid[0]`
+  - 从第二行开始遍历grid，内层继续循环当前`grid[i]`
+  - 内层循环的处理逻辑是：
+    - 初始化一个与`grid[i]`长度相同的空数组arr 
+    - 遍历dp数组中与当前列j不同的所有坐标元素`dp[k], k != j`，找到最小值并累加`grid[i][j]`，暂存在`arr[j]`位置
+    - 内层遍历结束，将arr赋值给dp
+  - 遍历结束后，返回dp数组中的最小值
+### 代码
+```java
+class Solution {
+    public int minFallingPathSum(int[][] grid) {
+        int n = grid[0].length;
+        int[] dp = grid[0];
+
+        for (int i = 1; i < grid.length; i++) {
+            int[] arr = new int[n];
+            for (int j = 0; j < n; j++) {
+                int min = Integer.MAX_VALUE;
+                for (int k = 0; k < n; k++) {
+                    if (j == k) {
+                        continue;
+                    }
+
+                    min = Math.min(min, dp[k]);
+                }
+                arr[j] = min + grid[i][j];
+            }
+            dp = arr;
+        }
+
+        int ans = Integer.MAX_VALUE;
+        for (int num : dp) {
+            ans = Math.min(num, ans);
+        }
+        return ans;
+    }
+}
+```
