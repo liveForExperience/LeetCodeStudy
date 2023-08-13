@@ -162,3 +162,40 @@ class Solution {
     }
 }
 ```
+# [LeetCode_23_合并K个升序链表](https://leetcode.cn/problems/merge-k-sorted-lists/description/)
+## 解法
+### 思路
+- 初始化一个优先级队列
+  - 存储元素为链表节点
+  - 比较规则为节点值的非降序排列
+- 将K个链表的头节点依次放入优先级队列中
+- 初始化一个fake头作为结果链表的起始节点
+- 遍历优先级队列，退出条件是队列为空
+- 依次将弹出的节点拼接到fake及后续节点之后
+- 遍历结束返回fake的next指针对应的节点即可
+### 代码
+```java
+class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        ListNode fake = new ListNode(0), cur = fake;
+        PriorityQueue<ListNode> queue = new PriorityQueue<>(Comparator.comparingInt(x -> x.val));
+        for (ListNode node : lists) {
+            if (node == null) {
+                continue;
+            }
+            queue.offer(node);
+        }
+        while (!queue.isEmpty()) {
+            ListNode node = queue.poll();
+            cur.next = node;
+            cur = cur.next;
+            if (node.next != null) {
+                queue.offer(node.next);
+                node.next = null;
+            }
+        }
+        
+        return fake.next;
+    }
+}
+```
