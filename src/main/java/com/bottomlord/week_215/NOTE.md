@@ -65,3 +65,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1267_统计参与通信的服务器](https://leetcode.cn/problems/count-servers-that-communicate/)
+## 解法
+### 思路
+- 第一次遍历二维数组，使用2个map来统计行和列上的计算机个数
+- 第二次遍历，基于第一次生成的2个map，判断当前计算机是否能与其他服务器通信，也即是否有大于1的行列，然后根据判断结果计数
+- 返回第二次遍历的统计结果
+### 代码
+```java
+class Solution {
+    public int countServers(int[][] grid) {
+        Map<Integer, Integer> rmap = new HashMap<>(), cmap = new HashMap<>();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == 0) {
+                    continue;
+                }
+                
+                rmap.put(i, rmap.getOrDefault(i, 0) + 1);
+                cmap.put(j, cmap.getOrDefault(j, 0) + 1);
+            }
+        }
+        
+        int cnt = 0;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == 0) {
+                    continue;
+                }
+                
+                if (rmap.get(i) > 1 || cmap.get(j) > 1) {
+                    cnt++;
+                }
+            }
+        }
+        
+        return cnt;
+    }
+}
+```
