@@ -104,3 +104,35 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1448_统计二叉树中好节点的数目](https://leetcode.cn/problems/count-good-nodes-in-binary-tree/)
+## 解法
+### 思路
+- 定义一个类变量`cnt`，在遍历过程中用来记录好节点个数
+- dfs遍历整棵树，在下钻的过程中，维护一个从根节点下来的最大值`max`，如果当前节点的val不小于最大值，就累加`cnt`，并更新这个最大值`max`
+- 遍历结束，返回`max`
+### 代码
+```java
+class Solution {
+    private int cnt;
+    
+    public int goodNodes(TreeNode root) {
+        this.cnt = 0;
+        dfs(root, root.val);
+        return cnt;
+    }
+    
+    private void dfs(TreeNode node, int max) {
+        if (node == null) {
+            return;
+        }
+        
+        if (node.val >= max) {
+            cnt++;
+        }
+        
+        max = Math.max(max, node.val);
+        dfs(node.left, max);
+        dfs(node.right, max);
+    }
+}
+```
