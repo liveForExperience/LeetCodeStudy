@@ -136,3 +136,74 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1782_统计点对的数目](https://leetcode.cn/problems/count-pairs-of-nodes)
+## 解法
+### 思路
+- 设每个有效点对相连的边的个数是`cnt`，答案要求的是`cnt`大于`queries[i]`的点对的个数
+- 如果点对由`a`和`b`组成，`cnt`可以通过`edge[a] + edge[b] - dup(a,b)`得到
+- `dup(a,b)`的含义是，如果边是`(a,b)`，那么这种边会导致计算的边数重复，`dup(a,b)`就是计算这样的边的个数
+- 如果正常做，就是枚举所有的`a`和`b`，计算相连边的个数，这样的时间复杂度是`O(N²)`，会超时
+- 如果不去考虑重复的问题，只找到满足`edge[a] + edge[b] > queries[i]`的点对个数，可以使用二分查找：
+  - 首先将所有坐标对应的`edgee[x]`维护好，可以通过枚举`edges`二维数组统计，`x`即点对中的点
+  - 其次，因为二分查找需要查找的数组是有序的，而我们要查找的是`edge[x]`的边数对应的数组，所以需要对`edge[x]`进行从小到大的排序
+  - 初始化指针`a = 1`和`b = n`，坐标对应`edges`中的值，也即点对中的点，该值范围是`[1,n]`
+  - 初始化一个循环，循环继续条件是`a < b`，因为题目要求点对是符合`a < b`的
+  - 如果`edge[a] + edge[b] <= queries[i]`，说明`edge[a]`与任何一个在`(a, b)`范围内的`b`坐标，它们的度的和都一定小于等于`queries[i]`，所以可以不用考虑这个`a`坐标，`a`右移
+  - 如果`edge[a] + edge[b] > queries[i]`
+    - 这个状态是符合题目要求的，所以所有以`b`坐标为右端点，范围在`[a,b)`的坐标，都符合题目的要求，因为通过对度的个数排序后，所有这些`edge[a]`与当前确定的`edge[b]`相加，都一定大于`queries[i]`
+    - 所以可以将这些`a`的个数统计出来后，累加到暂定的不考虑重复的答案个数中
+    - 然后在处理过如上步骤后，这个`b`坐标就不需要考虑了，可以左移
+  - 当循环退出后，累计出来的个数，就是不考虑重复边状态下的答案个数了
+- 之后就是考虑去除掉重复边的问题，可以通过枚举所有点对出现的个数`c`，如果这些点对`(a,b)`的各自的度满足：
+  - `edge[a] + edge[c] > queries[i]`
+  - `edge[a] + edge[b] - c <= queries[i]`
+  - 那么就说明其实这组点对实际是不符合题目要求的，就把这组点对从答案个数中减去
+- 如此循环`queries`数组的所有元素，得到对应的答案值即可
+### 代码
+```java
+class Solution {
+  public int[] countPairs(int n, int[][] edges, int[] queries) {
+    int[] degrees = new int[n + 1];
+    Map<Integer, Integer> edgeMap = new HashMap<>();
+    for (int[] edge : edges) {
+      int x = edge[0], y = edge[1];
+      if (x > y) {
+        int tmp = y;
+        y = x;
+        x = tmp;
+      }
+
+      degrees[x]++;
+      degrees[y]++;
+      int mask = (x << 16) | y;
+      edgeMap.put(mask, edgeMap.getOrDefault(mask, 0) + 1);
+    }
+
+    int[] ans = new int[queries.length];
+    int[] sortedDegrees = degrees.clone();
+    Arrays.sort(sortedDegrees);
+    for (int i = 0; i < queries.length; i++) {
+      int a = 1, b = n, query = queries[i];
+      while (a < b) {
+        if (sortedDegrees[a] + sortedDegrees[b] <= query) {
+          a++;
+        } else {
+          ans[i] += b - a;
+          b--;
+        }
+      }
+
+      for (Map.Entry<Integer, Integer> entry : edgeMap.entrySet()) {
+        int mask = entry.getKey(), c = entry.getValue(),
+                x = mask >> 16, y = mask & 0xffff, sum = degrees[x] + degrees[y];
+
+        if (sum > query && sum - c <= query) {
+          ans[i]--;
+        }
+      }
+    }
+
+    return ans;
+  }
+}
+```
