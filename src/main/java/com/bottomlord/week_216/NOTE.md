@@ -49,3 +49,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1761_一个图中连通三元组的最小度数](https://leetcode.cn/problems/minimum-degree-of-a-connected-trio-in-a-graph/)
+## 解法
+### 思路
+- 使用邻接表`g`记录边
+- 使用`degrees`数组记录入度个数
+- 初遍历`edges`始化`g`和`degrees`
+- 3层遍历`edges`，找到3元组，然后计算度数，暂存最小值
+- 遍历结束返回结果值
+### 代码
+```java
+class Solution {
+    public int minTrioDegree(int n, int[][] edges) {
+        int[][] g = new int[n + 1][n + 1];
+        int[] degrees = new int[n + 1];
+        for (int[] edge : edges) {
+            int x = Math.min(edge[0], edge[1]), y = Math.max(edge[0], edge[1]);
+            g[x][y] = 1;
+            degrees[x]++;
+            degrees[y]++;
+        }
+
+        int ans = Integer.MAX_VALUE;
+        for (int i = 1; i <= n; i++) {
+            for (int j = i + 1; j <= n; j++) {
+                if (g[i][j] == 0) {
+                    continue;
+                }
+
+                for (int k = j + 1; k <= n; k++) {
+                    if (g[i][k] == 0 || g[j][k] == 0) {
+                        continue;
+                    }
+                    
+                    ans = Math.min(ans, degrees[i] + degrees[j] + degrees[k] - 6);
+                }
+            }
+        }
+        
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+}
+```
