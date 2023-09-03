@@ -91,3 +91,81 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2240_1_买钢笔和铅笔的方案数](https://leetcode.cn/problems/number-of-ways-to-buy-pens-and-pencils/)
+## 失败解法
+### 原因
+时间复杂度过高，超时
+### 思路
+2层for循环模拟
+### 代码
+```java
+class Solution {
+    public long waysToBuyPensPencils(int total, int cost1, int cost2) {
+        int ans = 0;
+        for (int c1 = 0; c1 * cost1 <= total; c1++) {
+            int cost = c1 * cost1;
+            for (int c2 = 0; c2 * cost2 <= total - cost; c2++) {
+                ans++;
+            }
+        }
+        return ans;
+    }
+}
+```
+## 解法
+### 思路
+- 在失败解法的基础上，将内层循环的时间复杂度降低
+- 很容易想到通过二分查找的方法找到铅笔的个数上限
+### 代码
+```java
+class Solution {
+    public long waysToBuyPensPencils(int total, int cost1, int cost2) {
+        long sum = 0;
+        for (long i = 0; i * cost1 <= total; i++) {
+            sum += binarySearch(total - i * cost1, cost2) + 1;
+        }
+        return sum;
+    }
+
+    private long binarySearch(long target, int cost2) {
+        long head = 0, tail = target, ans = -1;
+        while (head <= tail) {
+            long mid = head + (tail - head) / 2, cur = mid * cost2;
+
+            if (cur <= target) {
+                head = mid + 1;
+                ans = mid;
+            } else {
+                tail = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 失败解法慢的原因是一个个的去判断每个个数的可能性
+- 解法一在解法1的基础上，将铅笔个数的个数可能性通过二分查找最大个数给缩短了
+- 基于解法2的思路，其实稍微进一步想一下就可以发现，一个除法就可以得到这个最大个数
+- 而2种物品的个数都可以通过除法来处理，于是问题就变成了算出钢笔的最大个数n
+- 从0开始遍历n+1个个数可能，来累加铅笔对应的个数即可
+- 时间复杂度降低到O(N)
+### 代码
+```java
+class Solution {
+    public long waysToBuyPensPencils(int total, int cost1, int cost2) {
+        if (cost1 < cost2) {
+            return waysToBuyPensPencils(total, cost2, cost1);
+        }
+        
+        long n = total / cost1, sum = 0;
+        for (long i = 0; i <= n; i++) {
+            long rest = total - i * cost1;
+            sum += rest / cost2 + 1;
+        }
+        return sum;
+    }
+}
+```
