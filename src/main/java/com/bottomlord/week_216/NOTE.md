@@ -169,3 +169,74 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1921_消灭怪物的最大数量](https://leetcode.cn/problems/eliminate-maximum-number-of-monsters/)
+## 解法
+### 思路
+- 求出怪兽到达城市的时间，对时间进行排序，排序规则非降序，然后遍历射击的回合数，从0开始，判断每个射击回合，是否可以将当前回合最先能到达的怪兽在到达城市前消灭
+- 初始化一个数组`arr`，用来存储怪物到达城市的回合数
+    - 一开始想到的计算公式：`dist[i] / speed[i]` 
+    - 因为java在进行整数除法运算时会向下取整，而如果怪物到达的时间是`5 / 2 = 2.5`回合，那么java整数运算求出的就是2回合，但其实怪物是在第3个回合的一半时候才会到达城市，所以需要做向上取整的处理
+    - 新的公式：`(dist[i] - 1) / speed[i] + 1`
+      - `+ 1`就是向上取整
+      - `dist[i] - 1`是为了处理整除的情况，因为如果考虑到整除，那么不会发生向下取整，而`-1`对于向下取整的运算没有影响，但可以使整除的状况也发生向下取整的运算
+- 对`arr`进行排序
+- 遍历`arr`，遍历坐标`index`范围是`[0, n)`，此时的`index`等价于射击回合数，只要射击回合早于怪兽到达的回合，就可以消灭怪兽，所以只要`index < arr[i]`，那么就可以累加答案，如果全部符合，那么答案就是`n`
+### 代码
+```java
+class Solution {
+     public int eliminateMaximum(int[] dist, int[] speed) {
+        int n = dist.length;
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = (dist[i] - 1) / speed[i] + 1;
+        }
+
+        Arrays.sort(arr);
+        for (int i = 0; i < n; i++) {
+            if (i >= arr[i]) {
+                return i;
+            }
+        }
+        
+        return n;
+    }
+}
+```
+## 解法二
+### 思路
+- 这个游戏最多有n个回合，每个回合玩家都可以消灭一个怪兽，所以消灭个数随回合数的增长是以`f(x) = x`函数线性增长的。
+- 按照这个思路，可以将整个游戏划分成`n+1`个区间，生成`arr`数组，数组元素代表从0开始的回合数中怪兽出现的个数
+- 然后将通过遍历怪兽的距离和速度，算出怪兽到达的回合数，在`arr`中对应坐标位置累加当前怪兽个数
+- 如上这个过程的时间复杂度是`O(N)`
+- 然后遍历游戏的`n+1`个回合，从0开始，在每个回合中累加1个消灭怪兽的个数`kills`，同时从`arr`数组中取出当前回合中到达的怪兽个数
+  - 如果`kills(消灭个数)`不小于`arr[i](怪兽个数)`，则更新`kills -= arr[i]`
+  - 如果`kills`小于`arr[i]`，则返回当前回合`i`，因为`i`从0开始，所以答案应该是`i+1`
+- 如果成功遍历结束，说明每一个回合，玩家都可以消灭最近的怪兽，则答案为`n`
+### 代码
+```java
+class Solution {
+     public int eliminateMaximum(int[] dist, int[] speed) {
+        int n = dist.length, kill = 0;
+        
+        int[] arr = new int[n + 1];
+        for (int i = 0; i < n; i++) {
+            int round = (dist[i] - 1) / speed[i] + 1;
+            if (round > n) {
+                continue;
+            }
+
+            arr[round]++;
+        }
+
+        for (int i = 0; i <= n; i++) {
+            kill -= arr[i];
+            if (kill < 0) {
+                return i;
+            }
+            kill++;
+        }
+
+        return n;
+    }
+}
+```
