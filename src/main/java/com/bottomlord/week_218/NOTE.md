@@ -44,3 +44,93 @@ class Solution {
   }
 }
 ```
+# [LeetCode_146_LRU缓存](https://leetcode.cn/problems/lru-cache/)
+## 解法
+### 思路
+- 使用hash表和自实现的简易双向链表来实现LRU
+  - 双向链表节点存储key，value值，以及前后指针
+  - hash表存储key和双向链表节点
+- LRU基于双向链表，通过实现删除节点、移动节点到头部，删除尾部节点，添加节点到头部这4个方法，实现基本能力
+### 代码
+```java
+class LRUCache {
+    private Map<Integer, DListNode> cache;
+    private int capacity, size;
+    private DListNode head, tail;
+
+    public LRUCache(int capacity) {
+        this.cache = new HashMap<>();
+        this.size = 0;
+        this.capacity = capacity;
+        head = new DListNode();
+        tail = new DListNode();
+        head.next = tail;
+        tail.prev = head;
+    }
+
+    public int get(int key) {
+        DListNode node = cache.get(key);
+        if (node == null) {
+            return -1;
+        }
+
+        moveToHead(node);
+        return node.value;
+    }
+
+    public void put(int key, int value) {
+        DListNode node = cache.get(key);
+        if (node == null) {
+            node = new DListNode(key, value);
+            cache.put(key, node);
+            addToHead(node);
+            size++;
+            
+            if (size > capacity) {
+                DListNode tail = removeTail();
+                cache.remove(tail.key);
+                size--;
+            }
+            
+            return;
+        }
+        
+        node.value = value;
+        moveToHead(node);
+    }
+
+    private void moveToHead(DListNode node) {
+        remove(node);
+        addToHead(node);
+    }
+    
+    private DListNode removeTail() {
+        DListNode tail = this.tail.prev;
+        remove(tail);
+        return tail;
+    }
+
+    private void remove(DListNode node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private void addToHead(DListNode node) {
+        node.prev = head;
+        node.next = head.next;
+        head.next.prev = node;
+        head.next = node;
+    }
+
+    private class DListNode {
+        private int key, value;
+        private DListNode prev, next;
+
+        public DListNode(){}
+        public DListNode(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+}
+```
