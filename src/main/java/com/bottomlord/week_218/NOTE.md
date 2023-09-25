@@ -134,3 +134,93 @@ class LRUCache {
     }
 }
 ```
+# [LeetCode_1993_树上的操作](https://leetcode.cn/problems/operations-on-tree)
+## 解法
+### 思路
+- 使用一个数组`lockUsers`来记录节点上锁用户的状态，数组元素初始化为-1，代表当前节点未上锁
+- `lock`和`unlock`操作可以通过`lockUsers`数组来进行判断
+  - `lock`时，如果当前`user`对应的`lockUsers`元素是-1，那么就将元素置为`user`，并返回true，否则就返回false
+  - `unlock`时，如果当前`user`与对应的`lockUsers`值相等，那么将元素值置为-1，并返回true，否则返回false
+- 基于`parent`数组的值来初始化`children`数组，数组中记录一个列表，代表当前元素对应节点的子节点坐标
+- 基于`upgrade`操作需要符合3个要求，所以对应实现这些条件是否符合的检查方法
+  - 不能上锁的状态可以通过`lockUsers`数组实现
+  - 祖先节点不能上锁的状态，可以通过循环`parent`数组配合`lockUsers`数组进行判断
+  - 子节点需要有上锁状态的节点，并且需要对其进行解锁，可以通过对`children`数组的dfs进行实现，直觉上我们会先检查是否有需要解锁的节点，再做解锁操作，但因为如果没有需要解锁的节点，解锁也不会影响节点的状态，所以解锁可以和检查放在一起操作，但前提是，`upgrade`操作的前两个条件需要先满足，否则可能会导致子节点满足但是祖先或者当前节点状态不满足不能操作，但子节点已经变更状态的问题
+### 代码
+```java
+class LockingTree {
+
+    private int[] parents, lockUsers;
+    private List<Integer>[] children;
+
+    public LockingTree(int[] parents) {
+        int n = parents.length;
+        this.parents = parents;
+        this.lockUsers = new int[n];
+        Arrays.fill(lockUsers, -1);
+        this.children = new List[n];
+        for (int i = 0; i < n; i++) {
+            children[i] = new ArrayList();
+        }
+
+        for (int i = 0; i < n; i++) {
+            int parent = parents[i];
+            if (parent == -1) {
+                continue;
+            }
+            
+            children[parent].add(i);
+        }
+    }
+
+    public boolean lock(int num, int user) {
+        if (lockUsers[num] == -1) {
+            lockUsers[num] = user;
+            return true;
+        }
+        
+        return false;
+    }
+
+    public boolean unlock(int num, int user) {
+        if (lockUsers[num] == user) {
+            lockUsers[num] = -1;
+            return true;
+        }
+        
+        return false;
+    }
+
+    public boolean upgrade(int num, int user) {
+        boolean ans = lockUsers[num] == -1 && !hasLockedAncestor(num) && checkAndUnlockChildren(num);
+        if (ans) {
+            lockUsers[num] = user;
+        }
+        return ans;
+    }
+    
+    private boolean hasLockedAncestor(int num) {
+        int parent = parents[num];
+        while (parent != -1) {
+            if (lockUsers[parent] != -1) {
+                return true;
+            }
+
+            parent = parents[parent];
+        }
+
+        return false;
+    }
+
+    private boolean checkAndUnlockChildren(int num) {
+        boolean hasLockedChild = lockUsers[num] != -1;
+        lockUsers[num] = -1;
+
+        for (Integer child : children[num]) {
+            hasLockedChild |= checkAndUnlockChildren(child);
+        }
+
+        return hasLockedChild;
+    }
+}
+```
