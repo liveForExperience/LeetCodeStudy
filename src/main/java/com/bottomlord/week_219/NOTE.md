@@ -198,3 +198,75 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2251_花期内花的数目]()
+## 解法
+### 思路
+- 根据花期的区间，我们可以分别生成花开时间和花最后还开着的时间的数组
+- 对这两个数组`starts`和`ends`进行非降序排序
+- 排序后的这两个数组就可以进行二分查找了，而查找的目标值就是遍历`people`的元素值
+- 那二分查找出来的2个值分别是什么含义呢？而二分查找的边界应该怎么定义呢？关键就需要理解这里
+- 首先，这两个数组的二分查找是不同的
+  - `starts`数组要找的是小于等于`people`元素值的最大值
+  - `ends`数组要找的是小于`people`元素值的最大值
+- 而这二者的之所以有区别，是因为
+  - 我们要在`starts`数组中二分查找到开花时间不大于`people`观察时间的最后那个元素坐标，也可以理解成通过坐标能够知道有多少花是在人来的时候至少开过的（包括当时开的）
+  - 而我们要在`ends`数组中二分查找的是在`people`观察时已经谢了的最大那个坐标，因为花期是指开着的时间时间，`ends`中的元素是指花最后开着的时间，所以只有小于`people`值的元素才代表在人来观察之前就谢了，所以要小于目标值
+- 得到这两个值之后，通过计算`开过的 - 已经谢了的`，就能得到`还开着的`
+- 所以只要计算2个值的差，就能得到每个人观察到的花的数量
+### 代码
+```java
+class Solution {
+    public int[] fullBloomFlowers(int[][] flowers, int[] people) {
+        int n = flowers.length;
+        int[] starts = new int[n], ends = new int[n];
+        for (int i = 0; i < flowers.length; i++) {
+            int[] flower = flowers[i];
+            starts[i] = flower[0];
+            ends[i] = flower[1];
+        }
+
+        Arrays.sort(starts);
+        Arrays.sort(ends);
+
+        int[] ans = new int[people.length];
+        for (int i = 0; i < people.length; i++) {
+            int person = people[i];
+            int bloom = binarySearchBiggestLowerOrEquals(starts, person) + 1,
+                fade = binarySearchBiggestLower(ends, person) + 1;
+                System.out.println(bloom + ":" + fade);
+            ans[i] = bloom - fade;
+        }
+        return ans;
+    }
+
+    private int binarySearchBiggestLowerOrEquals(int[] arr, int target) {
+        int head = 0, tail = arr.length - 1;
+        while (head + 1 < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (arr[mid] <= target) {
+                head = mid;
+            } else {
+                tail = mid;
+            }
+        }
+
+        return arr[head] > target ? -1 : arr[tail] <= target ? tail : head;
+    }
+
+    private int binarySearchBiggestLower(int[] arr, int target) {
+        int head = 0, tail = arr.length - 1;
+        while (head + 1 < tail) {
+            int mid = head + (tail - head) / 2;
+
+            if (arr[mid] < target) {
+                head = mid;
+            } else {
+                tail = mid;
+            }
+        }
+
+        return arr[head] >= target ? -1 : arr[tail] < target ? tail : head; 
+    }
+}
+```
