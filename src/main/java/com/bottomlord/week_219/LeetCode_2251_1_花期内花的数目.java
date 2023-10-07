@@ -58,9 +58,4 @@ public class LeetCode_2251_1_花期内花的数目 {
 
         return arr[head] >= target ? -1 : head;
     }
-
-    public static void main(String[] args) {
-        LeetCode_2251_1_花期内花的数目 t = new LeetCode_2251_1_花期内花的数目();
-        t.binarySearchBiggestLowerOrEquals(new int[]{1,3,4,9}, 11);
-    }
 }
