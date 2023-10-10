@@ -37,3 +37,44 @@ class StockSpanner {
     }
 }
 ```
+# [LeetCode_2731_移动机器人](https://leetcode.cn/problems/movement-of-robots)
+## 解法
+### 思路
+- 根据题意发现，如果两个机器人相遇，然后转换方向，对于要求的距离结果，实际转向的动作是没有意义的，完全可以理解成2个机器人相遇后擦肩而过。
+- 那题目就变成了
+  - 先求每个机器人行走d次后的坐标
+  - 对坐标进行排序
+  - 求所有的距离之和
+- 求所有距离之和的问题可以通过如下的方式来解决：
+  - 假设有`a,b,c,d,e`5个点
+  - `c - b`的距离是x
+  - 那么`c - a`，`d - a`,`e - a`的距离中都包含了x，同理，`b`也在和`c,d,e`之间的距离中包含了这个x，所以就可以得到如下的公式
+  - `i * (n - i) * x`：
+    - `i`：代表c之前的元素个数，也即2（a和b）
+    - `n`：代表所有元素个数，也即5
+    - `n - i`：代表c和c之后的所有元素，也即3（c,d,e）
+  - 遍历排序后的坐标后，套用公式计算这个差值累加即可
+### 代码
+```java
+class Solution {
+    public int sumDistance(int[] nums, String s, int d) {
+        int n = nums.length;
+        long[] arr = new long[n];
+        char[] cs = s.toCharArray();
+        for (int i = 0; i < n; i++) {
+            long v = cs[i] == 'L' ? -1 : 1;
+            arr[i] = nums[i] + v * d;
+        }
+
+        Arrays.sort(arr);
+        long sum = 0, mod = 1000000007;
+        for (int i = 1; i < n; i++) {
+            long x = arr[i] - arr[i - 1];
+            sum += i * x % mod * (n - i) % mod;
+            sum %= mod;
+        }
+
+        return (int) sum;
+    }
+}
+```
