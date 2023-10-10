@@ -11,13 +11,29 @@
 - 根据如上的处理逻辑，当next函数入参处理完栈内元素后，通过坐标差就能得到跨度，而因为坐标值无法通过函数入参提供，所以类中需要同时维护一个坐标属性，并在每次调用的时候进行自增
 ### 代码
 ```java
+class StockSpanner {
 
-```
-# [LeetCode_2136_全部开花的最早一天](https://leetcode.cn/problems/earliest-possible-day-of-full-bloom)
-## 解法
-### 思路
+    private int index;
+    private LinkedList<int[]> stack;
+    
+    public StockSpanner() {
+        this.index = 0;
+        this.stack = new LinkedList<>();
+    }
 
-### 代码
-```java
-
+    public int next(int price) {
+        while (!stack.isEmpty() && stack.peek()[0] <= price) {
+            stack.poll();
+        }
+        
+        if (stack.isEmpty()) {
+            stack.push(new int[]{price, index++});
+            return index;
+        }
+        
+        int[] peek = stack.peek();
+        stack.push(new int[]{price, index});
+        return index++ - peek[1];
+    }
+}
 ```
