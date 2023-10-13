@@ -78,3 +78,68 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2512_奖励最顶尖的K名学生](https://leetcode.cn/problems/reward-top-k-students)
+## 解法
+### 思路
+- 使用2个set分别记录正面和负面评语
+- 初始化一个优先级队列
+  - 存储的元素为1个存放2个元素的数组，一个元素记录评语总分，一个学生元素记录id
+  - 队列比较器的规则：
+    - 如果数值相同，按id降序排列
+    - 如果数值不同，按数值升序排列
+    - 构建一个小顶堆
+- 遍历评语数组，分别基于2个set算出当前学生的评语总分
+- 然后构建数组放入优先级队列
+- 放入后，判断当前队列是否大于k，如果是，就把堆顶最小元素出队
+- 遍历结束后，将队列中元素依次取出，倒序放入结果列表中返回即可
+### 代码
+```java
+class Solution {
+    public List<Integer> topStudents(String[] positives, String[] negatives, String[] reports, int[] ids, int k) {
+        Set<String> pset = new HashSet<>(), nset = new HashSet<>();
+        Collections.addAll(pset, positives);
+        Collections.addAll(nset, negatives);
+        int n = reports.length;
+        PriorityQueue<int[]> queue = new PriorityQueue<>((x, y) -> {
+            if (x[0] == y[0]) {
+                return y[1] - x[1];
+            }
+
+            return x[0] - y[0];
+        });
+        
+        for (int i = 0; i < n; i++) {
+            String report = reports[i];
+            String[] words = report.split(" ");
+            int score = 0;
+            for (String word : words) {
+                if (pset.contains(word)) {
+                    score += 3;
+                }
+
+                if (nset.contains(word)) {
+                    score--;
+                }
+            }
+
+            queue.offer(new int[]{score, ids[i]});
+
+            if (queue.size() > k) {
+                queue.poll();
+            }
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        k = queue.size();
+        for (int i = 0; i < k; i++) {
+            ans.add(null);
+        }
+
+        while (!queue.isEmpty()) {
+            ans.set(--k, queue.poll()[1]);
+        }
+
+        return ans;
+    }
+}
+```
