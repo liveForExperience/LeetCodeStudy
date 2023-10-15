@@ -143,3 +143,58 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1488_避免洪水泛滥](https://leetcode.cn/problems/avoid-flood-in-the-city)
+## 解法
+### 思路
+- 根据题意，如果某一个湖泊泛滥，那么必须至少有一个晴天在湖泊满的那天之后，而我只需要将离湖泊满了之后最近的那个晴天，记录其抽取的是该湖泊即可
+- 而如果有额外多的晴天，因为题目允许任意符合要求的答案，所以统一设置为一个值就行，我设置为1
+- 根据如上的分析，需要以下几个数据结构来辅助算法执行
+  - 一个能记录晴天的集合，该集合还能够提供二分查找的能力，满足我找到离即将泛滥的湖泊满之后最近的那个晴天，所以可以使用`TreeSet`
+  - 一个记录满了的湖泊和对应天数对应关系的键值对，所以可以用`HashMap`
+- 然后算法就比较简单：
+  - 首先初始化一个结果数组，将所有坐标填充为1
+  - 遍历`rains`数组，作如下判断
+    - 如果元素值为0，代表是晴天，那么就将该元素的坐标记录到`TreeMap`中
+    - 如果元素值为1，说明这天需要对湖泊状态进行判断，进而做出可能要抽水的决策
+      - 如果`HashMap`中存储有当前元素值，说明该元素值对应的湖泊即将泛滥，需要从`TreeMap`中找到那个最近的晴天
+        - 如果找不到，就返回空数组，结束算法
+        - 如果找到了
+          - 那么结果数组的该晴天坐标，对应的值就是当前的湖泊：`ans[day] = lake`，
+          - `TreeMap`中将该晴天坐标删除
+          - 更新`HashMap`中该湖泊对应的天数值
+      - 如果没有该湖泊值，那么就记录该湖泊及对应的天数值
+  - 遍历结束，返回结果数组即可
+### 代码
+```java
+class Solution {
+    public int[] avoidFlood(int[] rains) {
+        int[] ans = new int[rains.length];
+        Arrays.fill(ans, 1);
+        TreeSet<Integer> set = new TreeSet<>();
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < rains.length; i++) {
+            int lake = rains[i];
+            if (lake == 0) {
+                set.add(i);
+                continue;
+            }
+
+            ans[i] = -1;
+
+            if (map.containsKey(lake)) {
+                Integer day = set.ceiling(map.get(lake));
+                if (day == null) {
+                    return new int[0];
+                }
+
+                ans[day] = lake;
+                set.remove(day);
+            }
+
+            map.put(lake, i);
+        }
+
+        return ans;
+    }
+}
+```
