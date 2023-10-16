@@ -198,3 +198,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1436_全部开花的最早一天](https://leetcode.cn/problems/earliest-possible-day-of-full-bloom)
+## 解法
+### 思路
+- 根据题意发现，每朵花的`开花时间=播种时间+成长时间`
+  - 播种时间是需要消耗人力的，因为题目限制1个人，所以无法并发的情况下，最早开花时间大于等于包含所有播种时间的总和。这个时间是整个时间消耗的瓶颈
+  - 成长时间，因为不需要人的参与，实际是可以并发的，但又因为只有一个人的缘故，所以实际并发数的大小就取决于是否能尽可能的在话成长的过程中，更多的播种出新的花
+- 通过如上的分析，其实可以发现，如果在花的成长周期内，能够尽可能多的播种出花，使花的成长尽可能的并发，就能最小化全部开花的时间。
+- 为了达到如上目的，很容易想到如果对成长时间降序排序，然后基于这个顺序贪心的播种，就可以在最短的时间内使所有花开花
+- 算法过程：
+  - 初始化一个数组`arr`，存储花的坐标元素
+  - 对数组基于成长时间做降序排序
+  - 初始化变量`preTime`，用于累加播种时间
+  - 初始化变量`totalTime`，用于记录总共花费的时间
+  - 遍历`arr`，更新`preTime`和`totalTime`
+    - `preTime = preTime + plantTime`
+    - `totalTime = max(totalTime, preTime + growTime)`，之所以要比大小，是因为前一个花的开花的时间（`pre + grow[i - 1]`），可能会大于后一朵花在前一朵播种好以后开始的周期(`pre + plant[i] + grow[i]`)更晚
+  - 遍历结束后，返回`totalTime`即可
+### 代码
+```java
+class Solution {
+    public int earliestFullBloom(int[] plantTime, int[] growTime) {
+        int preTime = 0, totalTime = 0, n = plantTime.length;
+        Integer[] arr = new Integer[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = i;
+        }
+
+        Arrays.sort(arr, (x, y) -> growTime[y] - growTime[x]);
+
+        for (Integer index : arr) {
+            preTime = preTime + plantTime[index];
+            totalTime = Math.max(totalTime, preTime + growTime[index]);
+        }
+        
+        return totalTime;
+    }
+}
+```
