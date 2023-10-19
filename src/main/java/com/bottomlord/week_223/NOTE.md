@@ -33,3 +33,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1726_同积元组](https://leetcode.cn/problems/tuple-with-same-product)
+## 解法
+### 思路
+- 思考过程：
+  - 题目要求的是`a * b == c * d`的个数，这个公式中包含4个元素，然后看两两乘积相等的组合有多少个
+  - 又因为`a * b`和`b * a`在题目中是算不同组合的，所以交换位置的情况也需要考虑
+  - 可以通过遍历数组的方式，将两两的乘积记录下来，对乘积的个数进行统计，因为题目中限制元素是互补相同的，所以不需要考虑值重复的情况
+  - 然后通过统计值来计算相同乘积的元组组合有多少个
+    - 可以这么理解，假设元组数有`2n`个（因为之前说到的排列的问题，所以一定是偶数个），那么等式的左侧相当于是在`2n`个选择中选1个，而等式的右侧，相当于是在`2n - 2`个选择中选1个（-2是因为，题目要求所有元素是不想等的，所以不应该出现`a * b == b * a`的情况，所以需要将这两种情况一起去除）
+    - 所以个数的计算公式就是：`2n * (2n - 2)`
+      - `2n`是相同乘积的元组个数
+- 算法过程：
+  - 嵌套循环`nums`数组
+    - 第一层从0开始循环
+    - 第二次从第一层坐标的后一个坐标开始循环
+    - 第二层循环中的循环体，将一层和二层的元素相乘，获取乘积后，放入map中进行统计和累加
+  - 遍历结束后，开始遍历map的键值对，通过公式`2n * (2n - 2)`将个数累加起来
+  - 遍历结束后将累加值返回即可
+### 代码
+```java
+class Solution {
+    public int tupleSameProduct(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int n = nums.length, sum = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int multi = nums[i] * nums[j];
+                map.put(multi, map.getOrDefault(multi, 0) + 1);
+            }
+        }
+
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            sum += (entry.getValue() * 2) * (entry.getValue() * 2 - 2);
+        }
+
+        return sum;
+    }
+}
+```
