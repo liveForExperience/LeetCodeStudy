@@ -54,21 +54,21 @@ class Solution {
 ### 代码
 ```java
 class Solution {
-    public int tupleSameProduct(int[] nums) {
-        Map<Integer, Integer> map = new HashMap<>();
-        int n = nums.length, sum = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                int multi = nums[i] * nums[j];
-                map.put(multi, map.getOrDefault(multi, 0) + 1);
-            }
-        }
-
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            sum += (entry.getValue() * 2) * (entry.getValue() * 2 - 2);
-        }
-
-        return sum;
+  public int tupleSameProduct(int[] nums) {
+    Map<Integer, Integer> map = new HashMap<>();
+    int n = nums.length, sum = 0;
+    for (int i = 0; i < n; i++) {
+      for (int j = i + 1; j < n; j++) {
+        int multi = nums[i] * nums[j];
+        map.merge(multi, 1, Integer::sum);
+      }
     }
+
+    for (Integer num : map.values()) {
+      sum += (num) * (num - 1) / 2;
+    }
+
+    return sum << 3;
+  }
 }
 ```
