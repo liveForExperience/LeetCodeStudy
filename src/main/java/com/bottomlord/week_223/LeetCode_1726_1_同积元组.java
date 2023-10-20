@@ -13,14 +13,14 @@ public class LeetCode_1726_1_同积元组 {
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 int multi = nums[i] * nums[j];
-                map.put(multi, map.getOrDefault(multi, 0) + 1);
+                map.merge(multi, 1, Integer::sum);
             }
         }
 
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            sum += (entry.getValue() * 2) * (entry.getValue() * 2 - 2);
+        for (Integer num : map.values()) {
+            sum += (num) * (num - 1) / 2;
         }
 
-        return sum;
+        return sum << 3;
     }
 }
