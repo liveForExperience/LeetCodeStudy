@@ -72,3 +72,75 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2316_统计无向图中无法互相到达点对数](https://leetcode.cn/problems/count-unreachable-pairs-of-nodes-in-an-undirected-graph)
+## 解法
+### 思路
+- 初始化并查集对象，并查集需要具备如下能力
+  - 存储
+  - 根据元素查询根节点
+  - 根据元素查询联通分量大小
+- 遍历邻接表，将边的两个节点存储到并查集中
+- 遍历节点，通过节点到并查集中查询节点所在联通分量的大小`x`
+- 根据`x`计算与该点不联通的点的点对数：
+  - 不在同一个联通分量的点就是不联通的，这个个数就是`n - x`，`n`即节点总数
+- 将`n - x`的值进行累加，遍历结束后，得到累加总和，这个总和中，每个点其实被计算过两次：
+  - 第1次是以该点为基础计算的与该点不联通的点对
+  - 第2次是该点不作为基础，而是不联通点集合中的一部分时所计算的次数
+- 故，将总和除以2作为答案返回即可
+### 代码
+```java
+class Solution {
+    public long countPairs(int n, int[][] edges) {
+        UnionFind uf = new UnionFind(n);
+        for (int[] edge : edges) {
+            uf.union(edge[0], edge[1]);
+        }
+
+        long sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += n - uf.size(uf.find(i));
+        }
+
+        return sum / 2;
+    }
+
+    private static class UnionFind {
+
+        private int[] parent, size;
+
+        public UnionFind(int n) {
+            this.parent = new int[n];
+            this.size = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+                size[i] = 1;
+            }
+        }
+
+        public void union(int x, int y) {
+            int rx = find(x), ry = find(y);
+            if (rx != ry) {
+                if (size(rx) > size(ry)) {
+                    parent[ry] = rx;
+                    size[rx] += size[ry];
+                } else {
+                    parent[rx] = ry;
+                    size[ry] += size[rx];
+                }
+            }
+        }
+
+        public int find(int x) {
+            if (parent[x] != x) {
+                parent[x] = find(parent[x]);
+            }
+
+            return parent[x];
+        }
+
+        public int size(int x) {
+            return size[x];
+        }
+    }
+}
+```
