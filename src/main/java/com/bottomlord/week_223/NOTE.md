@@ -144,3 +144,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1402_做菜顺序](https://leetcode.cn/problems/reducing-dishes)
+## 解法
+### 思路
+- 根据题意，越后做的菜，乘以的乘数就越大，所以可以对`satisfaction`数组进行排序，使其从小到大排列
+- 然后需要在排序后的数组中选择哪些菜肴是需要制作的，因为根据题意知道，值是可能为负数的，所以需要选择不做哪些菜肴，而问题就在于到底要舍弃哪些
+- 首先，如果所有的菜肴都需要做，那么很容易算出总和`sum`
+- 假设按值排序后的菜肴为[a,b,c,d,e]，那么`sum = a + 2 * b + 3 * c + 4 * d + 5 * e`。如下图所示：
+```bash
+a b c d e => ls1
+  b c d e => ls2
+    c d e => ls3
+      d e => ls4
+        e => ls5
+```
+- 假设上图，每一行的总和为`ls1, ls2 ... ls5`，`sum = ls1 + ls2 + ... + ls5`
+- 那么如果`ls1 + ls2 + ls3 + ls4 + ls5 < ls2 + ls3 + ls4 + ls5`，那答案一定至少是`ls2 + ls3 + ls4 + ls5`
+- 因为`ls1 + ls2 + ls3 + ls4 + ls5 < ls2 + ls3 + ls4 + ls5`，那么`ls1 + ls2 + ls3 + ls4 + ls5 < 0`
+- 有一个问题，如果我选a，不选b，然后选c,d,e，这种情况是否满足`a + c + d + e > b + c + d + e`？答案是否定的，因为经过排序后，`a < b`
+- 进而可以理解，如果选择了a，说明最后一行对于总和一定是正向的，且`b + c + d + e`也就一定是正向的，所以问题就可以变成，对于图中的每一行进行判断，判断总和去除当前行，是否比不去除的值更大，如果是，那么就舍弃这一行，其实也就是舍弃这道菜，直到不再大于为止，那么从这道菜开始的总和就是答案要求的最大值。
+- 算法过程
+  - 对数组进行非降序排序
+  - 初始化两个变量：
+    - 存储最终答案的变量`ans`
+    - 存储当前行大小的`sum`
+  - 遍历排序后的数组，将制作所有菜肴的总和计算出来，赋值给`ans`，同时将所有菜肴分值累加，得到最初的一行的总和
+  - 重新遍历数组，依次比较`ans`和`ans - sum`的大小
+    - 如果`ans < ans - sum`，那么说明需要舍弃这一行，算法要继续，通过`sum - satisfaction[i]`更新`sum`值
+    - 如果`ans >= ans - sum`，说明找到了需要做的第一道菜肴，停止循环，返回ans即可
+### 代码
+```java
+class Solution {
+    public int maxSatisfaction(int[] satisfaction) {
+        Arrays.sort(satisfaction);
+        int n = satisfaction.length;
+        int sum = 0, ans = 0;
+        for (int i = 0; i < n; i++) {
+            sum += satisfaction[i];
+            ans += (i + 1) * satisfaction[i];
+        }
+
+        for (int num : satisfaction) {
+            ans = Math.max(ans, ans - sum);
+            sum -= num;
+        }
+
+        return ans;
+    }
+}
+```
