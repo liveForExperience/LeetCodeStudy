@@ -43,3 +43,51 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2698_求一个整数的惩罚数](https://leetcode.cn/problems/find-the-punishment-number-of-an-integer)
+## 解法
+### 思路
+- 思考过程：
+  - 回溯
+- 算法过程：
+  - 遍历`[1,n]`范围内的所有数，对每个数做回溯，判断是否是能够达到题目要求的数字`i`，如果符合就累加平方
+  - 定义回溯函数，返回值为布尔值，返回当前`i`是否能满足题目要求的状态
+    - `index`入参控制回溯切分字符串的位置，然后通过计算来判断是否符合题目要求
+    - `sum`入参控制每个可能搜索路径的暂定总和
+    - `s`入参是当前`i`坐标平方的字符串形式
+    - `target`是当前`i * i`的值
+  - 回溯过程中从`index`开始，遍历所有可能坐标，切分字符串，转换成数字后累加到`sum`上
+  - 通过递归，搜索到可能路径的叶子结点，判断`sum`是否与`target`（目标值，也即`i * i`）一致，如果一致就返回true，否则返回false
+  - 循环过程中，如果递归返回true，则直接中断循环遍历，直接返回true
+  - 如果循环结束还没有返回true，则返回false，说明当前路径的所有叶子结点都不能满足题目要求
+### 代码
+```java
+class Solution {
+  public int punishmentNumber(int n) {
+    int sum = 0;
+    for (int i = 1; i <= n; i++) {
+      int pow = i * i;
+      if (backTrack(0, Integer.toString(pow), 0, i)) {
+        sum += pow;
+      }
+    }
+
+    return sum;
+  }
+
+  private boolean backTrack(int index, String s, int sum, int target) {
+    if (index == s.length()) {
+      return sum == target;
+    }
+
+    for (int i = index; i < s.length(); i++) {
+      int cur = Integer.parseInt(s.substring(index, i + 1));
+
+      if (backTrack(i + 1, s, sum + cur, target)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
+```
