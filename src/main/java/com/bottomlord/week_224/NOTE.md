@@ -91,3 +91,55 @@ class Solution {
   }
 }
 ```
+## 解法二
+### 思路
+- 解法一中通过将平方转换成字符串后，通过string的API来处理题目要求的切分的动作，但实际可以通过除法和取模来获取一个整数切分后的2部分：
+  - `151 / 10 = 15`
+  - `151 % 10 = 1`
+- 通过如上的方式将字符串的转换开销省略掉
+- 另外，因为没有了字符串的处理，所以解法一中的坐标也就不需要了，题目看的是一个整数的平方在切分后，通过相加是否能得到整数本身
+  - 题目要求代表，整个算法包括了2部分，平方`pow`和整数`target`
+- 那么当`pow`被切分后，将一部分从`target`减去后，实际求解的过程是不变的，只是`pow`和`target`的值变化了
+  - `pow` => `partB`，`pow = partA concat partB`
+  - `target` => `target - partA`
+- 所以这就变成了递归，而递归的退出条件：
+  - `pow < target`，因为`partA <= pow && partB <= pow`，所以，这时候当前路径一定不可能得到`target`，返回false
+  - `pow == target`，则说明当前路径是可行的，返回true即可
+- 逻辑主体与解法一不变，但具体实现和入参做了变更，因为不需要字符串变换的开销，整体速度肯定是变快的。
+### 代码
+```java
+class Solution {
+    public int punishmentNumber(int n) {
+        int sum = 0;
+        for (int target = 1; target <= n; target++) {
+            int pow = target * target;
+            if (backTrack(pow, target)) {
+                sum += pow;
+            }
+        }
+
+        return sum;
+    }
+
+    private boolean backTrack(int pow, int target) {
+        if (pow < target) {
+            return false;
+        }
+        
+        if (pow == target) {
+            return true;
+        }
+
+        int mask = 10;
+        while (pow >= mask && pow % mask <= target) {
+            if (backTrack(pow / mask, target - (pow % mask))) {
+                return true;
+            }
+            
+            mask *= 10;
+        }
+
+        return false;
+    }
+}
+```
