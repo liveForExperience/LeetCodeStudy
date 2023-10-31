@@ -143,3 +143,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1465_切割后面积最大的蛋糕](https://leetcode.cn/problems/maximum-area-of-a-piece-of-cake-after-horizontal-and-vertical-cuts)
+## 解法
+### 思路
+- 思考过程：
+  - 看图可知，2根相邻的横线和2根相邻的竖线，形成的矩形就是题目要求的蛋糕
+  - 基于这4根线的横坐标和纵坐标，就能够求出这个矩形的面积
+  - 因为题目要求的是最大面积，实际就是枚举这些矩形，然后比较并得到其中最大的部分
+  - 那么要求这个题目，就可以对横坐标和纵坐标进行升序排序，遍历所有横坐标或纵坐标相邻之间间距，得到最大的间距，然后相乘，得到最大值即可
+- 算法过程：
+  - 对横坐标和纵坐标升序排序
+  - 分别遍历2个数组，得到数值最大的间距
+  - 返回相乘并取模后的结果
+  - 需要注意：
+    - 因为边缘部分不需要切2刀，所以需要再特判边缘部分的间距
+    - 数据范围过大，32位整数会发生溢出，需要先转成64位后再转回
+### 代码
+```java
+class Solution {
+    public int maxArea(int h, int w, int[] horizontalCuts, int[] verticalCuts) {
+        Arrays.sort(horizontalCuts);
+        Arrays.sort(verticalCuts);
+        return (int) ((long) calMax(horizontalCuts, h) * calMax(verticalCuts, w) % 1000000007);
+    }
+
+    public int calMax(int[] arr, int board) {
+        int res = 0, pre = 0;
+        for (int cur : arr) {
+            res = Math.max(cur - pre, res);
+            pre = cur;
+        }
+        return Math.max(res, board - pre);
+    }
+}
+```
