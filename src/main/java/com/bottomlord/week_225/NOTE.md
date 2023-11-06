@@ -109,3 +109,48 @@ class Solution {
   }
 }
 ```
+# [LeetCode_421_数组中两个数的最大异或值](https://leetcode.cn/problems/maximum-xor-of-two-numbers-in-an-array^)
+## 解法
+### 思路
+- 思考过程：
+  - 因为`a ^ b = target` => `a ^ b ^ b = target ^ b` => `a = target ^ b`，所以可以通过hash表来存储已有值，然后通过遍历`b`来查找hash表中的`a` 
+  - 从高位开始判断，如果在已确定的所有位是最大值的情况下，当前位也是1的话，是否可能通过数组中的某2个数组成，如果可以，那么这个值就是目前为止的最大值，这样依次向低位判断，追加低位的情况，直到得到可能得最大值即可
+- 算法过程
+  - 初始化几个变量：
+    - mask：用来在逐位处理的过程中，将低位转换成0
+    - ans：暂存的结果变量，在从高位开始向低位的循环过程中，暂存可能的结果
+  - 从高位开始遍历，因为题目设置的是32位的整数，所以可以从第32位开始，这个32位可以通过`1 << 31`来实现，所以循环方法体可以写成`for (int i = 31; i >= 0; i--)`，另外，也可以计算出当前数组中的最大值，用该值的最高位来作为循环的开始，但因为数据范围不大，所以也可以不优化
+  - 从高位向低位循环的过程中
+    - 初始化一个set集合`memo`，用来记录遍历的所有`nums`数组元素，通过这个hash集合，就能够实现遍历`b`找`a`的逻辑
+    - 通过`target = ans | 1 << i`的处理来假定一个可能的结果值
+    - 然后将当前遍历的元素`num`通过`mask`将低位遮盖住
+    - 通过`memo.contains(target ^ num)`来寻找要找的目标值`a`，也即之前循环并保存的值
+    - 如果找到就终止当前这一位的处理，将`ans`替换为`target`
+  - 就这样循环完所有位之后，返回`ans`即可
+### 代码
+```java
+class Solution {
+    public int findMaximumXOR(int[] nums) {
+        int mask = 0, ans = 0;
+        for (int i = 31; i >= 0; i--) {
+            Set<Integer> memo = new HashSet<>();
+            mask |= 1 << i;
+
+            int target = ans | 1 << i;
+            
+            for (int num : nums) {
+                num &= mask;
+
+                if (memo.contains(target ^ num)) {
+                    ans = target;
+                    break;
+                }   
+
+                memo.add(num);
+            }
+        }
+
+        return ans;
+    }
+}
+```
