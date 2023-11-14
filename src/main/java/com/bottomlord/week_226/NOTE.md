@@ -90,3 +90,131 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2258_逃离火灾](https://leetcode.cn/problems/escape-the-spreading-fire)
+## 解法
+### 思路
+- 思考过程：
+  - 题目要求的是从起始位置到终点，能在起点待的最晚时间
+  - 因为题目中有火势蔓延的情况，也就意味着每个火焰可以到达的位置都会有一个火焰到达的时间`x`
+  - 如果等待时间为`t`，人员到达某个位置的最短时间是`y`，那么实际人员到达该位置的时间就是`t + y`，只要这个时间小于`x`，就说明人员可以到达该位置而不用担心火势
+  - 所以就可以先做一次bfs，将每个火焰可以到达的位置的到达时间记录下来
+  - 然后因为等待时间是呈单调性的（即如果`t`为最晚的等待时间，那么所有小于该时间的值都一定可以使人员到达终点，而所有大于该时间的值都一定不能到达），那么就可以通过二分查找的方式查找这个`t`值
+  - 查找的方式就是通过从起点开始的bfs，带上查找的`t`值来判断到达终点的路径上的时间是否符合`t + y < x`
+- 算法过程：
+  - 初始化二维数组`matrix`，为了在之后判断是否能走通的计算过程中方便计算，可以将其初始化为int最大值
+  - 从火源开始bfs，计算火势到达位置的时间，记录在`matrix`中
+  - 然后初始化二分的头尾指针
+    - 头：0
+    - 尾：`matrix`矩阵的长度和元素长度的乘积
+  - 初始化一个变量`ans`，用来暂存可能正确的等待时间，初始值为-1，代表不可能的状态
+  - 通过判断确定二分查找的位置是否符合，判断的方式就是通过从起点开始的bfs
+    - 如果符合，就将头指针设置为mid + 1，同时记录目前符合要求的时间到`ans`变量上
+    - 如果不符合，就将尾指针设置为mid - 1
+  - 二分查找结束后，如果`ans`大于等于初始的尾坐标值，那么就返回`10^9`，说明无论等待多长时间都可以到达终点
+### 代码
+```java
+class Solution {
+    private int[][] grid, matrix, dirs = new int[][]{{0,1}, {0,-1}, {1,0}, {-1,0}};
+    private int m, n;
+    public int maximumMinutes(int[][] grid) {
+        this.m = grid.length;
+        this.n = grid[0].length;
+        this.matrix = new int[m][n];
+        this.grid = grid;
+        for (int[] arr : matrix) {
+            Arrays.fill(arr, Integer.MAX_VALUE);
+        }
+
+        bfs();
+
+        int head = 0, tail = m * n, ans = -1;
+        while (head <= tail) {
+            int mid = head + (tail - head) / 2;
+            if (check(mid)) {
+                ans = mid;
+                head = mid + 1;
+            } else {
+                tail = mid - 1;
+            }
+        }
+
+        return ans >= m * n ? 1000000000 : ans;
+    }
+
+    private void bfs() {
+        Queue<int[]> queue = new ArrayDeque<>();
+        boolean[][] memo = new boolean[m][n];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 1) {
+                    queue.offer(new int[]{i, j});
+                }
+            }
+        }
+
+        int t = 1;
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+            while (count-- > 0) {
+                int[] arr = queue.poll();
+                if (arr == null) {
+                    continue;
+                }
+
+                int x = arr[0], y = arr[1];
+                for (int[] dir : dirs) {
+                    int nx = x + dir[0], ny = y + dir[1];
+
+                    if (nx < 0 || nx >= m || ny < 0 || ny >= n || grid[nx][ny] != 0 || memo[nx][ny]) {
+                        continue;
+                    }
+
+                    memo[nx][ny] = true;
+                    matrix[nx][ny] = t;
+                    queue.offer(new int[]{nx, ny});
+                }
+            }
+            t++;
+        }
+    }
+
+    private boolean check(int stay) {
+        Queue<int[]> queue = new ArrayDeque<>();
+        boolean[][] memo = new boolean[m][n];
+        queue.offer(new int[]{0, 0});
+        memo[0][0] = true;
+
+        int t = 1;
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+
+            while (count-- > 0) {
+                int[] arr = queue.poll();
+                if (arr == null) {
+                    continue;
+                }
+
+                int x = arr[0], y = arr[1];
+
+                for (int[] dir : dirs) {
+                    int nx = x + dir[0], ny = y + dir[1];
+                    if (nx == m - 1 && ny == n - 1 && matrix[nx][ny] >= t + stay) {
+                        return true;
+                    }
+
+                    if (nx < 0 || nx >= m || ny < 0 || ny >= n || grid[nx][ny] == 2 || memo[nx][ny] || matrix[nx][ny] <= t + stay) {
+                        continue;
+                    }
+
+                    memo[nx][ny] = true;
+                    queue.offer(new int[]{nx, ny});
+                }
+            }
+
+            t++;
+        }
+
+        return false;
+    }
+}
+```
