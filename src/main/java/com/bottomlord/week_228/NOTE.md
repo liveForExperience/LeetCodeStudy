@@ -16,3 +16,52 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1410_HTML实体解析器](https://leetcode.cn/problems/html-entity-parser)
+## 解法
+### 思路
+- 思考过程：
+  - 可以与现将`实体`与`特殊字符`的关系通过键值对存储起来
+  - 有了这个映射关系，就能够通过遍历字符串来进行解析了
+- 算法过程：
+  - 初始化1个hash表用于存储映射关系
+  - 遍历字符串，当发现当前字符为`&`时就进行匹配和替换
+  - 遍历结束，返回字符串即可
+### 代码
+```java
+class Solution {
+  public String entityParser(String text) {
+    Map<String, String> map = new HashMap<>(6);
+    map.put("&quot;", "\"");
+    map.put("&apos;", "'");
+    map.put("&amp;", "&");
+    map.put("&gt;", ">");
+    map.put("&lt;", "<");
+    map.put("&frasl;", "/");
+
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < text.length(); i++) {
+      if (text.charAt(i) != '&') {
+        sb.append(text.charAt(i));
+        continue;
+      }
+
+      boolean flag = false;
+      for (Map.Entry<String, String> entry : map.entrySet()) {
+        int len = entry.getKey().length();
+        if (i + len <= text.length() && Objects.equals(entry.getKey(), text.substring(i, i + len))) {
+          sb.append(entry.getValue());
+          i += len - 1;
+          flag = true;
+          break;
+        }
+      }
+
+      if (!flag) {
+        sb.append(text.charAt(i));
+      }
+    }
+
+    return sb.toString();
+  }
+}
+```
