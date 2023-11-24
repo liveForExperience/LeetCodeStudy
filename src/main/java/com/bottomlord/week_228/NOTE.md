@@ -65,3 +65,28 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2824_统计和小于目标的下标对数目](https://leetcode.cn/problems/count-pairs-whose-sum-is-less-than-target)
+## 解法
+### 思路
+- 思考过程：
+  - 模拟即可
+- 算法过程：
+  - 2层循环数组，外层坐标`i`起始为0，内层坐标起始为`i + 1`
+  - 内层判断内网层元素和是否小于目标`target`，如果符合就累加暂存值
+  - 遍历结束返回暂存值
+### 代码
+```java
+class Solution {
+    public int countPairs(List<Integer> nums, int target) {
+        int ans = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            for (int j = i + 1; j < nums.size(); j++) {
+                if (nums.get(i) + nums.get(j) < target) {
+                    ans++;
+                }
+            }
+        }
+        return ans;
+    }
+}
+```
