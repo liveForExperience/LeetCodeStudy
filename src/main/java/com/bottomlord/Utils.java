@@ -1,7 +1,9 @@
 package com.bottomlord;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author chen yue
@@ -9,6 +11,16 @@ import java.util.List;
  */
 public class Utils {
     private Utils(){}
+
+    public static int[] convertArr(String str) {
+        str = str.substring(1, str.length() - 1);
+        String[] factors = str.split(",");
+        return Arrays.stream(factors).map(Integer::parseInt).mapToInt(x -> x).toArray();
+    }
+
+    public static List<Integer> convertList(String str) {
+        return Arrays.stream(convertArr(str)).boxed().collect(Collectors.toList());
+    }
 
     public static int[][] convertMatrix(String str) {
         if (str == null || str.isEmpty()) {

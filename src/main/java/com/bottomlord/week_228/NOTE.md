@@ -90,3 +90,70 @@ class Solution {
     }
 }
 ```
+## 解法二
+### 思路
+- 思考过程：
+  - 二分查找
+- 算法过程：
+  - 对列表排序
+  - 2层循环
+    - 外层从0开始遍历
+    - 内层使用2分查找，找到最大的、与外层元素相加小于`target`的坐标
+    - 内层确定坐标后累加外层坐标到内层坐标的距离`j - i + 1`
+  - 遍历结束返回累加值
+### 代码
+```java
+class Solution {
+    public int countPairs(List<Integer> nums, int target) {
+        Collections.sort(nums);
+        int n = nums.size(), ans = 0;
+        for (int i = 0; i < n; i++) {
+            int head = i, tail = n - 1, cur = i;
+            while (head <= tail) {
+                int mid = head + (tail - head) / 2;
+                int num = nums.get(mid);
+                
+                if (num + nums.get(i) >= target) {
+                    tail = mid - 1;
+                } else {
+                    cur = mid;
+                    head = mid + 1;
+                }
+            }
+            
+            ans += cur - i;
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法三
+### 思路
+- 思考过程：
+  - 双指针
+- 算法过程：
+  - 对列表排序
+  - 循环列表，初始化头尾指针
+  - 判断当前头尾指针元素之和是否小于`target`
+    - 小于：`ans`累加头尾坐标差
+    - 大于等于：尾指针向前移动，继续判断
+  - 循环结束，返回累加值
+### 代码
+```java
+class Solution {
+    public int countPairs(List<Integer> nums, int target) {
+        Collections.sort(nums);
+        int n = nums.size(), ans = 0;
+        for (int head = 0, tail = n - 1; head < tail; head++) {
+            while (head < tail && nums.get(head) + nums.get(tail) >= target) {
+                tail--;
+            }
+            
+            ans += tail - head;
+        }
+        
+        return ans;
+    }
+}
+```
