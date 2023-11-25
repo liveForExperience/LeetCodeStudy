@@ -157,7 +157,7 @@ class Solution {
     }
 }
 ```
-# [LeetCode_]()
+# [LeetCode_1457_二叉树中的伪回文路径](https://leetcode.cn/problems/pseudo-palindromic-paths-in-a-binary-tree)
 ## 解法
 ### 思路
 - 思考过程：
