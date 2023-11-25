@@ -157,3 +157,73 @@ class Solution {
     }
 }
 ```
+# [LeetCode_]()
+## 解法
+### 思路
+- 思考过程：
+  - 伪回文串可以理解为只允许存在至多1个值出现的个数为奇数
+  - 通过dfs回溯穷举所有路径，对路径上出现的元素个数依次判断
+- 算法过程：
+  - 初始化一个hash表用于存储路径上的val值
+  - 通过dfs+回溯穷举所有路径
+  - 在递归的每一层，先将节点值放入map，并累加1
+  - 然后判断当前节点是否为叶子结点，如果是，就对map进行伪回文串的判断
+    - 如果是，要返回的结果值就是1
+    - 如果不是，要返回的结果值就是0
+  - 如果不是叶子结点，就继续递归，并将左右子节点返回的结果相加，作为当前层的结果
+  - 最后在当前层返回前，对map中当前层节点值的个数进行回溯，也即计数值累减，且如果计数值为0，则将键去除
+  - 最后返回结果
+### 代码
+```java
+class Solution {
+  public int pseudoPalindromicPaths (TreeNode root) {
+    return dfs(root, new HashMap<>());
+  }
+
+  private int dfs(TreeNode node, Map<Integer, Integer> map) {
+    if (node == null) {
+      return 0;
+    }
+
+    int val = node.val;
+    map.put(val, map.getOrDefault(val, 0) + 1);
+
+    int ans;
+    if (node.left == null && node.right == null) {
+      ans = isFakePalindrome(map) ? 1 : 0;
+    } else {
+      ans = dfs(node.left, map) + dfs(node.right, map);
+    }
+
+    removeVal(map, val);
+    return ans;
+  }
+
+  private boolean isFakePalindrome(Map<Integer, Integer> map) {
+    if (map == null || map.isEmpty()) {
+      return true;
+    }
+
+    int odd = 0;
+    for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+      int num = entry.getValue();
+      if (num % 2 != 0) {
+        odd++;
+      }
+
+      if (odd > 1) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private void removeVal(Map<Integer, Integer> map, int val) {
+    map.put(val, map.get(val) - 1);
+    if (map.get(val) == 0) {
+      map.remove(val);
+    }
+  }
+}
+```
