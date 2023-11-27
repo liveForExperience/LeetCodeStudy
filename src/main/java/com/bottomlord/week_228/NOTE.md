@@ -227,3 +227,85 @@ class Solution {
   }
 }
 ```
+# [LeetCode_828_统计子串中的唯一字符](https://leetcode.cn/problems/count-unique-characters-of-all-substrings-of-a-given-string)
+## 解法
+### 思路
+- 思考过程：
+  - 题目要计算字符串`s`的子字符串`t`中唯一字符的出现个数，反过来思考就是：计算每个字符作为唯一字符出现在子字符串中的个数。
+  - 也即可以解释为：唯一字符`t[j]`，它在`s`中出现的前一个坐标是`i`，后一个坐标是`k`，那么`t[j]`作为唯一字符所出现在子字符串中的个数是`len(j - i) * len(k - j)`
+  - 所以可以先将每个字符在`s`中出现的坐标预存起来，再遍历这些字符出现的坐标列表，就能通过如上的公式计算出个数，这些个数累加即可
+  - 为了方便处理计算，可以将`-1`作为默认的`i`，`len(s)`作为默认的`k`
+- 算法过程：
+  - 初始化hash表，`key`为字符，`value`为存储字符坐标列表
+  - 遍历`s`字符串，将字符与坐标存储起来，第一次出现字符的时候，先将`-1`预存到列表的第一个位置，然后再存储字符的坐标
+  - 预存结束后，遍历map集合，取出键值对的value，将`len(s)`先存入到列表中，然后遍历这个列表，通过公式计算每个坐标对应的字符作为唯一字符出现在子字符串中的个数，然后累加起来
+  - 遍历结束返回累加结果即可
+### 代码
+```java
+class Solution {
+    public int uniqueLetterString(String s) {
+        int len = s.length();
+        Map<Character, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if (!map.containsKey(c)) {
+                map.put(c, new ArrayList<>());
+                map.get(c).add(-1);
+            }            map.get(c).add(i);
+        }
+
+        int ans = 0;
+        for (Map.Entry<Character, List<Integer>> entry : map.entrySet()) {
+            List<Integer> list = entry.getValue();
+            list.add(len);
+
+            for (int i = 1; i < list.size() - 1; i++) {
+                ans += (list.get(i) - list.get(i - 1)) * (list.get(i + 1) - list.get(i));
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+- 在解法一的基础上，使用2个数组来替换map
+  - preArr：存储26个字符当前坐标的前一个出现的坐标
+  - curArr：存储26个字符当前坐标
+- 初始化2个数组的所有元素为-1
+- 遍历`s`的时候，直接开始套用公式计算
+  - 如果`curArr[i] == -1`，说明当前字符第一次出现，这时候直接将坐标存储在`curArr`中，不做其他处理
+  - 如果`curArr[i] > -1`，说明已经出现过至少1个字符，那么加上当前字符，至少有2个字符，那么组成的2个区间就可以计算出出现个数了
+- 在循环过程中，更新`curArr`和`preArr`的坐标值
+- 第一次循环结束后，还需要将元素与右边界的这个区间加进去，所以需要将出现过的字符坐标，也即`curArr[i] > -1`的坐标套入公式中进行计算，并累加到结果中
+- 第二次循环结束后，返回累加值即可
+### 代码
+```java
+class Solution {
+    public int uniqueLetterString(String s) {
+        int len = s.length(), ans = 0;
+        int[] preArr = new int[26], curArr = new int[26];
+        Arrays.fill(preArr, -1);
+        Arrays.fill(curArr, -1);
+
+        for (int i = 0; i < len; i++) {
+            int ci = s.charAt(i) - 'A';
+            if (curArr[ci] > - 1) {
+                ans += (i - curArr[ci]) * (curArr[ci] - preArr[ci]);
+            }
+            
+            preArr[ci] = curArr[ci];
+            curArr[ci] = i;
+        }
+
+        for (int i = 0; i < curArr.length; i++) {
+            if (curArr[i] > -1) {
+                ans += (len - curArr[i]) * (curArr[i] - preArr[i]);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
