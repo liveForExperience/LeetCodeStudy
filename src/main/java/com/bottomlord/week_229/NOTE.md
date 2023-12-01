@@ -19,27 +19,6 @@ class Solution {
         int n = arr.length, mod = 1000000007, ans = Arrays.stream(arr).sum() % mod;
         int[][] dp = new int[n][n];
 
-        for (int i = 0; i < n; i++) {# [LeetCode_907_子数组的最小值之和](https://leetcode.cn/problems/sum-of-subarray-minimums)
-## 失败解法
-### 原因
-内存不足
-### 思路
-- 思考过程：
-  - `dp[i][j]`：`i`到`j`区间内的最小值，`i <= j`
-  - 状态转移方程：`dp[i][j] = min(dp[i][j - 1], nums[j])`
-  - base case：`dp[i][i] = nums[i]`
-- 算法过程：
-  - 声明并初始化二维dp数组`dp[][]`
-  - 初始化暂存最小值总和的变量`ans`
-  - 嵌套循环dp数组，通过状态转移方程填充数组值，同时将得到的最小值累加到暂存变量`ans`中
-  - 循环结束，返回`ans`
-### 代码
-```java
-class Solution {
-    public int sumSubarrayMins(int[] arr) {
-        int n = arr.length, mod = 1000000007, ans = Arrays.stream(arr).sum() % mod;
-        int[][] dp = new int[n][n];
-
         for (int i = 0; i < n; i++) {
             dp[i][i] = arr[i];
         }
@@ -228,6 +207,50 @@ class Solution {
         }
 
         return (int)ans;
+    }
+}
+```
+# [LeetCode_2336_无限集中的最小数字](https://leetcode.cn/problems/smallest-number-in-infinite-set)
+## 解法
+### 思路
+使用TreeSet
+### 代码
+```java
+
+```
+# [LeetCode_2661_找出叠涂元素](https://leetcode.cn/problems/first-completely-painted-row-or-column)
+## 解法
+### 思路
+- 初始化部分：
+  - 2个记录行列元素个数的数组，长度分别为`m`和`n`
+  - 1个记录数值和坐标映射关系的数组`mapping`，长度为`m * n + 1`
+- 遍历`mat`矩阵，将元素值放入到`mapping`中，值为`r * n + c`：
+  - `r`代表横坐标
+  - `c`代表纵坐标
+- 遍历`arr`，通过`mapping`找到坐标，并在对应的记录个数数组中累加，同时判断任意一个数组对应坐标的值是否已经与`m`或`n`相等，横坐标计数值看`n`，纵坐标看`m`
+- 遍历的时候如果找到，就返回`i`
+### 代码
+```java
+class Solution {
+    public int firstCompleteIndex(int[] arr, int[][] mat) {
+        int m = mat.length, n = mat[0].length;
+        int[] r = new int[m], c = new int[n], mapping = new int[m * n + 1];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int num = mat[i][j];
+                mapping[num] = i * n + j;
+            }
+        }
+
+        for (int i = 0; i < arr.length; i++) {
+            int index = mapping[arr[i]];
+            int row = index / n, col = index % n;
+            if (++r[row] == n || ++c[col] == m) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
 ```
