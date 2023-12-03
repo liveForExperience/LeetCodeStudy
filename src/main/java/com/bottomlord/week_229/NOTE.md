@@ -254,3 +254,44 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1094_拼车](https://leetcode.cn/problems/car-pooling)
+## 解法
+### 思路
+- 思考过程：
+  - 理解参数：
+    - `capacity`是汽车的承载上限
+    - `trips`代表有若干个`trip`，有需要上车的数量，有上车的位置，还有下车的位置
+  - 理解题目：
+    - 车子有`capacity`，根据题目意思，这个值会在`trip`指定位置上车时被消耗，消耗的值是其第一个元素
+    - `tirp`第二个元素，对应上车，也代表要消耗`capacity`的位置
+    - `trip`第三个元素，对应下车，也代表了恢复`capacity`的位置
+    - 所以需要有一个可以方便记录上下车位置的数据结构，在对应的上下车位置记录上会消耗或恢复的值
+    - 然后能通过一个暂存值来判定，在某一个位置，车子的capacity是否足够，如果不足够，那么就可以返回false了
+    - 那么这个暂存值就可以通过累加数组中记录值，用`差分`的思路来记录即可
+- 算法过程：
+  - 初始化一个数组`arr`，长度可以设置为题目规定的距离上限1000，再+1，加一是因为这个数组的坐标代表的是距离，所以需要有坐标1000
+  - 遍历`trips`数组，根据元素的3个子元素，将值，放入到`arr`数组中的上下车坐标位置
+  - 再遍历`arr`数组，通过差分的方式求得当前位置的车子的实际承载值，如果大于`capacity`，就返回false
+  - 如果遍历结束，那么就返回true，说明整个过程是满足承载要求的
+### 代码
+```java
+class Solution {
+    public boolean carPooling(int[][] trips, int capacity) {
+        int[] arr = new int[1001];
+        for (int[] trip : trips) {
+            arr[trip[1]] += trip[0];
+            arr[trip[2]] -= trip[0];
+        }
+        
+        int cur = 0;
+        for (int n : arr) {
+            cur += n;
+            if (cur > capacity) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
