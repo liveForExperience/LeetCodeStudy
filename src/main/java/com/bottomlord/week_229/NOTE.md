@@ -210,14 +210,6 @@ class Solution {
     }
 }
 ```
-# [LeetCode_2336_无限集中的最小数字](https://leetcode.cn/problems/smallest-number-in-infinite-set)
-## 解法
-### 思路
-使用TreeSet
-### 代码
-```java
-
-```
 # [LeetCode_2661_找出叠涂元素](https://leetcode.cn/problems/first-completely-painted-row-or-column)
 ## 解法
 ### 思路
@@ -293,5 +285,41 @@ class Solution {
         
         return true;
     }
+}
+```
+# [LeetCode_1423_可获得的最大点数](https://leetcode.cn/problems/maximum-points-you-can-obtain-from-cards)
+## 解法
+### 思路
+- 思考过程：
+  - 通过阅读题目可知，虽然每次都需要选择数组区间的头尾元素，看上去需要穷举所有可能性，但其实整个选择区间是一个子数组，不可被分割，所以好像一个包含头尾两端的滑动区间，极限位置就是左边全选或者右边全选，然后在这两个区间的之间滑动
+  - 我们就可以通过算出一个极限区间的区间数组元素和，然后通过滑动进行比较，就可以得到最大值了
+- 算法过程：
+  - 初始化一个变量`ans`用于暂存答案
+  - 确定区间的长度，也就是`k`
+  - 遍历数组`k`次，左侧全部元素的极限总和`sum`
+  - 然后通过加入右侧元素，减去左侧最右端元素的方式，更新`sum`，比较`sum`和`ans`之间的较大值，将较大值暂存在`ans`上
+    - `sum`的更新公式：`sum = sum - cardPoints[k - 1 - i] + cardPoints[n - 1 - i]`，`i`是遍历的坐标
+  - 遍历结束以后返回`ans`即可
+### 代码
+```java
+class Solution {
+  public int maxScore(int[] cardPoints, int k) {
+    int ans = 0, n = cardPoints.length;
+    for (int i = 0; i < k; i++) {
+      ans += cardPoints[i];
+    }
+
+    if (n == k) {
+      return ans;
+    }
+
+    int sum = ans;
+    for (int i = 0; i < k; i++) {
+      sum = sum - cardPoints[k - 1 - i] + cardPoints[n - 1 - i];
+      ans = Math.max(ans, sum);
+    }
+
+    return ans;
+  }
 }
 ```
