@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
 
-import static com.bottomlord.Utils.convertMatrix;
+import static com.bottomlord.LeetCodeUtils.convertMatrix;
 
 /**
  * @author chen yue

@@ -3,7 +3,7 @@ package com.bottomlord.week_228;
 import java.util.Collections;
 import java.util.List;
 
-import static com.bottomlord.Utils.convertList;
+import static com.bottomlord.LeetCodeUtils.convertList;
 
 /**
  * @author chen yue

@@ -110,3 +110,69 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2646_最小化旅行的价格总和](https://leetcode.cn/problems/minimize-the-total-price-of-the-trips)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
+# [LeetCode_1466_重新规划路线](https://leetcode.cn/problems/reorder-routes-to-make-all-paths-lead-to-the-city-zero)
+## 解法
+### 思路
+- 思考过程：
+  - 因为题目限制了2个节点之间只有唯一一条路径，且`n`个节点一共只有`n-1`条路径，那就说明如果不考虑方向，将0作为根节点，这张图实际可以理解成一颗树
+  - 同时，所有非0节点都要能够在调整后通到0节点，所以可以根据`connections`生成邻接表，并将入度和出度分别统计，然后遍历这颗树，将方向都设置为从叶子节点指向根节点0的状态，就可以了
+- 算法过程：
+  - 初始化2个数组`outs`和`ins`，元素分别初始化为动态列表，用这两个数组来记录入度和出度
+  - 从节点0开始做bfs，然后对遍历到的元素节点进行判断
+    - 如果当前节点有出度，那么将这些出度都从概念上进行翻转，实际就是记录一下翻转次数，然后放入队列
+    - 如果当前节点有入度，那么将这些入度放入队列即可
+  - bfs结束，返回记录的翻转次数即可
+### 代码
+```java
+class Solution {
+    public int minReorder(int n, int[][] connections) {
+        List[] outs = new List[n], ins = new List[n];
+
+        for (int i = 0; i < n; i++) {
+            outs[i] = new ArrayList<>();
+            ins[i] = new ArrayList();
+        }
+
+        for (int[] connection : connections) {
+            int from = connection[0], to = connection[1];
+            outs[from].add(to);
+            ins[to].add(from);
+        }
+
+        int ans = 0;
+        boolean[] memo = new boolean[n];
+        Queue<Integer> queue = new ArrayDeque<>();
+        queue.offer(0);
+
+        while (!queue.isEmpty()) {
+            int index = queue.poll();
+            memo[index] = true;
+
+            List<Integer> outIndexes = outs[index];
+            for (Integer outIndex : outIndexes) {
+                if (!memo[outIndex]) {
+                    queue.offer(outIndex);
+                    ans++;
+                }
+            }
+
+            List<Integer> inIndexes = ins[index];
+            for (Integer inIndex : inIndexes) {
+                if (!memo[inIndex]) {
+                    queue.offer(inIndex);
+                }
+            }
+        }
+
+        return ans;
+    }
+}
+```
