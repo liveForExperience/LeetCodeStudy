@@ -1,11 +1,3 @@
-# [LeetCode_2336_无限集中的最小数字](https://leetcode.cn/problems/smallest-number-in-infinite-set)
-## 解法
-### 思路
-使用TreeSet
-### 代码
-```java
-
-```
 # [LeetCode_1038_从二叉搜索树到更大和树](https://leetcode.cn/problems/binary-search-tree-to-greater-sum-tree)
 ## 解法
 ### 思路
@@ -110,14 +102,7 @@ class Solution {
   }
 }
 ```
-# [LeetCode_2646_最小化旅行的价格总和](https://leetcode.cn/problems/minimize-the-total-price-of-the-trips)
-## 解法
-### 思路
 
-### 代码
-```java
-
-```
 # [LeetCode_1466_重新规划路线](https://leetcode.cn/problems/reorder-routes-to-make-all-paths-lead-to-the-city-zero)
 ## 解法
 ### 思路

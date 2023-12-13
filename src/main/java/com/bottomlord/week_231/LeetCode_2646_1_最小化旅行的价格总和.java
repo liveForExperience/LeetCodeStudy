@@ -1,4 +1,4 @@
-package com.bottomlord.week_230;
+package com.bottomlord.week_231;
 
 /**
  * @author chen yue
@@ -6,6 +6,7 @@ package com.bottomlord.week_230;
  */
 public class LeetCode_2646_1_最小化旅行的价格总和 {
     public int minimumTotalPrice(int n, int[][] edges, int[] price, int[][] trips) {
+        // todo
         return 0;
     }
 }

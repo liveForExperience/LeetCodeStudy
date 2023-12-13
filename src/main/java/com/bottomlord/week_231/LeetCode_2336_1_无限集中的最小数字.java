@@ -1,4 +1,4 @@
-package com.bottomlord.week_230;
+package com.bottomlord.week_231;
 
 import java.util.HashSet;
 import java.util.PriorityQueue;
@@ -13,6 +13,7 @@ import java.util.TreeSet;
 public class LeetCode_2336_1_无限集中的最小数字 {
     class SmallestInfiniteSet {
 
+        // todo
         private int min;
         private Set<Integer> set;
         private PriorityQueue<Integer> queue;
