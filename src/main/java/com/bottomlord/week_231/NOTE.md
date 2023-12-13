@@ -151,3 +151,53 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2048_下一个更大的数值平衡数](https://leetcode.cn/problems/next-greater-numerically-balanced-number)
+## 解法
+### 思路
+- 思考过程：
+  - 从`n + 1`开始遍历，依次判断当前数字是否符合题目要求
+- 算法过程：
+  - 死循环遍历
+  - 依次对n做累加，同时判断累加后的值是否符合题目要求
+    - 使用一个长度为10的数组`bucket`记录当前数值上每一位值对应的出现次数
+    - 遍历判断的数，依次截断每一位进行记录，如果遇到0，则直接返回false。因为0这个数字应该出现0次:)
+    - 截断处理结束后，遍历`bucket`，判断坐标（也就是位上的数字）与值是否相等，如果不相等就返回false
+    - 遍历结束，返回true，说明每一个数值都是符合要求的
+### 代码
+```java
+class Solution {
+    public int nextBeautifulNumber(int n) {
+        while (true) {
+            n++;
+            if (valid(n)) {
+                return n;
+            }
+        }
+    }
+    
+    private boolean valid(int n) {
+        int[] bucket = new int[10];
+        while (n > 0) {
+            int cur = n % 10;
+            if (cur == 0) {
+                return false;
+            }
+            
+            bucket[cur]++;
+            n /= 10;
+        }
+
+        for (int i = 1; i < bucket.length; i++) {
+            if (bucket[i] == 0) {
+                continue;
+            }
+            
+            if (bucket[i] != i) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
