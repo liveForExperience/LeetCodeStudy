@@ -201,3 +201,83 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2415_反转二叉树的奇数层](https://leetcode.cn/problems/reverse-odd-levels-of-binary-tree)
+## 解法
+### 思路
+- 思考过程：
+  - bfs遍历整棵树，在需要反转的奇数层，基于其上层和下层，进行反转
+    - 遍历上层的节点，依次将反转后节点重新赋值给上层的左右指针
+    - 遍历当前反转后的节点列表，将原来的节点依次赋值给当前节点的左右指针
+- 算法过程：
+  - 初始化一个布尔控制变量，用于判断bfs过程中当前层的奇偶性
+  - bfs完美二叉树
+    - bfs的元素需要传递3部分内容
+      - 父节点
+      - 当前节点
+      - 左右子节点
+    - 如果当前层为奇数层，那么在遍历的过程中，将当前层的节点存储在列表中，然后做如下几件事
+      - 将当前层节点的父节点存储在列表中
+      - 将当前层节点的左右子节点按顺序存储在列表中
+      - 将当前层的节点倒序排列
+      - 遍历倒序后的节点，将对应的父节点和左右子节点重新绑到当前新的顺序的节点上
+  - bfs结束返回根节点即可
+### 代码
+```java
+class Solution {
+    public TreeNode reverseOddLevels(TreeNode root) {
+        Queue<TreeNode[]> queue = new ArrayDeque<>();
+        boolean flag = false;
+        queue.offer(new TreeNode[]{null, root});
+        while (!queue.isEmpty()) {
+            int count = queue.size();
+
+            List<TreeNode> parents = new ArrayList<>(),
+                           nodes = new ArrayList<>(),
+                           children = new ArrayList<>();
+            while (count-- > 0) {
+                TreeNode[] arr = queue.poll();
+                if (arr == null) {
+                    continue;
+                }
+
+                parents.add(arr[0]);
+                TreeNode node = arr[1];
+                nodes.add(node);
+
+                if (node.left != null) {
+                    children.add(node.left);
+                    queue.offer(new TreeNode[]{node, node.left});
+                }
+
+                if (node.right != null) {
+                    children.add(node.right);
+                    queue.offer(new TreeNode[]{node, node.right});
+                }
+            }
+
+            if (flag) {
+                Collections.reverse(nodes);
+                for (int i = 0; i < nodes.size(); i++) {
+                    TreeNode node = nodes.get(i);
+                    if (i % 2 == 0) {
+                        parents.get(i).left = node;
+                    } else {
+                        parents.get(i).right = node;
+                    }
+                    
+                    if (children.isEmpty()) {
+                        continue;
+                    }
+                    
+                    node.left = children.get(i * 2);
+                    node.right = children.get(i * 2 + 1);
+                }
+            }
+
+            flag = !flag;
+        }
+        
+        return root;
+    }
+}
+```

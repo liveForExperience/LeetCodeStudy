@@ -9,17 +9,27 @@ import java.util.stream.Collectors;
  */
 public class LeetCodeUtils {
     private LeetCodeUtils() {}
-    public static int[] convertArr(String str) {
+
+    public static TreeNode convertToTree(String str) {
+        int[] arr = convertToArr(str);
+        if (arr == null || arr.length == 0) {
+            return null;
+        }
+
+        return dfs(arr, 0);
+    }
+
+    public static int[] convertToArr(String str) {
         str = str.substring(1, str.length() - 1);
         String[] factors = str.split(",");
         return Arrays.stream(factors).map(Integer::parseInt).mapToInt(x -> x).toArray();
     }
 
     public static List<Integer> convertList(String str) {
-        return Arrays.stream(convertArr(str)).boxed().collect(Collectors.toList());
+        return Arrays.stream(convertToArr(str)).boxed().collect(Collectors.toList());
     }
 
-    public static int[][] convertMatrix(String str) {
+    public static int[][] convertToMatrix(String str) {
         if (str == null || str.isEmpty()) {
             return new int[0][0];
         }
@@ -42,6 +52,17 @@ public class LeetCodeUtils {
         }
 
         return matrix;
+    }
+
+    private static TreeNode dfs(int[] arr, int index) {
+        if (index >= arr.length) {
+            return null;
+        }
+
+        TreeNode node = new TreeNode(arr[index]);
+        node.left = dfs(arr, index * 2 + 1);
+        node.right = dfs(arr, index * 2 + 2);
+        return node;
     }
 
     private static List<List<Integer>> getLists(String str) {

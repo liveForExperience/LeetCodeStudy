@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
 
-import static com.bottomlord.LeetCodeUtils.convertMatrix;
+import static com.bottomlord.LeetCodeUtils.convertToMatrix;
 
 /**
  * @author chen yue
@@ -116,7 +116,7 @@ public class LeetCode_2258_1_逃离火灾 {
 
     public static void main(String[] args) {
         LeetCode_2258_1_逃离火灾 t = new LeetCode_2258_1_逃离火灾();
-        t.maximumMinutes(convertMatrix("" +
+        t.maximumMinutes(convertToMatrix("" +
                 "[[0,2,0,0,1]," +
                 " [0,2,0,2,2]," +
                 " [0,2,0,0,0]," +

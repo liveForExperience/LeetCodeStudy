@@ -53,9 +53,4 @@ public class LeetCode_1466_1_重新规划路线 {
 
         return ans;
     }
-
-    public static void main(String[] args) {
-        LeetCode_1466_1_重新规划路线 t = new LeetCode_1466_1_重新规划路线();
-        t.minReorder(5, LeetCodeUtils.convertMatrix("[[4,3],[2,3],[1,2],[1,0]]"));
-    }
 }
