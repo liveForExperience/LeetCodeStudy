@@ -64,3 +64,55 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1901_寻找峰值II](https://leetcode.cn/problems/find-a-peak-element-ii/description/)
+## 解法
+### 思路
+- 思考过程：
+  - 最朴素的算法就是迭代二维数组，通过平均`O(n * m)`的时间复杂度来寻找峰值
+  - 题目要求是`O(nlog(m))`或`O(mlog(n))`的时间复杂度，为了达到这个要求，就需要对2个维度中的一个进行提速，提速的方式则可以通过二分查找
+  - 如果通过迭代的方式，确定当前行(或者列)的最大值，那么这个最大值在矩阵中就一定比该行的其他元素更有概率是峰值
+  - 那么通过确定的当前行最大值的坐标，和上一行的元素进行比较就能够确定二分的下一步需要查找的区间了：
+    - 如果大于，那么就找大于当前行的部分
+    - 如果小于，那么就找小于当前行的部分
+- 算法过程：
+  - 开始二分查找：
+    - 确定中间值`mid`，也即需要搜索最大值的行
+    - 搜索`mid`坐标所在行的最大值，确定坐标`k`
+    - 判断`mat[mid][k]` 与 `mat[mid + 1][k]`之间的大小关系
+      - 如果小于，搜索`[mid + 1, tail]`区间
+      - 如果大于，搜索`[head, mid]`区间
+    - 搜索结束，也即确定了行坐标
+    - 再搜索列的最大值，即可确定目标坐标，返回即可
+### 代码
+```java
+class Solution {
+    public int[] findPeakGrid(int[][] mat) {
+        int head = 0, tail = mat.length - 1;
+        while (head < tail) {
+            int mid = head + (tail - head) / 2, max = 0, k = -1;
+            for (int i = 0; i < mat[mid].length; i++) {
+                if (mat[mid][i] > max) {
+                    max = mat[mid][i];
+                    k = i;
+                }
+            }
+            
+            if (mat[mid][k] < mat[mid + 1][k]) {
+                head = mid + 1;
+            } else {
+                tail = mid;
+            }
+        }
+        
+        int max = 0, k = -1;
+        for (int i = 0; i < mat[head].length; i++) {
+            if (mat[head][i] > max) {
+                max = mat[head][i];
+                k = i;
+            }
+        }
+        
+        return new int[]{head, k};
+    }
+}
+```
