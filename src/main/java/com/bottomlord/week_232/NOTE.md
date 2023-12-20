@@ -116,3 +116,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2828_判别首字母缩略词](https://leetcode.cn/problems/check-if-a-string-is-an-acronym-of-words)
+## 解法
+### 思路
+- 思考过程：
+  - 模拟
+- 算法过程：
+  - 使用`StringBuilder`拼接遍历字符串数组并依次获取的字符串元素首字符
+  - 遍历完成后，比较`StringBuilder`与字符串`s`是否完全一致，并返回对应的布尔结果
+### 代码
+```java
+class Solution {
+    public boolean isAcronym(List<String> words, String s) {
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            if (word == null || word.isEmpty()) {
+                continue;
+            }
+            
+            sb.append(word.charAt(0));
+        }
+        
+        return Objects.equals(s, sb.toString());
+    }
+}
+```
+## 解法二
+### 思路
+不使用`StringBuilder`，直接比较
+### 代码
+```java
+class Solution {
+    public boolean isAcronym(List<String> words, String s) {
+        int n = words.size();
+        if (n != s.length()) {
+            return false;
+        }
+
+        for (int i = 0; i < n; i++) {
+            if (words.get(i).charAt(0) != s.charAt(i)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+```
