@@ -163,3 +163,88 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1962_移除石子使总数最小](https://leetcode.cn/problems/remove-stones-to-minimize-the-total)
+## 解法
+### 思路
+- 思考过程：
+  - 使用大顶堆存储`piles`元素
+  - 获取`k`次堆顶元素，并通过规则将堆顶元素减小：`num = num - floor(num / 2)`
+  - `k`次处理结束后，弹出堆中所有元素累加即可
+- 算法过程：
+  - 初始化优先级队列`queue`，比较规则为非升序
+  - 遍历`piles`数组，将数组元素依次放入`queue`中
+  - 遍历`k`次，每次将`queue`的堆顶元素取出，通过计算规则处理后放回`queue`，计算逻辑：`num = num - floor(num / 2)`
+  - 之后依次将`queue`中的元素弹出并累加到`sum`值中
+  - 累加结束后返回`sum`即可
+### 代码
+```java
+class Solution {
+    public int minStoneSum(int[] piles, int k) {
+        PriorityQueue<Integer> queue = new PriorityQueue<>((x, y) -> y - x);
+        for (int pile : piles) {
+            queue.offer(pile);
+        }
+
+        while (k-- > 0) {
+            Integer num = queue.poll();
+            if (num == null) {
+                break;
+            }
+            
+            queue.offer(num - num / 2);
+        }
+
+        int sum = 0;
+        while (!queue.isEmpty()) {
+            sum += queue.poll();
+        }
+
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+- 思考过程：
+  - 通过计数桶将数组元素出现的个数直接存储在桶数组中
+  - 同时获取到数组中的最大值，那么通过降序遍历最大值的方式，依次去桶中查看出现的个数，如果有个数，，那么就可以模拟题目要求的减半的计算逻辑了
+- 算法过程：
+  - 遍历数组获取最大值`max`和元素和`sum`
+  - 初始化长度为`max + 1`的桶数组`bucket`，用于存储`piles`数组中元素出现的个数
+  - 开始一个循环，遍历`k`次，每次在循环中确定当前这次要进行计算的最大值，确定的方式就是从`max`开始递减遍历，只要这个猜测的最大值在`bucket`中的元素值大于0，那么就可以将这个值的`floor(num / 2)`从`sum`中减去
+  - 同时将变小后的值在`bucket`中的个数+1
+  - 这样循环`k`次以后，返回`sum`值即可
+### 代码
+```java
+class Solution {
+    public int minStoneSum(int[] piles, int k) {
+                int max = 0, sum = 0;
+        for (int pile : piles) {
+            max = Math.max(pile, max);
+            sum += pile;
+        }
+        
+        int[] bucket = new int[max + 1];
+        for (int pile : piles) {
+            bucket[pile]++;
+        }
+        
+        while (k-- > 0) {
+            while (max >= 0 && bucket[max] == 0) {
+                max--;
+            }
+            
+            if (max < 0) {
+                break;
+            }
+            
+            int minus = max / 2;
+            sum -= minus;
+            bucket[max]--;
+            bucket[max - minus]++;
+        }
+        
+        return sum;
+    }
+}
+```
