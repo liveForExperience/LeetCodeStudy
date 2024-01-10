@@ -95,3 +95,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2707_字符串中的额外字符](https://leetcode.cn/problems/extra-characters-in-a-string)
+## 解法
+### 思路
+- 思考过程：
+  - 通过观察题目可以发现这是一个递推子问题：
+    - 假设[0, i - 1]区间的最小空闲字符长度是`f[i - 1]`，那么`f[i]`作为[0,i]区间的最小空闲字符个数，至少就是`f[i - 1] + 1`
+    - 然后，可以在区间[0, i]中，寻找`s[j,i]`，如果`s[j,i]`出现在`dictionary`中，那么`f[i]`的另一个空闲字符个数就出现了，也就是`f[j]`
+    - 此时就可以通过比较来获取[0, i]区间中的个数，即`f[i] = min(f[i], f[j])`
+  - 通过如上的推倒，就可以得到一个动态规划方程
+- 算法过程：
+  - 初始化数组`f[]`，长度为`s.length + 1`，其中`f[0] = 0`，元素坐标对应的是字符串的长度，0代表长度为0的字符串，其最小空闲字符自然就是0
+  - 初始化set集合，用于存储`dictionary`中的字符串元素，并提供`O(1)`复杂度的查询能力
+  - 从1开始遍历`s.length`
+    - 首先`f[i] = f[i - 1] + 1`，给当前i长度的字符串最小空闲字符长度值赋上默认值
+    - 然后遍历字符串坐标区间`[0, i]`，确定坐标`j`，从而找到能在`set`找到的字符串`s[j, i]`
+    - 如果找到`s[j,i]`，那么进行对`f[i]`的比较更新，即`f[i] = min(f[j], f[i])`
+  - 遍历结束，返回`f[n]`作为结果
+### 代码
+```java
+class Solution {
+  public int minExtraChar(String s, String[] dictionary) {
+    int n = s.length();
+    int[] f = new int[n + 1];
+    Set<String> set = new HashSet<>(Arrays.asList(dictionary));
+
+    for (int i = 1; i <= n; i++) {
+      f[i] = f[i - 1] + 1;
+      for (int j = 0; j < i; j++) {
+        if (set.contains(s.substring(j, i))) {
+          f[i] = Math.min(f[i], f[j]);
+        }
+      }
+    }
+
+    return f[n];
+  }
+}
+```
