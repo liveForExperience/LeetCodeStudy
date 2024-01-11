@@ -133,3 +133,40 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2645_构造有效字符串的最少插入数](https://leetcode.cn/problems/minimum-additions-to-make-valid-string)
+## 解法
+### 思路
+- 思考过程：
+  - 使用2个指针
+    - 一个指针`i`作用在`word`字符串上
+    - 一个指针`j`作用在题目要求的`abc`字符串上
+  - 2个指针同时移动
+    - 如果指针指向的字符相同，就同时移动
+    - 如果指针指向的字符不同，那么就增加计数，并只移动指针`j`
+- 算法过程：
+  - 初始化指针`i`和`j`
+  - 初始化计数值`cnt`
+  - 循环遍历`word`
+    - 如果`i`和`j`指向的字符不同，就增加`cnt`并只移动`j`指针
+  - 循环结束后，如果`j`不是指向`c`，那么就继续移动到`c`并记录移动的步数到`cnt`
+  - 最后返回`cnt`作为结果
+  - 需要注意，在模拟`j`在`abc`上移动的时候，每次要对`j`进行取模，循环结束后累加`j`距离`c`的时候，也需要通过`(3 - j) % 3`来获取这个距离
+### 代码
+```java
+class Solution {
+    public int addMinimum(String word) {
+        int j = 0, cnt = 0;
+        for (int i = 0; i < word.length();) {
+            if ((word.charAt(i) - 'a') == j) {
+                i++;
+            } else {
+                cnt++;
+            }
+            
+            j = (j + 1) % 3;
+        }
+
+        return cnt + (3 - j) % 3;
+    }
+}
+```
