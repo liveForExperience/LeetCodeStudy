@@ -170,3 +170,128 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2008_出租车的最大盈利](https://leetcode.cn/problems/maximum-earnings-from-taxi/)
+## 解法
+### 失败解法1
+```java
+class Solution {
+    public long maxTaxiEarnings(int n, int[][] rides) {
+        Arrays.sort(rides, Comparator.comparingInt(x -> x[0]));
+        return backTrack(0, rides, -1, 0);
+    }
+    
+    private int backTrack(int index, int[][] rides, int end, int sum) {
+        if (index >= rides.length) {
+            return sum;
+        }
+        
+        int max = sum;
+        for (int i = index; i < rides.length; i++) {
+            if (rides[i][0] < end) {
+                continue;
+            }
+            
+            max = Math.max(backTrack(i + 1, rides, rides[i][1], sum + rides[i][1] - rides[i][0] + rides[i][2]), max);
+        }
+        
+        return max;
+    }
+}
+```
+### 失败解法2
+```java
+class Solution {
+    public long maxTaxiEarnings(int n, int[][] rides) {
+        Arrays.sort(rides, Comparator.comparingInt(x -> x[1]));
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, -1);
+        dp[0] = 0;
+        for (int i = 0; i < rides.length; i++) {
+            int start = rides[i][0], end = rides[i][1], tip = rides[i][2];
+            dp[end] = Math.max(dp[end], end - start + tip);
+            for (int j = start; j >= 0; j--) {
+                if (dp[j] == -1) {
+                    continue;
+                }
+
+                dp[end] = Math.max(dp[j] + end - start + tip, dp[end]);
+            }
+        }
+
+        int ans = 0;
+        for (int i = n; i >= 1; i--) {
+            ans = Math.max(ans, dp[i]);
+        }
+
+        return ans;
+    }
+}
+```
+### 思路
+- 思考过程：
+  - 在得到最终ac的答案之前，经历了如下2个步骤：
+    - 通过递归暴力计算，超时了
+    - 通过时间复杂度为`O(N^2)`的dp求解，超时了
+  - 递归的过程可以理解成：每次需要选择下一个路程时，通过遍历所有可能的子路程，一直到底，最终得到最大值结果。这个过程中，每条看似不同的路径，从最大值路径的角度去看，实际都会走相同的最后一段路程，只不过这段路程的开始点会不同。这里就可以优化。
+  - 在第2个失败的dp解法中，希望通过记录探索过程中得到的每个路径结尾地点值，来简化下一次的探索过程。但是，每一次新的探索开始后，都需要遍历之前的所有dp元素点，通过比较大小来确定到底应该选择哪个作为当前路径开始的上一段路径。而实际上，当得到了某个结尾点的最大值后，它与它之前的某个路劲结尾点之间的所有点，都可以视为值与上一个结尾点的最大值一致。这样，当新的路径开始的时候，只需要从当前路径开始点开始往前遍历到某个探索过的结尾点，就能确定这个点的值就是最大值，这样就不需要去遍历更早的点了，从而节省了很多搜索过程。
+  - 于是在最终ac的算法中，每次在确定好当前路径的最大值后，会把从当前结尾点之前的所有没有探索过的点都填充好，为下一次搜索做准备。
+- 算法过程：
+  - 根据结尾点值对`rides`数组进行非降序排序，保证填充历史最大值的时候的正确性，如果没有排序，那么你在填充的时候就并不能确定是否所有之前的路径都已经搜索过，最大值都已经确定过。
+  - 初始化一维的`dp`数组
+    - 坐标：路程点
+    - 元素值`dp[i]`：以当前路程点为结尾的路径盈利最大值
+    - 长度：`n + 1`，因为路程点从1开始
+  - 初始化`dp[0] = 0`，代表没有开始的路程的盈利为0
+  - 2层循环
+    - 第一层遍历`rides`数组，遍历所有可选的路程，在这层遍历中做如下2件事
+      - 第一件事是，基于当前遍历到的路程，从路程的开始点开始向前找到之前在`dp`中记录的，离开始值最近的最大盈利值，找到就可以终止搜索
+        - 之所以可以已找到就能终止，是因为思考过程中提到了，我们在后续的处理中会将之前的所有路程点都进行填充，将当前路程点的最大盈利值与向前查找的第一个确定的最大盈利值保持一致，从而使得只要一找到第一个最近的有搜索过的路程点，就一定是可能的最大值
+        - 在第一个内层循环中，还会将找到的这个最近的最大盈利值和对应的坐标暂存下来，方便之后填充来用
+      - 第二件事就是填充，填充的方式就是从之前确定的第一个没有填充的路程点开始填充
+  - 2层循环结束之后，再从dp中找到坐标最大的那个有记录的最大盈利值，将其作为结果即可
+### 代码
+```java
+class Solution {
+    public long maxTaxiEarnings(int n, int[][] rides) {
+        Arrays.sort(rides, Comparator.comparingInt(x -> x[1]));
+        long[] dp = new long[n + 1];
+        Arrays.fill(dp, -1);
+        dp[0] = 0;
+        int index = 0;
+        for (int i = 0; i < rides.length; i++) {
+            int start = rides[i][0], end = rides[i][1], tip = rides[i][2];
+            long cur = end - start + tip, preMax = 0;
+            int preMaxIndex = 0;
+            for (int j = start; j >= 0; j--) {
+                if (dp[j] == -1) {
+                    continue;
+                }
+
+                preMax = dp[j];
+                preMaxIndex = i;
+                cur += dp[j];
+                break;
+            }
+
+            dp[end] = Math.max(dp[end], cur);
+
+            long max = preMax;
+            index = Math.max(preMaxIndex, index);
+            for (int j = index; j <= end; j++) {
+                max = Math.max(dp[j], max);
+                dp[j] = max;
+                index = j;
+            }
+        }
+
+        long ans = 0;
+        for (int i = n; i >= 1; i--) {
+            if (dp[i] != -1) {
+                return dp[i];
+            }
+        }
+
+        return ans;
+    }
+}
+```
