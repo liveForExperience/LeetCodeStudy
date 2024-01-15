@@ -295,3 +295,56 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2182_构造限制重复的字符串](https://leetcode.cn/problems/construct-string-with-repeat-limit)
+## 解法
+### 思路
+- 思考过程：
+  - 为了组成字典序最大的字符串，可以先对字符串`s`中字符出现的个数进行统计，然后从字典序最大的字符开始拼接新的字符串
+  - 因为题目有最大重复个数，所以可以通过2个指针
+    - 1个指针指向不考虑重复的情况下，正常可以添加的字典序最大的字符位置
+    - 1个指针用于在连续次数达到最大重复次数时候，指向相对第二大的字符位置，用于在重复次数达到时拼接另一个最大的字符
+- 算法过程：
+  - 初始化一个桶数组`bucket`，长度为26，对应26个小写字母
+  - 初始化一个变量`cnt`，用于记录新拼接的字符串中连续字符的个数
+  - 初始化一个字符串变量，对应新的答案字符串
+  - 创建一个循环，循环变量有2个指针`i`和`j`，并同时从25（`z`的坐标）开始，向前遍历
+    - 先判断`bucket[i]`的个数是否是0，如果是0，代表当前字母不能再作为拼接的字符，将`cnt`重置为0，并左移`i`
+    - 如果上一个不满足，则说明当前字母还有对应的个数没有使用，此时就要判断是否达到了重复个数
+      - 如果`cnt < repeatLimit`，说明可以拼接，就将当前字母拼接在字符串最后，并自增`cnt`，同时递减`bucket[i]`
+      - 否则说明已经达到了`repeatLimit`，就看`j`是否在`i`的左侧，且个数不为0
+        - 如果不是，说明`j`对应的字符不能作为第二大的字符，需要继续左移
+        - 如果全都符合，就将当前`j`对应的字母拼接在字符串后面，并重置`cnt`，累减`bucket[j]`
+  - 循环结束，则返回字符串作为结果
+  - 这里循环的时候千万不要这样写`for (i = 0; i < s.toCharArray().length; i++)`，这样每次调用`toCharArray`方法，都会创建一个新的`char`数组，这样会导致很大的内存和时间开销
+### 代码
+```java
+class Solution {
+    public String repeatLimitedString(String s, int repeatLimit) {
+        int[] bucket = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            bucket[s.charAt(i) - 'a']++;
+        }
+
+        int cnt = 0;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 25, j = 24; i >= 0 && j >= 0;) {
+            if (bucket[i] == 0) {
+                cnt = 0;
+                i--;
+            } else if (cnt < repeatLimit) {
+                sb.append((char)('a' + i));
+                bucket[i]--;
+                cnt++;
+            } else if (j >= i || bucket[j] == 0) {
+                j--;
+            } else {
+                bucket[j]--;
+                sb.append((char)('a' + j));
+                cnt = 0;
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
