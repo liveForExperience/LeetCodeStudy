@@ -238,6 +238,7 @@
 |233|2023/12/25 - 2023/12/31| [1](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_233)  |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_233/NOTE.md) | - | - |:sunny:|456|
 |234|2024/1/1 - 2023/1/7| [1](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_234)  |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_234/NOTE.md) | - | - |:sunny:|456|
 |235|2024/1/8 - 2023/1/14| [5](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_235)  |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_235/NOTE.md) | - | - |:sunny:|456|
+|236|2024/1/15 - 2023/1/21| [1](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_236)  |[:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_236/NOTE.md) | - | - |:sunny:|456|
 ## 竞赛
 <table>
     <tr align="center">
