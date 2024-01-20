@@ -11,7 +11,7 @@ public class LeetCodeUtils {
     private LeetCodeUtils() {}
 
     public static TreeNode convertToTree(String str) {
-        int[] arr = convertToArr(str);
+        int[] arr = convertToIntArr(str);
         if (arr == null || arr.length == 0) {
             return null;
         }
@@ -19,14 +19,27 @@ public class LeetCodeUtils {
         return dfs(arr, 0);
     }
 
-    public static int[] convertToArr(String str) {
+    public static int[] convertToIntArr(String str) {
         str = str.substring(1, str.length() - 1);
         String[] factors = str.split(",");
         return Arrays.stream(factors).map(Integer::parseInt).mapToInt(x -> x).toArray();
     }
 
-    public static List<Integer> convertList(String str) {
-        return Arrays.stream(convertToArr(str)).boxed().collect(Collectors.toList());
+    public static List<Integer> convertIntList(String str) {
+        return Arrays.stream(convertToIntArr(str)).boxed().collect(Collectors.toList());
+    }
+
+    public static String[] convertToStrArr(String str) {
+        str = str.substring(1, str.length() - 1);
+        String[] words = str.split(",");
+        for (int i = 0; i < words.length; i++) {
+            words[i] = words[i].substring(1, words[i].length() - 1);
+        }
+        return words;
+    }
+
+    public static List<String> convertToStrList(String str) {
+        return Arrays.stream(convertToStrArr(str)).collect(Collectors.toList());
     }
 
     public static int[][] convertToMatrix(String str) {

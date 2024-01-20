@@ -146,3 +146,86 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2788_按分隔符拆分字符串](https://leetcode.cn/problems/split-strings-by-separator)
+## 解法
+### 思路
+- 解题思路：基于`separator`分隔符，遍历每个字符串元素，在去除分隔符的同时，将`separator`去除
+- 算法过程：
+  - 初始化一个`list`列表
+  - 遍历`words`，对每个`words`元素`word`做基于`separator`的分割操作，将分割后的字符串数组依次放入list中。
+    - 创建一个`strs`列表
+    - 创建一个`StringBuilder`对象`sb`中
+    - 遍历字符串，比较每个字符是否和`separator`一致
+      - 不一致，将字符放入`sb`
+      - 一致，如果`sb`不为0，那么将`sb`转为字符串后放入`strs`中
+    - 遍历结束后，如果`sb`不为空，那么将这个`sb`也转换为字符串并放入`strs`中
+    - 最后将`strs`返回并放入到调用方法中的答案`list`中
+  - 遍历时候过滤掉空字符串
+  - 遍历结束，返回`list`作为结果
+### 代码
+```java
+class Solution {
+    public List<String> splitWordsBySeparator(List<String> words, char separator) {
+        List<String> strs = new ArrayList<>();
+        for (String word : words) {
+            strs.addAll(split(word, separator));
+        }
+        return strs;
+    }
+    
+    private List<String> split(String word, char separator) {
+        List<String> strs = new ArrayList<>();
+        char[] cs = word.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : cs) {
+            if (c == separator) {
+                if (sb.length() != 0) {
+                    strs.add(sb.toString());
+                    sb.setLength(0);
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        
+        if (sb.length() != 0) {
+            strs.add(sb.toString());
+        }
+        
+        return strs;
+    }
+}
+```
+## 解法二
+### 思路
+- 在解法一的基础上，不使用`StringBuilder`，而是使用String的`subString`API
+- 通过2个指针`l`和`r`来确定`subString`的区间
+  - `r`负责移动确定右边界，当遇到第一个与`separator`相同的字符则停止
+  - `l`负责确定左边界
+  - 当`r`遇到第一个`separator`字符，且`l < r`的时候，通过`l`和`r`将子字符串截取出来，然后`r`向右移动，接着将`l`移动到`r`的位置
+- 直到移动到`l`越界为止
+### 代码
+```java
+class Solution {
+    public List<String> splitWordsBySeparator(List<String> words, char separator) {
+        List<String> strs = new ArrayList<>();
+        for (String word : words) {
+            char[] cs = word.toCharArray();
+            int l = 0, r = 0, n = cs.length;
+            while (l < n) {
+                while (r < n && cs[r] != separator) {
+                    r++;
+                }
+                
+                if (l < r) {
+                    strs.add(word.substring(l, r));
+                }
+                
+                l = ++r;
+            }
+        }
+        
+        return strs;
+    }
+}
+```

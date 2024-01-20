@@ -3,7 +3,7 @@ package com.bottomlord.week_228;
 import java.util.Collections;
 import java.util.List;
 
-import static com.bottomlord.LeetCodeUtils.convertList;
+import static com.bottomlord.LeetCodeUtils.convertIntList;
 
 /**
  * @author chen yue
@@ -35,6 +35,6 @@ public class LeetCode_2824_2 {
 
     public static void main(String[] args) {
         LeetCode_2824_2 t = new LeetCode_2824_2();
-        t.countPairs(convertList("[-6,2,5,-2,-7,-1,3]"), 2);
+        t.countPairs(convertIntList("[-6,2,5,-2,-7,-1,3]"), 2);
     }
 }
