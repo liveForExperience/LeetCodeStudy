@@ -40,3 +40,37 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2859_计算K置位下标对应元素的和](https://leetcode.cn/problems/sum-of-values-at-indices-with-k-set-bits/)
+## 解法
+### 思路
+- 思考过程： 
+  - 遍历`nums`，对下标做置位个数的计算，然后将符合的元素累加起来，遍历结束后返回累加值
+- 算法过程：
+  - 通过`n & (n - 1)`可以消去最低位置位的特性，循环处理并记录循环次数。将次数记录下来后，就是当前数字的置位。
+  - 遍历`nums`数组，通过如上的方式判断当前坐标的置位是否是k，如果符合就把元素值累加起来
+  - 遍历结束后，返回累计值
+### 代码
+```java
+class Solution {
+    public int sumIndicesWithKSetBits(List<Integer> nums, int k) {
+        int sum = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            int num = nums.get(i);
+            if (check(i, k)) {
+                sum += num;
+            }
+        }
+        return sum;
+    }
+    
+    private boolean check(int num, int k) {
+        int cnt = 0;
+        while (num > 0) {
+            num = num & (num - 1);
+            cnt++;
+        }
+        
+        return cnt == k;
+    }
+}
+```

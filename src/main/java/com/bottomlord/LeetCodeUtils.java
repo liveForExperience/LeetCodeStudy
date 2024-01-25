@@ -25,7 +25,7 @@ public class LeetCodeUtils {
         return Arrays.stream(factors).map(Integer::parseInt).mapToInt(x -> x).toArray();
     }
 
-    public static List<Integer> convertIntList(String str) {
+    public static List<Integer> convertToIntList(String str) {
         return Arrays.stream(convertToIntArr(str)).boxed().collect(Collectors.toList());
     }
 
