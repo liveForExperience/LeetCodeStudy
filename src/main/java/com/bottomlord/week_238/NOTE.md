@@ -41,3 +41,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2670_找出不同元素数目差数组](https://leetcode.cn/problems/find-the-distinct-difference-array)
+## 解法
+### 思路
+- 思考过程：
+  - 遍历`nums`然后每次都基于当前元素，再遍历前后2部分，计算出现的数字个数，然后相减后记录
+- 算法过程：
+  - 初始化`cnt`变量，用于记录从坐标0开始当遍历到的坐标为止，已经出现的数字个数，这个变量可以省去每次计算前半部分的开销
+  - 初始化一个布尔数组`memo`，用于记录前半部分已经记录的数字
+  - 初始化一个数组`diff`，用于记录答案
+  - 遍历`nums`数组，从坐标0开始
+    - 内部初始化一个布尔数组`innerMemo`，用于方便计算后半部分出现的不同数字个数，长度为题目范围的51
+    - 通过当前元素，到`memo`数组中查找是否是出现过的数字，如果不是就累加`cnt`变量
+    - 初始化一个`innerCnt`变量，用于记录后半部分的不同数字个数
+    - 从当前元素的后一个元素开始遍历，通过`innerMemo`来判断是否是不同数字，同时累加`innerCnt`
+    - 遍历结束后，通过`diff[i] = cnt - innerCnt`，将计算结果记录到对应的结果数组上
+  - 遍历结束后，将`diff`作为结果返回
+### 代码
+```java
+class Solution {
+    public int[] distinctDifferenceArray(int[] nums) {
+        int n = nums.length, cnt = 0;
+        boolean[] memo = new boolean[51];
+        int[] diff = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            int num = nums[i], innerCnt = 0;
+            if (!memo[num]) {
+                cnt++;
+                memo[num] = true;
+            }
+
+            boolean[] innerMemo = new boolean[51];
+            for (int j = i + 1; j < n; j++) {
+                int innerNum = nums[j];
+                if (!innerMemo[innerNum]) {
+                    innerCnt++;
+                    innerMemo[innerNum] = true;
+                }
+            }
+
+            diff[i] = cnt - innerCnt;
+        }
+
+        return diff;
+    }
+}
+```
