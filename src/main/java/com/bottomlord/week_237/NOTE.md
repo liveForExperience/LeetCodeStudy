@@ -74,3 +74,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2865_美丽塔I](https://leetcode.cn/problems/beautiful-towers-i/)
+## 解法
+### 思路
+- 思考过程：
+  - 模拟
+  - 遍历`maxHeights`数组的每一个元素，从当前元素开始向前和向后分别移动，并计算移动过程中的相对小值，将这个相对小值作为需要累加的值累加起来
+  - 2个方向都遍历完成后，比较并保留相对大的累加值
+- 算法过程：
+  - 初始化变量`max`用于暂存高度和的最大值
+  - 遍历`maxHeights`数组
+    - 初始化一个`pre`变量，值等于当前遍历到的元素
+    - 初始化一个`sum`变量，用于暂存以当前元素为山峰的高度和
+    - 基于当前坐标，向前和向后循环遍历，分别都更新`pre`
+      - 更新规则：`pre = Math.min(pre, maxHeights[j])`（`j`代表内层向前向后循环的坐标）
+      - 累加`pre`到`sum`上
+    - 内层循环结束后，将`sum`与`max`进行比较，取较大值作为`max`的值
+  - 循环结束后，返回`max`作为结果
+### 代码
+```java
+class Solution {
+    public long maximumSumOfHeights(List<Integer> maxHeights) {
+        long max = 0, n = maxHeights.size();
+        for (int i = 0; i < maxHeights.size(); i++) {
+            long num = maxHeights.get(i), pre = num, sum = num;
+
+            for (int j = i + 1; j < n; j++) {
+                pre = Math.min(pre, maxHeights.get(j));
+                sum += pre;
+            }
+
+            pre = num;
+            for (int j = i - 1; j >= 0; j--) {
+                pre = Math.min(pre, maxHeights.get(j));
+                sum += pre;
+            }
+
+            max = Math.max(sum, max);
+        }
+
+        return max;
+    }
+}
+```
