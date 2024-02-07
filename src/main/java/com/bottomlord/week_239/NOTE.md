@@ -45,3 +45,116 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2641_二叉树的堂兄弟节点II](https://leetcode.cn/problems/cousins-in-binary-tree-ii)
+## 解法
+### 思路
+- 思考过程：
+  - 根据题目定义的堂兄弟节点的特征
+    - 深度相同：深度相同的节点可以通过bfs来获取
+    - 父节点不同：父节点不同可以通过bfs时传递父节点引用来判断
+  - 基于如上的思考，用bfs，然后基于父节点进行group by，可以有效的计算出需要修改的值
+- 算法过程：
+  - 初始化bfs使用的队列`queue`，队列元素为一个节点数组，长度为2，分别存储父节点和当前节点
+  - 通过bfs，将每一层的所有元素都获取出来
+    - 将所有当前深度的节点放入一个`list`中，元素为`TreeNode[]`，数组中分别存储父节点和当前节点。用于在遍历完当前层之后，通过遍历这个`list`来处理修改`value`值的逻辑
+    - 将所有节点的总和进行计算汇总，得到`sum`
+    - 将所有节点基于父节点进行分组，每个节点都修改为`sum - curGroupValue`，`curGroupValue`是当前分组的节点的`value`和
+      - 分组使用一个`key`为`TreeNode`，`value`为`Integer`的map，`key`存储父节点，`value`存储以`key`为父节点的节点的`value`和
+  - 当前层的元素都取出后，遍历`list`，取出元素后，基于父节点从`map`中获取到`value`，再通过`sum - value`修改到当前节点中
+  - bfs结束后返回根节点即可
+### 代码
+```java
+class Solution {
+    public TreeNode replaceValueInTree(TreeNode root) {
+        Queue<TreeNode[]> queue = new ArrayDeque<>();
+        queue.offer(new TreeNode[]{root, root});
+        while (!queue.isEmpty()) {
+            int count = queue.size(), sum = 0;
+            List<TreeNode[]> list = new ArrayList<>();
+            Map<TreeNode, Integer> map = new HashMap<>();
+            while (count-- > 0) {
+                TreeNode[] item = queue.poll();
+
+                if (item == null) {
+                    continue;
+                }
+                
+                TreeNode parentItem = item[0], curItem = item[1];
+
+                list.add(item);
+                int curValue = curItem.val;
+                map.put(parentItem, map.getOrDefault(parentItem, 0) + curValue);
+                sum += curValue;
+                
+                if (curItem.left != null) {
+                    queue.offer(new TreeNode[]{curItem, curItem.left});
+                }
+                
+                if (curItem.right != null) {
+                    queue.offer(new TreeNode[]{curItem, curItem.right});
+                }
+            }
+
+            for (TreeNode[] item : list) {
+                item[1].val = sum - map.get(item[0]);
+            }
+        }
+
+        return root;
+    }
+}
+```
+## 解法二
+### 思路
+- 解法一在bfs过程中使用了list和map两个数据结构来实现
+  - 分组
+  - 统计同深度节点
+- 参考其他解法后发现，前一层实际是可以获取到下一层的所有节点的`value`之和`sum`
+- 然后每一层的相同父节点的元素，实际就是要通过`sum - groupValue`来修改，而这个`groupValue`实际也可以在前一层获取，而参考其他解法后，可以直接将当前节点的左右子节点的值设置为左右节点值的和
+- 通过如上的方式，就不需要再使用一开始提到的`list`和`map`2种数据结构了，且只需要在正常bfs过程中就可以完成这些操作
+- 最后节点值的修改，可以在上一层统计完下一层的`sum`，遍历当前层元素的时候，对当前层的元素进行修改，修改的方式就是用`sum`减去上一层已经在当前节点上设置好的那个和即可
+### 代码
+```java
+class Solution {
+    public TreeNode replaceValueInTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+
+        int sum = root.val;
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int count = queue.size(), nextSum = 0;
+            while (count-- > 0) {
+                TreeNode cur = queue.poll();
+
+                if (cur == null) {
+                    continue;
+                }
+
+                cur.val = sum - cur.val;
+                TreeNode left = cur.left, right = cur.right;
+                int lv = left == null ? 0 : left.val, rv = right == null ? 0 : right.val;
+                
+                if (left != null) {
+                    nextSum += left.val;
+                    queue.offer(left);
+                    left.val = lv + rv;
+                }
+                
+                if (cur.right != null) {
+                    nextSum += right.val;
+                    queue.offer(right);
+                    right.val = lv + rv;
+                }
+            }
+            
+            sum = nextSum;
+        }
+        
+        return root;
+    }
+}
+```
