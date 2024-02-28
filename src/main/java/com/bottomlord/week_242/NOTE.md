@@ -14,5 +14,14 @@
   - 继续循环，直到循环结束，返回`ans`作为结果
 ### 代码
 ```java
-
+class Solution {
+    public int minIncrements(int n, int[] cost) {
+         int ans = 0;
+        for (int i = n - 2; i > 0; i -= 2) {
+            ans += Math.abs(cost[i] - cost[i + 1]);
+            cost[i / 2] += Math.max(cost[i], cost[i + 1]);
+        }
+        return ans;
+    }
+}
 ```
