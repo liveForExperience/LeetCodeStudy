@@ -158,3 +158,59 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1696_跳跃游戏](https://leetcode.cn/problems/jump-game-vi)
+## 解法
+### 思路
+- 思考过程：
+  - 使用动态规划
+  - `dp[i]`代表到达i位置的和的最大值
+  - 状态转移方程：`dp[i] = max(dp[j]) + nums[i], j ∈ (j - k, j - 1)`
+      - `j`代表从`i - k`到`i - 1`的所有位置
+      - `nums[i]`代表当前位置的值
+  - 初始化：`dp[0] = nums[0]`
+  - 遍历方式：坐标1开始从前往后
+  - 这样的时间复杂度是`O(n*k)`，但因为题目的参数较大，所以时间还是过长
+  - 思考后发现，k次的遍历其实是为了找到区间中值最大的坐标，而这个坐标可以通过堆来实现
+    - 堆存储的是坐标
+    - 堆的比较规则是坐标对应的`dp`值，且是大顶堆
+  - 但因为k是动态的窗口区间，所以每次取值的时候，都需要判断一下存储的坐标是否属于窗口区间
+- 算法过程
+  - 初始化一个`dp`数组，`dp[0] = nums[0]`
+  - 初始化一个大顶堆`queue`，存储坐标，比较规则是以坐标对应的`dp`值为比较元素的大顶堆
+  - 将坐标`0`存储入`queue`
+  - 初始化变量`n = nums.length`
+  - 从1开始遍历`n`次
+    - 取出`queue`的堆顶元素，判断是否小于`i - k`
+      - 如果是，将元素弹出，继续取堆顶元素，循环往复
+      - 如果不是，就将`nums[i]`与堆顶元素相加，作为`dp[i]`的值
+    - 将坐标存储到`queue`
+  -  遍历结束，返回`dp[n - 1]`作为结果即可
+### 代码
+```java
+class Solution {
+    public int maxResult(int[] nums, int k) {
+        int n = nums.length;
+        int[] dp = new int[n];
+        Queue<Integer> queue = new PriorityQueue<>((x, y) -> dp[y] - dp[x]);
+        dp[0] = nums[0];
+        queue.offer(0);
+
+        for (int i = 1; i < n; i++) {
+            while (!queue.isEmpty() && queue.peek() < i - k) {
+                queue.poll();
+            }
+
+            if (queue.isEmpty()) {
+                break;
+            }
+
+            int index = queue.peek();
+            dp[i] = nums[i] + dp[index];
+
+            queue.offer(i);
+        }
+
+        return dp[n - 1];
+    }
+}
+```
