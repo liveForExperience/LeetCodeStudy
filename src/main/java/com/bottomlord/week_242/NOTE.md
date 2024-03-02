@@ -25,3 +25,68 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2368_受限条件下可到达节点的数目](https://leetcode.cn/problems/reachable-nodes-with-restrictions)
+## 解法
+### 思路
+- 思考过程
+  - 一看就可以用bfs做，因为0一定不在限制条件里，所以从0开始bfs就可以了
+  - 通过二维的边数组构建邻接表，然后基于邻接表做bfs
+- 算法过程
+  - 初始化邻接表`matrix`，基于`edges`对`matrix`做初始化，`matrix`可以是一个动态列表数组
+  - 初始化队列`queue`，队列元素为节点编号
+  - 将编号0放入队列中，开始bfs
+  - 初始化一个布尔数组`memo`记录遍历过的节点，同时将`restrited`值也放入`memo`中，因为此时拒绝和记录过的状态可以共用
+  - 初始化一个结果值`ans`，用于记录能够搜索到的节点个数
+  - 在bfs过程中
+    - 基于`matrix`获得下一批可以放入的`queue`
+    - 基于`memo`对当前元素做是否有效的判断
+    - 如果有效就基于编号值记录到`memo`中，并累加`ans`
+  - bfs结束后返回`ans`
+### 代码
+```java
+class Solution {
+    public int reachableNodes(int n, int[][] edges, int[] restricted) {
+        boolean[] memo = new boolean[n];
+        for (int i : restricted) {
+            memo[i] = true;
+        }
+
+        int ans = 0;
+        List<Integer>[] matrix = new List[n];
+        for (int i = 0; i < matrix.length; i++) {
+            matrix[i] = new ArrayList<>();
+        }
+
+        for (int[] edge : edges) {
+            matrix[edge[0]].add(edge[1]);
+            matrix[edge[1]].add(edge[0]);
+        }
+
+        Queue<Integer> queue = new ArrayDeque<>();
+        queue.offer(0);
+        while (!queue.isEmpty()) {
+            int cnt = queue.size();
+            while (cnt-- > 0) {
+                Integer index = queue.poll();
+                if (index == null) {
+                    continue;
+                }
+                
+                ans++;
+                memo[index] = true;
+                
+                List<Integer> nexts = matrix[index];
+                for (Integer next : nexts) {
+                    if (memo[next]) {
+                        continue;
+                    }
+                    
+                    queue.offer(next);
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
