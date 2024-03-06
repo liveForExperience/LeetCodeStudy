@@ -28,5 +28,149 @@
     - 返回`out`是否为空
 ### 代码
 ```java
+class MyStack {
 
+    private Queue<Integer> in, out;
+
+    public MyStack() {
+        this.in = new ArrayDeque<>();
+        this.out = new ArrayDeque<>();
+    }
+
+    public void push(int x) {
+        in.offer(x);
+        while (!out.isEmpty()) {
+            in.offer(out.poll());
+        }
+        
+        Queue<Integer> tmp = in;
+        in = out;
+        out = tmp;
+    }
+
+    public int pop() {
+        if (out.isEmpty()) {
+            return -1;
+        }
+        
+        return out.poll();
+    }
+
+    public int top() {
+        if (out.isEmpty()) {
+            return -1;
+        }
+        
+        return out.peek();
+    }
+
+    public boolean empty() {
+        return out.isEmpty();
+    }
+}
+```
+# [LeetCode_2917_找出数组中的Kor值](https://leetcode.cn/problems/find-the-k-or-of-an-array)
+## 解法
+### 思路
+- 算法过程：
+  - 2层遍历，第一层遍历32位，第二层遍历`nums`元素
+  - 依次对每个数字当前位`i`为1的数字进行计数，如果大于k，则累加`2 ^ i`
+  - 返回最后的累加值
+### 代码
+```java
+class Solution {
+    public int findKOr(int[] nums, int k) {
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            int cnt = 0;
+            for (int num : nums) {
+                if ((num & (1 << i)) != 0) {
+                    cnt++;
+                }
+                
+                if (cnt >= k) {
+                    break;
+                }
+            }
+            
+            if (cnt >= k) {
+                ans += (1 << i);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
+# [LeetCode_232_用栈实现队列](https://leetcode.cn/problems/implement-queue-using-stacks)
+## 解法
+### 思路
+- 思考过程：
+  - 栈是先进后出的，队列是先进先出的。这也就意味着，按顺序放入栈的元素，如果按顺序从栈中取出，是反着的。但如果，将这些元素再放入另一个栈中，那么再从第二个栈中取出，就是正的了。
+  - 所以可以用2个栈来实现队列的功能
+    - 1个栈`in`专门用来存储`push`的元素
+    - 1个栈`out`专门用来负责`pop`
+      - `out`栈中的元素是从`in`栈中`pop`出来再`push`进去的
+      - 如果`out`栈的元素不为空，那么直接从这个栈中获取元素
+      - 如果`out`栈中的元素为空，那么就将`in`中的元素全部取出来放入`out`中
+- 算法过程：
+  - 初始化2个栈
+  - `push`：将元素放入`in`
+  - `pop`：
+    - 如果`out`不为空，弹出并返回栈顶元素
+    - 否则，将`in`的元素全部放入`out`，再从`out`中取出第一个元素
+  - `peek`：
+    - 如果`out`不为空，返回栈顶元素
+    - 否则，将`in`的元素全部放入`out`中，再返回`out`的栈顶元素
+  - `empty`: 如果`in`和`out`同时为空，返回true，否则返回false
+### 代码
+```java
+class MyQueue {
+
+    private LinkedList<Integer> in, out;
+
+    public MyQueue() {
+        this.in = new LinkedList<>();
+        this.out = new LinkedList<>();
+    }
+
+    public void push(int x) {
+        this.in.push(x);
+    }
+
+    public int pop() {
+        return doReturn(() -> this.out.pop());
+    }
+
+    public int peek() {
+        return doReturn(() -> this.out.peek());
+    }
+
+    public boolean empty() {
+        return this.in.isEmpty() && this.out.isEmpty();
+    }
+    
+    public int doReturn(Supplier<Integer> fun) {
+        if (empty()) {
+            return -1;
+        }
+
+        if (!this.out.isEmpty()) {
+            return fun.get();
+        }
+
+        transferInToOut();
+        return fun.get();
+    }
+    
+    private void transferInToOut() {
+        if (this.in.isEmpty()) {
+            return;
+        }
+
+        while (!this.in.isEmpty()) {
+            this.out.push(this.in.pop());
+        }
+    }
+}
 ```
