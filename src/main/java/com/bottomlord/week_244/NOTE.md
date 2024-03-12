@@ -54,3 +54,46 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1261_在受污染的二叉树中查找元素](https://leetcode.cn/problems/find-elements-in-a-contaminated-binary-tree)
+## 解法
+### 思路
+- 将`root`的值更新为0
+- 通过dfs搜索并基于题目规则，更新左右子节点的值
+- 并将更新的值存储到`set`集合中
+- `find`方法就基于`set`集合进行判断即可
+### 代码
+```java
+class FindElements {
+
+    private final Set<Integer> set;
+
+    public FindElements(TreeNode root) {
+        this.set = new HashSet<>();
+        root.val = 0;
+        init(root);
+    }
+
+    public boolean find(int target) {
+        return this.set.contains(target);
+    }
+
+    private void init(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        int val = node.val;
+        this.set.add(val);
+        
+        if (node.left != null) {
+            node.left.val = val * 2 + 1;
+            init(node.left);
+        }
+
+        if (node.right != null) {
+            node.right.val = val * 2 + 2;
+            init(node.right);
+        }
+    }
+}
+```
