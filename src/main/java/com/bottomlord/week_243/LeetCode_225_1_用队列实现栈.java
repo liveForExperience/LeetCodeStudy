@@ -1,4 +1,4 @@
-package com.bottomlord.weekj_243;
+package com.bottomlord.week_243;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

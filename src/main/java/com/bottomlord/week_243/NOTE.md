@@ -174,3 +174,103 @@ class MyQueue {
     }
 }
 ```
+# [LeetCode_1976_到达目的地的方案数](https://leetcode.cn/problems/number-of-ways-to-arrive-at-destination)
+## 解法
+### 思路
+- 思考过程：
+- 算法过程
+### 代码
+```java
+
+```
+# [LeetCode_2575_找出字符串的可整除数组](https://leetcode.cn/problems/find-the-divisibility-array-of-a-string)
+## 解法
+### 思路
+- 思考过程：
+  - 算`x`是否能被`m`整除，就是算是否`x mod m == 0`
+  - 假设: `x = a * 10 + b`，根据mod公式，可推得`x mod m == (((a mod m) * 10) + b) mod m`
+  - 根据上述推导的公式，可以很方便的通过遍历`nums`的方式，依次计算每一个`[0,i]`区间的数字的余数，然后将这个余数存储后，在坐标为`i + 1`时带入到如上公式中进行计算，最终得到题目要求的数组结果
+- 算法过程：
+  - 初始化变量`mod`用于存储每次得到的上一个字符串数字的余数，初始化为0
+  - 初始化一个int数组`ans`，用于记录每个区间为`[0, i]`的字符串数字的整除m结果
+  - 遍历`word`字符串，从坐标0开始，将字符串转换为数字，然后代入到公式`(((a mod m) * 10) + b) mod m`中，其中`(a mod m)`等于`mod`变量的值，计算得到的结果重新赋值给`mod`，同时根据`mod`的值是否等于0，判断当前字符串数字的整除结果，并记录在`ans`中
+  - 遍历结束后，返回结果即可
+  - ps: 要小心因为`m`过大而导致的溢出问题，可以用long类型来声明`mod`变量
+### 代码
+```java
+class Solution {
+  public int[] divisibilityArray(String word, int m) {
+    long mod = 0;
+    int n = word.length();
+    int[] ans = new int[n];
+
+    for (int i = 0; i < n; i++) {
+      mod = (mod * 10 + (word.charAt(i) - '0')) % m;
+      ans[i] = (mod == 0) ? 1 : 0;
+    }
+
+    return ans;
+  }
+}
+```
+# [LeetCode_2834_找出美丽数组的最小和](https://leetcode.cn/problems/find-the-minimum-possible-sum-of-a-beautiful-array)
+## 解法
+### 思路
+- 如果从1开始依次将元素`x`放入`美丽数组`，那么`target - x`就不能再加入，那么简单可以推论：
+- 其实，`[1, target]`区间中，只有`[1, target / 2]`区间的数据能够被放入到`美丽数组`中
+- 如果`n <= target / 2`，那么，其实就是`[1, n]`区间的数字进行等差数列求和，返回结果即可
+- 如果`target / 2 < n`，那么，除了`[1, target / 2]`之外，还需要对`[target, target + n - target / 2 - 1]`进行等差数列求和，然后将两部分累加即可
+- 需要注意int值溢出，需要先转换为long值承接，然后基于题目要求的1e9+7取模后，在转换成int值
+### 代码
+```java
+class Solution {
+  public int minimumPossibleSum(int n, int target) {
+    int m = target / 2, mod = (int) 1e9 + 7;
+    if (n <= m) {
+      return (int) (((long) (1 + n) * n / 2) % mod);
+    }
+
+    return (int) (((long) (1 + m) * m / 2 + ((long) target + target + (n - m) - 1) * (n - m) / 2) % mod);
+  }
+}
+```
+# [LeetCode_299_猜数字游戏](https://leetcode.cn/problems/bulls-and-cows)
+## 解法
+### 思路
+- 思考过程：
+  - `bull`：对应的是`secret`和`guess`字符串的相同位上的字符完全相同的个数
+  - `cow`：对应的是出去`bull`个数外的，字符相同的个数
+- 算法过程：
+  - 初始化2个int数组，分别记录不是`bull`情况下2种字符串的字符出现个数，坐标对应10个数字
+  - 初始化2个变量`bull`和`cow`，分别记录两种情况下的个数
+  - 因为`secret`和`guess`字符串的长度相等，设置其长度为`n`
+  - 一共遍历2次
+    - 第一次，遍历n次，每次判断2个字符串的当前字符是否完全相等，如果是就累加`bull`，否则就将2个字符串的字符记录到对应的int数组中
+    - 第二次，遍历10次，判断2个int数组每个位上出现的个数的最小值，这个最小值就是题目要求的，调整后就能符合`bull`要求的字符个数，将最小值累加到`cow`中
+  - 遍历结束后，将`bull`和`cow`返回
+  - 另外发现使用StringBuilder返回最终的字符串结果，在`leetcode`上的耗时比直接拼接字符串更小，故可以做一下对应处理。
+### 代码
+```java
+class Solution {
+    public String getHint(String secret, String guess) {
+        int bull = 0, cow = 0, n = secret.length();
+        int[] ss = new int[10], gs = new int[10];
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            char s = secret.charAt(i), g = guess.charAt(i);
+            if (s == g) {
+                bull++;
+            } else {
+                ss[s - '0']++;
+                gs[g - '0']++;
+            }
+        }
+
+        for (int i = 0; i < 10; i++) {
+            cow += Math.min(ss[i], gs[i]);
+        }
+        
+        return sb.append(bull).append("A").append(cow).append("B").toString();
+    }
+}
+```
