@@ -97,3 +97,42 @@ class FindElements {
     }
 }
 ```
+# [LeetCode_2864_最大二进制奇数](https://leetcode.cn/problems/maximum-odd-binary-number)
+## 解法
+### 思路
+- 思考过程：
+  - 二进制表示的奇数，其最低位一定是`1`
+  - 遍历字符串，统计`1`出现的个数
+  - 将1个`1`分配在字符串末尾（保证数字是奇数）
+  - 将剩余的`1`分配在字符串头部（保证最大）
+  - 剩余使用`0`填充
+- 算法过程：
+  - 在思考过程基础上，可以省略掉第一次计算`1`个数的循环
+  - 初始化StringBuilder对象
+  - 循环遍历字符串，当遇到`1`时，将`1`拼接到StringBuilder中
+  - 循环结束后，基于原字符串长度和StringBuilder的长度，通过2者的差算出`0`的个数
+  - 将StringBuilder结尾的`1`去除，因为其要拼接在StringBuilder的结尾
+  - 基于`0`的个数，在StringBuilder后面拼接对应个数的`0`
+  - 最后将1个`1`拼接在StringBuilder后，转成字符串返回
+### 代码
+```java
+class Solution {
+  public String maximumOddBinaryNumber(String s) {
+    char[] cs = s.toCharArray();
+    StringBuilder sb = new StringBuilder();
+    for (char c : cs) {
+      if (c == '1') {
+        sb.append('1');
+      }
+    }
+
+    int z = s.length() - sb.length();
+    sb.setLength(sb.length() - 1);
+    for (int i = 0; i < z; i++) {
+      sb.append('0');
+    }
+
+    return sb.append('1').toString();
+  }
+}
+```
