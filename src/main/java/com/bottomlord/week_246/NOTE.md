@@ -28,3 +28,43 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2580_统计将重叠区间合并成组的方案数](https://leetcode.cn/problems/count-ways-to-group-overlapping-ranges)
+## 解法
+### 思路
+- 将有交集的区间进行合并，最终合并成一组没有交集的区间集合
+- 合并的方式
+  - 先对数组进行排序，排序规则是对区间起始值进行升序排序
+  - 遍历排序后的数组
+    - 内层先将当前元素的结尾变量初始化为变量`end`
+    - 然后从当前元素的后一个开始遍历，遍历时判断当前元素是否小于等于end，如果是，说明有交集，然后更新`end`值为两者之间的最大值，然后继续遍历判断，直到越界或者不符合
+- 得到区间总个数后，因为每个区间都可以放在任意一个组中，所以如果有`m`个区间，那么组合数就是`2 ^ m`
+  - 那么实际在遍历合并区间的时候，可以同时暂存记录到的区间个数`m`和组合数`ans`，然后通过`ans = ans * 2`的方式等价替换掉`2 ^ "(m + 1)`的公式，同时通过取模保证数值不越界，得到答案`ans`
+- 最终返回`ans`即可
+### 代码
+```java
+class Solution {
+    public int countWays(int[][] ranges) {
+        int ans = 1, mod = 1000000007, n = ranges.length;
+        Arrays.sort(ranges, Comparator.comparingInt(x -> x[0]));
+        for (int i = 0; i < ranges.length;) {
+            int end = ranges[i][1];
+            while (i < n && ranges[i][0] <= end) {
+                end = Math.max(end, ranges[i][1]);
+                i++;
+            }
+            
+            ans = ans * 2 % mod;
+        }
+        
+        return ans;
+    }
+}
+```
+# [LeetCode_2642_设计可以求最短路径的图类](https://leetcode.cn/problems/design-graph-with-shortest-path-calculator)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
