@@ -60,6 +60,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2980_元素和最小的山形三元组I](https://leetcode.cn/problems/minimum-sum-of-mountain-triplets-i)
+## 解法
+### 思路
+- 初始化2个数组`lr`和`rl`，分别记录从左到右和从右到左，到达当前坐标`i`位置的区间最小值
+- 遍历`nums`，基于当前坐标元素，与`lr`和`rl`相同坐标位置的元素进行比较，如果分别都大于2个数组中的对应元素，说明当前元素在左右区间都能找到一个比自身小的元素值，且这2个值分别都是最小的，然后将3个元素累加，用累加值与暂存的最小值进行比较，保留较小值
+- 暂存的最小值可以初始化为int最大值，方便计算
+### 代码
+```java
+class Solution {
+    public int minimumSum(int[] nums) {
+        int n = nums.length;
+        int[] lr = new int[n], rl = new int[n];
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            min = Math.min(min, nums[i]);
+            lr[i] = min;
+        }
+        
+        min = Integer.MAX_VALUE;
+        for (int i = n - 1; i >= 0; i--) {
+            min = Math.min(min, nums[i]);
+            rl[i] = min;
+        }
+        
+        min = Integer.MAX_VALUE;
+        for (int i = 0; i < n; i++) {
+            if (nums[i] > lr[i] && nums[i] > rl[i]) {
+                min = Math.min(nums[i] + lr[i] + rl[i], min);
+            }
+        }
+        
+        return min == Integer.MAX_VALUE ? -1 : min;
+    }
+}
+```
 # [LeetCode_2642_设计可以求最短路径的图类](https://leetcode.cn/problems/design-graph-with-shortest-path-calculator)
 ## 解法
 ### 思路
