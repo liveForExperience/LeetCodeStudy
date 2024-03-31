@@ -95,6 +95,60 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2952_需要添加的硬币的最小数量](https://leetcode.cn/problems/minimum-number-of-coins-to-be-added)
+## 解法
+### 思路
+- 假设现在需要构建的目标金额是`s`，且已经能够构造出`[0, s - 1]`区间内的所有元素
+- 如果此时在`coins`数组中增加一个元素`x`，那么区间`[x, s + x - 1]`也可以构造出来了
+- 如果此时：
+  - x <= s，那么就可以构造出`[0, s + x - 1]`
+  - x > s，那么现在只能构造出`[0, s - 1]`和`[x, s + x - 1]`，中间`[s, x - 1]`这个区间是断开的，此时就需要添加元素`s`，这样就能将区间`[0, s - 1]`扩展到`[0, 2 * s - 1]`，而此时的目标金额`s`就变成了`2 * s`
+- 此时就需要进行下一轮的比较了，比较的内容从现在的`x`与`s`变成了`x`和`2 * s`，然后再根据如上的分支逻辑进行处理
+### 代码
+```java
+
+```
+# [LeetCode_331_验证二叉树的前序序列化](https://leetcode.cn/problems/verify-preorder-serialization-of-a-binary-tree)
+## 解法
+### 思路
+- 初始化一个变量`cur`，变量对应`槽位`数
+- 所谓`槽位`，就是
+  - 假设现在开始遍历二叉树，那么就有一个对应根节点的槽位，需要被填充
+  - 如果遍历到的字符串不是井号，那么消耗掉栈中的一个槽位，并额外压入2个槽位，代表一个槽位被当前值填充了，且因为不是空，所以会有2个新的槽位要被填充
+  - 如果遍历到的字符串是井号，那么消耗掉栈中的一个槽位，代表当前这个槽位被空填充了
+- 然后，将字符串根据`,`切分成数组
+- 初始化`cur`为1，代表从根开始判断槽位了
+- 遍历字符串数组，判断当前`cur`是不是已经是0了，如果是0了，说明现在已经没有槽位需要被填充，但因为现在又遍历到了一个新的元素，那么无论是什么元素，都和前序二叉树的结构不符合，就返回false
+- 否则，就判断是否字符串为井号：
+  - 是：`cur--`
+  - 不是：`cur + 2 - 1 => cur++`
+- 最后，遍历结束，看`cur`是否为0，如果不是说明结构和字符串不相符合，不是前序遍历的二叉树，否则就说明字符串正确反映二叉树结构，返回true。
+### 代码
+```java
+class Solution {
+    public boolean isValidSerialization(String preorder) {
+        String[] strs = preorder.split(",");
+        if (strs.length == 0) {
+            return false;
+        }
+
+        int cur = 1;
+        for (String str : strs) {
+            if (cur <= 0) {
+                return false;
+            }
+            
+            if (Objects.equals(str, "#")) {
+                cur--;
+            } else {
+                cur++;
+            }
+        }
+
+        return cur == 0;
+    }
+}
+```
 # [LeetCode_2642_设计可以求最短路径的图类](https://leetcode.cn/problems/design-graph-with-shortest-path-calculator)
 ## 解法
 ### 思路
