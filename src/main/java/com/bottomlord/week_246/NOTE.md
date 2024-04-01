@@ -16,16 +16,16 @@
 ### 代码
 ```java
 class Solution {
-    public int change(int amount, int[] coins) {
-        int[] dp = new int[amount + 1];
-        dp[0] = 1;
-        for (int coin : coins) {
-            for (int i = coin; i <= amount; i++) {
-                dp[i] += dp[i - coin];
-            }
-        }
-        return dp[amount];
+  public int change(int amount, int[] coins) {
+    int[] dp = new int[amount + 1];
+    dp[0] = 1;
+    for (int coin : coins) {
+      for (int i = coin; i <= amount; i++) {
+        dp[i] += dp[i - coin];
+      }
     }
+    return dp[amount];
+  }
 }
 ```
 # [LeetCode_2580_统计将重叠区间合并成组的方案数](https://leetcode.cn/problems/count-ways-to-group-overlapping-ranges)
@@ -43,21 +43,21 @@ class Solution {
 ### 代码
 ```java
 class Solution {
-    public int countWays(int[][] ranges) {
-        int ans = 1, mod = 1000000007, n = ranges.length;
-        Arrays.sort(ranges, Comparator.comparingInt(x -> x[0]));
-        for (int i = 0; i < ranges.length;) {
-            int end = ranges[i][1];
-            while (i < n && ranges[i][0] <= end) {
-                end = Math.max(end, ranges[i][1]);
-                i++;
-            }
-            
-            ans = ans * 2 % mod;
-        }
-        
-        return ans;
+  public int countWays(int[][] ranges) {
+    int ans = 1, mod = 1000000007, n = ranges.length;
+    Arrays.sort(ranges, Comparator.comparingInt(x -> x[0]));
+    for (int i = 0; i < ranges.length;) {
+      int end = ranges[i][1];
+      while (i < n && ranges[i][0] <= end) {
+        end = Math.max(end, ranges[i][1]);
+        i++;
+      }
+
+      ans = ans * 2 % mod;
     }
+
+    return ans;
+  }
 }
 ```
 # [LeetCode_2980_元素和最小的山形三元组I](https://leetcode.cn/problems/minimum-sum-of-mountain-triplets-i)
@@ -69,44 +69,107 @@ class Solution {
 ### 代码
 ```java
 class Solution {
-    public int minimumSum(int[] nums) {
-        int n = nums.length;
-        int[] lr = new int[n], rl = new int[n];
-        int min = Integer.MAX_VALUE;
-        for (int i = 0; i < nums.length; i++) {
-            min = Math.min(min, nums[i]);
-            lr[i] = min;
-        }
-        
-        min = Integer.MAX_VALUE;
-        for (int i = n - 1; i >= 0; i--) {
-            min = Math.min(min, nums[i]);
-            rl[i] = min;
-        }
-        
-        min = Integer.MAX_VALUE;
-        for (int i = 0; i < n; i++) {
-            if (nums[i] > lr[i] && nums[i] > rl[i]) {
-                min = Math.min(nums[i] + lr[i] + rl[i], min);
-            }
-        }
-        
-        return min == Integer.MAX_VALUE ? -1 : min;
+  public int minimumSum(int[] nums) {
+    int n = nums.length;
+    int[] lr = new int[n], rl = new int[n];
+    int min = Integer.MAX_VALUE;
+    for (int i = 0; i < nums.length; i++) {
+      min = Math.min(min, nums[i]);
+      lr[i] = min;
     }
+
+    min = Integer.MAX_VALUE;
+    for (int i = n - 1; i >= 0; i--) {
+      min = Math.min(min, nums[i]);
+      rl[i] = min;
+    }
+
+    min = Integer.MAX_VALUE;
+    for (int i = 0; i < n; i++) {
+      if (nums[i] > lr[i] && nums[i] > rl[i]) {
+        min = Math.min(nums[i] + lr[i] + rl[i], min);
+      }
+    }
+
+    return min == Integer.MAX_VALUE ? -1 : min;
+  }
 }
 ```
 # [LeetCode_2952_需要添加的硬币的最小数量](https://leetcode.cn/problems/minimum-number-of-coins-to-be-added)
 ## 解法
 ### 思路
-- 假设现在需要构建的目标金额是`s`，且已经能够构造出`[0, s - 1]`区间内的所有元素
-- 如果此时在`coins`数组中增加一个元素`x`，那么区间`[x, s + x - 1]`也可以构造出来了
-- 如果此时：
-  - x <= s，那么就可以构造出`[0, s + x - 1]`
-  - x > s，那么现在只能构造出`[0, s - 1]`和`[x, s + x - 1]`，中间`[s, x - 1]`这个区间是断开的，此时就需要添加元素`s`，这样就能将区间`[0, s - 1]`扩展到`[0, 2 * s - 1]`，而此时的目标金额`s`就变成了`2 * s`
-- 此时就需要进行下一轮的比较了，比较的内容从现在的`x`与`s`变成了`x`和`2 * s`，然后再根据如上的分支逻辑进行处理
+- 思考过程：
+  - 假设现在需要构建的目标金额是`s`，且已经能够构造出`[0, s - 1]`区间内的所有元素
+  - 如果此时在`coins`数组中增加一个元素`x`，那么区间`[x, s + x - 1]`也可以构造出来
+  - 如果此时：
+    - x <= s，那么就可以构造出`[0, s + x - 1]`
+    - x > s，那么现在只能构造出`[0, s - 1]`和`[x, s + x - 1]`，中间`[s, x - 1]`这个区间是断开的，此时就需要添加元素`s`，这样就能将区间`[0, s - 1]`扩展到`[0, 2 * s - 1]`，而此时的目标金额`s`就变成了`2 * s`
+  - 此时就需要进行下一轮的比较了，比较的内容从现在的`x`与`s`变成了`x`和`2 * s`，然后再根据如上的分支逻辑进行处理
+  - 根据这个思路，那么`coins`数组首先需要被排序，目的是能按照思考过程中模拟的顺序依次从`coins`数组的最小值开始，与目标区间的`1`开始依次进行判断，看看新加入到区间中的`coins`数组能否覆盖当前的`s`
+- 算法过程：
+  - 排序`coins`数组
+  - 初始化变量
+    - `s`：用于暂存每次需要判断是否满足的目标值，初始化为1，代表第一个需要判断的目标值是1
+    - `ans`：用于暂存需要增加的元素数，初始化为0
+    - `i`：遍历`coins`数组的坐标
+  - 开始循环，循环继续条件是`s <= target`：
+    - 当前元素`x`与`s`进行比较
+      - `x <= s`：当前`coin`加入后，能够覆盖到`s`，`s`更新为`s + x`，继续循环下一个元素
+      - `x > s`：当前目标值`s`需要加入添加到`coins`数组中，否则无法覆盖`s`
+        - `ans++`
+        - `s = s - 1 + s`
+        - 继续循环当前元素
+    - 循环结束后，返回`ans`作为结果
 ### 代码
 ```java
+class Solution {
+    public int minimumAddedCoins(int[] coins, int target) {
+        Arrays.sort(coins);
+        int s = 1, ans = 0, i = 0, n = coins.length;
+        while (s <= target) {
+            if (i < n && coins[i] <= s) {
+                s += coins[i++];
+            } else {
+                ans++;
+                s <<= 1;
+            }
+        }
 
+        return ans;
+    }
+}
+```
+## 解法二
+### 思路
+在解法一的基础上，使用桶排序的方式，空间换时间，提升速度
+### 代码
+```java
+class Solution {
+    public int minimumAddedCoins(int[] coins, int target) {
+        int[] arr = new int[target + 1];
+        for (int coin : coins) {
+            arr[coin]++;
+        }
+        
+        int ans = 0, s = 1, x = 0;
+        while (s <= target) {
+            if (x <= target && arr[x] == 0) {
+                x++;
+                continue;
+            }
+            
+            if (x <= s) {
+                s += x * arr[x];
+                x++;
+            } else {
+                ans++;
+                s <<= 1;
+            }
+        }
+        
+        return ans;
+    }
+}
 ```
 # [LeetCode_331_验证二叉树的前序序列化](https://leetcode.cn/problems/verify-preorder-serialization-of-a-binary-tree)
 ## 解法
@@ -126,27 +189,27 @@ class Solution {
 ### 代码
 ```java
 class Solution {
-    public boolean isValidSerialization(String preorder) {
-        String[] strs = preorder.split(",");
-        if (strs.length == 0) {
-            return false;
-        }
-
-        int cur = 1;
-        for (String str : strs) {
-            if (cur <= 0) {
-                return false;
-            }
-            
-            if (Objects.equals(str, "#")) {
-                cur--;
-            } else {
-                cur++;
-            }
-        }
-
-        return cur == 0;
+  public boolean isValidSerialization(String preorder) {
+    String[] strs = preorder.split(",");
+    if (strs.length == 0) {
+      return false;
     }
+
+    int cur = 1;
+    for (String str : strs) {
+      if (cur <= 0) {
+        return false;
+      }
+
+      if (Objects.equals(str, "#")) {
+        cur--;
+      } else {
+        cur++;
+      }
+    }
+
+    return cur == 0;
+  }
 }
 ```
 # [LeetCode_2642_设计可以求最短路径的图类](https://leetcode.cn/problems/design-graph-with-shortest-path-calculator)
