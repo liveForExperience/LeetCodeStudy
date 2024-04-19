@@ -73,3 +73,57 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2007_从双倍数组中还原原数组](https://leetcode.cn/problems/find-original-array-from-doubled-array)
+## 解法
+### 思路
+- 当前数组的最小值一定不是双倍数，所以可以安全的把这个数和它的双倍数从数组中去除掉
+- 记录下被删除的数，然后继续循环第一步，直到删除所有元素即可
+- 算法过程：
+  - 先判断数组长度是否为偶数，如果不是偶数可以之间判定失败
+  - 初始化参数：
+    - 哈希表`map`，用于存储数组中各数字的个数
+    - 优先级队列`queue`，用于快速获取数组中的最小值
+  - 遍历数组`changed`，将元素统计到`map`中，同时也将元素放入`queue`中
+  - 循环处理n次逻辑，n为`changed`数组的长度除以2，循环体内依次处理：
+    - 获取小顶堆堆顶元素`cur`，判断元素是否已经在之前的处理中被逻辑上删除了，如果删除了，就将当前元素弹出队列，并继续循环，同时本次训话的计数回退
+    - 否则，当前元素就是目前数组中的最小值，将其放入结果数组中，同时将`cur`和`cur * 2`对应的个数从`map`中减一
+    - 还需要判断，如果`cur * 2`在`map`中的计数已经小于0了，说明`changed`数组无法构成有效的双倍数组，直接返回空数组作为结果
+  - 循环结束后，返回结果数组即可
+### 代码
+```java
+class Solution {
+    public int[] findOriginalArray(int[] changed) {
+        if (changed.length % 2 == 1) {
+            return new int[0];
+        }
+
+        Map<Integer, Integer> map = new HashMap<>();
+        Queue<Integer> queue = new PriorityQueue<>();
+        for (int num : changed) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            queue.offer(num);
+        }
+
+        int n = changed.length / 2, index = 0;
+        int[] ans = new int[n];
+        while (n-- > 0) {
+            int cur = queue.peek();
+            if (map.get(cur) == 0) {
+                queue.poll();
+                n++;
+                continue;
+            }
+
+            ans[index++] = cur;
+            map.put(cur, map.getOrDefault(cur, 0) - 1);
+            map.put(cur * 2, map.getOrDefault(cur * 2, 0) - 1);
+            
+            if (map.get(cur * 2) < 0) {
+                return new int[0];
+            }
+        }
+        
+        return ans;
+    }
+}
+```
