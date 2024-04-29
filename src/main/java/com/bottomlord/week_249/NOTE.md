@@ -127,3 +127,50 @@ class Solution {
     }
 }
 ```
+# [LeetCode_39_组合总和](https://leetcode.cn/problems/combination-sum/description)
+## 解法
+### 思路
+- 经典的回溯
+- 算法过程：
+  - 定义参数：
+    - `index`：当前遍历到的数组坐标
+    - `sum`：当前累加的总和
+    - `list`：暂存的子数组序列
+    - `ans`：答案数组
+  - 对`candidates`数组进行排序，这样在遍历数组进行回溯时，能根据排序后的单调性，基于`sum > target`，快速判断当前状态无需继续回溯，可以剪枝
+  - 然后回溯，回溯的时候，因为每个元素的使用次数无限，所以`index`在下钻的时候不需要+1
+  - 每次回溯返回的时候，记得对`sum`和`list`做恢复操作即可
+### 代码
+```java
+class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        List<List<Integer>> ans = new ArrayList<>();
+        backTrack(0, candidates, 0, target, new ArrayList<>(), ans);
+        return ans;
+    }
+    
+    private void backTrack(int index, int[] candidates, int sum, int target, List<Integer> list, List<List<Integer>> ans) {
+        if (sum > target) {
+            return;
+        }
+        
+        if (sum == target) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        
+        if (index >= candidates.length) {
+            return;
+        }
+
+        for (int i = index; i < candidates.length; i++) {
+            sum += candidates[i];
+            list.add(candidates[i]);
+            backTrack(i, candidates, sum, target, list, ans);
+            list.remove(list.size() - 1);
+            sum -= candidates[i];
+        }
+    }
+}
+```
