@@ -63,3 +63,19 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2798_满足目标工作时长的员工数目](https://leetcode.cn/problems/number-of-employees-who-met-the-target/)
+## 解法
+### 思路
+遍历`hours`，然后一一比对数组元素`hour`与`target`之间的关系，如果`hour >= target`，那么就累加计数
+### 代码
+```java
+class Solution {
+    public int numberOfEmployeesWhoMetTarget(int[] hours, int target) {
+        int cnt = 0;
+        for (int hour : hours) {
+            cnt += hour >= target ? 1 : 0;
+        }
+        return cnt;
+    }
+}
+```
