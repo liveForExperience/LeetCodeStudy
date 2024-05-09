@@ -79,3 +79,56 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1235_规划兼职工作](https://leetcode.cn/problems/maximum-profit-in-job-scheduling/)
+## 解法
+### 思路
+- 将3组数组整合成一个二维数组`jobs`，其长度`n`是任意一个数组的长度，同时存储：
+  - 0：`startTime`
+  - 1：`endTime`
+  - 2：`profit`
+- 对二维数组进行排序，排序规则是`endTime`从小到大的排列
+- 初始化一个`dp`数组，数组长度是`n + 1`
+  - `dp[i]`含义：考虑第`i`个`jobs`元素时，得到的最大收益值
+  - 其中`dp[0] = 0`，代表没有考虑任何元素时候，收益是0
+  - 状态转移方程：`dp[i] = max(dp[i - 1], dp[k] + jobs[i][2])`
+    - k：代表`endTime`小于`jobs[i][0]`的最大元素坐标
+- 找到`k`可以通过二分查找的方式
+- 最终返回`dp[n]`作为结果即可
+### 代码
+```java
+class Solution {
+    public int jobScheduling(int[] startTime, int[] endTime, int[] profit) {
+        int n = startTime.length;
+        int[][] jobs = new int[n][3];
+
+        for (int i = 0; i < n; i++) {
+            jobs[i] = new int[]{startTime[i], endTime[i], profit[i]};
+        }
+
+        Arrays.sort(jobs, Comparator.comparingInt(x -> x[1]));
+
+        int[] dp = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            int k = binarySearch(jobs, i - 1);
+            dp[i] = Math.max(dp[i - 1], dp[k + 1] + jobs[i - 1][2]);
+        }
+        
+        return dp[n];
+    }
+    
+    private int binarySearch(int[][] jobs, int i) {
+        int left = -1, right = i, startTime = jobs[i][0];
+        while (left + 1 < right) {
+            int mid = left + (right - left) / 2;
+            
+            if (jobs[mid][1] <= startTime) {
+                left = mid;
+            } else {
+                right = mid;
+            }
+        }
+        
+        return left;
+    }
+}
+```
