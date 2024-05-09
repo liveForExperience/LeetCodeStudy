@@ -31,3 +31,59 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2105_给植物浇水II](https://leetcode.cn/problems/watering-plants-ii)
+## 解法
+### 思路
+模拟过程
+- 初始化变量：
+  - `leftA`：Alice水壶中还剩余的水量
+  - `leftB`：Bob水壶中还剩余的水量
+  - `back`：回去补水的次数（也即题目结果）
+  - `ia`：Alice在数组中遍历的坐标
+  - `ib`：Bob在数组中遍历的坐标
+- 遍历数组模拟浇水过程：
+  - 如果`ia == ib`，说明Alice和Bob碰头，会浇同一株植物的水，此时按照题目的规则，需要判断3种情况
+    - `leftA > needA`：此时Alice浇水，无需返回
+    - `leftB > needB`：此时Bob浇水，无需返回
+    - 其他情况：说明Alice和Bob都不能完成浇水的工作，此时就由Alice返回补水并浇水，此时`back++`来记录
+    - 处理完成后，break循环即可
+  - 其他情况：
+    - 基于Alice和Bob水壶中的水量和他们对应的植物要求的水量的关系，来判断是否需要返回，如果需要，则`back++`
+    - 处理完成后，`ia++`，`ib--`，两者相向而行
+- 遍历结束后，返回`back`作为结果即可
+### 代码
+```java
+class Solution {
+  public int minimumRefill(int[] plants, int capacityA, int capacityB) {
+    int leftA = capacityA, leftB = capacityB, ia = 0, ib = plants.length - 1, back = 0;
+    while (ia <= ib) {
+      int needA = plants[ia], needB = plants[ib];
+
+      if (ia == ib) {
+        if (needA > leftA && needB > leftB) {
+          back++;
+        }
+
+        break;
+      }
+
+      if (needA > leftA) {
+        back++;
+        leftA = capacityA;
+      }
+
+      if (needB > leftB) {
+        back++;
+        leftB = capacityB;
+      }
+
+      leftA -= needA;
+      leftB -= needB;
+      ia++;
+      ib--;
+    }
+
+    return back;
+  }
+}
+```
