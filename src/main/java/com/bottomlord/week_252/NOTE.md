@@ -87,3 +87,27 @@ class Solution {
   }
 }
 ```
+# [LeetCode_2960_统计已测试设备](https://leetcode.cn/problems/count-tested-devices-after-test-operations)
+## 解法
+### 思路
+模拟
+- 根据题意，声明一个int变量`cnt`，存储已测试的电池个数
+- 遍历数组，用当前电池电量减去当前电池个数，即可得到题目所描述的每次测试完成，剩余电池就减1%的状况，并得到当时的电池数
+  - 如果大于0，则`cnt++`
+  - 否则直接跳过
+- 遍历结束后，返回`cnt`即可
+### 代码
+```java
+class Solution {
+    public int countTestedDevices(int[] batteryPercentages) {
+        int cnt = 0;
+        for (int p : batteryPercentages) {
+            if (p - cnt > 0) {
+                cnt++;
+            }
+        }
+        
+        return cnt;
+    }
+}
+```
