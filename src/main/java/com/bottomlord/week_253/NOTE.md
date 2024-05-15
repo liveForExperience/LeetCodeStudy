@@ -69,3 +69,42 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2589_完成所有任务的最少时间](https://leetcode.cn/problems/minimum-time-to-complete-all-tasks)
+## 解法
+### 思路
+- 对`task`进行排序，排序规则是以二维数组的第二个元素的升序规则进行排序，也即以右闭区间升序排序
+- 排序后，2个相邻的区间，前一个区间与后一个区间的交集一定是前一个区间靠后的部分，所以，如果要安排任务，应该尽量安排在有交集的位置，使该为止能尽可能多地运行任务
+- 因为题目的样本空间范围有限，可以通过遍历数组的方式，一个个的判断每个区间中任务的分布，使其尽可能的重复利用已经使用过的时间区间
+- 为了能方便快速找到使用过的区间，需要初始化一个布尔数组，用于记录哪些区间是被使用过的
+- 然后在判断每个区间的时候，优先将`duration`分配到已经使用过的区间中（区间需要在当前区间的范围内）
+- 然后再将剩下的`duration`分配在当前区间的右边界部分，并通过布尔数组进行记录，同时没分配一个新的区间，就记录一次空间使用情况，也即计数
+- 遍历结束后，返回计数值
+### 代码
+```java
+class Solution {
+    public int findMinimumTime(int[][] tasks) {
+        Arrays.sort(tasks, Comparator.comparingInt(x -> x[1]));
+        int max = tasks[tasks.length - 1][1];
+        boolean[] memo = new boolean[max + 1];
+        int ans = 0;
+        for (int[] task : tasks) {
+            int start = task[0], end = task[1], duration = task[2];
+            for (int i = start; i <= end; i++) {
+                if (memo[i]) {
+                    duration--;
+                }
+            }
+
+            for (int i = end; i > 0 && duration > 0 ; i--) {
+                if (!memo[i]) {
+                    memo[i] = true;
+                    duration--;
+                    ans++;
+                }
+            }
+        }
+        
+        return ans;
+    }
+}
+```
