@@ -108,3 +108,69 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1953_你可以工作的最大周数](https://leetcode.cn/problems/maximum-number-of-weeks-for-which-you-can-work)
+## 解法
+### 思路
+- 初始化变量`day`，用于记录答案需要的最大天数
+- 对`milestones`进行升序排序
+- 遍历`milestones`，每次循环时处理如下逻辑：
+  - 当前元素为`x`，对`day`值进行累加，公式为`day += 2 * x`
+  - 后一个元素为`y`，通过`y`与`x`的相减，将后一个元素变更为`y -= x`
+- 如果遍历结束后，最后一个元素大于0，则说明违反了题目规则，返回-1，否则，返回`day`值
+### 代码
+```java
+
+```
+# [LeetCode_826_安排工作以达到最大收益](https://leetcode.cn/problems/most-profit-assigning-work)
+## 解法
+### 思路
+- 使用一个二维数组`matrix`记录2个数组中所有`difficuly`和`profit`之间的映射关系
+  - 对`matrix`数组进行排序，排序规则为`difficulty`升序，排序后获取最大回报的过程就变成了线性的
+    - 只要`work`值比当前难度大，则比左侧所有难度都大
+    - 只要`work`值闭当前难度小，则闭右侧所有难度都小
+  - 对`matrix`的`profit`进行处理，通过遍历`matrix`数组，并暂存遍历过元素的最大值的方式，将当前元素与当前暂存的最大值进行比较，取其中的较大致，并将其存储在当前`difficulty`所对应的`profit`位置，从而用该元素来代表难度为当前值的时候，可以得到的最大的`profit`
+- 对`work`数组进行排序，排序规则为升序
+- 完成如上2个排序后，获取每个工人所工作最大收益的方式就是：
+  - 初始化变量`idx`，用于记录已经遍历过的`matrix`对，`idx`初始化为0，代表从第一个元素开始遍历
+  - 初始化变量`ans`，存储累加的`profit`
+  - 遍历`work`数组，求取每个工人能获得的最大`profit`
+  - 基于`idx`当前值开始遍历`matrix`，判断当前`matrix`对中的`difficulty`是否小于等于`work`元素，如果小于，就累加`idx`，直到大于为止
+  - 如果`idx`仍然为0，代表不存在可以做的工作，此时就跳过，否则就累加`profit`，`profit`是基于`matrix[idx - 1]`的数组对而来，`idx - 1`是因为目前`idx`对应的是第一个`difficulty`大于`work`元素值的数组对，故要-1
+- 循环结束后，返回`ans`即可
+### 代码
+```java
+class Solution {
+    public int maxProfitAssignment(int[] difficulty, int[] profit, int[] worker) {
+        int n = difficulty.length;
+
+        int[][] matrix = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            matrix[i][0] = difficulty[i];
+            matrix[i][1] = profit[i];
+        }
+        Arrays.sort(matrix, Comparator.comparingInt(x -> x[0]));
+        Arrays.sort(worker);
+
+        int max = -1;
+        for (int i = 0; i < n; i++) {
+            max = Math.max(max, matrix[i][1]);
+            matrix[i][1] = max;
+        }
+
+        int ans = 0, idx = 0;
+        for (int w : worker) {
+            while (idx < n && matrix[idx][0] <= w) {
+                idx++;
+            }
+
+            if (idx == 0) {
+                continue;
+            }
+
+            ans += matrix[idx - 1][1];   
+        }
+        
+        return ans;
+    }
+}
+```
