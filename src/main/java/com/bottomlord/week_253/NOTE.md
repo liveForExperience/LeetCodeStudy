@@ -174,3 +174,64 @@ class Solution {
     }
 }
 ```
+# [LeetCode_1535_找出数组游戏的赢家](https://leetcode.cn/problems/find-the-winner-of-an-array-game)
+## 解法
+### 思路
+- 题目实际要求的是某个元素`x`与下一个比自己大的元素之间，是否有大于等于k个比该元素小的元素存在（包括本身），如果存在，则直接`x`
+- 且，如果当前`arr`排列中，不包含如上情况的排列，则直接返回数组中最大值即可，因为按照题目要求，当遇到数组最大值后，只要循环足够多次，一定能得到k次连续大于的情况
+- 故，只需要遍历一次数组，按照如上2条的方式模拟计算，即可。
+### 代码
+```java
+class Solution {
+    public int getWinner(int[] arr, int k) {
+        int max = arr[0], cnt = 0;
+        for (int i = 1; i < arr.length; i++) {
+            int num = arr[i];
+            
+            if (num > max) {
+                max = num;
+                cnt = 1;
+
+                if (cnt == k) {
+                    return num;
+                }
+                continue;
+            }
+            
+            cnt++;
+            
+            if (cnt == k) {
+                return max;
+            }
+        }
+
+        return max;
+    }
+}
+```
+# [LeetCode_2903_找出满足差值条件的下标I](https://leetcode.cn/problems/find-indices-with-index-and-value-difference-i)
+## 解法
+### 思路
+2层循环
+- 外层从0开始遍历`nums`数组，遍历的坐标为`i`
+- 内层从`i + indexDifference`开始，遍历的坐标为`j`
+- 基于如上的遍历规则，则`i`和`j`符合了题目的第一个要求，即`abs(i - j) >= indexDifference`
+- 然后在内层判断`abs(nums[i] - nums[j])`是否符合，如果符合则直接返回坐标`i`和`j`组成的数组即可
+- 否则，遍历结束后，代表未找到匹配的坐标，返回数组`[-1, -1]`即可
+### 代码
+```java
+class Solution {
+    public int[] findIndices(int[] nums, int indexDifference, int valueDifference) {
+        int n = nums.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + indexDifference; j < n; j++) {
+                if (Math.abs(nums[i] - nums[j]) >= valueDifference) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        
+        return new int[]{-1, -1};
+    }
+}
+```
