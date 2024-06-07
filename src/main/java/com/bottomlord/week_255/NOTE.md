@@ -59,3 +59,60 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2928_给小朋友们分糖果I](https://leetcode.cn/problems/distribute-candies-among-children-i)
+## 解法
+### 思路
+递归穷举
+- 定义方法参数：
+  - `cur`：代表递归次数，也即代表第`cur`个分糖果的儿童
+  - `left`：代表剩下可分的糖果个数，初始化为`n`
+  - `limit`：代表题目限制的没人可分的个数
+- 递归2次，当递归到第3次时，判断`left`是否在[0, limit]区间之内，如果是，则代表本次方案有效，返回1，否则返回代表无效的0
+- 递归逻辑则是从0开始遍历，直到`limit`，枚举所有当前儿童可以分的糖果个数，将`left - cnt`后，继续递归到下一个儿童
+- 每次递归返回的结果在当前层累加
+- 最终返回结果
+### 代码
+```java
+class Solution {
+    public int distributeCandies(int n, int limit) {
+        return search(0, n, limit);
+    }
+    
+    private int search(int cur, int left, int limit) {
+        if (cur == 2) {
+            return left >= 0 && left <= limit ? 1 : 0;
+        }
+        
+        int sum = 0;
+        for (int cnt = 0; cnt <= limit; cnt++) {
+            sum += search(cur + 1, left - cnt, limit);
+        }
+        return sum;
+    }
+}
+```
+## 解法二
+### 思路
+2层遍历：
+- 第一层模拟第一个儿童的枚举个数，范围是[0, limit]
+- 第二层模拟第二个儿童的枚举个数，范围也是[0, limit]
+- 在第二层循环中，根据`n - one - two`的结果是否在[0, limit]范围内来确定方案是否有效，如果有效就累加1
+- 遍历结束后，返回累加结果即可
+### 代码
+```java
+class Solution {
+    public int distributeCandies(int n, int limit) {
+        int sum = 0;
+        for (int one = 0; one <= limit; one++) {
+            for (int two = 0; two <= limit; two++) {
+                if (n - one - two >= 0 &&
+                    n - one - two <= limit) {
+                    sum++;
+                }
+            }
+        }
+        
+        return sum;
+    }
+}
+```
