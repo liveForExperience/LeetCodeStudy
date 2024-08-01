@@ -35,3 +35,16 @@ class Solution {
     }
 }
 ```
+# [LeetCode_3112_访问消失节点的最少时间](https://leetcode.cn/problems/minimum-time-to-visit-disappearing-nodes)
+## 解法
+### 思路
+- 先基于`edges`数组初始化邻接表
+- 然后从0节点开始做bfs
+- bfs过程中记录度过的时间
+  - 如果第一次到达目标时，时间已经超过了`disappear`的对应坐标的时间，那么就记录-1
+  - 否则就记录当前路径上消耗的路径值，如果再次得到相同坐标的路径值，那么就取相对小的值。
+- bfs结束，返回结果
+### 代码
+```java
+
+```
