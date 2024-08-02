@@ -67,3 +67,41 @@ class Solution {
     }
 }
 ```
+# [LeetCode_3128_直角三角形](https://leetcode.cn/problems/right-triangles/)
+## 解法
+### 思路
+- 初始化2个数组：
+  - `rows`：记录纵坐标对应的每一行的1的个数
+  - `cols`：记录横坐标对应的每一列的1的个数
+- 遍历二维数组`grid`，将遍历到的1分别记录到`rows`和`cols`中
+- 再次遍历二维数组`grid`，当遍历到值为1的坐标时，用横坐标和纵坐标分别到`cols`和`rows`中找到对应的个数`r`和`c`，然后分别减1（因为需要剔除自身）
+- 然后计算`(r - 1) * (c - 1)`作为以当前坐标为直角点的三角形的个数，并累加到结果变量`cnt`中
+- 遍历结束后，返回`cnt`即可
+- 此处还有一个优化点，因为有点和没点对应的值是0和1，所以在2次遍历`grid`的过程中，不需要判断值是否为1：
+  - 第一次的时候，直接累加`grid[i][j]`，因为有就是1，没有则加0也没有影响
+  - 第二次的时候，直接在公式`(r - 1) * (c - 1)`后再乘以`grid[i][j]`，这样，如果当前坐标并不是1，则乘以0也就相当于不累加
+- 通过如上的优化可以减少逻辑判断，从而使得循环计算加速
+### 代码
+```java
+class Solution {
+    public long numberOfRightTriangles(int[][] grid) {
+        int row = grid.length, col = grid[0].length;
+        int[] rows = new int[col], cols = new int[row];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                rows[j] += grid[i][j];
+                cols[i] += grid[i][j];
+            }
+        }
+
+        long cnt = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                cnt += (long) (rows[j] - 1) * (cols[i] - 1) * grid[i][j];
+            }
+        }
+
+        return cnt;
+    }
+}
+```
