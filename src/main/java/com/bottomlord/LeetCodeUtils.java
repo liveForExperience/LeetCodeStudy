@@ -11,12 +11,33 @@ public class LeetCodeUtils {
     private LeetCodeUtils() {}
 
     public static TreeNode convertToTree(String str) {
-        int[] arr = convertToIntArr(str);
+        Integer[] arr = convertToIntegerArr(str);
         if (arr == null || arr.length == 0) {
             return null;
         }
 
         return dfs(arr, 0);
+    }
+
+    public static Integer[] convertToIntegerArr(String str) {
+        str = str.substring(1, str.length() - 1);
+        String[] factors = str.split(",");
+        Integer[] arr = new Integer[factors.length];
+        for (int i = 0; i < factors.length; i++) {
+            String factor = factors[i];
+            if (factor == null) {
+                arr[i] = null;
+                continue;
+            }
+
+            if ("null".compareToIgnoreCase(factor) == 0) {
+                arr[i] = null;
+                continue;
+            }
+
+            arr[i] = Integer.parseInt(factor);
+        }
+        return arr;
     }
 
     public static int[] convertToIntArr(String str) {
@@ -67,8 +88,12 @@ public class LeetCodeUtils {
         return matrix;
     }
 
-    private static TreeNode dfs(int[] arr, int index) {
+    private static TreeNode dfs(Integer[] arr, int index) {
         if (index >= arr.length) {
+            return null;
+        }
+
+        if (arr[index] == null) {
             return null;
         }
 
