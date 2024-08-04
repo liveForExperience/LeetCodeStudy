@@ -105,3 +105,88 @@ class Solution {
     }
 }
 ```
+# [LeetCode_3143_1_正方形中的最多点数](https://leetcode.cn/problems/maximum-points-inside-the-square)
+## 解法
+### 思路
+- 遍历`points`数组，并通过`TreeSet`数据结构来记录信息：
+  - key记录纵坐标和横坐标中对应的最大值（因为坐标有负数，还需要对坐标求绝对值）
+  - value是一个列表，记录`points`数组坐标对应的标签
+  - 键值对表示矩形长度为`key`的·
+- 初始化一个长度为26的布尔数组`memo`
+- 根据`TreeSet`的key的顺序遍历键值对，将遍历到的键值对的标签字符串记录到`memo`中，如果当前键值对出现了重复的字符串，那么当前键值对遍历结束后，终止循环。
+- 在遍历过程中累加所有不重复的字符串标签个数，遍历结束后返回累加值
+### 代码
+```java
+class Solution {
+  public int maxPointsInsideSquare(int[][] points, String s) {
+    boolean[] memo = new boolean[26];
+    TreeMap<Integer, List<Character>> map = new TreeMap<>();
+    for (int i = 0; i < points.length; i++) {
+      int[] point = points[i];
+      int len = Math.max(Math.abs(point[0]), Math.abs(point[1]));
+      map.computeIfAbsent(len, x -> new ArrayList<>()).add(s.charAt(i));
+    }
+
+    int sum = 0;
+    for (Map.Entry<Integer, List<Character>> entry : map.entrySet()) {
+      List<Character> list = entry.getValue();
+      boolean flag = false;
+      int cnt = 0;
+      for (Character c : list) {
+        if (memo[c - 'a']) {
+          flag = true;
+          break;
+        }
+
+        memo[c - 'a'] = true;
+        cnt++;
+      }
+
+      if (!flag) {
+        sum += cnt;
+      } else {
+        break;
+      }
+    }
+
+    return sum;
+  }
+}
+```
+## 解法
+### 思路
+- 通过思考题目可知，点数最大为26。而能达到多少点数取决于出现重复标签那个点所在的最小长度`min`是多少？
+- 所以，用一个整数`arr`数组记录标签对应字母出现的最小长度，这个长度也用于与如上提到的`min`进行比较，只要比`min`小，那么当前这个标签字母就是有效的。
+- `min`的维护方式，就是只要出现字母重复出现，就确保该值是最小的那个第二次出现字母所属点的长度。
+- 通过遍历`points`数组，先通过解法一中同样的方法，计算出当前点的长度`len`以及坐标对应的字符，然后和`arr`中相同字母的长度值对应以及`min`进行比较和更新。
+- 遍历结束后，遍历`arr`数组，将元素与`min`值比较，累加所有小于`min`的元素的个数，并将最终个数作为结果返回即可。
+### 代码
+```java
+class Solution {
+    public int maxPointsInsideSquare(int[][] points, String s) {
+        int[] arr = new int[26];
+        Arrays.fill(arr, Integer.MAX_VALUE);
+        int dupMin = Integer.MAX_VALUE;
+        for (int i = 0; i < points.length; i++) {
+            int[] point = points[i];
+            int len = Math.max(Math.abs(point[0]), Math.abs(point[1])),
+                index = s.charAt(i) - 'a';
+            
+            if (len < arr[index]) {
+                dupMin = Math.min(dupMin, arr[index]);
+                arr[index] = len;
+            } else if (len < dupMin) {
+                dupMin = len;
+            }
+        }
+        
+        int cnt = 0;
+        for (int len : arr) {
+            if (len < dupMin) {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+}
+```
