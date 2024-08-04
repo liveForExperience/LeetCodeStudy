@@ -12,11 +12,15 @@ public class LeetCodeUtils {
 
     public static TreeNode convertToTree(String str) {
         Integer[] arr = convertToIntegerArr(str);
-        if (arr == null || arr.length == 0) {
+        if (arr.length == 0 || arr[0] == null) {
             return null;
         }
 
-        return dfs(arr, 0);
+        List<TreeNode> list = new ArrayList<>();
+        TreeNode root = new TreeNode(arr[0]);
+        list.add(root);
+        recursive(arr, 1, list);
+        return root;
     }
 
     public static Integer[] convertToIntegerArr(String str) {
@@ -88,19 +92,27 @@ public class LeetCodeUtils {
         return matrix;
     }
 
-    private static TreeNode dfs(Integer[] arr, int index) {
-        if (index >= arr.length) {
-            return null;
+    private static void recursive(Integer[] arr, int si, List<TreeNode> preList) {
+        if (si >= arr.length) {
+            return;
         }
 
-        if (arr[index] == null) {
-            return null;
+        List<TreeNode> nextPreList = new ArrayList<>();
+        for (TreeNode treeNode : preList) {
+            if (si < arr.length && arr[si] != null) {
+                treeNode.left = new TreeNode(arr[si]);
+                nextPreList.add(treeNode.left);
+            }
+            si++;
+
+            if (si < arr.length && arr[si] != null) {
+                treeNode.right = new TreeNode(arr[si]);
+                nextPreList.add(treeNode.right);
+            }
+            si++;
         }
 
-        TreeNode node = new TreeNode(arr[index]);
-        node.left = dfs(arr, index * 2 + 1);
-        node.right = dfs(arr, index * 2 + 2);
-        return node;
+        recursive(arr, si, nextPreList);
     }
 
     private static List<List<Integer>> getLists(String str) {
