@@ -190,3 +190,45 @@ class Solution {
     }
 }
 ```
+# [LeetCode_572_另一颗树的子树](https://leetcode.cn/problems/subtree-of-another-tree)
+## 解法
+### 思路
+- 2层dfs
+  - 第一层dfs用于遍历s树
+  - 第二层dfs用于将每一个s树的子节点作为比较的根节点，与t树进行比较
+- 方法开始将t树的根作为类变量进行存储，用于方便在第一层dfs的时候进行取值和比较
+### 代码
+```java
+class Solution {
+  private TreeNode node;
+  public boolean isSubtree(TreeNode s, TreeNode t) {
+    node = t;
+    return dfs(s);
+  }
+
+  private boolean dfs(TreeNode s) {
+    if (s == null) {
+      return node == null;
+    }
+
+    boolean result = dfs2(s, node);
+    if (result) {
+      return result;
+    }
+
+    return dfs(s.left) || dfs(s.right);
+  }
+
+  private boolean dfs2(TreeNode s, TreeNode t) {
+    if (s == null && t == null) {
+      return true;
+    }
+
+    if (s == null || t == null) {
+      return false;
+    }
+
+    return s.val == t.val && dfs2(s.left, t.left) && dfs2(s.right, t.right);
+  }
+}
+```
