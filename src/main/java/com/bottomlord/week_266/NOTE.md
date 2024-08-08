@@ -53,3 +53,32 @@ class Solution {
     }
 }
 ```
+# [LeetCode_3131_找出与数组相加的整数I](https://leetcode.cn/problems/find-the-integer-added-to-array-i)
+## 解法
+### 思路
+求出2个数组的和，用`nums2`的和减去`nums1`的和，得到的差除以`nums1`的长度作为结果返回即可
+### 代码
+```java
+class Solution {
+    public int addedInteger(int[] nums1, int[] nums2) {
+        return (Arrays.stream(nums2).sum() - Arrays.stream(nums1).sum()) / nums1.length;
+    }
+}
+```
+## 解法
+### 思路
+求出2个数组各自的最小值，用第二个数组的最小值减去第一个数组的最小值，将得到的差作为结果返回即可
+### 代码
+```java
+class Solution {
+    public int addedInteger(int[] nums1, int[] nums2) {
+        int min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+        for (int i = 0; i < nums1.length; i++) {
+            min1 = Math.min(min1, nums1[i]);
+            min2 = Math.min(min2, nums2[i]);
+        }
+        
+        return min2 - min1;
+    }
+}
+```
