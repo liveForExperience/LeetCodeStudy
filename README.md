@@ -1,6 +1,9 @@
 # LeetCodeStudy
+
 > 题目来源：力扣（LeetCode）
+
 ## 练习
+
 | 周数  |                                                               日期                                                                |                                                               解题数                                                                |                                                                笔记                                                                | 未解题 |                                                                       未理解解法                                                                        |      心情      | 全站排名  |
 |:---:|:-------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|:---:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|:------------:|:-----:|
 |  1  |                                                      2019/7/8 - 2019/7/14                                                       |            [22](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_001)            | [:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_001/NOTE.md) |  -  |                                                                         -                                                                          |   :smile:    | 31262 |
@@ -267,7 +270,10 @@
 | 262 | 2024/7/15 - 2023/7/21 [2](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_262) | [:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_262/NOTE.md) |                                                                -                                                                 |  -  |                                                                      :sunny:                                                                       |     456      |
 | 263 | 2024/7/22 - 2023/7/28 [0](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_263) | [:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_263/NOTE.md) |                                                                -                                                                 |  -  |                                                                      :sunny:                                                                       |     456      |
 | 264 | 2024/7/29 - 2023/8/3 [4](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_264)  | [:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_264/NOTE.md) |                                                                -                                                                 |  -  |                                                                      :sunny:                                                                       |     456      |
+| 265 | 2024/8/4 - 2023/8/10 [1](https://github.com/liveForExperience/LeetCodeStudy/tree/master/src/main/java/com/bottomlord/week_265)  | [:page_with_curl:](https://github.com/liveForExperience/LeetCodeStudy/blob/master/src/main/java/com/bottomlord/week_265/NOTE.md) |                                                                -                                                                 |  -  |                                                                      :sunny:                                                                       |     456      |
+
 ## 竞赛
+
 <table>
     <tr align="center">
         <td>日期</td>
