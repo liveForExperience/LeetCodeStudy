@@ -82,3 +82,11 @@ class Solution {
     }
 }
 ```
+# [LeetCode_3132_找出数组相加的整数II](https://leetcode.cn/problems/find-the-integer-added-to-array-ii)
+## 解法
+### 思路
+
+### 代码
+```java
+
+```
