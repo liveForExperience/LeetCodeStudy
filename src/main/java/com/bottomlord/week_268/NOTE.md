@@ -65,3 +65,30 @@ private int[] bucket, nums;
     }
 }
 ```
+# [LeetCode_3146_两个字符串的排列差](https://leetcode.cn/problems/permutation-difference-between-two-strings)
+## 解法
+### 思路
+- 使用一个26个槽的数组`bucket`来记录2个字符串的字符出现的坐标值的绝对值差
+  - 数组每个槽初始化为0
+  - 每次出现一个字母，就将其在字符串所在的坐标记录在其字母值在`bucket`中所对应的槽位上，记录的逻辑就是用值减去槽位上的值，然后求绝对值
+- 再次遍历`bucket`，将绝对值累加作为答案返回即可
+### 代码
+```java
+class Solution {
+    public int findPermutationDifference(String s, String t) {
+        int[] bucket = new int[26];
+        int n = s.length();
+        for (int i = 0; i < n; i++) {
+            int is = s.charAt(i) - 'a', it = t.charAt(i) - 'a';
+            bucket[is] = Math.abs(i - bucket[is]);
+            bucket[it] = Math.abs(i - bucket[it]);
+        }
+
+        int sum = 0;
+        for (int num : bucket) {
+            sum += num;
+        }
+        return sum;
+    }
+}
+```
