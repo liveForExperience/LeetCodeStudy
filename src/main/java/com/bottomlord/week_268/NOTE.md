@@ -92,3 +92,65 @@ class Solution {
     }
 }
 ```
+# [LeetCode_3144_分割字符频率相等的最少子字符串](https://leetcode.cn/problems/minimum-substring-partition-of-equal-character-frequency)
+## 解法
+### 思路
+- dfs遍历所有可能性，并使用记事本来记录已经遍历过的子字符串能够分割的平衡子字符串个数
+- 因为一定是小写字母，所以可以使用一个长度为26的int数组来作为记事本，坐标对应子字符串的起始坐标
+- dfs的方法参数列表：
+  - `index`：代表已经遍历到的，需要计算可分割最小个数的子字符串起始坐标
+- dfs的退出条件就是`index >= s.length()`，表示`s`已经被遍历结束，此时返回0
+- dfs过程中
+  - 通过记事本剪枝，如果无法剪枝，就通过从`index`开始遍历所有可能的子字符串可能，在判定为平衡字符串后，从遍历到的坐标i再+1的位置开始继续递归，并在得到返回的个数后，加上当前这个平衡字符串的个数1，作为这个可能所对应的最小个数
+  - 然后完成所有可能子字符串的遍历后，将最小个数记录在记事本中，并将个数作为当前递归的结果返回
+  - 个数可以初始化为当前剩余字符串长度
+- 将dfs返回的结果作为答案返回即可
+### 代码
+```java
+class Solution {
+    private String s;
+    private int[] memo;
+
+    public int minimumSubstringsInPartition(String s) {
+        this.s = s;
+        this.memo = new int[s.length() + 1];
+        return dfs(0);
+    }
+
+    private int dfs(int index) {
+        if (index == s.length()) {
+            return 0;
+        }
+
+        if (memo[index] != 0) {
+            return memo[index];
+        }
+
+        int min = s.length() - index;
+        int[] bucket = new int[26];
+        int max = 0, cnt = 0;
+        for (int i = index; i < s.length(); i++) {
+            if (bucket[s.charAt(i) - 'a']++ == 0) {
+                cnt++;
+            }
+
+            max = Math.max(max, bucket[s.charAt(i) - 'a']);
+
+            if (cnt * max != i - index + 1) {
+                continue;
+            }
+
+            if (memo[i + 1] != 0) {
+                min = Math.min(min, memo[i + 1] + 1);
+                continue;
+            }
+
+            memo[i + 1] = dfs(i + 1);
+            min = Math.min(min, memo[i + 1] + 1);
+        }
+
+        memo[index] = min;
+        return min;
+    }
+}
+```
