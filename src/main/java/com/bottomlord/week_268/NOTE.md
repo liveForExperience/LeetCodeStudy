@@ -154,3 +154,27 @@ class Solution {
     }
 }
 ```
+# [LeetCode_3142_判断矩阵是否满足条件](https://leetcode.cn/problems/check-if-grid-satisfies-conditions)
+## 解法
+### 思路
+- 循环遍历每个单元格，判断是否与自身的下边的单元格相同，与右边的单元格不相同
+- 需要注意跳过没有对应单元格的情况
+- 但凡出现不符合的情况，就返回false
+- 否则，遍历结束后 返回true
+### 代码
+```java
+class Solution {
+    public boolean satisfiesConditions(int[][] grid) {
+        int r = grid.length, c = grid[0].length;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (i != r - 1 && grid[i][j] != grid[i + 1][j] ||
+                    j != c - 1 && grid[i][j] == grid[i][j + 1]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+```
