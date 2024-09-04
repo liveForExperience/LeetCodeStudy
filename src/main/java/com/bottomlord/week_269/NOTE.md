@@ -90,3 +90,39 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2860_让所有学生保持开心的分组方法数](https://leetcode.cn/problems/happy-students)
+## 解法
+### 思路
+- 将`nums`按从小到大排序
+- 遍历`nums`，所遍历的元素作为排序后的`nums`中连续子数组的结束元素，这个连续子数组可以视为被选择的同学，`i + 1`就是被选择同学的个数，`n - i`就是没被选择同学的个数
+- 根据遍历到的元素的坐标和值，可以判定当前元素是否符合题目的要求，即：
+  - `nums[i] < i + 1`
+  - `nums[i + 1] > i + 1`
+- 另外需要考虑两种特殊情况：
+  - 不选任何学生：此时只要考虑是否符合`nums[0] > 0`，如果符合就在暂存值上累加1
+  - 选择所有学生：此时只要考虑`nums[n - 1] < n`，如果符合就在暂存值上累加1
+- 遍历过程中，一旦匹配如上列举的情况，就累加可能值。遍历结束后再匹配如上2种特殊情况，经过处理后返回暂存值即可。
+### 代码
+```java
+class Solution {
+    public int countWays(List<Integer> nums) {
+        int ans = 0, n = nums.size();
+        Collections.sort(nums);
+        for (int i = 0; i < n - 1; i++) {;
+            if (nums.get(i) < i + 1 &&  nums.get(i + 1) > i + 1) {
+                ans++;
+            }
+        }
+        
+        if (nums.get(n - 1) < n) {
+            ans++;
+        }
+
+        if (nums.get(0) > 0) {
+            ans++;
+        }
+
+        return ans;
+    }
+}
+```
