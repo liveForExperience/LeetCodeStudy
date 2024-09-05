@@ -108,7 +108,7 @@ class Solution {
     public int countWays(List<Integer> nums) {
         int ans = 0, n = nums.size();
         Collections.sort(nums);
-        for (int i = 0; i < n - 1; i++) {;
+        for (int i = 0; i < n - 1; i++) {
             if (nums.get(i) < i + 1 &&  nums.get(i + 1) > i + 1) {
                 ans++;
             }
@@ -124,5 +124,30 @@ class Solution {
 
         return ans;
     }
+}
+```
+# [LeetCode_3174_清除数字](https://leetcode.cn/problems/clear-digits)
+## 解法
+### 思路
+- 初始化一个`StringBuilder`对象`sb`，用于记录最终的字符串（因为题目保证示例一定能够有效删除所有的数字字符，所以这个结果中一定至多只有字母字符）
+- 遍历字符串
+  - 遇到字母字符，就将该字符拼接在`sb`后
+  - 遇到数字字符，就将`sb`最后的字符删去
+- 遍历结束后返回`sb`转为字符串的对象作为结果即可
+### 代码
+```java
+class Solution {
+  public String clearDigits(String s) {
+    char[] cs = s.toCharArray();
+    StringBuilder sb = new StringBuilder();
+    for (char c : cs) {
+      if (Character.isDigit(c)) {
+        sb.deleteCharAt(sb.length() - 1);
+      } else {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
+  }
 }
 ```
