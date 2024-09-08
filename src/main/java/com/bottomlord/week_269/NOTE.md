@@ -151,3 +151,45 @@ class Solution {
   }
 }
 ```
+# [LeetCode_3176_求出最长好子序列](https://leetcode.cn/problems/find-the-maximum-length-of-a-good-subsequence-i)
+## 解法
+### 思路
+#### 题目理解
+- dp[i][j]：
+  - i：以坐标i位结尾的子序列
+  - j：有j个满足相邻元素不相等
+  - 值代表最大长度
+- base case：
+  - `dp[i][0] = 1`，没有元素与相邻的后一个元素不同，先假设为1，因为长度为1的子序列一定是符合的
+  - 其他的元素值设置为-1，代表未推演，如果在状态转移的时候推导到这个状态则跳过，因为无法继续推导
+- 状态转移方程：`dp[i][j] = max(dp[i][j], dp[i - 1][j - nums[i - 1] != nums[i] ? 1: 0] + 1)`，推导时候需要判断数组是否越界以及是否前置元素为-1
+- 最终结果：`max(dp[n][k]), k∈[0, k]`
+#### 算法过程
+### 代码
+```java
+class Solution {
+    public int maximumLength(int[] nums, int k) {
+        int n = nums.length, ans = 0;
+        int[][] dp = new int[n][k + 1];
+        for (int[] arr : dp) {
+            Arrays.fill(arr, -1);
+        }
+
+        for (int i = 0; i < n; i++) {
+            dp[i][0] = 1;
+            for (int j = 0; j <= k; j++) {
+                for (int l = 0; l < i; l++) {
+                    int add = (nums[l] != nums[i] ? 1 : 0);
+                    if (j - add >= 0 && dp[l][j - add] != -1) {
+                        dp[i][j] = Math.max(dp[i][j], dp[l][j - add] + 1);
+                    }
+                }
+                
+                ans = Math.max(ans, dp[i][j]);
+            }
+        }
+        
+        return ans;
+    }
+}
+```
