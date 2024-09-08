@@ -193,3 +193,54 @@ class Solution {
     }
 }
 ```
+# [LeetCode_977_有序的数组的平方](https://leetcode.cn/problems/squares-of-a-sorted-array)
+## 解法
+### 思路
+- 初始化一个新的数组`arr`，长度与原数组一致，用于存储重新排序后的元素
+- 遍历原数组，找到第一个正数所对应的坐标位置，这个位置即非正数与正数之间的分界点
+- 初始化2个指针，分别用于遍历正数区间和非正数区间。
+- 再初始化一个指针`index`用于标记`arr`元素被填充到的位置
+- 从分界点开始2头遍历，计算并判断哪个元素平方后的值更小，就将该平方值放入`arr`中，并累加`index`
+- 遍历结束后返回`arr`即可
+### 代码
+```java
+class Solution {
+    public int[] sortedSquares(int[] nums) {
+        int n = nums.length, l = -1, r = n, index = 0;
+        int[] arr = new int[n];
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] <= 0) {
+                l = i;
+            } else {
+                r = i;
+                break;
+            }
+        }
+
+        while (l >= 0 || r < n) {
+            if (l < 0) {
+                arr[index++] = nums[r] * nums[r];
+                r++;
+                continue;
+            }
+
+            if (r == n) {
+                arr[index++] = nums[l] * nums[l];
+                l--;
+                continue;
+            }
+
+            int x = nums[l] * nums[l], y = nums[r] * nums[r];
+            if (x <= y) {
+                arr[index++] = x;
+                l--;
+            } else {
+                arr[index++] = y;
+                r++;
+            }
+        }
+        
+        return arr;
+    }
+}
+```
