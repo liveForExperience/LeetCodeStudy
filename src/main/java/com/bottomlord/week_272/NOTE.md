@@ -30,3 +30,29 @@ class Solution {
     }
 }
 ```
+# [LeetCode_2535_数组元素和与数字和的绝对差](https://leetcode.cn/problems/difference-between-element-sum-and-digit-sum-of-an-array)
+## 解法
+### 思路
+- 遍历数组，累加元素与元素数位和之间的差值
+- 遍历结束后，将累加值求绝对值返回即可
+### 代码
+```java
+class Solution {
+    public int differenceOfSum(int[] nums) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += (num - sumDigit(num));
+        }
+        return Math.abs(sum);
+    }
+    
+    private int sumDigit(int num) {
+        int sum = 0;
+        while (num > 0) {
+            sum += num % 10;
+            num /= 10;
+        }
+        return sum;
+    }
+}
+```
